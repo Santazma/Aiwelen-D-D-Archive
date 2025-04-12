@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: url('https://cdnb.artstation.com/p/assets/images/images/020/192/283/large/thom-tenery-thomtenery-elvencity-wotc-det.jpg?1566784122') no-repeat center center fixed; /* Background image */
+      background: url('https://cdnb.artstation.com/p/assets/images/images/020/192/283/large/thom-tenery-thomtenery-elvencity-wotc-det.jpg?1566784122') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
     }
@@ -132,10 +132,15 @@
       text-decoration: none;
       cursor: pointer;
     }
-
   </style>
 </head>
 <body>
+  <!-- Müzik (Arka planda çalan) -->
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="background-music.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
   <div class="container">
     <h1>Daynore Dinenlas</h1>
     <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas" class="character-image">
@@ -195,7 +200,12 @@
         modal.style.display = "block";
         modalImg.src = this.src;
       }
-    });
+    }
+
+    // Müzik dosyasını sayfa kapandığında durdur
+    window.onbeforeunload = function() {
+      document.getElementById('background-music').pause();
+    };
   </script>
 </body>
 </html>
