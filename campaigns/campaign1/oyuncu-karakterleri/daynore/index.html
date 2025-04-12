@@ -6,58 +6,112 @@
   <title>Daynore Dinenlas</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+      margin: 0;
+      padding: 0;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/020/192/283/large/thom-tenery-thomtenery-elvencity-wotc-det.jpg?1566784122') no-repeat center center fixed; /* Background image */
+      background-size: cover;
+      color: #fff;
     }
-    img {
-      max-width: 400px;
-      width: 100%;
-      border-radius: 12px;
-      margin-bottom: 2rem;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
     }
+
     h1 {
       font-size: 3rem;
-      margin-bottom: 1rem;
+      text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7);
+      margin-bottom: 20px;
     }
-    p {
-      font-size: 1.2rem;
-      max-width: 800px;
-      line-height: 1.6;
-      text-align: center;
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 1.5rem;
-      border-radius: 10px;
+
+    .character-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
     }
-    a.back-link {
-      color: #87cefa;
-      margin-top: 2rem;
-      text-decoration: none;
+
+    .bio {
       font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      text-align: justify;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .alternative-images {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .alternative-images img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      border: 3px solid #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .alternative-images img:hover {
+      transform: scale(1.1);
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
       border: 1px solid #87cefa;
       padding: 0.5rem 1rem;
       border-radius: 8px;
       transition: background-color 0.3s;
     }
-    a.back-link:hover {
+
+    .back-link:hover {
       background-color: rgba(135, 206, 250, 0.2);
     }
+
   </style>
 </head>
 <body>
-  <h1>Daynore Dinenlas</h1>
-  <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
-  <p>
-    Daynore (Rael) Dínenlas, Alve Dorei'de orta halliden biraz daha iyi durumda bir ailenin ilk çocuğu olarak dünyaya gelmiş bir Orman Elfidir.
-    Kendisinden 85 yaş küçük (217) bir kız kardeşi vardır. Daynore'in babası zarif giysiler işleyen bir terzi, annesi ise babasının yanında ona yardım etmekle birlikte sade ve şık takılar işlemektedir.
-    Carpe Diem grubunun kurucu üyelerinden birisidir ve grubun Lideridir. Carpe Diem'in makus kaderinden kaçamamış ve ölmüştür. Lakin kendisinin, başka bir zaman çizgisinden gelmiş alternatif bir hali mavcuttur.
-    Bu alternatif Daynore, günümüzde "Ölümün ve Salgın Hastalıkların Tanrısı" lakabı ile bilinmektedir.
-  </p>
-  <a class="back-link" href="../index.html">← Geri Dön</a>
+  <div class="container">
+    <h1>Daynore Dinenlas</h1>
+    <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas" class="character-image">
+
+    <div class="bio">
+      <p><strong>Daynore (Rael) Dínenlas</strong>, Alve Dorei'de orta halliden biraz daha iyi durumda bir ailenin ilk çocuğu olarak dünyaya gelmiştir. Kendisinden 85 yaş küçük (217) bir kız kardeşi vardır. Rael'in babası zarif giysiler işleyen bir terzi, annesi ise babasının yanında ona yardım etmekle birlikte sade ve şık takılar işlemektedir.</p>
+    </div>
+
+    <!-- Alternatif Resimler -->
+    <div class="alternative-images">
+      <div>
+        <img src="daynore_alt1.png" alt="Daynore Alternatif Resim 1">
+      </div>
+      <div>
+        <img src="daynore_alt2.png" alt="Daynore Alternatif Resim 2">
+      </div>
+      <div>
+        <img src="daynore_alt3.png" alt="Daynore Alternatif Resim 3">
+      </div>
+    </div>
+
+    <!-- Geri Dön Linki -->
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </div>
 </body>
 </html>
