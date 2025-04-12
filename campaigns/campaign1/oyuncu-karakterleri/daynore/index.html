@@ -35,6 +35,12 @@
       border-radius: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
       margin-bottom: 20px;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .character-image:hover {
+      transform: scale(1.1); /* Hover effect for growing image */
     }
 
     .bio {
@@ -64,10 +70,11 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
       border: 3px solid #fff;
       transition: transform 0.3s ease;
+      cursor: pointer;
     }
 
     .alternative-images img:hover {
-      transform: scale(1.1);
+      transform: scale(1.1); /* Hover effect for growing image */
     }
 
     .back-link {
@@ -84,6 +91,46 @@
 
     .back-link:hover {
       background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    /* Modal Style (Pop-up) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      border-radius: 15px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #f44336;
+      text-decoration: none;
+      cursor: pointer;
     }
 
   </style>
@@ -113,5 +160,38 @@
     <!-- Geri Dön Linki -->
     <a class="back-link" href="../index.html">← Geri Dön</a>
   </div>
+
+  <!-- The Modal (pop-up) -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+  </div>
+
+  <script>
+    // Modal için script
+    var modal = document.getElementById("myModal");
+    var img = document.getElementById("myImg");
+    var modalImg = document.getElementById("img01");
+
+    img.onclick = function(){
+      modal.style.display = "block";
+      modalImg.src = this.src;
+    }
+
+    var span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function() { 
+      modal.style.display = "none";
+    }
+
+    // Alternatif resimler için pop-up
+    var altImages = document.querySelectorAll('.alt-img');
+    altImages.forEach(function(image) {
+      image.onclick = function() {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+      }
+    });
+  </script>
 </body>
 </html>
