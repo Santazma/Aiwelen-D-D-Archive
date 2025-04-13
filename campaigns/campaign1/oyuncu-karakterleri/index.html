@@ -8,12 +8,11 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://cdnb.artstation.com/p/assets/images/images/050/594/207/large/petar-milivojevic-b0a9dd9d-68e9-4e08-97c1-af4f1c0fe1ac-petarmilivojevic-httpss-mj-runexl4w0-army-of-white-priestes-around-giant-pope-priest-vampire-wearing-golden-crown-in-1.jpg?1655220634') no-repeat center center fixed;
+      background: url('https://cdna.artstation.com/p/assets/images/images/041/430/008/large/jonny-sun-.jpg?1631684163') no-repeat center center fixed;
       background-size: cover;
       position: relative;
       min-height: 100vh;
       overflow-x: hidden;
-      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
     }
 
     body::before {
@@ -53,20 +52,21 @@
       cursor: pointer;
       overflow: hidden;
       border-radius: 12px;
+      border: 4px solid rgba(255, 255, 255, 0.6); /* Çerçeve eklendi */
       transition: transform 0.3s ease;
+      background-color: rgba(0, 0, 0, 0.3);
     }
 
     .character-card img {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 12px;
       transition: transform 0.3s ease;
+      border-radius: 8px;
     }
 
     .character-card:hover img {
-      transform: scale(1.5);
-      filter: brightness(70%);
+      transform: scale(1.15); /* Gerçek zoom efekti */
     }
 
     .character-name {
