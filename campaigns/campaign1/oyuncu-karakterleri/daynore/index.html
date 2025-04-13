@@ -4,27 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Daynore Dinenlas</title>
-  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'MedievalSharp', cursive;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background: url('https://cdnb.artstation.com/p/assets/images/images/020/192/283/large/thom-tenery-thomtenery-elvencity-wotc-det.jpg?1566784122') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-    }
-
-    /* Overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.4);
-      z-index: 0;
     }
 
     .container {
@@ -37,13 +24,9 @@
     }
 
     h1 {
-      font-size: 4rem;
-      text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+      font-size: 3rem;
+      text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7);
       margin-bottom: 20px;
-      color: #ffd700;
-      border-bottom: 2px solid #fff;
-      display: inline-block;
-      padding-bottom: 10px;
     }
 
     .character-image {
@@ -115,15 +98,13 @@
       width: 240px;
       font-size: 0.95rem;
       line-height: 1.5;
-      z-index: 2;
     }
 
     .info-box h2 {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       color: #ffdf6e;
       margin-top: 0;
       margin-bottom: 10px;
-      text-shadow: 1px 1px 2px black;
     }
 
     .info-box strong {
@@ -143,7 +124,6 @@
       text-decoration: underline;
       font-weight: bold;
       margin-top: 5px;
-      display: block;
     }
 
     .back-link {
@@ -162,42 +142,29 @@
       background-color: rgba(135, 206, 250, 0.2);
     }
 
-    /* Modal Animasyonu */
     .modal {
       display: none;
       position: fixed;
-      z-index: 9999;
+      z-index: 10;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       overflow: auto;
-      background-color: rgba(0, 0, 0, 0.8);
-      animation: fadeIn 0.4s ease-out;
+      background-color: rgba(0, 0, 0, 0.7);
     }
 
     .modal-content {
-      margin: 5% auto;
+      margin: auto;
       display: block;
       width: 80%;
-      max-width: 800px;
+      max-width: 700px;
       border-radius: 15px;
-      animation: zoomIn 0.4s ease-in-out;
-    }
-
-    @keyframes zoomIn {
-      from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .close {
       position: absolute;
-      top: 20px;
+      top: 15px;
       right: 35px;
       color: #fff;
       font-size: 40px;
@@ -231,32 +198,6 @@
       font-size: 0.9rem;
       margin-left: 5px;
     }
-
-    /* Gotik Süsleme */
-    body::after {
-      content: "";
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 100px;
-      background: url('https://i.imgur.com/HT8BfRL.png') repeat-y center;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      width: 100px;
-      background: url('https://i.imgur.com/HT8BfRL.png') repeat-y center;
-      z-index: 1;
-      pointer-events: none;
-      transform: scaleX(-1);
-    }
   </style>
 </head>
 <body>
@@ -271,7 +212,7 @@
   </div>
 
   <div class="container">
-    <h1>⚔️ Daynore Dinenlas ⚔️</h1>
+    <h1>Daynore Dinenlas</h1>
     <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas" class="character-image" onclick="openModal(this)">
     <div class="image-title">Daynore Dinenlas</div>
 
@@ -309,35 +250,39 @@
 
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
-    <strong>... (devam ediyor)</strong>
+    <strong>Class ve Subclass:</strong> Horizon Walker Ranger<br>
+    <strong>Level:</strong> 10 Level'da öldü<br>
+    <strong>Irk:</strong> Yarı Elf (Wood Elf)<br>
+    <strong>Yaş:</strong> 304 (Öldü)<br>
+    <strong>Cinsiyet:</strong> Erkek
   </div>
 
-  <!-- Modal -->
-  <div id="imageModal" class="modal" onclick="closeModal()">
+  <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="modalImage">
+    <img class="modal-content" id="img01" />
   </div>
 
   <script>
-    const volumeControl = document.getElementById("volume-control");
-    const backgroundMusic = document.getElementById("background-music");
-    const volumeLabel = document.getElementById("volume-level");
-
-    volumeControl.addEventListener("input", function () {
-      backgroundMusic.volume = this.value;
-      volumeLabel.textContent = Math.round(this.value * 100) + "%";
-    });
-
     function openModal(img) {
-      const modal = document.getElementById("imageModal");
-      const modalImg = document.getElementById("modalImage");
-      modal.style.display = "block";
-      modalImg.src = img.src;
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
     }
 
     function closeModal() {
-      document.getElementById("imageModal").style.display = "none";
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
     }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
   </script>
 </body>
 </html>
