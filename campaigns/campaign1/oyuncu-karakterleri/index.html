@@ -20,7 +20,7 @@
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, 0.65);
       z-index: 0;
     }
 
@@ -33,54 +33,65 @@
     }
 
     h1 {
-      font-size: 3rem;
-      margin-bottom: 2rem;
+      font-size: 3.5rem;
+      margin-bottom: 3rem;
       color: #f5f5f5;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+      text-shadow: 2px 2px 12px rgba(0,0,0,0.7);
     }
 
     .character-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2.5rem;
+      max-width: 1600px;
+      margin: 0 auto 3rem auto;
+    }
+
+    .character-row {
+      display: contents;
     }
 
     .character-card {
       position: relative;
       cursor: pointer;
       overflow: hidden;
-      border-radius: 12px;
-      border: 4px solid rgba(255, 255, 255, 0.6); /* Çerçeve eklendi */
-      transition: transform 0.3s ease;
-      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      background-color: rgba(25, 25, 25, 0.75);
+      border: 5px solid #2f2f2f;
+      box-shadow:
+        0 0 10px rgba(170, 0, 255, 0.5),
+        0 0 20px rgba(0, 0, 0, 0.6) inset,
+        0 0 3px #666 inset;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .character-card:hover {
+      transform: scale(1.03);
+      box-shadow:
+        0 0 20px rgba(255, 0, 150, 0.8),
+        0 0 25px rgba(255, 255, 255, 0.1) inset;
     }
 
     .character-card img {
       width: 100%;
       height: auto;
       display: block;
-      transition: transform 0.3s ease;
-      border-radius: 8px;
-    }
-
-    .character-card:hover img {
-      transform: scale(1.15); /* Gerçek zoom efekti */
+      border-radius: 12px;
+      filter: brightness(1.1) contrast(1.1);
     }
 
     .character-name {
       position: absolute;
-      top: 50%;
+      bottom: 12px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      color: #fff;
-      font-size: 1.2rem;
+      transform: translateX(-50%);
+      color: #f0e6ff;
+      font-size: 1.5rem;
       font-weight: bold;
+      text-shadow: 0 0 10px black;
+      pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s ease;
-      pointer-events: none;
-      text-shadow: 0 0 8px black;
     }
 
     .character-card:hover .character-name {
@@ -89,12 +100,13 @@
 
     .back-link {
       display: inline-block;
-      margin-top: 3rem;
+      margin-top: 2rem;
       color: #87cefa;
       text-decoration: none;
       border: 1px solid #87cefa;
-      padding: 0.6rem 1.2rem;
+      padding: 0.8rem 1.4rem;
       border-radius: 10px;
+      font-size: 1.1rem;
       transition: background-color 0.3s, transform 0.2s;
     }
 
@@ -102,65 +114,82 @@
       background-color: rgba(135, 206, 250, 0.2);
       transform: scale(1.05);
     }
+
+    @media (max-width: 1400px) {
+      .character-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
   </style>
 </head>
 <body>
   <main>
     <h1>Oyuncu Karakterleri - Campaign 1</h1>
+
+    <!-- İlk 7 Karakter -->
     <div class="character-grid">
-      <a class="character-card" href="daynore/index.html">
-        <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
-        <div class="character-name">Daynore Dinenlas</div>
-      </a>
-      <a class="character-card" href="john/index.html">
-        <img src="images/john.jpg" alt="John">
-        <div class="character-name">John</div>
-      </a>
-      <a class="character-card" href="uther/index.html">
-        <img src="images/uther.jpg" alt="Uther">
-        <div class="character-name">Uther</div>
-      </a>
-      <a class="character-card" href="ruven/index.html">
-        <img src="images/ruven.jpg" alt="Ruven">
-        <div class="character-name">Ruven</div>
-      </a>
-      <a class="character-card" href="damian/index.html">
-        <img src="images/damian.jpg" alt="Damian">
-        <div class="character-name">Damian</div>
-      </a>
-      <a class="character-card" href="toji/index.html">
-        <img src="images/toji.jpg" alt="Toji">
-        <div class="character-name">Toji</div>
-      </a>
-      <a class="character-card" href="sirius/index.html">
-        <img src="images/sirius.jpg" alt="Sirius">
-        <div class="character-name">Sirius</div>
-      </a>
-      <a class="character-card" href="seid/index.html">
-        <img src="images/seid.jpg" alt="Seid">
-        <div class="character-name">Seid</div>
-      </a>
-      <a class="character-card" href="bob/index.html">
-        <img src="images/bob.jpg" alt="Bob">
-        <div class="character-name">Bob</div>
-      </a>
-      <a class="character-card" href="armani/index.html">
-        <img src="images/armani.jpg" alt="Armani">
-        <div class="character-name">Armani</div>
-      </a>
-      <a class="character-card" href="sylas/index.html">
-        <img src="images/sylas.jpg" alt="Sylas">
-        <div class="character-name">Sylas</div>
-      </a>
-      <a class="character-card" href="skull/index.html">
-        <img src="images/skull.jpg" alt="Skull">
-        <div class="character-name">Skull</div>
-      </a>
-      <a class="character-card" href="minofein/index.html">
-        <img src="images/minofein.jpg" alt="Minofein">
-        <div class="character-name">Minofein</div>
-      </a>
+      <div class="character-row">
+        <a class="character-card" href="daynore/index.html">
+          <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
+          <div class="character-name">Daynore Dinenlas</div>
+        </a>
+        <a class="character-card" href="john/index.html">
+          <img src="images/john.jpg" alt="John">
+          <div class="character-name">John</div>
+        </a>
+        <a class="character-card" href="uther/index.html">
+          <img src="images/uther.jpg" alt="Uther">
+          <div class="character-name">Uther</div>
+        </a>
+        <a class="character-card" href="ruven/index.html">
+          <img src="images/ruven.jpg" alt="Ruven">
+          <div class="character-name">Ruven</div>
+        </a>
+        <a class="character-card" href="damian/index.html">
+          <img src="images/damian.jpg" alt="Damian">
+          <div class="character-name">Damian</div>
+        </a>
+        <a class="character-card" href="toji/index.html">
+          <img src="images/toji.jpg" alt="Toji">
+          <div class="character-name">Toji</div>
+        </a>
+        <a class="character-card" href="sirius/index.html">
+          <img src="images/sirius.jpg" alt="Sirius">
+          <div class="character-name">Sirius</div>
+        </a>
+      </div>
     </div>
+
+    <!-- Kalan 6 Karakter -->
+    <div class="character-grid">
+      <div class="character-row">
+        <a class="character-card" href="seid/index.html">
+          <img src="images/seid.jpg" alt="Seid">
+          <div class="character-name">Seid</div>
+        </a>
+        <a class="character-card" href="bob/index.html">
+          <img src="images/bob.jpg" alt="Bob">
+          <div class="character-name">Bob</div>
+        </a>
+        <a class="character-card" href="armani/index.html">
+          <img src="images/armani.jpg" alt="Armani">
+          <div class="character-name">Armani</div>
+        </a>
+        <a class="character-card" href="sylas/index.html">
+          <img src="images/sylas.jpg" alt="Sylas">
+          <div class="character-name">Sylas</div>
+        </a>
+        <a class="character-card" href="skull/index.html">
+          <img src="images/skull.jpg" alt="Skull">
+          <div class="character-name">Skull</div>
+        </a>
+        <a class="character-card" href="minofein/index.html">
+          <img src="images/minofein.jpg" alt="Minofein">
+          <div class="character-name">Minofein</div>
+        </a>
+      </div>
+    </div>
+
     <a class="back-link" href="../index.html">← Geri Dön</a>
   </main>
 </body>
