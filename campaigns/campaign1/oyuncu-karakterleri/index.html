@@ -40,18 +40,17 @@
     }
 
     .character-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 2.5rem;
       max-width: 1600px;
       margin: 0 auto 3rem auto;
     }
 
-    .character-row {
-      display: contents;
-    }
-
     .character-card {
+      width: 200px;
+      aspect-ratio: 3/4;
       position: relative;
       cursor: pointer;
       overflow: hidden;
@@ -63,6 +62,9 @@
         0 0 20px rgba(0, 0, 0, 0.6) inset,
         0 0 3px #666 inset;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .character-card:hover {
@@ -73,12 +75,11 @@
     }
 
     .character-card img {
-      width: 120%;  /* Resimleri biraz daha büyüttüm */
-      height: auto;
-      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       border-radius: 12px;
       filter: brightness(1.1) contrast(1.1);
-      margin-left: -10%;  /* Görselin merkeze oturması için düzeltme */
     }
 
     .character-name {
@@ -93,6 +94,8 @@
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s ease;
+      text-align: center;
+      width: 100%;
     }
 
     .character-card:hover .character-name {
@@ -117,14 +120,15 @@
     }
 
     @media (max-width: 1400px) {
-      .character-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      .character-card {
+        width: 180px;
       }
     }
 
-    /* Alt ve üst sıralar için ortalamayı sağlamak */
-    .character-grid:first-of-type, .character-grid:last-of-type {
-      justify-items: center;  /* Ortalanmış resimler için */
+    @media (max-width: 768px) {
+      .character-card {
+        width: 150px;
+      }
     }
   </style>
 </head>
@@ -132,68 +136,62 @@
   <main>
     <h1>Oyuncu Karakterleri - Campaign 1</h1>
 
-    <!-- İlk 7 Karakter -->
     <div class="character-grid">
-      <div class="character-row">
-        <a class="character-card" href="daynore/index.html">
-          <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
-          <div class="character-name">Daynore Dinenlas</div>
-        </a>
-        <a class="character-card" href="john/index.html">
-          <img src="john/John.jpg" alt="John">
-          <div class="character-name">John</div>
-        </a>
-        <a class="character-card" href="uther/index.html">
-          <img src="uther/Uther Işıkgetiren.jpg" alt="Uther Işıkgetiren">
-          <div class="character-name">Uther Işıkgetiren</div>
-        </a>
-        <a class="character-card" href="ruven/index.html">
-          <img src="ruven/Ruven.jpg" alt="Ruven">
-          <div class="character-name">Ruven</div>
-        </a>
-        <a class="character-card" href="damian/index.html">
-          <img src="damian/Günahkar Damian.jpg" alt="Damian">
-          <div class="character-name">Damian</div>
-        </a>
-        <a class="character-card" href="toji/index.html">
-          <img src="toji/Toji.jpg" alt="Toji">
-          <div class="character-name">Toji</div>
-        </a>
-        <a class="character-card" href="sirius/index.html">
-          <img src="sirius/Sirius.jpg" alt="Sirius">
-          <div class="character-name">Sirius</div>
-        </a>
-      </div>
-    </div>
+      <!-- İlk 7 Karakter -->
+      <a class="character-card" href="daynore/index.html">
+        <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
+        <div class="character-name">Daynore Dinenlas</div>
+      </a>
+      <a class="character-card" href="john/index.html">
+        <img src="john/John.jpg" alt="John">
+        <div class="character-name">John</div>
+      </a>
+      <a class="character-card" href="uther/index.html">
+        <img src="uther/Uther Işıkgetiren.jpg" alt="Uther Işıkgetiren">
+        <div class="character-name">Uther Işıkgetiren</div>
+      </a>
+      <a class="character-card" href="ruven/index.html">
+        <img src="ruven/Ruven.jpg" alt="Ruven">
+        <div class="character-name">Ruven</div>
+      </a>
+      <a class="character-card" href="damian/index.html">
+        <img src="damian/Günahkar Damian.jpg" alt="Damian">
+        <div class="character-name">Damian</div>
+      </a>
+      <a class="character-card" href="toji/index.html">
+        <img src="toji/Toji.jpg" alt="Toji">
+        <div class="character-name">Toji</div>
+      </a>
+      <a class="character-card" href="sirius/index.html">
+        <img src="sirius/Sirius.jpg" alt="Sirius">
+        <div class="character-name">Sirius</div>
+      </a>
 
-    <!-- Kalan 6 Karakter -->
-    <div class="character-grid">
-      <div class="character-row">
-        <a class="character-card" href="seid/index.html">
-          <img src="seid/Seid.png" alt="Seid">
-          <div class="character-name">Seid</div>
-        </a>
-        <a class="character-card" href="bob/index.html">
-          <img src="bob/Bob.jpg" alt="Bob">
-          <div class="character-name">Bob</div>
-        </a>
-        <a class="character-card" href="armani/index.html">
-          <img src="armani/Armani.jpg" alt="Armani">
-          <div class="character-name">Armani</div>
-        </a>
-        <a class="character-card" href="silas/index.html">
-          <img src="silas/Silas.jpg" alt="Silas">
-          <div class="character-name">Silas</div>
-        </a>
-        <a class="character-card" href="skull/index.html">
-          <img src="skull/Skull.jpg" alt="Skull">
-          <div class="character-name">Skull</div>
-        </a>
-        <a class="character-card" href="minofein/index.html">
-          <img src="minofein/Minofein.jpg" alt="Minofein">
-          <div class="character-name">Minofein</div>
-        </a>
-      </div>
+      <!-- Sonraki 6 Karakter -->
+      <a class="character-card" href="seid/index.html">
+        <img src="seid/Seid.png" alt="Seid">
+        <div class="character-name">Seid</div>
+      </a>
+      <a class="character-card" href="bob/index.html">
+        <img src="bob/Bob.jpg" alt="Bob">
+        <div class="character-name">Bob</div>
+      </a>
+      <a class="character-card" href="armani/index.html">
+        <img src="armani/Armani.jpg" alt="Armani">
+        <div class="character-name">Armani</div>
+      </a>
+      <a class="character-card" href="silas/index.html">
+        <img src="silas/Silas.jpg" alt="Silas">
+        <div class="character-name">Silas</div>
+      </a>
+      <a class="character-card" href="skull/index.html">
+        <img src="skull/Skull.jpg" alt="Skull">
+        <div class="character-name">Skull</div>
+      </a>
+      <a class="character-card" href="minofein/index.html">
+        <img src="minofein/Minofein.jpg" alt="Minofein">
+        <div class="character-name">Minofein</div>
+      </a>
     </div>
 
     <a class="back-link" href="../index.html">← Geri Dön</a>
