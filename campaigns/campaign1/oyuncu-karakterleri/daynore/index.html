@@ -19,6 +19,7 @@
       margin: 0 auto;
       padding: 20px;
       text-align: center;
+      position: relative;
       z-index: 1;
     }
 
@@ -34,13 +35,20 @@
       object-fit: cover;
       border-radius: 15px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       transition: transform 0.3s ease;
       cursor: pointer;
     }
 
     .character-image:hover {
-      transform: scale(1.1); /* Hover effect for growing image */
+      transform: scale(1.1);
+    }
+
+    .image-title, .image-title-alt {
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-size: 1rem;
     }
 
     .bio {
@@ -62,6 +70,10 @@
       margin-bottom: 40px;
     }
 
+    .alternative-images div {
+      text-align: center;
+    }
+
     .alternative-images img {
       width: 150px;
       height: 200px;
@@ -74,7 +86,26 @@
     }
 
     .alternative-images img:hover {
-      transform: scale(1.5); /* Hover effect for growing image */
+      transform: scale(1.5);
+    }
+
+    .info-box {
+      position: absolute;
+      top: 100px;
+      background-color: rgba(0,0,0,0.6);
+      padding: 15px;
+      border-radius: 10px;
+      width: 200px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .left-box {
+      left: 20px;
+    }
+
+    .right-box {
+      right: 20px;
     }
 
     .back-link {
@@ -93,18 +124,16 @@
       background-color: rgba(135, 206, 250, 0.2);
     }
 
-    /* Modal Style (Pop-up) */
     .modal {
-      display: none; /* Hidden by default */
+      display: none;
       position: fixed;
-      z-index: 1;
+      z-index: 10;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       overflow: auto;
       background-color: rgba(0, 0, 0, 0.7);
-      padding-top: 60px;
     }
 
     .modal-content {
@@ -122,90 +151,98 @@
       color: #fff;
       font-size: 40px;
       font-weight: bold;
-      transition: 0.3s;
       cursor: pointer;
     }
 
-    .close:hover,
-    .close:focus {
+    .close:hover {
       color: #f44336;
-      text-decoration: none;
-      cursor: pointer;
+    }
+
+    #volume-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
-  <!-- Müzik (Arka planda çalan) -->
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Woodland Realm - Mark Sidebotham.mp3" type="audio/mp3">
     Your browser does not support the audio element.
   </audio>
 
+  <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5">
+
   <div class="container">
     <h1>Daynore Dinenlas</h1>
-    <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas" class="character-image">
+    <img src="Daynore Dínenlas.jpg" alt="Daynore Dinenlas" class="character-image" onclick="openModal(this)">
     <div class="image-title">Daynore Dinenlas</div>
 
     <div class="bio">
       <p><strong>Barkın BAYRAM</strong> tarafından canlandırılmış ve oynanmıştır. Barkın'ın ilk karakteridir. <strong>Daynore (Rael) Dínenlas</strong>, Alve Dorei'de orta halli bir ailenin ilk çocuğu olarak dünyaya gelmiştir. Kendisinden 85 yaş küçük (217) bir kız kardeşi vardır. Rael'in babası zarif giysiler işleyen bir terzi, annesi ise babasının yanında ona yardım etmekle birlikte sade ve şık takılar işlemektedir.</p>
     </div>
 
-    <!-- Alternatif Resimler -->
     <div class="alternative-images">
       <div>
-        <img src="Tanrı Daynore.jpg" alt="Ölümün Tanrısı Daynore">
+        <img src="Tanrı Daynore.jpg" alt="Ölümün Tanrısı Daynore" onclick="openModal(this)">
         <div class="image-title-alt">Ölümün Tanrısı Daynore</div>
       </div>
       <div>
-        <img src="Daynore Drow Kadın Disguise Formu.jpg" alt="Daynore'nin Drow Kadını Olarak Disguise Formu">
+        <img src="Daynore Drow Kadın Disguise Formu.jpg" alt="Daynore'nin Drow Kadını Olarak Disguise Formu" onclick="openModal(this)">
         <div class="image-title-alt">Daynore'nin Drow Kadını Olarak Disguise Formu</div>
       </div>
       <div>
-        <img src="Chains Of Eternity.jpg" alt="Daynore'nin Zincirdar Silahı Chains of Eternity">
+        <img src="Chains Of Eternity.jpg" alt="Daynore'nin Zincirdar Silahı Chains of Eternity" onclick="openModal(this)">
         <div class="image-title-alt">Daynore'nin Zincirdar Silahı Chains of Eternity</div>
       </div>
     </div>
 
-    <!-- Geri Dön Linki -->
     <a class="back-link" href="../index.html">← Geri Dön</a>
   </div>
 
-  <!-- The Modal (pop-up) -->
+  <div class="info-box left-box">
+    <strong>Unvanlar:</strong><br>
+    Ölümün ve Salgın Hastalıkların Tanrısı, Zincirdar Mirasçısı, Gaspçı Ufuk Gezgini, Alacakaranlığın İntikamcısı, Gölgeler İçindeki Yolcu, Örtülü Yol Gözeten, Yüce Egemen Avcı<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    Ölümün Tanrısı olarak Daynore, Zaman Çizgileri arasında hareket edebilir ve diyarları dolaşabilir. Ölümü kontrol eder ve her yaşayan varlığın bir gün ölmesinden sorumludur. <br><br>
+    <a href="pdfs/tanri-daynore.pdf" target="_blank" class="character-link" style="display: block;">📜 Tanrı Daynore</a>
+    <a href="pdfs/oyuncu-daynore.pdf" target="_blank" class="character-link" style="display: block;">🎲 Oyuncu Daynore</a>
+  </div>
+
+  <div class="info-box right-box">
+    <strong>Class ve Subclass:</strong> Horizon Walker Ranger<br>
+    <strong>Level:</strong> 10 Level'da öldü<br>
+    <strong>Irk:</strong> Yarı Elf (Wood Elf)<br>
+    <strong>Yaş:</strong> 304 (Öldü)<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
   <div id="myModal" class="modal">
-    <span class="close">&times;</span>
+    <span class="close" onclick="closeModal()">&times;</span>
     <img class="modal-content" id="img01">
   </div>
 
   <script>
-    // Modal için script
-    var modal = document.getElementById("myModal");
-    var img = document.getElementById("myImg");
-    var modalImg = document.getElementById("img01");
-
-    img.onclick = function(){
+    function openModal(img) {
+      var modal = document.getElementById("myModal");
+      var modalImg = document.getElementById("img01");
       modal.style.display = "block";
-      modalImg.src = this.src;
+      modalImg.src = img.src;
     }
 
-    var span = document.getElementsByClassName("close")[0];
-
-    span.onclick = function() { 
-      modal.style.display = "none";
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
     }
 
-    // Alternatif resimler için pop-up
-    var altImages = document.querySelectorAll('.alt-img');
-    altImages.forEach(function(image) {
-      image.onclick = function() {
-        modal.style.display = "block";
-        modalImg.src = this.src;
-      }
-    }
-
-    // Müzik dosyasını sayfa kapandığında durdur
     window.onbeforeunload = function() {
       document.getElementById('background-music').pause();
     };
+
+    document.getElementById('volume-control').addEventListener('input', function() {
+      var audio = document.getElementById('background-music');
+      audio.volume = this.value;
+    });
   </script>
 </body>
 </html>
