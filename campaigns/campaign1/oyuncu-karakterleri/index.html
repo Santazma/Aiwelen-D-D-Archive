@@ -7,67 +7,160 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('../assets/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: white;
+    }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 2rem;
+      color: #f5f5f5;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
     }
-    .character-list {
-      list-style-type: none;
-      padding: 0;
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .character-item {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
+
+    .character-card {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
     }
-    a {
-      color: #87cefa;
-      text-decoration: none;
+
+    .character-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .character-card:hover img {
+      transform: scale(1.5);
+      filter: brightness(70%);
+    }
+
+    .character-name {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
       font-size: 1.2rem;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      text-shadow: 0 0 8px black;
     }
-    a:hover {
-      text-decoration: underline;
+
+    .character-card:hover .character-name {
+      opacity: 1;
     }
+
     .back-link {
+      display: inline-block;
+      margin-top: 3rem;
       color: #87cefa;
-      margin-top: 2rem;
       text-decoration: none;
-      font-size: 1.1rem;
       border: 1px solid #87cefa;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: background-color 0.3s;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      transition: background-color 0.3s, transform 0.2s;
     }
+
     .back-link:hover {
       background-color: rgba(135, 206, 250, 0.2);
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <h1>Oyuncu Karakterleri - Campaign 1</h1>
-  <ul class="character-list">
-    <li class="character-item"><a href="daynore/index.html">Daynore Dinenlas</a></li>
-    <li class="character-item"><a href="john/index.html">John</a></li>
-    <li class="character-item"><a href="uther/index.html">Uther</a></li>
-    <li class="character-item"><a href="ruven/index.html">Ruven</a></li>
-    <li class="character-item"><a href="damian/index.html">Damian</a></li>
-    <li class="character-item"><a href="toji/index.html">Toji</a></li>
-    <li class="character-item"><a href="sirius/index.html">Sirius</a></li>
-    <li class="character-item"><a href="seid/index.html">Seid</a></li>
-    <li class="character-item"><a href="bob/index.html">Bob</a></li>
-    <li class="character-item"><a href="armani/index.html">Armani</a></li>
-    <li class="character-item"><a href="sylas/index.html">Sylas</a></li>
-    <li class="character-item"><a href="skull/index.html">Skull</a></li>
-    <li class="character-item"><a href="minofein/index.html">Minofein</a></li>
-  </ul>
-
-  <a class="back-link" href="../index.html">← Geri Dön</a>
+  <main>
+    <h1>Oyuncu Karakterleri - Campaign 1</h1>
+    <div class="character-grid">
+      <a class="character-card" href="daynore/index.html">
+        <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
+        <div class="character-name">Daynore Dinenlas</div>
+      </a>
+      <a class="character-card" href="john/index.html">
+        <img src="images/john.jpg" alt="John">
+        <div class="character-name">John</div>
+      </a>
+      <a class="character-card" href="uther/index.html">
+        <img src="images/uther.jpg" alt="Uther">
+        <div class="character-name">Uther</div>
+      </a>
+      <a class="character-card" href="ruven/index.html">
+        <img src="images/ruven.jpg" alt="Ruven">
+        <div class="character-name">Ruven</div>
+      </a>
+      <a class="character-card" href="damian/index.html">
+        <img src="images/damian.jpg" alt="Damian">
+        <div class="character-name">Damian</div>
+      </a>
+      <a class="character-card" href="toji/index.html">
+        <img src="images/toji.jpg" alt="Toji">
+        <div class="character-name">Toji</div>
+      </a>
+      <a class="character-card" href="sirius/index.html">
+        <img src="images/sirius.jpg" alt="Sirius">
+        <div class="character-name">Sirius</div>
+      </a>
+      <a class="character-card" href="seid/index.html">
+        <img src="images/seid.jpg" alt="Seid">
+        <div class="character-name">Seid</div>
+      </a>
+      <a class="character-card" href="bob/index.html">
+        <img src="images/bob.jpg" alt="Bob">
+        <div class="character-name">Bob</div>
+      </a>
+      <a class="character-card" href="armani/index.html">
+        <img src="images/armani.jpg" alt="Armani">
+        <div class="character-name">Armani</div>
+      </a>
+      <a class="character-card" href="sylas/index.html">
+        <img src="images/sylas.jpg" alt="Sylas">
+        <div class="character-name">Sylas</div>
+      </a>
+      <a class="character-card" href="skull/index.html">
+        <img src="images/skull.jpg" alt="Skull">
+        <div class="character-name">Skull</div>
+      </a>
+      <a class="character-card" href="minofein/index.html">
+        <img src="images/minofein.jpg" alt="Minofein">
+        <div class="character-name">Minofein</div>
+      </a>
+    </div>
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </main>
 </body>
 </html>
