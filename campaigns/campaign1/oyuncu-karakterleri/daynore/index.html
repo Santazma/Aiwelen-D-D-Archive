@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Daynore Dinenlas</title>
   <style>
     body {
@@ -92,12 +92,23 @@
     .info-box {
       position: absolute;
       top: 100px;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0, 0, 0, 0.6);
       padding: 15px;
       border-radius: 10px;
-      width: 200px;
-      font-size: 0.9rem;
-      line-height: 1.4;
+      width: 240px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .info-box h2 {
+      font-size: 1.2rem;
+      color: #ffdf6e;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .info-box strong {
+      color: #ffd700;
     }
 
     .left-box {
@@ -106,6 +117,13 @@
 
     .right-box {
       right: 20px;
+    }
+
+    .character-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+      margin-top: 5px;
     }
 
     .back-link {
@@ -158,21 +176,40 @@
       color: #f44336;
     }
 
-    #volume-control {
+    #volume-control-wrapper {
       position: fixed;
       top: 20px;
       right: 20px;
       z-index: 999;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    #volume-control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    #volume-level {
+      color: #ffd700;
+      font-size: 0.9rem;
+      margin-left: 5px;
     }
   </style>
 </head>
 <body>
   <audio id="background-music" autoplay loop preload="auto">
-    <source src="Woodland Realm - Mark Sidebotham.mp3" type="audio/mp3">
+    <source src="Woodland Realm - Mark Sidebotham.mp3" type="audio/mp3" />
     Your browser does not support the audio element.
   </audio>
 
-  <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5">
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
 
   <div class="container">
     <h1>Daynore Dinenlas</h1>
@@ -202,15 +239,17 @@
   </div>
 
   <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong><br>
     Ölümün ve Salgın Hastalıkların Tanrısı, Zincirdar Mirasçısı, Gaspçı Ufuk Gezgini, Alacakaranlığın İntikamcısı, Gölgeler İçindeki Yolcu, Örtülü Yol Gözeten, Yüce Egemen Avcı<br><br>
     <strong>Lore Etkisi:</strong><br>
-    Ölümün Tanrısı olarak Daynore, Zaman Çizgileri arasında hareket edebilir ve diyarları dolaşabilir. Ölümü kontrol eder ve her yaşayan varlığın bir gün ölmesinden sorumludur. <br><br>
-    <a href="Daynore Dínenlas Char Sheet.png" target="_blank" class="character-link" style="display: block;">📜 Tanrı Daynore Char Sheet</a>
-    <a href="Daynore Dínenlas.pdf" target="_blank" class="character-link" style="display: block;">🎲 Oyuncu Daynore Char Sheet</a>
+    Ölümün Tanrısı olarak Daynore, Zaman Çizgileri arasında hareket edebilir ve diyarları dolaşabilir. Ölümü kontrol eder ve her yaşayan varlığın bir gün ölmesinden sorumludur.<br><br>
+    <a href="Daynore Dínenlas Char Sheet.png" target="_blank" class="character-link">📜 Tanrı Daynore Char Sheet</a>
+    <a href="Daynore Dínenlas.pdf" target="_blank" class="character-link">🎲 Oyuncu Daynore Char Sheet</a>
   </div>
 
   <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
     <strong>Class ve Subclass:</strong> Horizon Walker Ranger<br>
     <strong>Level:</strong> 10 Level'da öldü<br>
     <strong>Irk:</strong> Yarı Elf (Wood Elf)<br>
@@ -220,29 +259,30 @@
 
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="img01">
+    <img class="modal-content" id="img01" />
   </div>
 
   <script>
     function openModal(img) {
-      var modal = document.getElementById("myModal");
-      var modalImg = document.getElementById("img01");
-      modal.style.display = "block";
-      modalImg.src = img.src;
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
     }
 
     function closeModal() {
       document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
     }
 
-    window.onbeforeunload = function() {
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
       document.getElementById('background-music').pause();
     };
-
-    document.getElementById('volume-control').addEventListener('input', function() {
-      var audio = document.getElementById('background-music');
-      audio.volume = this.value;
-    });
   </script>
 </body>
 </html>
