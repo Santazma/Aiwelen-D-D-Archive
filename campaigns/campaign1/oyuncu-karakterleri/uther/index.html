@@ -1,1 +1,329 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uther Işıkgetiren</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/085/193/785/large/edouard-noisette-cathedral-02-sunset.jpg?1740392958') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
+    }
 
+    /* Overlay transparency ekleme */
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
+      z-index: -1;
+    }
+
+    /* Başlık stilini iyileştirme */
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .character-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      cursor: pointer;
+    }
+
+    .character-image:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .image-title, .image-title-alt {
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      text-align: justify;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .alternative-images {
+      display: flex;
+      justify-content: space-between; /* Resimler arasındaki boşluğu eşit yapar */
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .alternative-images div {
+      text-align: center;
+    }
+
+    .alternative-images img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      border: 3px solid #fff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .info-box {
+      position: absolute;
+      top: 100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      width: 240px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .info-box h2 {
+      font-size: 1.2rem;
+      color: #ffdf6e;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .info-box strong {
+      color: #ffd700;
+    }
+
+    .left-box {
+      left: 20px;
+    }
+
+    .right-box {
+      right: 20px;
+    }
+
+    .character-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
+      border: 1px solid #87cefa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    /* Modal Animasyonu */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      border-radius: 15px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #f44336;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    #volume-control-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    #volume-control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    #volume-level {
+      color: #ffd700;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Knight's Respite.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
+
+  <div class="container">
+    <h1>Uther Işıkgetiren</h1>
+    <img src="Uther Işıkgetiren.jpg" alt="Uther Işıkgetiren" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Uther Işıkgetiren</div>
+
+    <div class="bio">
+      <p><strong>Armağan Özcan ZİYADE</strong> tarafından canlandırılmış ve oynanmıştır. Armağan'ın ilk karakteridir. <strong>Uther Işıkgetiren</strong>, göksel varlıklar arasında yetişmiş, ailesinin tek çocuğu olan bir Aasimar'dır. Babası ve Annesi, Keledrin'in göksel hizmetkarları arasında görev yapan Aasimarlardı. Uther, çocukluğunda doğumundan beri, Aasimarlar arasında "Sıradandan" uzak bir hayat yaşayacağı müjdelenmiş vaziyetteydi. Doğumunda anlaşılmıştı ki Uther, gözlerinin "Parıldaması" ile birlikte seçilmiş olandı. Seçilmiş Aasimarlar, yaklaşık 1000 Aasimarda bir kişinin denk gelebileceği bir durumdu. Eğer yeni doğmuş bir Aasimar'ın doğumunun ardından gözleri inanılmaz göz kamaştırıcı düzeyde bir ışık saçıyorsa, o çocuğun ileride Materyal Düzlem'e gönderilip fâni yaşama yardım edip yol gösterici olması umuluyordur. Uther bu kutsama ile hayata gelmiş birisiydi.</p>
+      <p>Çocukluğu boyunca seçilmiş olarak pohpohlanmış, el üstünde yetiştirilmiş birisiydi. Uther, <strong>Yukarı Düzlemlerde</strong> yetişmiş birisiydi ve kaderi doğumundan beri belliydi, ama çocuk Uther bu kaderi reddederek çalışmayı reddediyordu. Onu bu depresif durumundan Hocası olarak atanan <strong>Archangel Mirabelle</strong> kurtarmıştı. Mirabelle nazik, sevecen ve fani bir gözün görebileceği en güzel kadın gibi gözüküyordu, ama lakabı <strong>Kanlı Mirabelle</strong> olan bu kadın, lakabını öldürdüğü düşmanlarının kesilmiş kafalarında, saçlarını yaktıktan sonra akan kanla banyo yaptığı için almıştır. Uther'e dövüş ve ahlak konusunda çok sert bir eğitim vermiştir, fakat Uther'in pes etmeyi reddeden kişiliği sayesinde, bunu bir meydan okuma olarak görüp sonuna kadar bu eğitimi tamamlamayı kafasına koymuştur. Eğitim yıllar boyunca çok acılı geçse de Uther bu yıpratıcı durumdan yılmayı reddetmiş ve bu eğitimi başarıyla tamamlamıştır. Bu eğitimi başarılı tamamlamasının bir sebebi de, onun çocukluk arkadaşları olan; <strong>Zevir</strong>, <strong>Pairodin</strong> ve <strong>Agrim'in</strong>, eğitimi boyunca her daim Uther'in yanında olmaları olmuştur. Eğitim esnasında Mirabelle tamamen farklı ve korkutucu bir kadına dönüşse de, Uther Mirabelle'yi; bir öğretmen, bir abla ve belli noktalarda sevdiği kadın olarak görmüştür ve ona aşık olmaktan kendini alı koyamamıştır. Görev bilinci ve Tanrı Keledrin'in adına leke sürmemek adına aşkını bir kenara bırakarak yaşı geldiği vakit Materyal Düzeleme gönderilmiştir.</p>
+      <p>Buyruğu olarak bildiği görev neticesinde, ölümlü dünya ile yüzleşmesi ve tecrübe kazanması adına Uther, Materyal Düzlem'de Zonthar adındaki bir kasabaya gönderilmiştir. Yerleşkeye geldiğinde Kasabanın Vali'si ile konuşmuş ve bu kasabaya bir düzen ve barış getirmek için burada olduğunu söylemiştir, ve azılı suçlulardan biri <strong>Damian</strong> adındaki şahısın yapacağı eylemlerden sorumlu tutulmuş onu dizginlemesi için görevlendirilmiştir. Zonthar'ın iç meselelerini çözmek adına, orada tanıştıkları John, Daynore, ve Ruven ile birlikte, daha sonrasında "Carpe Diem" olarak bilinecek maceracı gruplarını oluşturmuşlardır.</p>
+      <p>Grubun içinde birçok drama dönmüştür ve bunun ana sorumlusu olan iki kişiden biridir. <strong>Ruven</strong> adındaki grup arkadaşının, teknisiz bir Tiefling olan <strong>Menzher'i</strong> desteklemesi ile, Ruven'in de teknisiz olduğuna karar kılmış, ve onu incelediği sürece onun dış dünyaların bilinmez ve habis güçlerini taşıyan bir <strong>Warlock</strong> olduğunu anlamıştır. Bu durumu idrak ettikten sonra Uther, <strong>"Düşmanını en yakınında bulunduracaksın..."</strong> felsefesini benimsemiş, ve Ruven'in yaptığı her hareketi dikkatlice ve detaylıca inceler bir vaziyete bürünmüştür. Ruven'in yaptığı kural tanımamazlıkları tespit ettiği vakit, onun üzerinde baskı kurmuş, ve yeri geldiğinde hem arkadaşlarının gözü önünde, hem de halka açık olacak şekilde Ruven'i cezalandırmıştır. Ruven'in üzerinde kurduğu bu otoriter rejim, Ruven'in belli bir noktadan sonra patlamasına ve Uther'e ihanet edip, onu arkasından bir <strong>Eldritch Blast ışınıyla</strong> vurup öldürmesine sebep olmuştur.</p>
+      <p>İlk ölümünün ardından Uther, Tanrı Keledrin ile yüzleşmiş, ve yaşanan bu rezilliğin sorumlusu tutulup bedel ödemek zorunda bırakılmıştır. Uther, Tanrı Keledrin'in adına leke getirdiği için, hem Uther'in hem de ailesinin mirasına el konulmuş ve soyu cezalandırılmıştır. Bu rezilliğin ardından <strong>Ölüler Diyarı'na</strong> gönderilmenin eşiğindeyken, Mirabelle sayesinde bir şans daha bulmuş, böylece ettiği <strong>Sadakat Yemini</strong> bozulmuş, ve yeni bir <strong>Kefaret Yemini</strong> etmiştir. Kendi kefaretini araması adına son bir şans daha elde eden Uther, bu rezilliğin devam etmesi durumunda bütün soyunun kurutulacağı ve bıracakağı hiçbir mirasın olmayacağı gerçeğiyle yüzleşmek zorunda kalmıştır. Görevini bir kere daha başaramazsa, Ölüler Diyarı'na bile gidemeyecek, sanki hiçbir zaman var olmamış gibi, <strong>Boşluğa</strong> gönderilmek ile lanetlenecekti.</p>
+      <p>Bulduğu ikinci şansı Uther, tamamen başka birine dönüşerek kullanmayı denemiştir. Kendisini sırtından vurarak öldüren Ruven'i ölüme mahkum etmiştir, ve hem Menzher'in hem de Ruven'in arkasından, Köyün Valisi ile birlikte komplo kurarak, onların öldürülmesini hedeflemiştir. Menzher bir şekilde kaçmayı başarsa da, Ruven yakalanmış ve bir nevi teslim olmuştur. Daha sonrasında ise halkın önünde yargılanarak infaz edilebilmesi için darağacına çıkarılmıştır. Lakin infazın gerçekleşeceği vakit <strong>Menzher</strong> belirmiştir ve <strong>Tanrıların Huzurunda Dövüş İle Yargılanma</strong> talep etmiştir. Savaşamayacak olan Ruven'in şampiyonu olarak kendisini öne süren Menzher, diğer tarafın şampiyonunu bekler vaziyetteydi. Zonthar Valisi, kendi şampiyonu olarak Uther'i öne sürmeyi istese de Uther, Menzher'in ne kadar güçlü olduğunu kabaca bildiği için <strong>ölümünün kaçınılmaz olduğunu düşünmüştür ve bu teklifi korkarak reddetmiştir.</strong> Daha sonra ise kalabalığın arasında, sanki bu anı fırsat kolluyormuşcasına bir adam belirerek, Vali'nin tarafının şampiyonu olmayı kabul etmiştir. Bu adam, Menzher ile kara bir mazisi olan <strong>Kreber Yağmurmızrağı</strong> adındaki bir adamdı. Zamanında Menzher ile birlikte aynı <strong>Matron'a</strong> hizmet etmiş bir <strong>Warlock'tu</strong> aynı zamanda bu adam. Tanrıların huzurunda yapılan bu dövüş ile yargılanmaya iki Warlock'un girmesine izin veren Uther, Tanrı Keledrin'in gözünden iyice düşmüş ve adını iyice kirletmişti. Bu nedenle bu dövüşün ardından Keledrin, kendi güçlerini Uther'den tamamen çekti. Yemini bozulmasa da, artık tanrıların seçilmişi değildi.</p>
+      <p>Bu savaşın kazananı Kreber oldu, Menzher öldü ve Menzher'in ölümüyle büyük bir arbede çıktı. Bu arbede sayesinde <strong>Carpe Diem üyeleri</strong>, Menzher'in cesedini çekip bir ara sokağa dalmayı başardı. Kalabalığın arasında bulunan, Uther'in ismini bilmediği bir <strong>Zahlera Rahibesi</strong>, savaşın ardından çıkan kargaşayla birlikte arka sokaklara çekilen Menzher'i <strong>Revivivfy</strong> büyüsü aracılığıyla diriltti, ve Uther bu kadının o adamı diriltmesine göz yumdu. Daha sonrasında ise Kreber, bu fırsat ile birlikte kaçan Ruven'i kovalamaya ve onu öldürmeye gitti. Uther'in burada yapması gereken üç seçenek vardı. <strong>Carpe Diem üyeleri</strong> onların dostu olan Menzher'in ölümüne vesile olduğu için Uther'e düşmancıl gözlerle bakıyorlardı. Bu noktadan sonra Uther; ya Vali'nin yanında olmaya devam edecek ve Kreber ile birlikte Ruven'i öldürecek ve Carpe Diem'e karşı savaşacaktı, ya kefaretini bulmak için Zonthar'ı tamamen terk edecekti, ya da Ruven'i öldürmeye çalışan Kreber'i öldürerek Vali'ye ihanet edecek ve onu devirecekti... Uther üçüncü seçeneği yapmayı tercih ederek Kreber'e karşı savaştı ve Vali'ye ihanet ederek en nihayetinde onun ölmesine sebep olarak Ruven'i kurtardı. Daha sonrasında ise Ruven ile tam anlamıyla barışmasa dahi birbirlerine karşı beyaz bayrakları çekerek birbirlerine zeytin dalı uzattılar ve birbirleriyle kavga etmeyi kestiler.</p>
+      <p>Bu olaylardan belirli bir süre sonra Zonthar Valisi'nin rejimi devrildi ve yeni Vali Menzher oldu. Fakat bu olaylardan sonra Zonthar'ı daha büyük bir tehlike bekliyordu. Zonthar'a doğru yaklaşan bir goblin baskını kapıda gözüküyordu. Zonthar ve geniş çevresindeki tüm Yeşil Derili Irklar, <strong>Sarıgöz</strong> adındaki goblin liderinin altında toplanmış ve büyük bir sefer için hazırlanmıştı. <strong>Carpe Diem</strong> olarak grup, bu baskını önlemek adına Goblinlerin en büyük silah ve yemek tedarik depolarından birine baskın yaptılar, ve Zonthar'a ihanet etmiş <strong>Doktor Helmus'u</strong> öldürmüşlerdir. Lakin bu tedarik zincirinin patlamasının ardından bu zincirin patronu konumundaki <strong>Darmull</strong> adındaki Uzun bir Glaive kullanan Albino bir bugbear ve onun Ogre askerleri tarafından öldürülmüştür.</p>
+      <p>Uther ismi, İmparatorluk tarafınca gerçek bir <strong>"Carpe Diem"</strong> üyesi olarak tanınmamıştır, çünkü grup ile birlikte Zincirdarlar ile tanışmamış ve Underdark'a grup ile birlikte inmemiştir. Gene de bu grubun belli noktada bir parçası olduğu için ismi <strong>Tanrı Anıtları'nda</strong> kısa da olsa ismi geçiyordur. Lakin bu anıtlarda ismi iyi olarak anılmaz, <strong>Gelmiş Geçmiş En Günahkar Rahip</strong> olarak anılır. Haksızlıklara karşı ayakta duran bir rahip olarak bilinse de, Zonthar'da bulunan halk, bu rahibin eylemlerini kınıyordur ve bu eylemleri alan kişinin rahipliğini tanımıyor ve onu Zonthar'ın düşmanı olarak hatırlıyordur. Kıtada bilinen genel kanı ise, büyük işler başarma potansiyeline sahip olsa da, tanrının yolunda ilerlemek istese de intikam yoluna sapmış ve gözleri dönmüş bir şekilde bir rahibin asla almayacağı eylemleri almış birisi olarak görülüyordur. Seveni ve hatırlayanı olmamıştır ve olmayacaktır, ama yaptığı işe hürmet gösteren diğer rahipler, onun bu söylentilerdeki hatalarını, ardından gelen kişilerin tekerrür etmeyeceğinden emin olacaktır...</p>
+    </div>
+
+    <div class="alternative-images">
+      <div>
+        <img src="Uther Gençlik.jpg" alt="Uther'in Gençliğindeki Görünüşü" onclick="openModal(this)">
+        <div class="image-title-alt">Uther'in Gençliğindeki Görünüşü</div>
+      </div>
+      <div>
+        <img src="Uther Işıkgetiren Aasimar.jpg" alt="Kanatlarını Açtığında Uther" onclick="openModal(this)">
+        <div class="image-title-alt">Kanatlarını Açtığında Uther</div>
+      </div>
+      <div>
+        <img src="Mirabelle.jpg" alt="Uther'in Cennetteki Hocası Mirabelle" onclick="openModal(this)">
+        <div class="image-title-alt">Uther'in Cennetteki Hocası Mirabelle</div>
+      </div>
+    </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </div>
+
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Keledrin Paladini, Kredite'nin Seçilmişi, Göklerden Gelen Aasimar, Savaşçı Rahip, Kanatlı Rahip, Zonthar'ın Düşmanı, Rahiplerin Yüzkarası, Gelmiş Geçmiş En Günahkar Rahip<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    Tanrı Keledrin'in sıradaki seçilmişi, Materyal Düzlem'deki iradesi olarak ölümlüler diyarına gönderildi. Ayrıca Hocası Archangel Mirabelle'den eğitim almış, Mirabelle'nin hizmet ettiği Tanrıça Kredite'nin Kutsamasını almış, seçilmiş bir rahipti.<br><br>
+    <a href="uther ışıkgetiren.pdf" target="_blank" class="character-link">♰ Uther Işıkgetiren'in En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Devotion Paladin / Dirildikten Sonra Redemption Paladin<br>
+    <strong>Level:</strong> İlk Ölüm: 3 Level, İkinci Ölüm: 4 Level<br>
+    <strong>Irk:</strong> Aasimar (Protector)<br>
+    <strong>Yaş:</strong> 106 Yaşında Öldü<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="img01" />
+  </div>
+
+  <script>
+    function openModal(img) {
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
+    }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
+  </script>
+</body>
+</html>
