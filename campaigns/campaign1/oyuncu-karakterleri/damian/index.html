@@ -1,1 +1,337 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Damian</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/017/710/147/large/sy-37-.jpg?1557065105') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
+    }
 
+    /* Overlay transparency ekleme */
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
+      z-index: -1;
+    }
+
+    /* Başlık stilini iyileştirme */
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .character-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      cursor: pointer;
+    }
+
+    .character-image:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .image-title, .image-title-alt {
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      text-align: justify;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .alternative-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .alternative-images div {
+      text-align: center;
+      max-width: 150px;
+      flex: 0 1 150px;
+    }
+
+    .alternative-images img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      border: 3px solid #fff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .info-box {
+      position: absolute;
+      top: 100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      width: 240px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .info-box h2 {
+      font-size: 1.2rem;
+      color: #ffdf6e;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .info-box strong {
+      color: #ffd700;
+    }
+
+    .left-box {
+      left: 20px;
+    }
+
+    .right-box {
+      right: 20px;
+    }
+
+    .character-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
+      border: 1px solid #87cefa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    /* Modal Animasyonu */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      border-radius: 15px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #f44336;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    #volume-control-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    #volume-control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    #volume-level {
+      color: #ffd700;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Baldurs Gate 3 The Legacy of Bhaal.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
+
+  <div class="container">
+    <h1>Damian</h1>
+    <img src="Günahkar Damian.jpg" alt="Damian" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Damian</div>
+
+    <div class="bio">
+      <p><strong>Fehmi NALBANT</strong> tarafından canlandırılmış ve oynanmıştır. Fehmi'in ilk karakteridir. <strong>Damian</strong> Zonthar'da doğmuş kimsesiz bir öksüdür. Babası bilinmese de annesinin kasabadaki konsomatrislerden biri olduğu tahmin ediliyordur. Bir öksüz olarak bebekken kasabanın şapelinin kapısına bırakılmıştır. O yüzden diğer öksüz çocuklar gibi, Damian'ı büyütme sorumluluğunu <strong>Rahibe Andora</strong> üstlenmiştir. Damian'ın çocukluğu rezil ve kanlı geçmiştir, ufaklığında yalnızca acıyı tatmıştır. Her gün her gece rasgele kavgalara karışırdı ve her seferinde kan revan içerisinde yere yığılırdı. Çocukken arkadaşları ona zorbalık ederdi. Çocukluk evresini bırakıp gençliğine girdiğinde bile hiçbir şey değişmiyor, sadece stres atmalık bir kum torbası muamelesi görüyordu. Damian iş tutmazdı, çalışamıyor veya çalışmıyordu, halka hiçbir faydası dokunmuyordu. Bir gece yerde ölesiye dövüldükten sonra yatar vaziyetteydi ve vücudundaki parçalanmış damarlardan oluk oluk kan yere fışkırır vaziyetteyken aldığı acı Damian'a fısıldadı. Bu ses ona "Ayağa kalk" diyordu. Ardından ses konuşmaya devam ederek "Izdırap, seni ayakta tutan şey, senin ödülün, senin kaderin... Bu zamana kadar senin için biçilen kaftana göre şekil aldın, peki sana soruyorum çocuk, artık bu kaftana şekil verme zamanın gelmedi mi? Gül, sevin ve minnettar ol, gül çünkü benim kutsamama mağruz kalma onuruna eriştin çocuk. Artık ezilen olmayacaksın..." diyerek seslenmişti. Bu sözleri duyduktan sonra Damian'ın kan dolaşımı hızlanmaya başladı, ve belki de bundan ötürü, belki de o sesin söylediği şeyden ötürü Damian durduk durmadık yerde gülmeye başladı. Bu gülüşleri, ona hayatı boyunca musallat olmaya devam edecekti... O gülüşten sonra karşısındaki adam vurmaya devam ettikçe bu yumrukların verdiği acı, hazza ve zevke dönüşmeye başlıyordu. Damian, dayak yerken mutlu olduğunu fark etti ve kanı aktıkça kendini daha da güçlü hissediyordu. Damian gülmeye başladıkca kahkahaların şiddeti ve korkunçluğu da her dayak yiyişinde artıyordu. Bu dozajın artmasıyla panikleyen serseriler daha hızlı ve sert bir şekilde yumruk atmaya başladılar ve sonrasında yere düşen Damian'ı yerde tekmelemeye devam ettiler. Fakat bu yumruklar gelirken Damian daha da eğleniyordu ve bir süre sonra serserilerden birinin elini kavradı ve adamı yere yapıştırdı ve ellerini direkt olarak gözlerine bastırıp gözlerini çıkardı. Serserinin acı çığlıkları bütün Zonthar'da yankılanıyordu. Yanındaki diğer serseriler şaşkınlık ile dona kalmış ve dehşete düşmüşlerdi. Bu esnada ise Damian, serserinin kafasından tutup sertce, amansızca ve sayısız bir şekilde yere vurmaya başladı. Diğer adamlar kaçışmaya başladı, 4 kişi birden ödünü canına takmış vaziyette neredeyse dört nala koşacak şekilde depar atıyordu. Bunu gören Damian, kendine hakim olamadıktan sonra yerde bulduğu bir ipi resmen bir kamçı şeklinde kullanarak gözüne kestirdiği koşanlardan birinin boynunu sarmalamıştı ve adamı kendine çekti. Adamı yere düşürdükten sonra adam Damian'a bir bıçak ile saldırmayı denedi. Damian bu bıçağı kavradı ve adamın kalbine sapladı. Daha sonrasındaysa bıçak ile eti parçalayarak kalbi bedenden çıkardı ve adamı orada canice öldürdü. Ondan sonra ise yarım kaldığı işe devam edip, ilk serserinin kafasını yüzlerce, belki binlerce kez yere vurmaya devam etti. Her vuruşunda eğleniyor ve deliler gibi gülüyordu. Bu esnada ise kasabanın yankılanmasından ötürü, kasabanın muhafız bölüğü lideri olan <strong>David</strong>, birkaç asker ile buraya gelmişti ama gördükleri şeyler karşısında dehşete düşmüştü. Haylice büyük bir kan göletinin arasında duran bir adam, tanınamayacak hale gelmiş bir adamı yere çarpıp duruyordu, yanında ise kalbi sökülmüş gözlerin dönmüş bir adam daha yatıyordu. Damian'ı gören adam onun için bir yakalama emri verdi. Onu bayıltmaya çalışan adamlar Damian'ı bayıltamadılar. Damian, bütün adamları başından savmayı başarıyordu. Bunun üzerine David, direkt olarak olaya müdahale edip Damian'ı etkisiz hale getirdi. Etkisiz halde olan Damian'ı bir hücreye tıktılar. Günler boyunca aynı hücrede kalan Damian'ı kontrol etmeye gelen gardiyanlar, o hücrenin önünden bir daha geçmek istemiyordu. David ne ile karşı karşıya kaldığının farkında değildi ve ne yapacağını tam bilmiyordu. 3 gündür bir hücrede yatan adam, neredeyse karakoldaki herkesin akıl sağlığına zarar vermiş vaziyetteydi. Bu yüzden David onun ile bizzat konuşmaktan başka bir çaresinin kalmadığını düşünerek onunla konuşmaya karar vermişti.</p>
+      <p><strong>Damian</strong> kontrol edilemez, abes ve içgüdüsel bir kuvvet konumundaydı. Onunla konuşmadan önce bu durumu ve yaşanan katliamı David bizzat kendisi Zonthar Vali'si <strong>Corado Vanelli</strong> ile görüştü ve durumu Vali'ye izah etti. Bu katilin başına onunla durup ona direkt müdahale edebilmesi için Vali, <strong>Uther</strong> adındaki Zonthar'a yeni gelen gezgin rahip ile konuşmaya karar verdi. Uther ve yanında burada tanıştığı, daha sonrasında <strong>Carpe Diem</strong> grubunu kuracak kişiler olan <strong>Ruven</strong>, <strong>Daynore</strong> ve <strong>John</strong> ile birlikte Vali'den bu işi aldılar. David grubu azılı suçlu Damian'ın yanına getirdi ve Damian'a idamını önlemenin tek yolunun, bu adamlar ile birlikte Zonthar'ın başına musallat olan bir <strong>Wererat'ı</strong> öldürmek olduğunu söyleyip, ölmek ile yaşamak arasında Damian'a bir seçim verdi. Damian, acı çekmeye devam edebilmek adına yaşamayı seçti ve Wererat'ı öldürmeyi kabul etti. Grup Damian'a karşı ilk başlarda çok temkinli yaklaşıyordu, ve bazı kaçınılmaz çatışmalar bile yaşandı aralarında. Hatta Damian bazı durumlarda az kalsın gruptan birilerini bile öldürüyordu ama çoğu durumda ya Uther, ya da Daynore tarafınca etkisiz hale getirildi. Grupla belirli bir sinerji eşiğini aştıktan sonra grup ile birlikte Damian, zor bir savaşın ardından Wererat'ı alt etmeyi başardılar. Daha sonrasında Damian, işlediği suçlardan af edilmese dahi, iyi niyet göstergesi olarak şartlı bir biçimde Uther'in denetimi altında salındı.</p>
+      <p>Zonthar'a </p>
+      <p>Zonthar'da </p>
+      <p>Yaptıklarından pişman </p>
+      <p>Ruven zamanı </p>
+      <p>Dövüş gerçekleşmiş ve.</p>
+      <p>Vali, Uther'e </p>
+      <p>Vali Ruven'i, Uther'i </p>
+      <p>Ruven ismi, İmparatorluk </p>
+    </div>
+
+    <div class="alternative-images">
+      <div>
+        <img src="Damian Reborn.jpg" alt="Reenkarnasyon İle Dirildikten Sonra Damian" onclick="openModal(this)">
+        <div class="image-title-alt">Reenkarnasyon İle Dirildikten Sonra Damian</div>
+      </div>
+      <div>
+        <img src="Quiw (Öldü).jpg" alt="Zonthar'daki Çınar Olayı'nda Damian'ı Öldüren S.A.R.S. Üyesi Quiw" onclick="openModal(this)">
+        <div class="image-title-alt">Zonthar'daki Çınar Olayı'nda Damian'ı Öldüren S.A.R.S. Üyesi Quiw</div>
+      </div>
+      <div>
+        <img src="Sister Andora.jpg" alt="Damian'ın Manevi Annesi Rahibe Andora" onclick="openModal(this)">
+        <div class="image-title-alt">Damian'ın Manevi Annesi Rahibe Andora</div>
+      </div>
+      <div>
+        <img src="Gezgin Fen'le.png" alt="Damian'ın Sevdiği Githyanki Fen'le" onclick="openModal(this)">
+        <div class="image-title-alt">Damian'ın Sevdiği Githyanki Fen'le</div>
+      </div>
+    </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </div>
+
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Kuzgun Çocuk, Harabe Köyün Sağ Kalanı, Menzher'in Oğlu, Zonthar'ın Kurtarıcısı, Maraz Işık'tan Rave, Vidar'ın Neferi, Kuzgunların Leydisi'nin Şampiyonu<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    "Carpe Diem"in kurucu üyelerindendir. Zontharı kurtarmış ve Bıçakların Hanımı'na hizmet etmiş birisidir. Savaş Tanrısı Keledrin'in yeryüzündeki iradesini öldürmüştür. Maraz Işığa katılarak Engizisyona olan başkaldırışın bir parçası olmuştur. "Şeb-i Ervah" ideolojisini yaratmıştır ve ondan sonra gelenler, Maraz Işığın Mirasını duydukça bu fikri benimsemiştir. Evreni yok oluşa sürükleme potansiyeline sahip bir mihenk taşıdır. Bu yüzden Tanrı Daynore, kendi zaman çizelgesindeki Ruven'in yarattığı felaketi önleyemediği için, bu zaman çizgisindeki felaketi önlemek adına bu zaman çizgisine gelmiştir.<br><br>
+    <a href="ruven.pdf" target="_blank" class="character-link">☠️ Ruven ve Rave Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Hexblade Warlock / Soul Gatherer Domain Cleric<br>
+    <strong>Level:</strong> İlk Ölüm: 5 Level, İkinci Ölüm: 10 Level<br>
+    <strong>Irk:</strong> Human<br>
+    <strong>Yaş:</strong> İlk Ölüm: 20 Yaşında, İkinci Ölüm: 39 Yaşında (İkinci Ölümü Esnasında Biyolojik Olarak 23 Yaşındaydı. Ölümünden Sonra Ruhu ve Bedeninin saklandığı düzlemde belli bir olaydan sonra yaşlanmadı.)<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="img01" />
+  </div>
+
+  <script>
+    function openModal(img) {
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
+    }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
+  </script>
+</body>
+</html>
