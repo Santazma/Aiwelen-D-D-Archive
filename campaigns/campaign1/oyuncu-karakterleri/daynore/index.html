@@ -86,13 +86,16 @@
 
     .alternative-images {
       display: flex;
-      justify-content: space-between; /* Resimler arasındaki boşluğu eşit yapar */
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
       margin-bottom: 40px;
     }
 
     .alternative-images div {
       text-align: center;
+      max-width: 150px;
+      flex: 0 1 150px;
     }
 
     .alternative-images img {
@@ -232,6 +235,30 @@
       font-size: 0.9rem;
       margin-left: 5px;
     }
+
+    .fixed-back-button {
+      position: fixed;
+      top: 45px;
+      right: 185px; /* Müzik kontrol kutusunun soluna konumlandırmak için */
+      z-index: 999;
+      color: #87cefa;
+      font-size: 1.1rem;
+      text-decoration: none;
+      border: 1px solid #87cefa;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.6);
+      transition: background-color 0.3s;
+    }
+
+    .fixed-back-button:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+    
   </style>
 </head>
 <body>
@@ -322,6 +349,43 @@
     window.onbeforeunload = function () {
       document.getElementById('background-music').pause();
     };
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "imageModal";
+
+    const modalImg = document.createElement("img");
+    modalImg.className = "modal-content";
+    modalImg.id = "modalImage";
+
+    const span = document.createElement("span");
+    span.className = "close";
+    span.innerHTML = "&times;";
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+    };
+
+    modal.appendChild(span);
+    modal.appendChild(modalImg);
+    document.body.appendChild(modal);
+
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
+    };
+
+    function openModal(element) {
+      modal.style.display = "block";
+      modalImg.src = element.src;
+      document.getElementById("back-button").classList.add("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
+    }
+    
   </script>
+  
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+  
 </body>
 </html>
