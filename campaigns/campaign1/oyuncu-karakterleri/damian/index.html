@@ -390,6 +390,40 @@
       modalImg.src = element.src;
       document.getElementById("back-button").classList.add("hidden");
     }
+
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+    document.body.appendChild(modal);
+
+    const volumeWrapper = document.getElementById("volume-control-wrapper");
+    const backButton = document.querySelector(".fixed-back-button");
+
+    function openModal(img) {
+      modal.innerHTML = `
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" src="${img.src}" alt="${img.alt}" />
+      `;
+      modal.style.display = "block";
+
+      // Gizle
+      if (backButton) backButton.classList.add("hidden");
+      if (volumeWrapper) volumeWrapper.classList.add("hidden");
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+
+      // Göster
+      if (backButton) backButton.classList.remove("hidden");
+      if (volumeWrapper) volumeWrapper.classList.remove("hidden");
+    }
+
+    // Dışarı tıklanınca kapansın
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
     
   </script>
   
