@@ -385,10 +385,17 @@
     modal.appendChild(modalImg);
     document.body.appendChild(modal);
 
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
+    };
+
     function openModal(element) {
       modal.style.display = "block";
       modalImg.src = element.src;
       document.getElementById("back-button").classList.add("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
     }
     
   </script>
