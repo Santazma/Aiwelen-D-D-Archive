@@ -12,8 +12,10 @@
       background: url('https://cdnb.artstation.com/p/assets/images/images/050/594/207/large/petar-milivojevic-b0a9dd9d-68e9-4e08-97c1-af4f1c0fe1ac-petarmilivojevic-httpss-mj-runexl4w0-army-of-white-priestes-around-giant-pope-priest-vampire-wearing-golden-crown-in-1.jpg?1655220634=') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
+      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
     }
 
+    /* Overlay transparency ekleme */
     .container {
       position: relative;
       max-width: 1200px;
@@ -30,10 +32,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
       z-index: -1;
     }
 
+    /* Başlık stilini iyileştirme */
     h1 {
       font-size: 4rem;
       font-weight: bold;
@@ -148,6 +151,23 @@
       margin-top: 5px;
     }
 
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
+      border: 1px solid #87cefa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    /* Modal Animasyonu */
     .modal {
       display: none;
       position: fixed;
@@ -185,27 +205,22 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
-    #volume-control-wrapper,
-    #back-button-wrapper {
+    #volume-control-wrapper {
       position: fixed;
       top: 20px;
+      right: 20px;
       z-index: 999;
       background-color: rgba(0, 0, 0, 0.6);
       padding: 10px 15px;
       border-radius: 10px;
-      transition: opacity 0.3s;
-    }
-
-    #volume-control-wrapper {
-      right: 20px;
-    }
-
-    #back-button-wrapper {
-      left: 20px;
     }
 
     #volume-control-label {
@@ -220,26 +235,6 @@
       font-size: 0.9rem;
       margin-left: 5px;
     }
-
-    .back-link {
-      display: inline-block;
-      color: #87cefa;
-      font-size: 1.2rem;
-      text-decoration: none;
-      border: 1px solid #87cefa;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-
-    .back-link:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    .hidden {
-      opacity: 0 !important;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body>
@@ -253,14 +248,11 @@
     <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
   </div>
 
-  <div id="back-button-wrapper">
-    <a href="index.html" class="back-link">← Geri Dön</a>
-  </div>
-
   <div class="container">
     <h1>Damian</h1>
     <img src="Günahkar Damian.jpg" alt="Damian" class="character-image" onclick="openModal(this)">
     <div class="image-title">Damian</div>
+
     <div class="bio">
       <p><strong>Fehmi NALBANT</strong> tarafından canlandırılmış ve oynanmıştır. Fehmi'in ilk karakteridir. <strong>Damian</strong> Zonthar'da doğmuş kimsesiz bir öksüdür. Babası bilinmese de annesinin kasabadaki konsomatrislerden biri olduğu tahmin ediliyordur. Bir öksüz olarak bebekken kasabanın şapelinin kapısına bırakılmıştır. O yüzden diğer öksüz çocuklar gibi, Damian'ı büyütme sorumluluğunu <strong>Rahibe Andora</strong> üstlenmiştir. Damian'ın çocukluğu rezil ve kanlı geçmiştir, ufaklığında yalnızca acıyı tatmıştır. Her gün her gece rasgele kavgalara karışırdı ve her seferinde kan revan içerisinde yere yığılırdı. Çocukken arkadaşları ona zorbalık ederdi. Çocukluk evresini bırakıp gençliğine girdiğinde bile hiçbir şey değişmiyor, sadece stres atmalık bir kum torbası muamelesi görüyordu. Damian iş tutmazdı, çalışamıyor veya çalışmıyordu, halka hiçbir faydası dokunmuyordu. Bir gece yerde ölesiye dövüldükten sonra yatar vaziyetteydi ve vücudundaki parçalanmış damarlardan oluk oluk kan yere fışkırır vaziyetteyken aldığı acı Damian'a fısıldadı. Bu ses ona "Ayağa kalk" diyordu. Ardından ses konuşmaya devam ederek "Izdırap, seni ayakta tutan şey, senin ödülün, senin kaderin... Bu zamana kadar senin için biçilen kaftana göre şekil aldın, peki sana soruyorum çocuk, artık bu kaftana şekil verme zamanın gelmedi mi? Gül, sevin ve minnettar ol, gül çünkü benim kutsamama mağruz kalma onuruna eriştin çocuk. Artık ezilen olmayacaksın..." diyerek seslenmişti. Bu sözleri duyduktan sonra Damian'ın kan dolaşımı hızlanmaya başladı, ve belki de bundan ötürü, belki de o sesin söylediği şeyden ötürü Damian durduk durmadık yerde gülmeye başladı. Bu gülüşleri, ona hayatı boyunca musallat olmaya devam edecekti... O gülüşten sonra karşısındaki adam vurmaya devam ettikçe bu yumrukların verdiği acı, hazza ve zevke dönüşmeye başlıyordu. Damian, dayak yerken mutlu olduğunu fark etti ve kanı aktıkça kendini daha da güçlü hissediyordu. Damian gülmeye başladıkca kahkahaların şiddeti ve korkunçluğu da her dayak yiyişinde artıyordu. Bu dozajın artmasıyla panikleyen serseriler daha hızlı ve sert bir şekilde yumruk atmaya başladılar ve sonrasında yere düşen Damian'ı yerde tekmelemeye devam ettiler. Fakat bu yumruklar gelirken Damian daha da eğleniyordu ve bir süre sonra serserilerden birinin elini kavradı ve adamı yere yapıştırdı ve ellerini direkt olarak gözlerine bastırıp gözlerini çıkardı. Serserinin acı çığlıkları bütün Zonthar'da yankılanıyordu. Yanındaki diğer serseriler şaşkınlık ile dona kalmış ve dehşete düşmüşlerdi. Bu esnada ise Damian, serserinin kafasından tutup sertce, amansızca ve sayısız bir şekilde yere vurmaya başladı. Diğer adamlar kaçışmaya başladı, 4 kişi birden ödünü canına takmış vaziyette neredeyse dört nala koşacak şekilde depar atıyordu. Bunu gören Damian, kendine hakim olamadıktan sonra yerde bulduğu bir ipi resmen bir kamçı şeklinde kullanarak gözüne kestirdiği koşanlardan birinin boynunu sarmalamıştı ve adamı kendine çekti. Adamı yere düşürdükten sonra adam Damian'a bir bıçak ile saldırmayı denedi. Damian bu bıçağı kavradı ve adamın kalbine sapladı. Daha sonrasındaysa bıçak ile eti parçalayarak kalbi bedenden çıkardı ve adamı orada canice öldürdü. Ondan sonra ise yarım kaldığı işe devam edip, ilk serserinin kafasını yüzlerce, belki binlerce kez yere vurmaya devam etti. Her vuruşunda eğleniyor ve deliler gibi gülüyordu. Bu esnada ise kasabanın yankılanmasından ötürü, kasabanın muhafız bölüğü lideri olan <strong>David</strong>, birkaç asker ile buraya gelmişti ama gördükleri şeyler karşısında dehşete düşmüştü. Haylice büyük bir kan göletinin arasında duran bir adam, tanınamayacak hale gelmiş bir adamı yere çarpıp duruyordu, yanında ise kalbi sökülmüş gözlerin dönmüş bir adam daha yatıyordu. Damian'ı gören adam onun için bir yakalama emri verdi. Onu bayıltmaya çalışan adamlar Damian'ı bayıltamadılar. Damian, bütün adamları başından savmayı başarıyordu. Bunun üzerine David, direkt olarak olaya müdahale edip Damian'ı etkisiz hale getirdi. Etkisiz halde olan Damian'ı bir hücreye tıktılar. Günler boyunca aynı hücrede kalan Damian'ı kontrol etmeye gelen gardiyanlar, o hücrenin önünden bir daha geçmek istemiyordu. David ne ile karşı karşıya kaldığının farkında değildi ve ne yapacağını tam bilmiyordu. 3 gündür bir hücrede yatan adam, neredeyse karakoldaki herkesin akıl sağlığına zarar vermiş vaziyetteydi. Bu yüzden David onun ile bizzat konuşmaktan başka bir çaresinin kalmadığını düşünerek onunla konuşmaya karar vermişti.</p>
       <p><strong>Damian</strong> kontrol edilemez, abes ve içgüdüsel bir kuvvet konumundaydı. Onunla konuşmadan önce bu durumu ve yaşanan katliamı David bizzat kendisi Zonthar Vali'si <strong>Corado Vanelli</strong> ile görüştü ve durumu Vali'ye izah etti. Bu katilin başına onunla durup ona direkt müdahale edebilmesi için Vali, <strong>Uther</strong> adındaki Zonthar'a yeni gelen gezgin rahip ile konuşmaya karar verdi. Uther ve yanında burada tanıştığı, daha sonrasında <strong>Carpe Diem</strong> grubunu kuracak kişiler olan <strong>Ruven</strong>, <strong>Daynore</strong> ve <strong>John</strong> ile birlikte Vali'den bu işi aldılar. David grubu azılı suçlu Damian'ın yanına getirdi ve Damian'a idamını önlemenin tek yolunun, bu adamlar ile birlikte Zonthar'ın başına musallat olan bir <strong>Wererat'ı</strong> öldürmek olduğunu söyleyip, ölmek ile yaşamak arasında Damian'a bir seçim verdi. Damian, acı çekmeye devam edebilmek adına yaşamayı seçti ve Wererat'ı öldürmeyi kabul etti. Grup Damian'a karşı ilk başlarda çok temkinli yaklaşıyordu, ve bazı kaçınılmaz çatışmalar bile yaşandı aralarında. Hatta Damian bazı durumlarda az kalsın gruptan birilerini bile öldürüyordu ama çoğu durumda ya Uther, ya da Daynore tarafınca etkisiz hale getirildi. Grupla belirli bir sinerji eşiğini aştıktan sonra grup ile birlikte Damian, zor bir savaşın ardından Wererat'ı alt etmeyi başardılar. Daha sonrasında Damian, işlediği suçlardan af edilmese dahi, iyi niyet göstergesi olarak şartlı bir biçimde Uther'in denetimi altında salındı.</p>
@@ -300,38 +292,54 @@
         <div class="image-title-alt">Damian'ı Seven ve Kal'El'in Lideri Olan Marvela</div>
       </div>
     </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
   </div>
 
-  <div id="imageModal" class="modal">
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Zonthar'ın Belası, Acı Getiren, Haldir'in Seçilmişi, Kanlı Kasap, Flagellant, Vaad Edilmiş Prens<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    "Carpe Diem"in kurucu üyelerindendir. Zonthar'ın kurtarıcısı ve Haldir'in Seçilmişi'dir. Yaşamış en tehlikeli ve belirsiz Flagellantlar'dan birisi olmuştur. Ölümünden evvel grubundan ayrılıp Kal'El'e katılmayı seçmiştir. Kal'El'e katıldıktan sonra, kendisinin aslında İmparator Vsag'ın soyundan gelen bir piç olduğunu öğrenmiştir. Bir ritüel sonucunda kurban edilerek ölmeyi kabul etmiştir, böylece kendisi inhibitör madde görevini üstlenerek Ölü Tanrıça Lolth'un dirilişinde en önemli rolü oynamıştır. Chicky olarak hitap ettiği Lolth, aslında Damian'ın doğumundan beri kendisinin içinde dirilmeyi bekliyordu.<br><br>
+    <a href="Damian.pdf" target="_blank" class="character-link">🩸 Damian Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Path of Punishment Flagellant<br>
+    <strong>Level:</strong> İlk Ölüm: 6 Level, İkinci Ölüm: 9 Level<br>
+    <strong>Irk:</strong> Human<br>
+    <strong>Yaş:</strong> İlk Ölüm: 26 Yaşında, İkinci Ölüm: 28 Yaşında<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
+  <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="modalImage">
+    <img class="modal-content" id="img01" />
   </div>
 
   <script>
-    const volumeControl = document.getElementById('volume-control');
-    const backgroundMusic = document.getElementById('background-music');
-    const volumeLevel = document.getElementById('volume-level');
-    const volumeWrapper = document.getElementById('volume-control-wrapper');
-    const backWrapper = document.getElementById('back-button-wrapper');
-    const modal = document.getElementById('imageModal');
-
-    volumeControl.addEventListener('input', () => {
-      backgroundMusic.volume = volumeControl.value;
-      volumeLevel.textContent = `${Math.round(volumeControl.value * 100)}%`;
-    });
-
     function openModal(img) {
-      modal.style.display = 'block';
-      document.getElementById('modalImage').src = img.src;
-      volumeWrapper.classList.add('hidden');
-      backWrapper.classList.add('hidden');
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
     }
 
     function closeModal() {
-      modal.style.display = 'none';
-      volumeWrapper.classList.remove('hidden');
-      backWrapper.classList.remove('hidden');
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
     }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
   </script>
 </body>
 </html>
