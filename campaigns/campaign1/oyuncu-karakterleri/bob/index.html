@@ -1,1 +1,405 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bob</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://i.pinimg.com/1200x/48/04/ca/4804ca5a38e09adcc6ee13d20013c556.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
+    }
 
+    /* Overlay transparency ekleme */
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
+      z-index: -1;
+    }
+
+    /* Başlık stilini iyileştirme */
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .character-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      cursor: pointer;
+    }
+
+    .character-image:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .image-title, .image-title-alt {
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      text-align: justify;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .alternative-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .alternative-images div {
+      text-align: center;
+      max-width: 150px;
+      flex: 0 1 150px;
+    }
+
+    .alternative-images img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      border: 3px solid #fff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .info-box {
+      position: absolute;
+      top: 100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      width: 240px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .info-box h2 {
+      font-size: 1.2rem;
+      color: #ffdf6e;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .info-box strong {
+      color: #ffd700;
+    }
+
+    .left-box {
+      left: 20px;
+    }
+
+    .right-box {
+      right: 20px;
+    }
+
+    .character-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
+      border: 1px solid #87cefa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    /* Modal Animasyonu */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      border-radius: 15px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #f44336;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    #volume-control-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    #volume-control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    #volume-level {
+      color: #ffd700;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+
+    .fixed-back-button {
+      position: fixed;
+      top: 45px;
+      right: 185px; /* Müzik kontrol kutusunun soluna konumlandırmak için */
+      z-index: 999;
+      color: #87cefa;
+      font-size: 1.1rem;
+      text-decoration: none;
+      border: 1px solid #87cefa;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.6);
+      transition: background-color 0.3s;
+    }
+
+    .fixed-back-button:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+  </style>
+</head>
+<body>
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Wanderer.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
+
+  <div class="container">
+    <h1>Bob</h1>
+    <img src="Bob.jpg" alt="Bob" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Bob</div>
+
+    <div class="bio">
+      <p><strong>Armağan Özcan ZİYADE</strong> tarafından canlandırılmış ve oynanmıştır. Armağan'ın ikinci karakteridir. <strong>Bob</strong> Escar Ormanları'nda doğmuş, </p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob</p>
+      <p>Bob ismi, İmparatorluk tarafından tanınmıştır. Imparatorluk tarafından kendisine "Kahraman" ünvanı verilmiştir. İmparatorluk Bob'u diğer kölelere örnek olsun diye, tarihinde ilk defa bir köleyi Tanrı Anıtları'na kazıtmıştır. Bob'un ismi arkadaşlarının en altına kazınmıştır. Gururlu, Imparatorluğa fayda sağlamış ve ihtiyaç duyulduğunda imdada yetişmiş bir kahraman olarak nitelendirilmektedir. Bütün kölelerin, eğer yeterince çalışırslarsa, bir gün onun gibi olabileceğini gösteren bir silüet haline gelmiştir. Köle olmasına rağmen, seveni ve saygı duyanı olacak şekilde hatırlanacaktır... </p>
+    </div>
+
+    <div class="alternative-images">
+      <div>
+        <img src="Julius.jpg" alt="Arena'da Bob'u Yenmiş ve Bob'un Hayatı Boyu Hem Dostu Hem Rakibi Olmuş Julius" onclick="openModal(this)">
+        <div class="image-title-alt">Arena'da Bob'u Yenmiş ve Bob'un Hayatı Boyu Hem Dostu Hem Rakibi Olmuş Julius</div>
+      </div>
+      <div>
+        <img src="1. Tümen Lideri Lorenzo.jpg" alt="Demir El'in 1. Tümen Lideri Lorenzo" onclick="openModal(this)">
+        <div class="image-title-alt">Demir El'in 1. Tümen Lideri Lorenzo</div>
+      </div>
+      <div>
+        <img src="Adamantine Kalkan.png" alt="Bob'un Adamantine Kalkanı" onclick="openModal(this)">
+        <div class="image-title-alt">Bob'un Adamantine Kalkanı</div>
+      </div>
+      <div>
+        <img src="Efsungar Syds.jpg" alt="Bob'un Zonthar'da Tanıştığı ve Sevdiği Efsungar Syds" onclick="openModal(this)">
+        <div class="image-title-alt">Bob'un Zonthar'da Tanıştığı ve Sevdiği Efsungar Syds</div>
+      </div>
+      <div>
+        <img src="Bob Renewed.jpg" alt="Swashbuckler Olduktan Sonra Bob" onclick="openModal(this)">
+        <div class="image-title-alt">Swashbuckler Olduktan Sonra Bob</div>
+      </div>
+      <div>
+        <img src="Flame Tongue Sword.jpeg" alt="Bob'un Yadigar Kılıcı Olan Flame Tongue Sword" onclick="openModal(this)">
+        <div class="image-title-alt">Bob'un Yadigar Kılıcı Olan Flame Tongue Sword</div>
+      </div>
+    </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </div>
+
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Escar'ın Güruhu, Yeşil Derili Düzenbaz, İmansız Barbar, Özgür Bob, Daynore'nin En iyi Arkadaşı<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    "Carpe Diem"in bünyesinde barınmış bir köledir. Zonthar'ın kurtarıcısıdır. Grubunun en güçlü üyesi olduğu düşünülür. Carpe Diem'in birçok savaştan muzaffer ayrılabilmesinin yegane sebebidir. İmparatorluğun Kölelik Propagandası'nda kullandığı bir araca dönüşse de, varlığı ve başardıkları ile ondan sonra gelecek olan Kölelere değer katmıştır.<br><br>
+    <a href="bob.pdf" target="_blank" class="character-link">🏴‍☠️ Bob Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Swashbuckler Rogue / Totem Warrior Barbarian<br>
+    <strong>Level:</strong> 10 Level'da öldü<br>
+    <strong>Irk:</strong> Half Orc<br>
+    <strong>Yaş:</strong> 31 Yaşında Öldü<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="img01" />
+  </div>
+
+  <script>
+    function openModal(img) {
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
+    }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "imageModal";
+
+    const modalImg = document.createElement("img");
+    modalImg.className = "modal-content";
+    modalImg.id = "modalImage";
+
+    const span = document.createElement("span");
+    span.className = "close";
+    span.innerHTML = "&times;";
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+    };
+
+    modal.appendChild(span);
+    modal.appendChild(modalImg);
+    document.body.appendChild(modal);
+
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
+    };
+
+    function openModal(element) {
+      modal.style.display = "block";
+      modalImg.src = element.src;
+      document.getElementById("back-button").classList.add("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
+    }
+    
+  </script>
+  
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+  
+</body>
+</html>
