@@ -23,7 +23,7 @@
       padding: 1rem;
     }
 
-    .music-player, .back-button {
+    .back-button {
       background-color: rgba(0, 0, 0, 0.6);
       color: white;
       border: none;
@@ -160,23 +160,51 @@
       z-index: 9;
       display: none;
     }
+
+    /* Volume Control */
+    #volume-control-wrapper {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      z-index: 10;
+    }
+
+    #volume-control {
+      width: 100px;
+    }
+
+    #volume-control-label {
+      font-size: 0.9rem;
+      color: white;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
   </style>
 </head>
 <body>
   <header>
-    <a href="../index.html" class="back-button">← Geri Dön</a>
-    <audio id="bg-music" class="music-player" controls autoplay loop>
-      <source src="Darkest Dungeon II OST - The Inn (2023) HQ Official.mp3" type="audio/mpeg">
-      Tarayıcınız bu ses öğesini desteklemiyor.
-    </audio>
+    <a href="../index.html" class="back-button" id="back-button">← Geri Dön</a>
   </header>
+
+  <!-- MÜZİK -->
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Darkest Dungeon II OST - The Inn (2023) HQ Official.mp3" type="audio/mp3" />
+    Tarayıcınız bu ses öğesini desteklemiyor.
+  </audio>
+
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
 
   <h1>The Hamlet</h1>
 
   <div class="section">
     <h2 style="text-align:center;">On-Rest</h2>
     <div class="token-area" id="rest-area">
-      <!-- Örnek Token -->
       <div class="token" draggable="true" data-name="Lurien Veil" data-img="Lurien Veil.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Lurien Veil Token.png" alt="Lurien">
         <span>Lurien</span>
@@ -234,7 +262,14 @@
         document.getElementById("modal-negative").innerHTML = quirks.negative.map(q => `<li>${q}</li>`).join("");
         modal.style.display = "flex";
         disabledOverlay.style.display = "block";
+        document.getElementById("volume-control-wrapper").style.display = "none";
       }
+    });
+
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
+      disabledOverlay.style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
     });
 
     document.addEventListener("dragstart", e => {
@@ -263,10 +298,16 @@
       document.getElementById("rest-area").insertAdjacentHTML("beforeend", html);
     });
 
-    closeModal.addEventListener("click", () => {
-      modal.style.display = "none";
-      disabledOverlay.style.display = "none";
+    // Ses kontrolü
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
     });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
   </script>
 </body>
 </html>
