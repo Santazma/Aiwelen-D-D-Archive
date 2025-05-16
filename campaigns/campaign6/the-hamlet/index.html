@@ -21,18 +21,20 @@
       justify-content: flex-end;
       align-items: center;
       padding: 1rem;
+      position: fixed;
+      top: 1rem;
+      right: 150px;
+      z-index: 11;
     }
 
     .back-button {
       background-color: rgba(0, 0, 0, 0.6);
-      color: white;
+      color: #ff4444;
       border: none;
       padding: 0.5rem 1rem;
-      font-size: 1rem;
-      margin-left: 1rem;
+      font-size: 1.2rem;
       border-radius: 8px;
       cursor: pointer;
-      z-index: 2;
     }
 
     h1 {
@@ -177,8 +179,8 @@
     }
 
     #volume-control-label {
-      font-size: 0.9rem;
-      color: white;
+      font-size: 1.1rem;
+      color: #ff4444;
       margin-bottom: 0.3rem;
       display: block;
     }
@@ -298,9 +300,8 @@
       document.getElementById("rest-area").insertAdjacentHTML("beforeend", html);
     });
 
-    // Ses kontrolü
     document.getElementById('volume-control').addEventListener('input', function () {
-      var volume = parseFloat(this.value);
+      const volume = parseFloat(this.value);
       document.getElementById('background-music').volume = volume;
       document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
     });
