@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Hamlet</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
     body {
       margin: 0;
-      font-family: 'Georgia', serif;
-      background: url('https://i.pinimg.com/1200x/bd/53/3e/bd533e11674ac5c8184299b14d75f044.jpg') no-repeat center center fixed;
+      font-family: 'UnifrakturCook', cursive;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/057/688/955/large/sfc-.jpg?1672363017') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      color: #ff4444;
       overflow-x: hidden;
     }
 
@@ -41,6 +43,11 @@
       animation: flicker 3s infinite alternate;
     }
 
+    h2, h3, h4, li {
+      font-family: 'UnifrakturCook', cursive;
+      color: #ff4444;
+    }
+
     @keyframes flicker {
       from { opacity: 1; }
       to { opacity: 0.85; }
@@ -66,6 +73,9 @@
       border: 3px solid white;
       cursor: grab;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .token img {
@@ -79,6 +89,8 @@
       text-align: center;
       margin-top: 0.5rem;
       font-weight: bold;
+      font-family: 'UnifrakturCook', cursive;
+      color: #ff4444;
     }
 
     .modal {
@@ -98,11 +110,11 @@
       border-radius: 15px;
       display: flex;
       gap: 2rem;
-      max-width: 800px;
+      max-width: 1000px;
     }
 
     .modal-content img {
-      width: 250px;
+      width: 300px;
       height: auto;
       border-radius: 10px;
     }
@@ -169,7 +181,6 @@
         <img src="Lurien Veil Token.png" alt="Lurien">
         <span>Lurien</span>
       </div>
-      <!-- Diğer Tokenler buraya eklenecek -->
     </div>
   </div>
 
@@ -211,25 +222,26 @@
     const closeModal = document.getElementById("close-modal");
     const disabledOverlay = document.getElementById("disabled-overlay");
 
-    document.querySelectorAll(".token").forEach(token => {
-      token.addEventListener("click", () => {
+    document.addEventListener("click", e => {
+      if (e.target.classList.contains("token") || e.target.closest(".token")) {
+        const token = e.target.closest(".token");
         const img = token.dataset.img;
         const name = token.dataset.name;
         const quirks = JSON.parse(token.dataset.quirks);
         document.getElementById("modal-image").src = img;
         document.getElementById("modal-name").innerText = name;
-
         document.getElementById("modal-positive").innerHTML = quirks.positive.map(q => `<li>${q}</li>`).join("");
         document.getElementById("modal-negative").innerHTML = quirks.negative.map(q => `<li>${q}</li>`).join("");
-
         modal.style.display = "flex";
         disabledOverlay.style.display = "block";
-      });
+      }
+    });
 
-      token.addEventListener("dragstart", e => {
-        e.dataTransfer.setData("text/plain", token.outerHTML);
-        token.remove();
-      });
+    document.addEventListener("dragstart", e => {
+      if (e.target.classList.contains("token")) {
+        e.dataTransfer.setData("text/plain", e.target.outerHTML);
+        e.target.remove();
+      }
     });
 
     document.querySelectorAll(".slot").forEach(slot => {
