@@ -39,13 +39,19 @@
 
     h1 {
       text-align: center;
-      font-size: 3rem;
+      font-size: 5rem;
       text-shadow: 2px 2px 10px black;
       margin-top: 1rem;
       animation: flicker 3s infinite alternate;
     }
 
-    h2, h3, h4, li {
+    h2 {
+      text-align: center;
+      font-size: 3rem;
+      text-shadow: 2px 2px 8px black;
+    }
+
+    h3, h4, li {
       font-family: 'UnifrakturCook', cursive;
       color: #ff4444;
     }
@@ -172,14 +178,16 @@
       padding: 0.5rem 1rem;
       border-radius: 10px;
       z-index: 10;
+      width: 150px;
+      box-sizing: border-box;
     }
 
     #volume-control {
-      width: 100px;
+      width: 100%;
     }
 
     #volume-control-label {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #ff4444;
       margin-bottom: 0.3rem;
       display: block;
@@ -205,7 +213,7 @@
   <h1>The Hamlet</h1>
 
   <div class="section">
-    <h2 style="text-align:center;">On-Rest</h2>
+    <h2>On-Rest</h2>
     <div class="token-area" id="rest-area">
       <div class="token" draggable="true" data-name="Lurien Veil" data-img="Lurien Veil.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Lurien Veil Token.png" alt="Lurien">
@@ -215,7 +223,7 @@
   </div>
 
   <div class="section operation-area">
-    <h2 style="text-align:center;">Operation Teams</h2>
+    <h2>Operation Teams</h2>
     <div class="operation-grid" id="team-row-1">
       <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
     </div>
