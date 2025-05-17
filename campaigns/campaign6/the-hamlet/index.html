@@ -17,6 +17,27 @@
       font-size: 1.5rem;
     }
 
+    header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 1rem;
+      position: fixed;
+      top: 1rem;
+      right: 150px;
+      z-index: 11;
+    }
+
+    .back-button {
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #ff4444;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      font-size: 1.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     h1 {
       text-align: center;
       font-size: 6rem;
@@ -186,32 +207,12 @@
       margin-bottom: 0.3rem;
       display: block;
     }
-
-    .top-left-controls {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      display: flex;
-      align-items: center;
-      z-index: 11;
-    }
-
-    .back-button {
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #ff4444;
-      border: none;
-      padding: 0.7rem 1.4rem;
-      font-size: 1.8rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
-
-  <div class="top-left-controls">
-    <a href="../index.html" class="back-button">← Geri Dön</a>
-  </div>
+  <header id="header-bar">
+    <a href="../index.html" class="back-button" id="back-button">← Geri Dön</a>
+  </header>
 
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Darkest Dungeon II OST - The Inn (2023) HQ Official.mp3" type="audio/mp3" />
@@ -274,6 +275,8 @@
     const modal = document.getElementById("modal");
     const closeModal = document.getElementById("close-modal");
     const disabledOverlay = document.getElementById("disabled-overlay");
+    const headerBar = document.getElementById("header-bar");
+    const backButton = document.getElementById("back-button");
     let draggedToken = null;
 
     document.querySelectorAll('.token').forEach(token => {
@@ -288,6 +291,7 @@
         modal.style.display = "flex";
         disabledOverlay.style.display = "block";
         document.getElementById("volume-control-wrapper").style.display = "none";
+        backButton.style.display = "none"; // Geri Dön butonunu gizle
       });
 
       token.addEventListener("dragstart", e => {
@@ -323,6 +327,7 @@
       modal.style.display = "none";
       disabledOverlay.style.display = "none";
       document.getElementById("volume-control-wrapper").style.display = "block";
+      backButton.style.display = "inline-block"; // Geri Dön butonunu geri getir
     });
 
     document.getElementById('volume-control').addEventListener('input', function () {
