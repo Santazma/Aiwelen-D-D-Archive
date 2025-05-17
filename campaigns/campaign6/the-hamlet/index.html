@@ -19,12 +19,12 @@
 
     header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       align-items: center;
       padding: 1rem;
       position: fixed;
       top: 1rem;
-      right: 150px;
+      left: 1rem;
       z-index: 11;
     }
 
@@ -36,6 +36,7 @@
       font-size: 1.8rem;
       border-radius: 8px;
       cursor: pointer;
+      text-decoration: none;
     }
 
     h1 {
@@ -210,7 +211,7 @@
   </style>
 </head>
 <body>
-  <header id="header-bar">
+  <header id="header">
     <a href="../index.html" class="back-button" id="back-button">← Geri Dön</a>
   </header>
 
@@ -275,7 +276,6 @@
     const modal = document.getElementById("modal");
     const closeModal = document.getElementById("close-modal");
     const disabledOverlay = document.getElementById("disabled-overlay");
-    const headerBar = document.getElementById("header-bar");
     const backButton = document.getElementById("back-button");
     let draggedToken = null;
 
@@ -291,7 +291,7 @@
         modal.style.display = "flex";
         disabledOverlay.style.display = "block";
         document.getElementById("volume-control-wrapper").style.display = "none";
-        backButton.style.display = "none"; // Geri Dön butonunu gizle
+        backButton.style.display = "none";
       });
 
       token.addEventListener("dragstart", e => {
@@ -327,7 +327,7 @@
       modal.style.display = "none";
       disabledOverlay.style.display = "none";
       document.getElementById("volume-control-wrapper").style.display = "block";
-      backButton.style.display = "inline-block"; // Geri Dön butonunu geri getir
+      backButton.style.display = "inline-block";
     });
 
     document.getElementById('volume-control').addEventListener('input', function () {
