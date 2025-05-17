@@ -14,6 +14,7 @@
       background-size: cover;
       color: #ff4444;
       overflow-x: hidden;
+      font-size: 1.5rem;
     }
 
     header {
@@ -31,15 +32,15 @@
       background-color: rgba(0, 0, 0, 0.6);
       color: #ff4444;
       border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1.2rem;
+      padding: 0.7rem 1.4rem;
+      font-size: 1.8rem;
       border-radius: 8px;
       cursor: pointer;
     }
 
     h1 {
       text-align: center;
-      font-size: 5rem;
+      font-size: 6rem;
       text-shadow: 2px 2px 10px black;
       margin-top: 1rem;
       animation: flicker 3s infinite alternate;
@@ -47,13 +48,20 @@
 
     h2 {
       text-align: center;
-      font-size: 3rem;
+      font-size: 4rem;
       text-shadow: 2px 2px 8px black;
     }
 
-    h3, h4, li {
-      font-family: 'UnifrakturCook', cursive;
-      color: #ff4444;
+    h3 {
+      font-size: 2.5rem;
+    }
+
+    h4 {
+      font-size: 2rem;
+    }
+
+    li {
+      font-size: 1.8rem;
     }
 
     @keyframes flicker {
@@ -94,7 +102,7 @@
 
     .token-label {
       margin-top: 0.3rem;
-      font-size: 1rem;
+      font-size: 1.5rem;
       font-weight: bold;
       font-family: 'UnifrakturCook', cursive;
       color: #ff4444;
@@ -121,6 +129,7 @@
       max-width: 1100px;
       font-family: 'UnifrakturCook', cursive;
       box-shadow: 0 0 15px #ff4444;
+      font-size: 1.8rem;
     }
 
     .modal-content img {
@@ -134,7 +143,7 @@
       position: fixed;
       top: 1rem;
       right: 1rem;
-      font-size: 2.5rem;
+      font-size: 3rem;
       color: white;
       cursor: pointer;
       z-index: 11;
@@ -180,8 +189,8 @@
       padding: 0.5rem 1rem;
       border-radius: 10px;
       z-index: 10;
-      width: 160px;
-      height: 70px;
+      width: 200px;
+      height: 80px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -193,7 +202,7 @@
     }
 
     #volume-control-label {
-      font-size: 1.2rem;
+      font-size: 1.8rem;
       color: #ff4444;
       margin-bottom: 0.3rem;
       display: block;
@@ -247,7 +256,7 @@
     <div class="modal-content">
       <img id="modal-image" src="" alt="Character">
       <div>
-        <h3 id="modal-name" style="font-size: 2.5rem; margin-bottom: 1rem;"></h3>
+        <h3 id="modal-name" style="font-size: 3rem; margin-bottom: 1rem;"></h3>
         <h4>Positive Quirks</h4>
         <ul id="modal-positive"></ul>
         <h4>Negative Quirks</h4>
@@ -284,7 +293,7 @@
 
       token.addEventListener("dragstart", e => {
         draggedToken = token;
-        e.dataTransfer.setData("text/plain", null); // iOS uyumluluğu
+        e.dataTransfer.setData("text/plain", null);
         document.getElementById("drop-sound").play();
       });
     });
