@@ -221,11 +221,11 @@
   <div class="section">
     <h2>On-Rest</h2>
     <div class="token-area" id="rest-area">
-      <div class="token" draggable="true" data-name="Lurien Veil" data-img="Lurien Veil.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
+      <div class="token" draggable="true" id="token-lurien" data-name="Lurien Veil" data-img="Lurien Veil.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Lurien Veil Token.png" alt="Lurien">
         <div class="token-label">Lurien</div>
       </div>
-      <div class="token" draggable="true" data-name="Erevan Duskwight" data-img="Erevan Duskwight.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
+      <div class="token" draggable="true" id="token-erevan" data-name="Erevan Duskwight" data-img="Erevan Duskwight.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Erevan Duskwight Token.png" alt="Erevan">
         <div class="token-label">Erevan</div>
       </div>
@@ -267,6 +267,7 @@
     const modal = document.getElementById("modal");
     const closeModal = document.getElementById("close-modal");
     const disabledOverlay = document.getElementById("disabled-overlay");
+    let draggedToken = null;
 
     document.addEventListener("click", e => {
       if (e.target.classList.contains("token") || e.target.closest(".token")) {
@@ -292,9 +293,9 @@
 
     document.addEventListener("dragstart", e => {
       if (e.target.classList.contains("token")) {
-        e.dataTransfer.setData("text/plain", e.target.outerHTML);
+        draggedToken = e.target;
+        e.dataTransfer.effectAllowed = "move";
         document.getElementById("drop-sound").play();
-        e.target.remove();
       }
     });
 
@@ -302,19 +303,22 @@
       slot.addEventListener("dragover", e => e.preventDefault());
       slot.addEventListener("drop", e => {
         e.preventDefault();
-        const html = e.dataTransfer.getData("text/plain");
-        if (!slot.innerHTML.trim()) {
-          slot.innerHTML = html;
+        if (!slot.querySelector(".token") && draggedToken) {
+          slot.appendChild(draggedToken);
           document.getElementById("drop-sound").play();
+          draggedToken = null;
         }
       });
     });
 
-    document.getElementById("rest-area").addEventListener("dragover", e => e.preventDefault());
-    document.getElementById("rest-area").addEventListener("drop", e => {
+    const restArea = document.getElementById("rest-area");
+    restArea.addEventListener("dragover", e => e.preventDefault());
+    restArea.addEventListener("drop", e => {
       e.preventDefault();
-      const html = e.dataTransfer.getData("text/plain");
-      document.getElementById("rest-area").insertAdjacentHTML("beforeend", html);
+      if (draggedToken) {
+        restArea.appendChild(draggedToken);
+        draggedToken = null;
+      }
     });
 
     document.getElementById('volume-control').addEventListener('input', function () {
