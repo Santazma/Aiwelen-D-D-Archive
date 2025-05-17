@@ -75,33 +75,29 @@
 
     .token {
       width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid white;
+      display: inline-block;
+      text-align: center;
       cursor: grab;
       position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     .token img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
+      border: 3px solid white;
+      object-fit: cover;
+      display: block;
     }
 
-    .token span {
-      display: block;
-      text-align: center;
+    .token-label {
       margin-top: 0.3rem;
       font-size: 1rem;
       font-weight: bold;
       font-family: 'UnifrakturCook', cursive;
       color: #ff4444;
       text-shadow: 1px 1px 2px black;
+      pointer-events: none;
     }
 
     .modal {
@@ -225,11 +221,11 @@
     <div class="token-area" id="rest-area">
       <div class="token" draggable="true" data-name="Lurien Veil" data-img="Lurien Veil.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Lurien Veil Token.png" alt="Lurien">
-        <span>Lurien</span>
+        <div class="token-label">Lurien</div>
       </div>
       <div class="token" draggable="true" data-name="Erevan Duskwight" data-img="Erevan Duskwight.jpg" data-quirks='{"positive":["Calm","Strategist"],"negative":["Paranoid"]}'>
         <img src="Erevan Duskwight Token.png" alt="Erevan">
-        <span>Erevan</span>
+        <div class="token-label">Erevan</div>
       </div>
     </div>
   </div>
