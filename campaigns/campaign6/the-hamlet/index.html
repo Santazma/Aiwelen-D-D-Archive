@@ -17,27 +17,6 @@
       font-size: 1.5rem;
     }
 
-    header {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 1rem;
-      position: fixed;
-      top: 1rem;
-      right: 150px;
-      z-index: 11;
-    }
-
-    .back-button {
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #ff4444;
-      border: none;
-      padding: 0.7rem 1.4rem;
-      font-size: 1.8rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
     h1 {
       text-align: center;
       font-size: 6rem;
@@ -207,12 +186,32 @@
       margin-bottom: 0.3rem;
       display: block;
     }
+
+    .top-left-controls {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      display: flex;
+      align-items: center;
+      z-index: 11;
+    }
+
+    .back-button {
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #ff4444;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      font-size: 1.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <header>
+
+  <div class="top-left-controls">
     <a href="../index.html" class="back-button">← Geri Dön</a>
-  </header>
+  </div>
 
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Darkest Dungeon II OST - The Inn (2023) HQ Official.mp3" type="audio/mp3" />
