@@ -43,9 +43,9 @@
       background-color: rgba(0, 0, 0, 0.6);
       color: #ff4444;
       border: none;
-      padding: 0.7rem 1.4rem;
-      font-size: 1.8rem;
-      border-radius: 8px;
+      padding: 0.4rem 1rem;
+      font-size: 1.2rem;
+      border-radius: 6px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.3s ease;
@@ -216,14 +216,15 @@
       top: 1rem;
       right: 1rem;
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
       z-index: 10;
-      width: 200px;
-      height: 80px;
+      width: 160px;
+      height: auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: stretch;
     }
 
     #volume-control {
@@ -231,9 +232,10 @@
     }
 
     #volume-control-label {
-      font-size: 1.8rem;
+      font-size: 1.2rem;
       color: #ff4444;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem;
+      text-align: center;
     }
   </style>
 </head>
@@ -353,7 +355,7 @@
     closeModal.addEventListener("click", () => {
       modal.style.display = "none";
       disabledOverlay.style.display = "none";
-      document.getElementById("volume-control-wrapper").style.display = "block";
+      document.getElementById("volume-control-wrapper").style.display = "flex";
       backButton.style.display = "inline-block";
     });
 
