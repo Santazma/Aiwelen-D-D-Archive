@@ -76,62 +76,6 @@
       color: #ff8888;
     }
 
-    #tag-panel {
-      position: fixed;
-      top: 9rem; /* On Rest'in üstü */
-      right: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      background-color: rgba(0,0,0,0.5);
-      padding: 1rem;
-      border-radius: 12px;
-      z-index: 10;
-      box-shadow: 0 0 15px #ff4444;
-    }
-
-    .tag {
-      background-color: transparent;
-      color: white;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      text-align: center;
-      cursor: grab;
-      animation: flickerTag 2s infinite;
-      text-shadow: 0 0 5px currentColor;
-      border: none;
-      padding: 0;
-    }
-
-    .tag:hover {
-      background-color: #550000;
-      transform: scale(1.05);
-    }
-
-    @keyframes flickerTag {
-      0%, 100% { opacity: 1; text-shadow: 0 0 5px currentColor; }
-      50% { opacity: 0.8; text-shadow: 0 0 12px currentColor; }
-    }
-
-    .tag[data-type="wounded"] { color: #ff6666; }
-    .tag[data-type="severely"] { color: #cc0000; }
-    .tag[data-type="madness"] { color: #ffff55; }
-    .tag[data-type="dead"] { color: #ffffff; }
-    .tag[data-type="morale"] { color: #33ff66; }
-
-    .token-tag {
-      position: absolute;
-      bottom: -10px;
-      right: -10px;
-      background-color: #222;
-      color: #ff4444;
-      font-size: 0.9rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #ff4444;
-      font-family: 'Cormorant Garamond', serif;
-    }
-
     h1, h2 {
       text-align: center;
       text-shadow: 0 0 12px #000;
@@ -371,14 +315,6 @@
 
   <h1>The Hamlet</h1>
 
-  <div id="tag-panel">
-    <div class="tag" draggable="true" data-tag="Wounded">Wounded</div>
-    <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
-    <div class="tag" draggable="true" data-tag="Madness">Madness</div>
-    <div class="tag" draggable="true" data-tag="Dead">Dead</div>
-    <div class="tag" draggable="true" data-tag="Morale">Morale</div>
-  </div>
-
   <div class="section">
     <h2>On-Rest</h2>
     <div class="token-area" id="rest-area">
@@ -503,72 +439,6 @@
       document.getElementById("background-music").volume = volume;
       document.getElementById("volume-level").textContent = `${Math.round(volume * 100)}%`;
     });
-
-    document.querySelectorAll('.tag').forEach(tag => {
-      tag.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('tag', e.target.dataset.tag);
-      });
-    });
-
-    document.querySelectorAll('.token').forEach(token => {
-      token.addEventListener('dragover', (e) => e.preventDefault());
-
-      token.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const tagName = e.dataTransfer.getData('tag');
-
-        // Aynı tag birden fazla kez eklenmesin
-        if (token.querySelector(`.token-tag[data-tag="${tagName}"]`)) return;
-
-        const tagEl = document.createElement('div');
-        tagEl.classList.add('token-tag');
-        tagEl.textContent = tagName;
-        tagEl.setAttribute('data-tag', tagName);
-        token.appendChild(tagEl);
-
-        // Tag’i kaldırmak için tıklanabilir yap
-        tagEl.addEventListener('click', () => tagEl.remove());
-      });
-    });
-
-    // TAG SÜRÜKLEME
-    document.querySelectorAll('.tag').forEach(tag => {
-      tag.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', tag.dataset.type);
-      });
-    });
-
-    // TOKEN ALANI
-    document.querySelectorAll('.token').forEach(token => {
-      const tagContainer = document.createElement('div');
-      tagContainer.className = 'token-tags';
-      tagContainer.style.display = 'flex';
-      tagContainer.style.flexDirection = 'column';
-      tagContainer.style.alignItems = 'center';
-      tagContainer.style.marginTop = '0.3rem';
-      token.appendChild(tagContainer);
-
-      token.addEventListener('dragover', e => e.preventDefault());
-      token.addEventListener('drop', e => {
-        e.preventDefault();
-        const type = e.dataTransfer.getData('text/plain');
-
-        // Aynı tag zaten varsa ekleme
-        if (Array.from(tagContainer.children).some(t => t.dataset.type === type)) return;
-
-        const newTag = document.createElement('div');
-        newTag.textContent = type.replace(/^\w/, c => c.toUpperCase());
-        newTag.className = 'tag';
-        newTag.dataset.type = type;
-        newTag.style.cursor = 'pointer';
-        newTag.title = "Çıkarmak için tıkla";
-
-        newTag.addEventListener('click', () => newTag.remove());
-
-        tagContainer.appendChild(newTag);
-      });
-    });
-   
   </script>
 </body>
 </html>
