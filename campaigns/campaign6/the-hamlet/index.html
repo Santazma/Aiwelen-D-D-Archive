@@ -8,8 +8,10 @@
     @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
     * { box-sizing: border-box; }
+
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       font-family: 'UnifrakturCook', cursive;
       color: #ff4444;
       background: url('https://cdnb.artstation.com/p/assets/images/images/057/688/955/large/sfc-.jpg?1672363017') no-repeat center center fixed;
@@ -18,10 +20,12 @@
       font-size: 1.5rem;
       animation: fadeInBody 2s ease-in-out;
     }
+
     @keyframes fadeInBody {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
     header {
       display: flex;
       justify-content: flex-start;
@@ -32,6 +36,7 @@
       left: 1rem;
       z-index: 11;
     }
+
     .back-button {
       background-color: rgba(0, 0, 0, 0.6);
       color: #ff4444;
@@ -43,33 +48,41 @@
       text-decoration: none;
       transition: all 0.3s ease;
     }
+
     .back-button:hover {
       background-color: #ff4444;
       color: black;
     }
+
     h1, h2 {
       text-align: center;
       text-shadow: 0 0 12px #000;
     }
+
     h1 {
       font-size: 6rem;
       margin-top: 5rem;
       animation: flicker 3s infinite alternate;
     }
+
     h2 {
       font-size: 4rem;
       margin-bottom: 1rem;
     }
+
     @keyframes flicker {
       0% { opacity: 1; text-shadow: 0 0 10px #ff4444; }
       100% { opacity: 0.85; text-shadow: 0 0 25px #ff8888; }
     }
+
     h3 { font-size: 2.5rem; }
     h4 { font-size: 2rem; }
     li { font-size: 1.8rem; }
+
     .section {
       padding: 2rem;
     }
+
     .token-area {
       display: flex;
       flex-wrap: wrap;
@@ -78,6 +91,7 @@
       margin-bottom: 4rem;
       min-height: 120px;
     }
+
     .token {
       width: 100px;
       display: flex;
@@ -87,10 +101,12 @@
       position: relative;
       transition: transform 0.3s ease, filter 0.3s ease;
     }
+
     .token:hover {
       transform: scale(1.1);
       filter: drop-shadow(0 0 10px #ff4444);
     }
+
     .token img {
       width: 100px;
       height: 100px;
@@ -98,6 +114,7 @@
       border: 3px solid white;
       object-fit: cover;
     }
+
     .token-label {
       margin-top: 0.3rem;
       font-size: 1.5rem;
@@ -105,6 +122,7 @@
       color: #ff4444;
       text-shadow: 1px 1px 2px black;
     }
+
     .modal {
       position: fixed;
       top: 0; left: 0;
@@ -115,30 +133,45 @@
       justify-content: center;
       z-index: 10;
       animation: fadeInModal 0.4s ease;
+      padding: 1rem;
     }
+
     @keyframes fadeInModal {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
     .modal-content {
       background-color: #111;
-      padding: 2.5rem;
+      padding: 2rem;
       border-radius: 20px;
       display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 2rem;
-      max-width: 1300px;
-      width: 90%;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
       font-family: 'Cormorant Garamond', serif;
       box-shadow: 0 0 15px #ff4444;
       font-size: 1.8rem;
       color: #ffdddd;
     }
+
     .modal-content img {
+      max-width: 100%;
       width: 350px;
       height: auto;
       border-radius: 12px;
       border: 3px solid #ff4444;
+      flex-shrink: 0;
     }
+
+    .modal-content > div {
+      flex: 1;
+      min-width: 280px;
+    }
+
     .modal-close {
       position: fixed;
       top: 1rem;
@@ -148,6 +181,7 @@
       cursor: pointer;
       z-index: 11;
     }
+
     .operation-area {
       padding: 2rem;
       background-color: rgba(0,0,0,0.6);
@@ -156,6 +190,7 @@
       margin: 0 auto;
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
     }
+
     .operation-grid {
       display: grid;
       grid-template-columns: repeat(4, 100px);
@@ -163,6 +198,7 @@
       justify-content: center;
       margin-top: 1rem;
     }
+
     .slot {
       width: 100px;
       height: 100px;
@@ -171,11 +207,13 @@
       background-color: rgba(255,255,255,0.1);
       transition: all 0.3s ease;
     }
+
     .slot:hover {
       border-color: #ff4444;
       background-color: rgba(255, 0, 0, 0.2);
       box-shadow: 0 0 10px #ff4444;
     }
+
     .disabled-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -183,6 +221,7 @@
       z-index: 9;
       display: none;
     }
+
     #volume-control-wrapper {
       position: fixed;
       top: 1rem;
@@ -192,18 +231,29 @@
       border-radius: 8px;
       z-index: 10;
       width: 160px;
-      height: auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: stretch;
     }
+
     #volume-control { width: 100%; }
+
     #volume-control-label {
       font-size: 1.2rem;
       color: #ff4444;
       margin-bottom: 0.2rem;
       text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .modal-content {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .modal-content img {
+        width: 90%;
+      }
     }
   </style>
 </head>
