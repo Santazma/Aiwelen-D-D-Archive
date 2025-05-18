@@ -76,6 +76,58 @@
       color: #ff8888;
     }
 
+    #tag-panel {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      background-color: rgba(0,0,0,0.7);
+      padding: 1rem;
+      border-radius: 12px;
+      z-index: 10;
+      box-shadow: 0 0 15px #ff4444;
+    }
+
+    .tag {
+      background-color: #300000;
+      color: #ffcccc;
+      border: 1px solid #ff4444;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      text-align: center;
+      cursor: grab;
+      transition: all 0.2s ease-in-out;
+      animation: pulseTag 2s infinite;
+    }
+
+    .tag:hover {
+      background-color: #550000;
+      transform: scale(1.05);
+    }
+
+    @keyframes pulseTag {
+      0% { box-shadow: 0 0 5px #ff4444; }
+      50% { box-shadow: 0 0 15px #ff8888; }
+      100% { box-shadow: 0 0 5px #ff4444; }
+    }
+
+    .token-tag {
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      background-color: #222;
+      color: #ff4444;
+      font-size: 0.9rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #ff4444;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
     h1, h2 {
       text-align: center;
       text-shadow: 0 0 12px #000;
@@ -313,6 +365,14 @@
     • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüellerden ve masraflardan geçilmesi gerekiliyordur.
   </div>
 
+  <div id="tag-panel">
+    <div class="tag" draggable="true" data-tag="Wounded">Wounded</div>
+    <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
+    <div class="tag" draggable="true" data-tag="Madness">Madness</div>
+    <div class="tag" draggable="true" data-tag="Dead">Dead</div>
+    <div class="tag" draggable="true" data-tag="Morale">Morale</div>
+  </div>
+
   <h1>The Hamlet</h1>
 
   <div class="section">
@@ -439,6 +499,34 @@
       document.getElementById("background-music").volume = volume;
       document.getElementById("volume-level").textContent = `${Math.round(volume * 100)}%`;
     });
+
+    document.querySelectorAll('.tag').forEach(tag => {
+      tag.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('tag', e.target.dataset.tag);
+      });
+    });
+
+    document.querySelectorAll('.token').forEach(token => {
+      token.addEventListener('dragover', (e) => e.preventDefault());
+
+      token.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const tagName = e.dataTransfer.getData('tag');
+
+        // Aynı tag birden fazla kez eklenmesin
+        if (token.querySelector(`.token-tag[data-tag="${tagName}"]`)) return;
+
+        const tagEl = document.createElement('div');
+        tagEl.classList.add('token-tag');
+        tagEl.textContent = tagName;
+        tagEl.setAttribute('data-tag', tagName);
+        token.appendChild(tagEl);
+
+        // Tag’i kaldırmak için tıklanabilir yap
+        tagEl.addEventListener('click', () => tagEl.remove());
+      });
+    });
+    
   </script>
 </body>
 </html>
