@@ -78,12 +78,12 @@
 
     #tag-panel {
       position: fixed;
-      bottom: 1rem;
+      top: 9rem; /* On Rest'in üstü */
       right: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.6rem;
-      background-color: rgba(0,0,0,0.7);
+      background-color: rgba(0,0,0,0.5);
       padding: 1rem;
       border-radius: 12px;
       z-index: 10;
@@ -91,17 +91,16 @@
     }
 
     .tag {
-      background-color: #300000;
-      color: #ffcccc;
-      border: 1px solid #ff4444;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
+      background-color: transparent;
+      color: white;
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       text-align: center;
       cursor: grab;
-      transition: all 0.2s ease-in-out;
-      animation: pulseTag 2s infinite;
+      animation: flickerTag 2s infinite;
+      text-shadow: 0 0 5px currentColor;
+      border: none;
+      padding: 0;
     }
 
     .tag:hover {
@@ -109,11 +108,16 @@
       transform: scale(1.05);
     }
 
-    @keyframes pulseTag {
-      0% { box-shadow: 0 0 5px #ff4444; }
-      50% { box-shadow: 0 0 15px #ff8888; }
-      100% { box-shadow: 0 0 5px #ff4444; }
+    @keyframes flickerTag {
+      0%, 100% { opacity: 1; text-shadow: 0 0 5px currentColor; }
+      50% { opacity: 0.8; text-shadow: 0 0 12px currentColor; }
     }
+
+    .tag[data-type="wounded"] { color: #ff6666; }
+    .tag[data-type="severely"] { color: #cc0000; }
+    .tag[data-type="madness"] { color: #ffff55; }
+    .tag[data-type="dead"] { color: #ffffff; }
+    .tag[data-type="morale"] { color: #33ff66; }
 
     .token-tag {
       position: absolute;
@@ -365,6 +369,8 @@
     • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüellerden ve masraflardan geçilmesi gerekiliyordur.
   </div>
 
+  <h1>The Hamlet</h1>
+
   <div id="tag-panel">
     <div class="tag" draggable="true" data-tag="Wounded">Wounded</div>
     <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
@@ -372,8 +378,6 @@
     <div class="tag" draggable="true" data-tag="Dead">Dead</div>
     <div class="tag" draggable="true" data-tag="Morale">Morale</div>
   </div>
-
-  <h1>The Hamlet</h1>
 
   <div class="section">
     <h2>On-Rest</h2>
@@ -526,7 +530,45 @@
         tagEl.addEventListener('click', () => tagEl.remove());
       });
     });
-    
+
+    // TAG SÜRÜKLEME
+    document.querySelectorAll('.tag').forEach(tag => {
+      tag.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', tag.dataset.type);
+      });
+    });
+
+    // TOKEN ALANI
+    document.querySelectorAll('.token').forEach(token => {
+      const tagContainer = document.createElement('div');
+      tagContainer.className = 'token-tags';
+      tagContainer.style.display = 'flex';
+      tagContainer.style.flexDirection = 'column';
+      tagContainer.style.alignItems = 'center';
+      tagContainer.style.marginTop = '0.3rem';
+      token.appendChild(tagContainer);
+
+      token.addEventListener('dragover', e => e.preventDefault());
+      token.addEventListener('drop', e => {
+        e.preventDefault();
+        const type = e.dataTransfer.getData('text/plain');
+
+        // Aynı tag zaten varsa ekleme
+        if (Array.from(tagContainer.children).some(t => t.dataset.type === type)) return;
+
+        const newTag = document.createElement('div');
+        newTag.textContent = type.replace(/^\w/, c => c.toUpperCase());
+        newTag.className = 'tag';
+        newTag.dataset.type = type;
+        newTag.style.cursor = 'pointer';
+        newTag.title = "Çıkarmak için tıkla";
+
+        newTag.addEventListener('click', () => newTag.remove());
+
+        tagContainer.appendChild(newTag);
+      });
+    });
+   
   </script>
 </body>
 </html>
