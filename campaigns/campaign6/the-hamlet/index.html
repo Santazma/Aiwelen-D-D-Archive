@@ -54,6 +54,28 @@
       color: black;
     }
 
+    .info-box {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      max-width: 420px;
+      border-radius: 10px;
+      font-family: 'UnifrakturCook', cursive;
+      color: #ff4444;
+      font-size: 1.2rem;
+      line-height: 1.5;
+      z-index: 10;
+      overflow-y: auto;
+      max-height: 70vh;
+      box-shadow: 0 0 10px #ff4444;
+    }
+
+    .info-box b {
+      color: #ff8888;
+    }
+
     h1, h2 {
       text-align: center;
       text-shadow: 0 0 12px #000;
@@ -279,6 +301,16 @@
   <div id="volume-control-wrapper">
     <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
     <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
+
+  <div class="info-box">
+    <b>Campaign 6 - The Dark Path Terimleri:</b><br/>
+    • <b>Success Rate:</b> Bir Operasyonun başarı şansıdır. Çeşitli değişkenlere göre artıp azalabilir. Success Rate en az %10 ve en fazla %90 olabilir.<br/>
+    • <b>Morale:</b> Operasyon öncesi ve sonrasında kişinin moralini ve ne kadar operasyona hazır olduğunu belirtir. Bu değer 0 ile 100 arasında değişir. Bir kişinin bir Operasyona katılabilmesi için en az 40 morale ihtiyacı vardır. Baz olarak (çarpanlar eklenmemişken) başarılı bir Operasyonda 20, başarısız bir Operasyonda ise 40 moral azalır.<br/>
+    • <b>Wounded:</b> Bir kişinin yaralandığını gösterir. Bu yara hem mental hem fiziksel hem de metafiziksel olabilir. Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Yaralı birinin yarası bir hafta içerisinde iyileşir.<br/>
+    • <b>Severely Wounded:</b> Bir kişinin ağır bir biçimde yaralandığını gösterir. Bu ağır yara hem mental hem fiziksel hem de metafiziksel olabilir. Ağır Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Ağır Yaralı birinin yarası üç hafta içerisinde iyileşir.<br/>
+    • <b>Madness:</b> Bir kişinin halihazırda bir Madness etkisinde olduğunu gösterir. Madness'ı olan kişilerin Operasyon sırasında sorun çıkarmaları daha olasıdır.<br/>
+    • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüellerden ve masraflardan geçilmesi gerekiliyordur.
   </div>
 
   <h1>The Hamlet</h1>
