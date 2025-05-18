@@ -347,11 +347,19 @@
         const name = token.dataset.name;
         const quirks = JSON.parse(token.dataset.quirks);
         const affiliations = JSON.parse(token.dataset.affiliations);
+
         document.getElementById("modal-image").src = img;
         document.getElementById("modal-name").innerText = name;
-        document.getElementById("modal-positive").innerHTML = quirks.positive.map(q => `<li>${q}</li>`).join("");
-        document.getElementById("modal-negative").innerHTML = quirks.negative.map(q => `<li>${q}</li>`).join("");
+
+        // Doğru biçimlendirme
+        const formatQuirks = (list) => {
+          return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
+        };
+
+        document.getElementById("modal-positive").innerHTML = formatQuirks(quirks.positive);
+        document.getElementById("modal-negative").innerHTML = formatQuirks(quirks.negative);
         document.getElementById("modal-affiliations").innerHTML = affiliations.map(a => `<li>${a}</li>`).join("");
+
         modal.style.display = "flex";
         disabledOverlay.style.display = "block";
         document.getElementById("volume-control-wrapper").style.display = "none";
@@ -394,15 +402,11 @@
       backButton.style.display = "inline-block";
     });
 
-    document.getElementById('volume-control').addEventListener('input', function () {
+    document.getElementById("volume-control").addEventListener("input", function () {
       const volume = parseFloat(this.value);
-      document.getElementById('background-music').volume = volume;
-      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+      document.getElementById("background-music").volume = volume;
+      document.getElementById("volume-level").textContent = `${Math.round(volume * 100)}%`;
     });
-
-    window.onbeforeunload = function () {
-      document.getElementById('background-music').pause();
-    };
   </script>
 </body>
 </html>
