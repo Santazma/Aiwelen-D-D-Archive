@@ -214,16 +214,30 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 5px;
       padding: 5px;
+      width: 100%;
     }
 
-    .token-tag-slider {
+    .morale-bar {
       width: 80px;
-      margin-top: 3px;
-      pointer-events: auto;
+      height: 10px;
+      background-color: #333;
+      border-radius: 5px;
+      overflow: hidden;
       position: relative;
-      z-index: 2;
+    }
+
+    .morale-fill {
+      height: 100%;
+      background-color: #4CAF50;
+      width: 50%;
+      transition: width 0.3s ease;
+    }
+
+    .morale-value {
+      font-size: 10px;
+      color: white;
     }
 
     h2 {
@@ -353,6 +367,63 @@
       text-align: center;
     }
 
+    /* Morale Input Modal */
+    .morale-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .morale-modal-content {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 100, 0, 0.5);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .morale-modal h3 {
+      margin-top: 0;
+      color: #4CAF50;
+    }
+
+    .morale-input {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border: 2px solid #4CAF50;
+      border-radius: 4px;
+      background-color: #111;
+      color: white;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .validate-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .validate-btn:hover {
+      background-color: #45a049;
+    }
+
     @media (max-width: 768px) {
       .modal-content {
         flex-direction: column;
@@ -386,7 +457,7 @@
     • <b>Wounded:</b> Bir kişinin yaralandığını gösterir. Bu yara hem mental hem fiziksel hem de metafiziksel olabilir. Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Yaralı birinin yarası bir hafta içerisinde iyileşir.<br/>
     • <b>Severely Wounded:</b> Bir kişinin ağır bir biçimde yaralandığını gösterir. Bu ağır yara hem mental hem fiziksel hem de metafiziksel olabilir. Ağır Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Ağır Yaralı birinin yarası üç hafta içerisinde iyileşir.<br/>
     • <b>Madness:</b> Bir kişinin halihazırda bir Madness etkisinde olduğunu gösterir. Madness'ı olan kişilerin Operasyon sırasında sorun çıkarmaları daha olasıdır.<br/>
-    • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüellerden ve masraflardan geçilmesi gerekiliyordur.
+    • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüeller ve masraflar gerekir.
   </div>
 
   <h1>The Hamlet</h1>
@@ -451,6 +522,16 @@
     </div>
   </div>
 
+  <!-- Morale Input Modal -->
+  <div class="morale-modal" id="morale-modal">
+    <div class="morale-modal-content">
+      <h3>Kişinin Moralini Giriniz</h3>
+      <p>Lütfen 0 ile 100 arasında bir değer girin:</p>
+      <input type="number" class="morale-input" id="morale-input" min="0" max="100" value="50">
+      <button class="validate-btn" id="validate-btn">Doğrula</button>
+    </div>
+  </div>
+
   <div class="disabled-overlay" id="disabled-overlay"></div>
 
   <audio id="drop-sound">
@@ -462,12 +543,16 @@
     const closeModal = document.getElementById("close-modal");
     const disabledOverlay = document.getElementById("disabled-overlay");
     const backButton = document.getElementById("back-button");
+    const moraleModal = document.getElementById("morale-modal");
+    const moraleInput = document.getElementById("morale-input");
+    const validateBtn = document.getElementById("validate-btn");
     let draggedToken = null;
+    let currentTokenForMorale = null;
 
     // Token tıklama ve modal açma
     document.querySelectorAll('.token').forEach(token => {
       token.addEventListener("click", (e) => {
-        if (e.target.classList.contains('token-tag') || e.target.classList.contains('token-tag-slider')) {
+        if (e.target.classList.contains('token-tag')) {
           e.stopPropagation();
           return;
         }
@@ -494,12 +579,7 @@
         backButton.style.display = "none";
       });
 
-      // Token drag işlemi - slider'dan geliyorsa engelle
       token.addEventListener("dragstart", function(e) {
-        if (e.target.classList.contains('token-tag-slider')) {
-          e.preventDefault();
-          return;
-        }
         draggedToken = token;
         e.dataTransfer.setData("text/plain", null);
         document.getElementById("drop-sound").play();
@@ -569,55 +649,76 @@
         const existingTag = [...tagsContainer.children].find(t => t.dataset.tag === tagType);
         if (existingTag) return;
 
-        const newTag = document.createElement('div');
-        newTag.classList.add('token-tag');
-        newTag.dataset.tag = tagType;
-        
         if (tagType === 'Morale') {
-          newTag.innerHTML = `
-            Morale: 50
-            <input type="range" class="token-tag-slider" min="0" max="100" value="50">
-          `;
-          
-          const slider = newTag.querySelector('.token-tag-slider');
-          slider.addEventListener('input', (e) => {
-            newTag.firstChild.textContent = `Morale: ${e.target.value}`;
-          });
-
-          // Slider için özel drag işlemi
-          slider.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            
-            const handleMove = (e) => {
-              const rect = slider.getBoundingClientRect();
-              let value = (e.clientX - rect.left) / rect.width;
-              value = Math.min(1, Math.max(0, value));
-              slider.value = Math.round(value * 100);
-              slider.dispatchEvent(new Event('input'));
-            };
-            
-            const handleUp = () => {
-              document.removeEventListener('mousemove', handleMove);
-              document.removeEventListener('mouseup', handleUp);
-            };
-            
-            document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleUp);
-          });
+          currentTokenForMorale = token;
+          moraleInput.value = '50';
+          moraleModal.style.display = 'flex';
+          disabledOverlay.style.display = 'block';
         } else {
+          const newTag = document.createElement('div');
+          newTag.classList.add('token-tag');
+          newTag.dataset.tag = tagType;
           newTag.textContent = tagType;
+
+          newTag.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newTag.remove();
+          });
+
+          tagsContainer.appendChild(newTag);
         }
-
-        newTag.addEventListener('click', (e) => {
-          if (e.target !== newTag && e.target.className !== 'token-tag-slider') return;
-          e.stopPropagation();
-          newTag.remove();
-        });
-
-        tagsContainer.appendChild(newTag);
+        
         draggedTag = null;
       });
+    });
+
+    // Morale değerini doğrulama
+    validateBtn.addEventListener('click', () => {
+      const value = parseInt(moraleInput.value);
+      
+      if (isNaN(value) || value < 0 || value > 100) {
+        alert('Lütfen 0 ile 100 arasında bir değer girin!');
+        return;
+      }
+
+      if (currentTokenForMorale) {
+        const tagsContainer = currentTokenForMorale.querySelector('.token-tags');
+        const existingTag = [...tagsContainer.children].find(t => t.dataset.tag === 'Morale');
+        
+        if (existingTag) {
+          // Varolan morale tag'ını güncelle
+          existingTag.querySelector('.morale-fill').style.width = `${value}%`;
+          existingTag.querySelector('.morale-value').textContent = `${value}/100`;
+        } else {
+          // Yeni morale tag'ı oluştur
+          const newTag = document.createElement('div');
+          newTag.classList.add('token-tag');
+          newTag.dataset.tag = 'Morale';
+          
+          newTag.innerHTML = `
+            <div class="morale-bar">
+              <div class="morale-fill" style="width: ${value}%"></div>
+            </div>
+            <div class="morale-value">${value}/100</div>
+          `;
+
+          newTag.addEventListener('click', (e) => {
+            if (e.target === newTag || e.target.classList.contains('morale-bar') || e.target.classList.contains('morale-fill')) {
+              e.stopPropagation();
+              currentTokenForMorale = newTag.closest('.token');
+              moraleInput.value = value;
+              moraleModal.style.display = 'flex';
+              disabledOverlay.style.display = 'block';
+            }
+          });
+
+          tagsContainer.appendChild(newTag);
+        }
+      }
+
+      moraleModal.style.display = 'none';
+      disabledOverlay.style.display = 'none';
+      currentTokenForMorale = null;
     });
 
     // Sayfa yüklendiğinde müzik sesini ayarla
