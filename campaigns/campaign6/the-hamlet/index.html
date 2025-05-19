@@ -6,7 +6,7 @@
   <title>The Hamlet</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;7&display=swap');
     * { box-sizing: border-box; }
 
     html, body {
@@ -126,13 +126,13 @@
 
     .token {
       width: 100px;
+      height: 140px; /* Yükseklik artırıldı */
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: grab;
       position: relative;
       transition: transform 0.3s ease, filter 0.3s ease;
-      padding-bottom: 40px;
     }
 
     .token:hover {
@@ -164,6 +164,9 @@
       padding: 10px;
       border-top: 2px solid #550000;
       border-bottom: 2px solid #550000;
+      max-width: 800px; /* Maksimum genişlik eklendi */
+      margin: 0 auto; /* Ortalama eklendi */
+      border-radius: 8px; /* Köşeler yuvarlatıldı */
     }
 
     .tag {
@@ -194,6 +197,8 @@
       gap: 4px;
       align-items: center;
       width: 100%;
+      max-height: 40px; /* Maksimum yükseklik eklendi */
+      overflow-y: auto; /* Kaydırma eklendi */
     }
 
     .token-tag {
@@ -202,6 +207,7 @@
       border-radius: 3px;
       cursor: pointer;
       white-space: nowrap;
+      position: relative; /* Çarpı butonu için */
     }
 
     .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
@@ -238,6 +244,35 @@
     .morale-value {
       font-size: 10px;
       color: white;
+    }
+
+    /* Çarpı butonu için yeni stil */
+    .tag-remove-btn {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      background-color: rgba(0,0,0,0.7);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .token-tag[data-tag="Morale"] .tag-remove-btn {
+      opacity: 1;
+    }
+
+    .token-tag:hover .tag-remove-btn {
+      opacity: 1;
     }
 
     h2 {
@@ -433,6 +468,11 @@
       .modal-content img {
         width: 90%;
       }
+
+      .tag-panel {
+        flex-wrap: wrap;
+        max-width: 90%;
+      }
     }
   </style>
 </head>
@@ -552,7 +592,8 @@
     // Token tıklama ve modal açma
     document.querySelectorAll('.token').forEach(token => {
       token.addEventListener("click", (e) => {
-        if (e.target.classList.contains('token-tag')) {
+        if (e.target.classList.contains('token-tag') || 
+            e.target.classList.contains('tag-remove-btn')) {
           e.stopPropagation();
           return;
         }
@@ -582,7 +623,7 @@
       token.addEventListener("dragstart", function(e) {
         draggedToken = token;
         e.dataTransfer.setData("text/plain", null);
-        document.getElementById("drop-sound").play();
+        document.getElementById("drop-s sound").play();
       });
     });
 
@@ -700,10 +741,20 @@
               <div class="morale-fill" style="width: ${value}%"></div>
             </div>
             <div class="morale-value">${value}/100</div>
+            <button class="tag-remove-btn">&times;</button>
           `;
 
+          const removeBtn = newTag.querySelector('.tag-remove-btn');
+          removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newTag.remove();
+          });
+
           newTag.addEventListener('click', (e) => {
-            if (e.target === newTag || e.target.classList.contains('morale-bar') || e.target.classList.contains('morale-fill')) {
+            if (e.target === newTag || 
+                e.target.classList.contains('morale-bar') || 
+                e.target.classList.contains('morale-fill') ||
+                e.target.classList.contains('morale-value')) {
               e.stopPropagation();
               currentTokenForMorale = newTag.closest('.token');
               moraleInput.value = value;
@@ -723,7 +774,7 @@
 
     // Sayfa yüklendiğinde müzik sesini ayarla
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById("background-music").volume = 0.5;
+      document.getElementById("background-document").volume = 0.5;
     });
   </script>
 </body>
