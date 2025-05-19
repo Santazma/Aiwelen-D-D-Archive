@@ -204,6 +204,7 @@
       border-radius: 3px;
       cursor: pointer;
       white-space: nowrap;
+      position: relative;
     }
 
     .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
@@ -219,6 +220,28 @@
       gap: 5px;
       padding: 5px;
       width: 100%;
+      position: relative;
+    }
+
+    .morale-close {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 10px;
+      cursor: pointer;
+      color: white;
+      background-color: rgba(0,0,0,0.3);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .morale-close:hover {
+      background-color: rgba(0,0,0,0.5);
     }
 
     .morale-bar {
@@ -558,7 +581,8 @@
         if (e.target.classList.contains('token-tag') || 
             e.target.classList.contains('morale-bar') || 
             e.target.classList.contains('morale-fill') || 
-            e.target.classList.contains('morale-value')) {
+            e.target.classList.contains('morale-value') ||
+            e.target.classList.contains('morale-close')) {
           return;
         }
         
@@ -724,7 +748,15 @@
               <div class="morale-fill" style="width: ${value}%"></div>
             </div>
             <div class="morale-value">${value}/100</div>
+            <div class="morale-close">×</div>
           `;
+
+          // Çarpı butonuna tıklama olayı ekle
+          const closeBtn = newTag.querySelector('.morale-close');
+          closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newTag.remove();
+          });
 
           newTag.addEventListener('click', (e) => {
             if (e.target === newTag || e.target.classList.contains('morale-bar') || e.target.classList.contains('morale-fill')) {
