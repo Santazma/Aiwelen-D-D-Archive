@@ -553,36 +553,43 @@
 
     // Token tıklama ve modal açma
     document.querySelectorAll('.token').forEach(token => {
-      token.addEventListener("click", (e) => {
-        if (e.target.classList.contains('token-tag')) {
-          e.stopPropagation();
+      token.addEventListener("click", function(e) {
+        // Eğer tıklanan element bir token-tag ise işlemi durdur
+        if (e.target.classList.contains('token-tag') || 
+            e.target.classList.contains('morale-bar') || 
+            e.target.classList.contains('morale-fill') || 
+            e.target.classList.contains('morale-value')) {
           return;
         }
         
-        const img = token.dataset.img;
-        const name = token.dataset.name;
-        const quirks = JSON.parse(token.dataset.quirks);
-        const affiliations = JSON.parse(token.dataset.affiliations);
+        try {
+          const img = this.dataset.img;
+          const name = this.dataset.name;
+          const quirks = JSON.parse(this.dataset.quirks);
+          const affiliations = JSON.parse(this.dataset.affiliations);
 
-        document.getElementById("modal-image").src = img;
-        document.getElementById("modal-name").innerText = name;
+          document.getElementById("modal-image").src = img;
+          document.getElementById("modal-name").textContent = name;
 
-        const formatQuirks = (list) => {
-          return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
-        };
+          const formatQuirks = (list) => {
+            return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
+          };
 
-        document.getElementById("modal-positive").innerHTML = formatQuirks(quirks.positive);
-        document.getElementById("modal-negative").innerHTML = formatQuirks(quirks.negative);
-        document.getElementById("modal-affiliations").innerHTML = affiliations.map(a => `<li>${a}</li>`).join("");
+          document.getElementById("modal-positive").innerHTML = formatQuirks(quirks.positive);
+          document.getElementById("modal-negative").innerHTML = formatQuirks(quirks.negative);
+          document.getElementById("modal-affiliations").innerHTML = affiliations.map(a => `<li>${a}</li>`).join("");
 
-        modal.style.display = "flex";
-        disabledOverlay.style.display = "block";
-        document.getElementById("volume-control-wrapper").style.display = "none";
-        backButton.style.display = "none";
+          modal.style.display = "flex";
+          disabledOverlay.style.display = "block";
+          document.getElementById("volume-control-wrapper").style.display = "none";
+          backButton.style.display = "none";
+        } catch (error) {
+          console.error("Token bilgileri yüklenirken hata oluştu:", error);
+        }
       });
 
       token.addEventListener("dragstart", function(e) {
-        draggedToken = token;
+        draggedToken = this;
         e.dataTransfer.setData("text/plain", null);
         document.getElementById("drop-sound").play();
       });
