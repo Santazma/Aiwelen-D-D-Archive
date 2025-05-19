@@ -181,14 +181,6 @@
     .tag[data-tag="Morale"] {
       background-color: #006600;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .tag .slider {
-      width: 80px;
-      margin-top: 3px;
     }
 
     .token-tags {
@@ -197,8 +189,10 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
+      flex-direction: column;
       gap: 4px;
-      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
     }
 
     .token-tag {
@@ -206,13 +200,25 @@
       padding: 2px 5px;
       border-radius: 3px;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
     .token-tag[data-tag="Severely Wounded"] { background-color: #5A0000; color: white; }
     .token-tag[data-tag="Madness"] { background-color: #999900; color: black; }
     .token-tag[data-tag="Dead"] { background-color: #e0e0e0; color: black; }
-    .token-tag[data-tag="Morale"] { background-color: #006600; color: white; }
+    .token-tag[data-tag="Morale"] { 
+      background-color: #006600; 
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .token-tag-slider {
+      width: 80px;
+    }
 
     h2 {
       text-align: center;
@@ -384,10 +390,7 @@
     <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
     <div class="tag" draggable="true" data-tag="Madness">Madness</div>
     <div class="tag" draggable="true" data-tag="Dead">Dead</div>
-    <div class="tag" draggable="true" data-tag="Morale">
-      Morale
-      <input class="slider" type="range" min="0" max="100" value="50">
-    </div>
+    <div class="tag" draggable="true" data-tag="Morale">Morale</div>
   </div>
 
   <div class="section">
@@ -406,7 +409,7 @@
       <div class="token" draggable="true"
         data-name="Erevan Duskwight"
         data-img="the-hamlet-tokenler-resimler/Erevan Duskwight.jpg"
-        data-quirks='{"positive":[{"name":"<b><i><u>Strategist</u></i></b>","desc":"Bu karakter plan kurgulamakta iyidir."},{"name":"<b><i><u>Connections</u></i></b>","desc":"Bu karakterin bağlantıları ve bağlantılı olduğu kişiler güçlüdür."}],"negative":[{"name":"<b><i><u>Egoistical</u></i></b>","desc":"Bu karakter karar alınırken bencilce davranabilir."},{"name":"<b><i><u>Hubris Syndrome</u></i></b>","desc":"Bu karakter bir Narsist’tir ve kendini sayılı kişiler hariç birçok kişiden üstün görür."}]}'
+        data-quirks='{"positive":[{"name":"<b><i><u>Strategist</u></i></b>","desc":"Bu karakter plan kurgulamakta iyidir."},{"name":"<b><i><u>Connections</u></i></b>","desc":"Bu karakterin bağlantıları ve bağlantılı olduğu kişiler güçlüdür."}],"negative":[{"name":"<b><i><u>Egoistical</u></i></b>","desc":"Bu karakter karar alınırken bencilce davranabilir."},{"name":"<b><i><u>Hubris Syndrome</u></i></b>","desc":"Bu karakter bir Narsist'tir ve kendini sayılı kişiler hariç birçok kişiden üstün görür."}]}'
         data-affiliations='["Boss","Mage","Underdark","Goliath","Immortal Nature"]'>
         <img src="the-hamlet-tokenler-resimler/Erevan Duskwight Token.png" alt="Erevan">
         <div class="token-label">Erevan</div>
@@ -456,7 +459,13 @@
     let draggedToken = null;
 
     document.querySelectorAll('.token').forEach(token => {
-      token.addEventListener("click", () => {
+      token.addEventListener("click", (e) => {
+        // Eğer tıklanan element bir token-tag ise modal açma
+        if (e.target.classList.contains('token-tag')) {
+          e.stopPropagation();
+          return;
+        }
+        
         const img = token.dataset.img;
         const name = token.dataset.name;
         const quirks = JSON.parse(token.dataset.quirks);
@@ -465,7 +474,6 @@
         document.getElementById("modal-image").src = img;
         document.getElementById("modal-name").innerText = name;
 
-        // Doğru biçimlendirme
         const formatQuirks = (list) => {
           return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
         };
@@ -523,15 +531,11 @@
     });
 
     let draggedTag = null;
-    let moraleValue = 50;
 
     document.querySelectorAll('.tag').forEach(tag => {
       tag.addEventListener('dragstart', (e) => {
         draggedTag = e.target.cloneNode(true);
-        if (draggedTag.dataset.tag === "Morale") {
-          const slider = draggedTag.querySelector('.slider');
-          moraleValue = slider ? slider.value : 50;
-        }
+        e.dataTransfer.setData("text/plain", draggedTag.dataset.tag);
       });
     });
 
@@ -540,34 +544,46 @@
 
       token.addEventListener('drop', (e) => {
         e.preventDefault();
+        if (!draggedTag) return;
+        
         const tagType = draggedTag.dataset.tag;
         const tagsContainer = token.querySelector('.token-tags');
-
-        // Aynı tag zaten varsa tekrar eklenmesin
-        if ([...tagsContainer.children].some(t => t.dataset.tag === tagType)) return;
+        
+        // Aynı tag zaten varsa ekleme
+        const existingTag = [...tagsContainer.children].find(t => t.dataset.tag === tagType);
+        if (existingTag) return;
 
         const newTag = document.createElement('div');
         newTag.classList.add('token-tag');
         newTag.dataset.tag = tagType;
-        newTag.textContent = tagType;
-
-        // Morale tag'inde slider değeri göster
+        
         if (tagType === 'Morale') {
-          newTag.textContent = `Morale: ${moraleValue}`;
+          newTag.innerHTML = `
+            Morale: 50
+            <input type="range" class="token-tag-slider" min="0" max="100" value="50">
+          `;
+          
+          const slider = newTag.querySelector('.token-tag-slider');
+          slider.addEventListener('input', (e) => {
+            newTag.firstChild.textContent = `Morale: ${e.target.value}`;
+          });
+        } else {
+          newTag.textContent = tagType;
         }
 
-        newTag.addEventListener('click', () => {
+        newTag.addEventListener('click', (e) => {
+          if (e.target !== newTag && e.target.className !== 'token-tag-slider') return;
           newTag.remove();
         });
 
         tagsContainer.appendChild(newTag);
+        draggedTag = null;
       });
+    });
 
-      // Token'e tıklayınca modal açılmasını engellemek için:
-      token.addEventListener('click', (e) => {
-        if (e.target.classList.contains('token-tag')) return;
-        // Modal açma kodu varsa burada olurdu; engelleniyor.
-      });
+    // Sayfa yüklendiğinde müzik sesini ayarla
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById("background-music").volume = 0.5;
     });
   </script>
 </body>
