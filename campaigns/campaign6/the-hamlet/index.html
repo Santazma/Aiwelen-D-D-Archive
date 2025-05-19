@@ -155,6 +155,70 @@
       text-shadow: 1px 1px 2px black;
     }
 
+    .tag-panel {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      background-color: #1a1a1a;
+      padding: 10px;
+      border-top: 2px solid #550000;
+      border-bottom: 2px solid #550000;
+    }
+
+    .tag {
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: grab;
+      user-select: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
+    .tag[data-tag="Severely Wounded"] { background-color: #5A0000; color: white; }
+    .tag[data-tag="Madness"] { background-color: #999900; color: black; }
+    .tag[data-tag="Dead"] { background-color: #e0e0e0; color: black; }
+    .tag[data-tag="Morale"] {
+      background-color: #006600;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tag .slider {
+      width: 80px;
+      margin-top: 3px;
+    }
+
+    .token-tags {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .token-tag {
+      font-size: 12px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
+    .token-tag[data-tag="Severely Wounded"] { background-color: #5A0000; color: white; }
+    .token-tag[data-tag="Madness"] { background-color: #999900; color: black; }
+    .token-tag[data-tag="Dead"] { background-color: #e0e0e0; color: black; }
+    .token-tag[data-tag="Morale"] { background-color: #006600; color: white; }
+
+    h2 {
+      text-align: center;
+      margin: 20px;
+    }
+
     .modal {
       position: fixed;
       top: 0; left: 0;
@@ -315,20 +379,38 @@
 
   <h1>The Hamlet</h1>
 
+  <div class="tag-panel">
+    <div class="tag" draggable="true" data-tag="Wounded">Wounded</div>
+    <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
+    <div class="tag" draggable="true" data-tag="Madness">Madness</div>
+    <div class="tag" draggable="true" data-tag="Dead">Dead</div>
+    <div class="tag" draggable="true" data-tag="Morale">
+      Morale
+      <input class="slider" type="range" min="0" max="100" value="50">
+    </div>
+  </div>
+
   <div class="section">
     <h2>On-Rest</h2>
     <div class="token-area" id="rest-area">
-      <div class="token" draggable="true" data-name="Lurien Veil" data-img="the-hamlet-tokenler-resimler/Lurien Veil.jpg"
+      <div class="token" draggable="true"
+        data-name="Lurien Veil"
+        data-img="the-hamlet-tokenler-resimler/Lurien Veil.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Trauma Immunity</u></i></b>","desc":"Bu karakter tramvatik olaylardan olumsuz etkilenmez, etkilense bile dışarıya yansıtmaz."},{"name":"<b><i><u>Perfect Soldier</u></i></b>","desc":"Bu karakter verilen emirlere uyarken ahlaki moral dilemmaları yaşamaz."}],"negative":[{"name":"<b><i><u>Heteronomy</u></i></b>","desc":"Bu karakterin iradesi çok zayıftır, dış güçler ve idealler tarafından kolayca manipüle edilebilir."},{"name":"<b><i><u>Unpredictable</u></i></b>","desc":"Bu karakterin akıl sağlığı yerinde olmadığı için ne yapacağı öngörülemez."}]}'
         data-affiliations='["Otherworldly","Mage","Underdark","Freak","Unstable"]'>
         <img src="the-hamlet-tokenler-resimler/Lurien Veil Token.png" alt="Lurien">
         <div class="token-label">Lurien</div>
+        <div class="token-tags"></div>
       </div>
-      <div class="token" draggable="true" data-name="Erevan Duskwight" data-img="the-hamlet-tokenler-resimler/Erevan Duskwight.jpg"
+
+      <div class="token" draggable="true"
+        data-name="Erevan Duskwight"
+        data-img="the-hamlet-tokenler-resimler/Erevan Duskwight.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Strategist</u></i></b>","desc":"Bu karakter plan kurgulamakta iyidir."},{"name":"<b><i><u>Connections</u></i></b>","desc":"Bu karakterin bağlantıları ve bağlantılı olduğu kişiler güçlüdür."}],"negative":[{"name":"<b><i><u>Egoistical</u></i></b>","desc":"Bu karakter karar alınırken bencilce davranabilir."},{"name":"<b><i><u>Hubris Syndrome</u></i></b>","desc":"Bu karakter bir Narsist’tir ve kendini sayılı kişiler hariç birçok kişiden üstün görür."}]}'
         data-affiliations='["Boss","Mage","Underdark","Goliath","Immortal Nature"]'>
         <img src="the-hamlet-tokenler-resimler/Erevan Duskwight Token.png" alt="Erevan">
         <div class="token-label">Erevan</div>
+        <div class="token-tags"></div>
       </div>
     </div>
   </div>
@@ -438,6 +520,54 @@
       const volume = parseFloat(this.value);
       document.getElementById("background-music").volume = volume;
       document.getElementById("volume-level").textContent = `${Math.round(volume * 100)}%`;
+    });
+
+    let draggedTag = null;
+    let moraleValue = 50;
+
+    document.querySelectorAll('.tag').forEach(tag => {
+      tag.addEventListener('dragstart', (e) => {
+        draggedTag = e.target.cloneNode(true);
+        if (draggedTag.dataset.tag === "Morale") {
+          const slider = draggedTag.querySelector('.slider');
+          moraleValue = slider ? slider.value : 50;
+        }
+      });
+    });
+
+    document.querySelectorAll('.token').forEach(token => {
+      token.addEventListener('dragover', (e) => e.preventDefault());
+
+      token.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const tagType = draggedTag.dataset.tag;
+        const tagsContainer = token.querySelector('.token-tags');
+
+        // Aynı tag zaten varsa tekrar eklenmesin
+        if ([...tagsContainer.children].some(t => t.dataset.tag === tagType)) return;
+
+        const newTag = document.createElement('div');
+        newTag.classList.add('token-tag');
+        newTag.dataset.tag = tagType;
+        newTag.textContent = tagType;
+
+        // Morale tag'inde slider değeri göster
+        if (tagType === 'Morale') {
+          newTag.textContent = `Morale: ${moraleValue}`;
+        }
+
+        newTag.addEventListener('click', () => {
+          newTag.remove();
+        });
+
+        tagsContainer.appendChild(newTag);
+      });
+
+      // Token'e tıklayınca modal açılmasını engellemek için:
+      token.addEventListener('click', (e) => {
+        if (e.target.classList.contains('token-tag')) return;
+        // Modal açma kodu varsa burada olurdu; engelleniyor.
+      });
     });
   </script>
 </body>
