@@ -565,8 +565,22 @@
         try {
           const img = this.dataset.img;
           const name = this.dataset.name;
-          const quirks = JSON.parse(this.dataset.quirks);
-          const affiliations = JSON.parse(this.dataset.affiliations);
+          
+          // JSON.parse hatalarını yakalamak için try-catch blokları
+          let quirks, affiliations;
+          try {
+            quirks = JSON.parse(this.dataset.quirks);
+          } catch (e) {
+            console.error("Quirks verisi parse edilemedi:", this.dataset.quirks);
+            quirks = {positive: [], negative: []};
+          }
+          
+          try {
+            affiliations = JSON.parse(this.dataset.affiliations);
+          } catch (e) {
+            console.error("Affiliations verisi parse edilemedi:", this.dataset.affiliations);
+            affiliations = [];
+          }
 
           document.getElementById("modal-image").src = img;
           document.getElementById("modal-name").textContent = name;
@@ -575,9 +589,9 @@
             return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
           };
 
-          document.getElementById("modal-positive").innerHTML = formatQuirks(quirks.positive);
-          document.getElementById("modal-negative").innerHTML = formatQuirks(quirks.negative);
-          document.getElementById("modal-affiliations").innerHTML = affiliations.map(a => `<li>${a}</li>`).join("");
+          document.getElementById("modal-positive").innerHTML = quirks.positive ? formatQuirks(quirks.positive) : "";
+          document.getElementById("modal-negative").innerHTML = quirks.negative ? formatQuirks(quirks.negative) : "";
+          document.getElementById("modal-affiliations").innerHTML = affiliations ? affiliations.map(a => `<li>${a}</li>`).join("") : "";
 
           modal.style.display = "flex";
           disabledOverlay.style.display = "block";
@@ -585,6 +599,7 @@
           backButton.style.display = "none";
         } catch (error) {
           console.error("Token bilgileri yüklenirken hata oluştu:", error);
+          alert("Karakter bilgileri yüklenirken bir hata oluştu. Lütfen konsolu kontrol edin.");
         }
       });
 
