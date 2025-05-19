@@ -189,7 +189,7 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      flex-direction: column;
+      flex-direction: column-reverse; /* Yeni eklenenler en altta */
       gap: 4px;
       align-items: center;
       width: 100%;
@@ -201,6 +201,7 @@
       border-radius: 3px;
       cursor: pointer;
       white-space: nowrap;
+      position: relative; /* Slider için pozisyon ayarı */
     }
 
     .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
@@ -214,10 +215,13 @@
       flex-direction: column;
       align-items: center;
       gap: 3px;
+      padding: 5px;
     }
 
     .token-tag-slider {
       width: 80px;
+      margin-top: 3px;
+      pointer-events: auto; /* Slider'ın çalışmasını sağlar */
     }
 
     h2 {
@@ -461,7 +465,7 @@
     document.querySelectorAll('.token').forEach(token => {
       token.addEventListener("click", (e) => {
         // Eğer tıklanan element bir token-tag ise modal açma
-        if (e.target.classList.contains('token-tag')) {
+        if (e.target.classList.contains('token-tag') || e.target.classList.contains('token-tag-slider')) {
           e.stopPropagation();
           return;
         }
@@ -567,16 +571,23 @@
           slider.addEventListener('input', (e) => {
             newTag.firstChild.textContent = `Morale: ${e.target.value}`;
           });
+
+          // Slider'a tıklandığında token'in drag olayını engelle
+          slider.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+          });
         } else {
           newTag.textContent = tagType;
         }
 
         newTag.addEventListener('click', (e) => {
           if (e.target !== newTag && e.target.className !== 'token-tag-slider') return;
+          e.stopPropagation();
           newTag.remove();
         });
 
-        tagsContainer.appendChild(newTag);
+        // Yeni tag'i en alta ekle (öncekilerin üstüne çıkmasın diye)
+        tagsContainer.insertBefore(newTag, tagsContainer.firstChild);
         draggedTag = null;
       });
     });
