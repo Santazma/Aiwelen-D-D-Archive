@@ -328,16 +328,16 @@
     }
 
     .modal-content img {
-      max-width: 100%;
-      width: auto; /* Sabit genişlik yerine otomatik */
-      max-height: 70vh; /* Ekran yüksekliğinin %70'ini geçmez */
-      height: auto; /* Oranları korur */
+      max-width: 90vw; /* Ekran genişliğinin %90'ına kadar büyüyebilir */
+      max-height: 80vh; /* Ekran yüksekliğinin %80'ine kadar büyüyebilir */
+      width: auto;
+      height: auto;
       border-radius: 12px;
       border: 3px solid #ff4444;
       flex-shrink: 0;
-      object-fit: contain; /* Resmi orantılı şekilde sığdırır */
+      object-fit: contain;
+      object-position: center;
     }
-
     .modal-content > div {
       flex: 1;
       min-width: 280px;
