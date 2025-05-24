@@ -318,7 +318,8 @@
       padding: 2rem;
       border-radius: 20px;
       display: flex;
-      flex-flow: row wrap;
+      flex-wrap: nowrap; /* Metinlerin resmin yanında kalması için */
+      align-items: flex-start;
       gap: 2rem;
       max-width: 95vw;
       max-height: 90vh;
@@ -327,11 +328,10 @@
       box-shadow: 0 0 15px #ff4444;
       font-size: 1.8rem;
       color: #ffdddd;
-      align-items: flex-start;
     }
 
     .modal-content img {
-      max-width: 90vw; /* Ekran genişliğinin %90'ına kadar büyüyebilir */
+      max-width: 80vw; /* Ekran genişliğinin %80'ına kadar büyüyebilir */
       max-height: 80vh; /* Ekran yüksekliğinin %80'ine kadar büyüyebilir */
       width: auto;
       height: auto;
