@@ -318,32 +318,62 @@
       padding: 2rem;
       border-radius: 20px;
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 2rem;
-      max-width: 95vw;
+      max-width: 90vw;
       max-height: 90vh;
       overflow-y: auto;
       font-family: 'Cormorant Garamond', serif;
       box-shadow: 0 0 15px #ff4444;
       font-size: 1.8rem;
       color: #ffdddd;
+      width: 90%;
     }
 
     .modal-content img {
-      max-width: 90vw; /* Ekran genişliğinin %90'ına kadar büyüyebilir */
-      max-height: 80vh; /* Ekran yüksekliğinin %80'ine kadar büyüyebilir */
-      width: auto;
-      height: auto;
+      max-width: 100%;
+      max-height: 50vh;
       border-radius: 12px;
       border: 3px solid #ff4444;
-      flex-shrink: 0;
       object-fit: contain;
       object-position: center;
+      margin: 0 auto;
+      display: block;
     }
-    .modal-content > div {
+
+    .modal-text-content {
       flex: 1;
-      min-width: 280px;
+      width: 100%;
+    }
+
+    @media (min-width: 992px) {
+      .modal-content {
+        flex-direction: row;
+        max-width: 80vw;
+      }
+      
+      .modal-content img {
+        max-width: 40%;
+        max-height: 70vh;
+        align-self: flex-start;
+        position: sticky;
+        top: 0;
+      }
+      
+      .modal-text-content {
+        padding-left: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .modal-content {
+        flex-direction: column;
+      }
+      
+      .modal-content img {
+        max-width: 100%;
+        max-height: 40vh;
+      }
     }
 
     .modal-close {
@@ -474,17 +504,6 @@
 
     .validate-btn:hover {
       background-color: #45a049;
-    }
-
-    @media (max-width: 768px) {
-      .modal-content {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .modal-content img {
-        width: 90%;
-      }
     }
   </style>
 </head>
