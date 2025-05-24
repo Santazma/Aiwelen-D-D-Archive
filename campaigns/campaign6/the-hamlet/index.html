@@ -318,8 +318,8 @@
       padding: 2rem;
       border-radius: 20px;
       display: flex;
-      flex-wrap: nowrap; /* Metinlerin resmin yanında kalması için */
-      align-items: flex-start;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 2rem;
       max-width: 95vw;
       max-height: 90vh;
@@ -331,7 +331,7 @@
     }
 
     .modal-content img {
-      max-width: 80vw; /* Ekran genişliğinin %80'ına kadar büyüyebilir */
+      max-width: 90vw; /* Ekran genişliğinin %90'ına kadar büyüyebilir */
       max-height: 80vh; /* Ekran yüksekliğinin %80'ine kadar büyüyebilir */
       width: auto;
       height: auto;
@@ -340,11 +340,10 @@
       flex-shrink: 0;
       object-fit: contain;
       object-position: center;
-      align-self: flex-start;
     }
     .modal-content > div {
       flex: 1;
-      min-width: 50%;
+      min-width: 280px;
       max-width: 100%
     }
 
