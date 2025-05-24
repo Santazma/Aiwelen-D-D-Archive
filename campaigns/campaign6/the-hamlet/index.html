@@ -328,6 +328,7 @@
       box-shadow: 0 0 15px #ff4444;
       font-size: 1.8rem;
       color: #ffdddd;
+      text-align: center;
     }
 
     .modal-content img {
@@ -340,11 +341,31 @@
       flex-shrink: 0;
       object-fit: contain;
       object-position: center;
+      margin: 0 auto;
     }
     .modal-content > div {
       flex: 1;
       min-width: 280px;
       max-width: 100%
+      text-align: center;
+    }
+
+    #modal-name,
+    #modal-positive + h4,
+    #modal-negative + h4,
+    #modal-affiliations + h4 {
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Liste stillerini düzenle (liste noktalarını sola yaslar) */
+    #modal-positive,
+    #modal-negative,
+    #modal-affiliations {
+      text-align: left;
+      margin-left: auto;
+      margin-right: auto;
+      display: inline-block;
     }
 
     .modal-close {
