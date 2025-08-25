@@ -32,12 +32,17 @@
         }
         
         .map-image {
-            width: 200%;
-            height: 200%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: auto;
             background: url('aiwelen-map.jpg') no-repeat center center;
-            background-size: cover;
+            background-size: contain;
             transform-origin: center center;
             transition: transform 0.1s ease;
+            min-width: 100vw;
+            min-height: 100vh;
         }
         
         .waypoint {
@@ -203,7 +208,17 @@
             <select id="terrainDifficulty">
                 <option value="1" selected>Normal Terrain</option>
                 <option value="2">Difficult Terrain (x2)</option>
-                <option value="3">Very Difficult Terrain (x3)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Daily Travel Time</label>
+            <select id="travelTime">
+                <option value="2">2 Hours</option>
+                <option value="4">4 Hours</option>
+                <option value="6">6 Hours</option>
+                <option value="8" selected>8 Hours</option>
+                <option value="10">10 Hours</option>
+                <option value="12">12 Hours</option>
             </select>
         </div>
     </div>
@@ -228,6 +243,7 @@
                 this.detailsContent = document.getElementById('detailsContent');
                 this.travelSpeedSelect = document.getElementById('travelSpeed');
                 this.terrainDifficultySelect = document.getElementById('terrainDifficulty');
+                this.travelTimeSelect = document.getElementById('travelTime');
                 
                 this.waypoints = [];
                 this.waypointCounter = 0;
@@ -238,6 +254,15 @@
                 
                 this.initEventListeners();
                 this.updateDetails();
+                this.centerMap();
+            }
+            
+            centerMap() {
+                // Haritayı ekranın ortasında konumlandır
+                const containerRect = this.mapContainer.getBoundingClientRect();
+                this.panOffset.x = 0;
+                this.panOffset.y = 0;
+                this.updateMapTransform();
             }
             
             initEventListeners() {
@@ -288,21 +313,24 @@
                     this.updateMapTransform();
                 });
                 
-                // İlk başta zoom seviyesini uygula
-                this.updateMapTransform();
-                
                 // Ayar değişiklikleri
                 this.travelSpeedSelect.addEventListener('change', () => this.updateDetails());
                 this.terrainDifficultySelect.addEventListener('change', () => this.updateDetails());
+                this.travelTimeSelect.addEventListener('change', () => this.updateDetails());
             }
             
             updateMapTransform() {
-                this.mapImage.style.transform = `translate(${this.panOffset.x}px, ${this.panOffset.y}px) scale(${this.zoom})`;
+                this.mapImage.style.transform = `translate(${this.panOffset.x - 50}%, ${this.panOffset.y - 50}%) scale(${this.zoom})`;
                 
                 // Tüm waypoint'lerin pozisyonlarını güncelle
                 this.waypoints.forEach(waypoint => {
-                    const screenX = waypoint.realX * this.zoom + this.panOffset.x;
-                    const screenY = waypoint.realY * this.zoom + this.panOffset.y;
+                    const containerRect = this.mapContainer.getBoundingClientRect();
+                    const centerX = containerRect.width / 2;
+                    const centerY = containerRect.height / 2;
+                    
+                    const screenX = centerX + (waypoint.mapX * this.zoom) + (this.panOffset.x);
+                    const screenY = centerY + (waypoint.mapY * this.zoom) + (this.panOffset.y);
+                    
                     waypoint.element.style.left = screenX + 'px';
                     waypoint.element.style.top = screenY + 'px';
                 });
@@ -312,26 +340,29 @@
             
             addWaypoint(e) {
                 const rect = this.mapContainer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
                 
-                // Zoom ve pan dönüşümlerini hesaba katarak gerçek harita koordinatlarını bul
-                const realX = (x - this.panOffset.x) / this.zoom;
-                const realY = (y - this.panOffset.y) / this.zoom;
+                // Harita koordinatlarına çevir
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const mapX = (clickX - centerX - this.panOffset.x) / this.zoom;
+                const mapY = (clickY - centerY - this.panOffset.y) / this.zoom;
                 
                 const waypoint = {
                     id: ++this.waypointCounter,
-                    realX: realX,
-                    realY: realY,
+                    mapX: mapX,
+                    mapY: mapY,
                     element: null
                 };
                 
                 // Waypoint elementi oluştur
                 const waypointEl = document.createElement('div');
                 waypointEl.className = 'waypoint';
-                waypointEl.textContent = this.waypoints.length + 1; // Mevcut waypoint sayısına göre numara
-                waypointEl.style.left = x + 'px';
-                waypointEl.style.top = y + 'px';
+                waypointEl.textContent = this.waypoints.length + 1;
+                waypointEl.style.left = clickX + 'px';
+                waypointEl.style.top = clickY + 'px';
                 
                 // Waypoint'i silme işlevi
                 waypointEl.addEventListener('click', (e) => {
@@ -373,11 +404,14 @@
                     const start = this.waypoints[i];
                     const end = this.waypoints[i + 1];
                     
-                    // Ekran koordinatlarını hesapla
-                    const startX = start.realX * this.zoom + this.panOffset.x;
-                    const startY = start.realY * this.zoom + this.panOffset.y;
-                    const endX = end.realX * this.zoom + this.panOffset.x;
-                    const endY = end.realY * this.zoom + this.panOffset.y;
+                    const containerRect = this.mapContainer.getBoundingClientRect();
+                    const centerX = containerRect.width / 2;
+                    const centerY = containerRect.height / 2;
+                    
+                    const startX = centerX + (start.mapX * this.zoom) + this.panOffset.x;
+                    const startY = centerY + (start.mapY * this.zoom) + this.panOffset.y;
+                    const endX = centerX + (end.mapX * this.zoom) + this.panOffset.x;
+                    const endY = centerY + (end.mapY * this.zoom) + this.panOffset.y;
                     
                     const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
                     const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
@@ -398,12 +432,12 @@
                 for (let i = 0; i < this.waypoints.length - 1; i++) {
                     const start = this.waypoints[i];
                     const end = this.waypoints[i + 1];
-                    const distance = Math.sqrt(Math.pow(end.realX - start.realX, 2) + Math.pow(end.realY - start.realY, 2));
+                    const distance = Math.sqrt(Math.pow(end.mapX - start.mapX, 2) + Math.pow(end.mapY - start.mapY, 2));
                     totalDistance += distance;
                 }
                 
-                // Piksel mesafesini mil'e çevir (harita boyutuna göre ayarlayın)
-                const milesPerPixel = 0.5; // Bu değeri kendi haritanıza göre ayarlayın
+                // Piksel mesafesini mil'e çevir
+                const milesPerPixel = 0.5;
                 return totalDistance * milesPerPixel;
             }
             
@@ -416,16 +450,23 @@
                     const totalMiles = this.calculateTotalDistance();
                     const travelSpeed = parseInt(this.travelSpeedSelect.value);
                     const terrainMultiplier = parseInt(this.terrainDifficultySelect.value);
+                    const dailyHours = parseInt(this.travelTimeSelect.value);
                     const adjustedMiles = totalMiles * terrainMultiplier;
-                    const totalHours = (adjustedMiles / travelSpeed) * 8; // 8 saat günlük yürüyüş
-                    const travelDays = Math.ceil(adjustedMiles / travelSpeed);
-                    const extraHours = Math.round(totalHours % 8);
                     
-                    let timeText = `${travelDays - 1} day${travelDays - 1 !== 1 ? 's' : ''}`;
-                    if (extraHours > 0) {
-                        timeText += ` and ${extraHours} hour${extraHours !== 1 ? 's' : ''}`;
-                    }
-                    if (travelDays === 1) {
+                    // Günlük kat edilen mesafe
+                    const dailyMiles = (travelSpeed / 12) * dailyHours; // 12 saat = tam hız, orantılı hesaplama
+                    const totalHours = (adjustedMiles / dailyMiles) * dailyHours;
+                    
+                    const fullDays = Math.floor(totalHours / dailyHours);
+                    const extraHours = Math.round(totalHours % dailyHours);
+                    
+                    let timeText = '';
+                    if (fullDays > 0) {
+                        timeText = `${fullDays} day${fullDays !== 1 ? 's' : ''}`;
+                        if (extraHours > 0) {
+                            timeText += ` and ${extraHours} hour${extraHours !== 1 ? 's' : ''}`;
+                        }
+                    } else {
                         timeText = `${extraHours} hour${extraHours !== 1 ? 's' : ''}`;
                     }
                     
@@ -439,6 +480,7 @@
                         <div>
                             <strong>Waypoints:</strong> ${this.waypoints.length}<br>
                             <strong>Travel Speed:</strong> ${travelSpeed} miles/day<br>
+                            <strong>Daily Hours:</strong> ${dailyHours} hours/day<br>
                             <strong>Terrain:</strong> ${terrainMultiplier}x difficulty
                         </div>
                         <button class="clear-btn" onclick="mapApp.clearAll()">Clear All Waypoints</button>
