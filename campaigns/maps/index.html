@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aiwelen Map - D&D Haritası</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .map-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            cursor: grab;
+        }
+        
+        .map-container:active {
+            cursor: grabbing;
+        }
+        
+        .map-image {
+            width: 200%;
+            height: 200%;
+            background: url('aiwelen-map.jpg') no-repeat center center;
+            background-size: cover;
+            transform-origin: center center;
+            transition: transform 0.1s ease;
+        }
+        
+        .waypoint {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #ff4444;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+        }
+        
+        .route-line {
+            position: absolute;
+            height: 3px;
+            background: #ff4444;
+            z-index: 5;
+            transform-origin: left center;
+        }
+        
+        .controls-left {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+            z-index: 100;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .control-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        select {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .zoom-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .details-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+            z-index: 100;
+        }
+        
+        .details-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ff4444;
+        }
+        
+        .details-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .distance-info {
+            background: rgba(255, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff4444;
+        }
+        
+        .clear-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .clear-btn:hover {
+            background: #cc3333;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container" id="mapContainer">
+        <div class="map-image" id="mapImage"></div>
+    </div>
+    
+    <div class="controls-left">
+        <div class="control-group">
+            <label class="control-label">Travel Speed</label>
+            <select id="travelSpeed">
+                <option value="30">Fast (30 mile/day)</option>
+                <option value="24" selected>Normal (24 mile/day)</option>
+                <option value="18">Slow (18 mile/day)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Terrain Difficulty</label>
+            <select id="terrainDifficulty">
+                <option value="1" selected>Normal Terrain</option>
+                <option value="2">Difficult Terrain (x2)</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn">+</button>
+        <button class="zoom-btn" id="zoomOut">-</button>
+    </div>
+    
+    <div class="details-panel">
+        <div class="details-title">Route Details</div>
+        <div class="details-content" id="detailsContent">
+            Click on the map to start planning your route...
+        </div>
+    </div>
+
+    <script>
+        class MapApp {
+            constructor() {
+                this.mapContainer = document.getElementById('mapContainer');
+                this.mapImage = document.getElementById('mapImage');
+                this.detailsContent = document.getElementById('detailsContent');
+                this.travelSpeedSelect = document.getElementById('travelSpeed');
+                this.terrainDifficultySelect = document.getElementById('terrainDifficulty');
+                
+                this.waypoints = [];
+                this.waypointCounter = 0;
+                this.zoom = 1;
+                this.isDragging = false;
+                this.lastPanPoint = { x: 0, y: 0 };
+                this.panOffset = { x: 0, y: 0 };
+                
+                this.initEventListeners();
+                this.updateDetails();
+            }
+            
+            initEventListeners() {
+                // Harita tıklama
+                this.mapContainer.addEventListener('click', (e) => {
+                    if (!this.isDragging) {
+                        this.addWaypoint(e);
+                    }
+                });
+                
+                // Pan (sürükleme) işlemleri
+                this.mapContainer.addEventListener('mousedown', (e) => {
+                    this.isDragging = false;
+                    this.lastPanPoint = { x: e.clientX, y: e.clientY };
+                });
+                
+                this.mapContainer.addEventListener('mousemove', (e) => {
+                    if (e.buttons === 1) {
+                        const deltaX = e.clientX - this.lastPanPoint.x;
+                        const deltaY = e.clientY - this.lastPanPoint.y;
+                        
+                        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+                            this.isDragging = true;
+                            this.panOffset.x += deltaX;
+                            this.panOffset.y += deltaY;
+                            this.updateMapTransform();
+                            this.lastPanPoint = { x: e.clientX, y: e.clientY };
+                        }
+                    }
+                });
+                
+                // Zoom kontrolleri
+                document.getElementById('zoomIn').addEventListener('click', () => {
+                    this.zoom = Math.min(this.zoom + 0.25, 3);
+                    this.updateMapTransform();
+                });
+                
+                document.getElementById('zoomOut').addEventListener('click', () => {
+                    this.zoom = Math.max(this.zoom - 0.25, 0.5);
+                    this.updateMapTransform();
+                });
+                
+                // Mouse wheel zoom
+                this.mapContainer.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -0.25 : 0.25;
+                    this.zoom = Math.max(0.5, Math.min(3, this.zoom + delta));
+                    this.updateMapTransform();
+                });
+                
+                // Ayar değişiklikleri
+                this.travelSpeedSelect.addEventListener('change', () => this.updateDetails());
+                this.terrainDifficultySelect.addEventListener('change', () => this.updateDetails());
+            }
+            
+            updateMapTransform() {
+                this.mapImage.style.transform = `translate(${this.panOffset.x}px, ${this.panOffset.y}px) scale(${this.zoom})`;
+            }
+            
+            addWaypoint(e) {
+                const rect = this.mapContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const waypoint = {
+                    id: ++this.waypointCounter,
+                    x: x,
+                    y: y,
+                    element: null
+                };
+                
+                // Waypoint elementi oluştur
+                const waypointEl = document.createElement('div');
+                waypointEl.className = 'waypoint';
+                waypointEl.textContent = waypoint.id;
+                waypointEl.style.left = x + 'px';
+                waypointEl.style.top = y + 'px';
+                
+                // Waypoint'i silme işlevi
+                waypointEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.removeWaypoint(waypoint.id);
+                });
+                
+                waypoint.element = waypointEl;
+                this.mapContainer.appendChild(waypointEl);
+                this.waypoints.push(waypoint);
+                
+                this.drawRoutes();
+                this.updateDetails();
+            }
+            
+            removeWaypoint(id) {
+                const index = this.waypoints.findIndex(w => w.id === id);
+                if (index !== -1) {
+                    this.waypoints[index].element.remove();
+                    this.waypoints.splice(index, 1);
+                    
+                    // Waypoint numaralarını yeniden düzenle
+                    this.waypoints.forEach((waypoint, i) => {
+                        waypoint.element.textContent = i + 1;
+                    });
+                    
+                    this.drawRoutes();
+                    this.updateDetails();
+                }
+            }
+            
+            drawRoutes() {
+                // Önceki route çizgilerini temizle
+                const oldLines = this.mapContainer.querySelectorAll('.route-line');
+                oldLines.forEach(line => line.remove());
+                
+                // Yeni çizgileri çiz
+                for (let i = 0; i < this.waypoints.length - 1; i++) {
+                    const start = this.waypoints[i];
+                    const end = this.waypoints[i + 1];
+                    
+                    const distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+                    const angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
+                    
+                    const line = document.createElement('div');
+                    line.className = 'route-line';
+                    line.style.left = start.x + 'px';
+                    line.style.top = start.y + 'px';
+                    line.style.width = distance + 'px';
+                    line.style.transform = `rotate(${angle}deg)`;
+                    
+                    this.mapContainer.appendChild(line);
+                }
+            }
+            
+            calculateTotalDistance() {
+                let totalDistance = 0;
+                for (let i = 0; i < this.waypoints.length - 1; i++) {
+                    const start = this.waypoints[i];
+                    const end = this.waypoints[i + 1];
+                    const distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+                    totalDistance += distance;
+                }
+                
+                // Piksel mesafesini mil'e çevir (harita boyutuna göre ayarlayın)
+                const milesPerPixel = 0.5; // Bu değeri kendi haritanıza göre ayarlayın
+                return totalDistance * milesPerPixel;
+            }
+            
+            updateDetails() {
+                if (this.waypoints.length === 0) {
+                    this.detailsContent.innerHTML = 'Click on the map to start planning your route...';
+                } else if (this.waypoints.length === 1) {
+                    this.detailsContent.innerHTML = 'Add the second point of the route...';
+                } else {
+                    const totalMiles = this.calculateTotalDistance();
+                    const travelSpeed = parseInt(this.travelSpeedSelect.value);
+                    const terrainMultiplier = parseInt(this.terrainDifficultySelect.value);
+                    const adjustedMiles = totalMiles * terrainMultiplier;
+                    const travelDays = Math.ceil(adjustedMiles / travelSpeed);
+                    
+                    this.detailsContent.innerHTML = `
+                        <div class="distance-info">
+                            <strong>Route Summary:</strong><br>
+                            Distance: ${totalMiles.toFixed(1)} miles<br>
+                            Adjusted Distance: ${adjustedMiles.toFixed(1)} miles<br>
+                            Travel Time: ${travelDays} day${travelDays > 1 ? 's' : ''}
+                        </div>
+                        <div>
+                            <strong>Waypoints:</strong> ${this.waypoints.length}<br>
+                            <strong>Travel Speed:</strong> ${travelSpeed} miles/day<br>
+                            <strong>Terrain:</strong> ${terrainMultiplier}x difficulty
+                        </div>
+                        <button class="clear-btn" onclick="mapApp.clearAll()">Clear All Waypoints</button>
+                    `;
+                }
+            }
+            
+            clearAll() {
+                this.waypoints.forEach(waypoint => waypoint.element.remove());
+                const lines = this.mapContainer.querySelectorAll('.route-line');
+                lines.forEach(line => line.remove());
+                
+                this.waypoints = [];
+                this.waypointCounter = 0;
+                this.updateDetails();
+            }
+        }
+        
+        // Uygulamayı başlat
+        const mapApp = new MapApp();
+    </script>
+</body>
+</html>
