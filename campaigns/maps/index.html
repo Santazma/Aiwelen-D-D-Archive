@@ -247,10 +247,15 @@
                 
                 this.waypoints = [];
                 this.waypointCounter = 0;
-                this.zoom = 0.25;
+                this.zoom = 0.5;
                 this.isDragging = false;
                 this.lastPanPoint = { x: 0, y: 0 };
                 this.panOffset = { x: 0, y: 0 };
+                this.dragStartOffset = { x: 0, y: 0 };
+                
+                // Harita boyutları (piksel cinsinden - bu değerleri gerçek harita boyutunuza göre ayarlayın)
+                this.mapWidth = 2000;
+                this.mapHeight = 1500;
                 
                 this.initEventListeners();
                 this.updateDetails();
@@ -259,7 +264,6 @@
             
             centerMap() {
                 // Haritayı ekranın ortasında konumlandır
-                const containerRect = this.mapContainer.getBoundingClientRect();
                 this.panOffset.x = 0;
                 this.panOffset.y = 0;
                 this.updateMapTransform();
@@ -277,6 +281,7 @@
                 this.mapContainer.addEventListener('mousedown', (e) => {
                     this.isDragging = false;
                     this.lastPanPoint = { x: e.clientX, y: e.clientY };
+                    this.dragStartOffset = { x: this.panOffset.x, y: this.panOffset.y };
                 });
                 
                 this.mapContainer.addEventListener('mousemove', (e) => {
@@ -286,12 +291,19 @@
                         
                         if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
                             this.isDragging = true;
-                            this.panOffset.x += deltaX;
-                            this.panOffset.y += deltaY;
+                            // Daha yavaş kaydırma için delta değerlerini azaltıyoruz
+                            this.panOffset.x = this.dragStartOffset.x + (deltaX * 0.5);
+                            this.panOffset.y = this.dragStartOffset.y + (deltaY * 0.5);
                             this.updateMapTransform();
-                            this.lastPanPoint = { x: e.clientX, y: e.clientY };
                         }
                     }
+                });
+                
+                this.mapContainer.addEventListener('mouseup', () => {
+                    // Drag işlemi bittiğinde isDragging'i biraz gecikmeyle false yap
+                    setTimeout(() => {
+                        this.isDragging = false;
+                    }, 100);
                 });
                 
                 // Zoom kontrolleri
@@ -320,22 +332,28 @@
             }
             
             updateMapTransform() {
+                // Harita transformasyonu
                 this.mapImage.style.transform = `translate(${this.panOffset.x - 50}%, ${this.panOffset.y - 50}%) scale(${this.zoom})`;
                 
                 // Tüm waypoint'lerin pozisyonlarını güncelle
                 this.waypoints.forEach(waypoint => {
-                    const containerRect = this.mapContainer.getBoundingClientRect();
-                    const centerX = containerRect.width / 2;
-                    const centerY = containerRect.height / 2;
-                    
-                    const screenX = centerX + (waypoint.mapX * this.zoom) + (this.panOffset.x);
-                    const screenY = centerY + (waypoint.mapY * this.zoom) + (this.panOffset.y);
-                    
-                    waypoint.element.style.left = screenX + 'px';
-                    waypoint.element.style.top = screenY + 'px';
+                    this.updateWaypointPosition(waypoint);
                 });
                 
                 this.drawRoutes();
+            }
+            
+            updateWaypointPosition(waypoint) {
+                const containerRect = this.mapContainer.getBoundingClientRect();
+                const centerX = containerRect.width / 2;
+                const centerY = containerRect.height / 2;
+                
+                // Waypoint'in harita koordinatlarından ekran koordinatlarına dönüşüm
+                const screenX = centerX + (waypoint.mapX * this.zoom) + this.panOffset.x;
+                const screenY = centerY + (waypoint.mapY * this.zoom) + this.panOffset.y;
+                
+                waypoint.element.style.left = screenX + 'px';
+                waypoint.element.style.top = screenY + 'px';
             }
             
             addWaypoint(e) {
@@ -343,10 +361,11 @@
                 const clickX = e.clientX - rect.left;
                 const clickY = e.clientY - rect.top;
                 
-                // Harita koordinatlarına çevir
+                // Ekran koordinatlarından harita koordinatlarına çevir
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
+                // Normalize edilmiş harita koordinatları (-1 ile 1 arasında)
                 const mapX = (clickX - centerX - this.panOffset.x) / this.zoom;
                 const mapY = (clickY - centerY - this.panOffset.y) / this.zoom;
                 
@@ -361,8 +380,6 @@
                 const waypointEl = document.createElement('div');
                 waypointEl.className = 'waypoint';
                 waypointEl.textContent = this.waypoints.length + 1;
-                waypointEl.style.left = clickX + 'px';
-                waypointEl.style.top = clickY + 'px';
                 
                 // Waypoint'i silme işlevi
                 waypointEl.addEventListener('click', (e) => {
@@ -373,6 +390,9 @@
                 waypoint.element = waypointEl;
                 this.mapContainer.appendChild(waypointEl);
                 this.waypoints.push(waypoint);
+                
+                // Pozisyonu güncelle
+                this.updateWaypointPosition(waypoint);
                 
                 this.drawRoutes();
                 this.updateDetails();
