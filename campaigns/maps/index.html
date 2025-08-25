@@ -33,16 +33,12 @@
         
         .map-image {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: auto;
-            height: auto;
+            width: 1920px;
+            height: 1080px;
             background: url('aiwelen-map.jpg') no-repeat center center;
             background-size: contain;
-            transform-origin: center center;
-            transition: transform 0.1s ease;
-            min-width: 100vw;
-            min-height: 100vh;
+            transform-origin: 0 0;
+            transition: none;
         }
         
         .waypoint {
@@ -61,6 +57,7 @@
             cursor: pointer;
             z-index: 10;
             transform: translate(-50%, -50%);
+            pointer-events: auto;
         }
         
         .route-line {
@@ -69,6 +66,7 @@
             background: #ff4444;
             z-index: 5;
             transform-origin: left center;
+            pointer-events: none;
         }
         
         .controls-left {
@@ -245,129 +243,183 @@
                 this.terrainDifficultySelect = document.getElementById('terrainDifficulty');
                 this.travelTimeSelect = document.getElementById('travelTime');
                 
+                // Map properties
+                this.mapWidth = 1920;
+                this.mapHeight = 1080;
+                this.minZoom = 0.3;
+                this.maxZoom = 3;
+                this.zoom = 0.8;
+                this.panX = 0;
+                this.panY = 0;
+                
+                // Waypoints
                 this.waypoints = [];
                 this.waypointCounter = 0;
-                this.zoom = 0.5;
+                
+                // Dragging
                 this.isDragging = false;
-                this.lastPanPoint = { x: 0, y: 0 };
-                this.panOffset = { x: 0, y: 0 };
-                this.dragStartOffset = { x: 0, y: 0 };
+                this.dragStartX = 0;
+                this.dragStartY = 0;
+                this.lastPanX = 0;
+                this.lastPanY = 0;
                 
-                // Harita boyutları (piksel cinsinden - bu değerleri gerçek harita boyutunuza göre ayarlayın)
-                this.mapWidth = 2000;
-                this.mapHeight = 1500;
-                
-                this.initEventListeners();
-                this.updateDetails();
+                this.init();
+            }
+            
+            init() {
                 this.centerMap();
+                this.initEventListeners();
+                this.updateMapTransform();
+                this.updateDetails();
             }
             
             centerMap() {
+                const containerWidth = this.mapContainer.clientWidth;
+                const containerHeight = this.mapContainer.clientHeight;
+                
                 // Haritayı ekranın ortasında konumlandır
-                this.panOffset.x = 0;
-                this.panOffset.y = 0;
-                this.updateMapTransform();
+                this.panX = (containerWidth - this.mapWidth * this.zoom) / 2;
+                this.panY = (containerHeight - this.mapHeight * this.zoom) / 2;
             }
             
             initEventListeners() {
-                // Harita tıklama
+                // Map click for waypoints
                 this.mapContainer.addEventListener('click', (e) => {
                     if (!this.isDragging) {
                         this.addWaypoint(e);
                     }
                 });
                 
-                // Pan (sürükleme) işlemleri
+                // Mouse down - start dragging
                 this.mapContainer.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('waypoint')) return;
+                    
                     this.isDragging = false;
-                    this.lastPanPoint = { x: e.clientX, y: e.clientY };
-                    this.dragStartOffset = { x: this.panOffset.x, y: this.panOffset.y };
+                    this.dragStartX = e.clientX;
+                    this.dragStartY = e.clientY;
+                    this.lastPanX = this.panX;
+                    this.lastPanY = this.panY;
+                    
+                    e.preventDefault();
                 });
                 
+                // Mouse move - handle dragging
                 this.mapContainer.addEventListener('mousemove', (e) => {
                     if (e.buttons === 1) {
-                        const deltaX = e.clientX - this.lastPanPoint.x;
-                        const deltaY = e.clientY - this.lastPanPoint.y;
+                        const deltaX = e.clientX - this.dragStartX;
+                        const deltaY = e.clientY - this.dragStartY;
                         
-                        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+                        // Reduced sensitivity for slower panning
+                        const sensitivity = 0.8;
+                        
+                        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
                             this.isDragging = true;
-                            // Daha yavaş kaydırma için delta değerlerini azaltıyoruz
-                            this.panOffset.x = this.dragStartOffset.x + (deltaX * 0.5);
-                            this.panOffset.y = this.dragStartOffset.y + (deltaY * 0.5);
+                            this.panX = this.lastPanX + (deltaX * sensitivity);
+                            this.panY = this.lastPanY + (deltaY * sensitivity);
+                            
+                            this.constrainPan();
                             this.updateMapTransform();
                         }
                     }
                 });
                 
-                this.mapContainer.addEventListener('mouseup', () => {
-                    // Drag işlemi bittiğinde isDragging'i biraz gecikmeyle false yap
-                    setTimeout(() => {
-                        this.isDragging = false;
-                    }, 100);
+                // Mouse up - stop dragging
+                window.addEventListener('mouseup', () => {
+                    if (this.isDragging) {
+                        setTimeout(() => {
+                            this.isDragging = false;
+                        }, 50);
+                    }
                 });
                 
-                // Zoom kontrolleri
+                // Zoom controls
                 document.getElementById('zoomIn').addEventListener('click', () => {
-                    this.zoom = Math.min(this.zoom + 0.25, 3);
-                    this.updateMapTransform();
+                    this.zoomAtCenter(0.2);
                 });
                 
                 document.getElementById('zoomOut').addEventListener('click', () => {
-                    this.zoom = Math.max(this.zoom - 0.25, 0.1);
-                    this.updateMapTransform();
+                    this.zoomAtCenter(-0.2);
                 });
                 
                 // Mouse wheel zoom
                 this.mapContainer.addEventListener('wheel', (e) => {
                     e.preventDefault();
-                    const delta = e.deltaY > 0 ? -0.25 : 0.25;
-                    this.zoom = Math.max(0.1, Math.min(3, this.zoom + delta));
-                    this.updateMapTransform();
+                    
+                    const rect = this.mapContainer.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                    this.zoomAtPoint(mouseX, mouseY, delta);
                 });
                 
-                // Ayar değişiklikleri
+                // Settings change listeners
                 this.travelSpeedSelect.addEventListener('change', () => this.updateDetails());
                 this.terrainDifficultySelect.addEventListener('change', () => this.updateDetails());
                 this.travelTimeSelect.addEventListener('change', () => this.updateDetails());
             }
             
-            updateMapTransform() {
-                // Harita transformasyonu
-                this.mapImage.style.transform = `translate(${this.panOffset.x - 50}%, ${this.panOffset.y - 50}%) scale(${this.zoom})`;
-                
-                // Tüm waypoint'lerin pozisyonlarını güncelle
-                this.waypoints.forEach(waypoint => {
-                    this.updateWaypointPosition(waypoint);
-                });
-                
-                this.drawRoutes();
+            zoomAtCenter(zoomDelta) {
+                const centerX = this.mapContainer.clientWidth / 2;
+                const centerY = this.mapContainer.clientHeight / 2;
+                this.zoomAtPoint(centerX, centerY, zoomDelta);
             }
             
-            updateWaypointPosition(waypoint) {
-                const containerRect = this.mapContainer.getBoundingClientRect();
-                const centerX = containerRect.width / 2;
-                const centerY = containerRect.height / 2;
+            zoomAtPoint(screenX, screenY, zoomDelta) {
+                const oldZoom = this.zoom;
+                const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom + zoomDelta));
                 
-                // Waypoint'in harita koordinatlarından ekran koordinatlarına dönüşüm
-                const screenX = centerX + (waypoint.mapX * this.zoom) + this.panOffset.x;
-                const screenY = centerY + (waypoint.mapY * this.zoom) + this.panOffset.y;
+                if (newZoom !== oldZoom) {
+                    // Calculate the point on the map that should stay fixed
+                    const mapX = (screenX - this.panX) / oldZoom;
+                    const mapY = (screenY - this.panY) / oldZoom;
+                    
+                    // Update zoom
+                    this.zoom = newZoom;
+                    
+                    // Adjust pan to keep the point fixed
+                    this.panX = screenX - mapX * this.zoom;
+                    this.panY = screenY - mapY * this.zoom;
+                    
+                    this.constrainPan();
+                    this.updateMapTransform();
+                }
+            }
+            
+            constrainPan() {
+                const containerWidth = this.mapContainer.clientWidth;
+                const containerHeight = this.mapContainer.clientHeight;
+                const mapDisplayWidth = this.mapWidth * this.zoom;
+                const mapDisplayHeight = this.mapHeight * this.zoom;
                 
-                waypoint.element.style.left = screenX + 'px';
-                waypoint.element.style.top = screenY + 'px';
+                // Allow some overscroll but not too much
+                const maxOverscroll = 100;
+                
+                this.panX = Math.max(-mapDisplayWidth - maxOverscroll, 
+                           Math.min(containerWidth + maxOverscroll, this.panX));
+                this.panY = Math.max(-mapDisplayHeight - maxOverscroll, 
+                           Math.min(containerHeight + maxOverscroll, this.panY));
+            }
+            
+            updateMapTransform() {
+                this.mapImage.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+                this.updateWaypointPositions();
+                this.drawRoutes();
             }
             
             addWaypoint(e) {
                 const rect = this.mapContainer.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
+                const screenX = e.clientX - rect.left;
+                const screenY = e.clientY - rect.top;
                 
-                // Ekran koordinatlarından harita koordinatlarına çevir
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
+                // Convert screen coordinates to map coordinates
+                const mapX = (screenX - this.panX) / this.zoom;
+                const mapY = (screenY - this.panY) / this.zoom;
                 
-                // Normalize edilmiş harita koordinatları (-1 ile 1 arasında)
-                const mapX = (clickX - centerX - this.panOffset.x) / this.zoom;
-                const mapY = (clickY - centerY - this.panOffset.y) / this.zoom;
+                // Check if coordinates are within map bounds
+                if (mapX < 0 || mapX > this.mapWidth || mapY < 0 || mapY > this.mapHeight) {
+                    return;
+                }
                 
                 const waypoint = {
                     id: ++this.waypointCounter,
@@ -376,12 +428,12 @@
                     element: null
                 };
                 
-                // Waypoint elementi oluştur
+                // Create waypoint element
                 const waypointEl = document.createElement('div');
                 waypointEl.className = 'waypoint';
                 waypointEl.textContent = this.waypoints.length + 1;
                 
-                // Waypoint'i silme işlevi
+                // Add click handler for removal
                 waypointEl.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.removeWaypoint(waypoint.id);
@@ -391,9 +443,7 @@
                 this.mapContainer.appendChild(waypointEl);
                 this.waypoints.push(waypoint);
                 
-                // Pozisyonu güncelle
-                this.updateWaypointPosition(waypoint);
-                
+                this.updateWaypointPositions();
                 this.drawRoutes();
                 this.updateDetails();
             }
@@ -404,7 +454,7 @@
                     this.waypoints[index].element.remove();
                     this.waypoints.splice(index, 1);
                     
-                    // Waypoint numaralarını yeniden düzenle
+                    // Renumber waypoints
                     this.waypoints.forEach((waypoint, i) => {
                         waypoint.element.textContent = i + 1;
                     });
@@ -414,24 +464,30 @@
                 }
             }
             
+            updateWaypointPositions() {
+                this.waypoints.forEach(waypoint => {
+                    const screenX = waypoint.mapX * this.zoom + this.panX;
+                    const screenY = waypoint.mapY * this.zoom + this.panY;
+                    
+                    waypoint.element.style.left = screenX + 'px';
+                    waypoint.element.style.top = screenY + 'px';
+                });
+            }
+            
             drawRoutes() {
-                // Önceki route çizgilerini temizle
+                // Remove old route lines
                 const oldLines = this.mapContainer.querySelectorAll('.route-line');
                 oldLines.forEach(line => line.remove());
                 
-                // Yeni çizgileri çiz
+                // Draw new route lines
                 for (let i = 0; i < this.waypoints.length - 1; i++) {
                     const start = this.waypoints[i];
                     const end = this.waypoints[i + 1];
                     
-                    const containerRect = this.mapContainer.getBoundingClientRect();
-                    const centerX = containerRect.width / 2;
-                    const centerY = containerRect.height / 2;
-                    
-                    const startX = centerX + (start.mapX * this.zoom) + this.panOffset.x;
-                    const startY = centerY + (start.mapY * this.zoom) + this.panOffset.y;
-                    const endX = centerX + (end.mapX * this.zoom) + this.panOffset.x;
-                    const endY = centerY + (end.mapY * this.zoom) + this.panOffset.y;
+                    const startX = start.mapX * this.zoom + this.panX;
+                    const startY = start.mapY * this.zoom + this.panY;
+                    const endX = end.mapX * this.zoom + this.panX;
+                    const endY = end.mapY * this.zoom + this.panY;
                     
                     const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
                     const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
@@ -456,8 +512,8 @@
                     totalDistance += distance;
                 }
                 
-                // Piksel mesafesini mil'e çevir
-                const milesPerPixel = 0.5;
+                // Convert pixels to miles (adjusted for your map scale)
+                const milesPerPixel = 0.1;
                 return totalDistance * milesPerPixel;
             }
             
@@ -465,7 +521,7 @@
                 if (this.waypoints.length === 0) {
                     this.detailsContent.innerHTML = 'Click on the map to start planning your route...';
                 } else if (this.waypoints.length === 1) {
-                    this.detailsContent.innerHTML = 'Add the second point of the route...';
+                    this.detailsContent.innerHTML = 'Add a second point to create a route...';
                 } else {
                     const totalMiles = this.calculateTotalDistance();
                     const travelSpeed = parseInt(this.travelSpeedSelect.value);
@@ -473,12 +529,12 @@
                     const dailyHours = parseInt(this.travelTimeSelect.value);
                     const adjustedMiles = totalMiles * terrainMultiplier;
                     
-                    // Günlük kat edilen mesafe
-                    const dailyMiles = (travelSpeed / 12) * dailyHours; // 12 saat = tam hız, orantılı hesaplama
-                    const totalHours = (adjustedMiles / dailyMiles) * dailyHours;
+                    // Calculate daily distance based on hours traveled
+                    const dailyMiles = (travelSpeed / 8) * dailyHours; // 8 hours = standard travel day
+                    const totalDays = adjustedMiles / dailyMiles;
                     
-                    const fullDays = Math.floor(totalHours / dailyHours);
-                    const extraHours = Math.round(totalHours % dailyHours);
+                    const fullDays = Math.floor(totalDays);
+                    const extraHours = Math.round((totalDays - fullDays) * dailyHours);
                     
                     let timeText = '';
                     if (fullDays > 0) {
@@ -519,7 +575,7 @@
             }
         }
         
-        // Uygulamayı başlat
+        // Initialize the map application
         const mapApp = new MapApp();
     </script>
 </body>
