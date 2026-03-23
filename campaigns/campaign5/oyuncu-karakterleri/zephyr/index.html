@@ -1,1 +1,428 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Druuthtikmorash Zephyr Kilbarum</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
 
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .character-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      cursor: pointer;
+    }
+
+    .character-image:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .image-title, .image-title-alt {
+      text-align: center;
+      margin-bottom: 20px;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      text-align: justify;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .alternative-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .alternative-images div {
+      text-align: center;
+      max-width: 150px;
+      flex: 0 1 150px;
+    }
+
+    .alternative-images img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      border: 3px solid #fff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      opacity: 0.8;
+    }
+
+    .info-box {
+      position: absolute;
+      top: 100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      width: 240px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .info-box h2 {
+      font-size: 1.2rem;
+      color: #ffdf6e;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .info-box strong {
+      color: #ffd700;
+    }
+
+    .left-box {
+      left: 20px;
+    }
+
+    .right-box {
+      right: 20px;
+    }
+
+    .character-link {
+      color: #ffffff;
+      text-decoration: underline;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #87cefa;
+      font-size: 1.2rem;
+      text-decoration: none;
+      margin-top: 20px;
+      border: 1px solid #87cefa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      border-radius: 15px;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #f44336;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #volume-control-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
+
+    #volume-control-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    #volume-level {
+      color: #ffd700;
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+
+    .fixed-back-button {
+      position: fixed;
+      top: 45px;
+      right: 185px;
+      z-index: 999;
+      color: #87cefa;
+      font-size: 1.1rem;
+      text-decoration: none;
+      border: 1px solid #87cefa;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.6);
+      transition: background-color 0.3s;
+    }
+
+    .fixed-back-button:hover {
+      background-color: rgba(135, 206, 250, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Zephyr, the Steel Saint.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="volume-control-wrapper">
+    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
+    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  </div>
+
+  <div class="container">
+    <h1>Zephyr</h1>
+    <img src="Druuthtikmorash Zephyr Kilbarum.jpg" alt="Druuthtikmorash Zephyr Kilbarum" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Çelik Azizi Zephyr</div>
+
+    <div class="bio">
+      <p><strong>Barkın BAYRAM</strong> tarafından canlandırılmış ve oynanmıştır. Barkın'ın beşinci karakteridir.<strong>Druuthtikmorash Kilbarum</strong>, şana ve onura büyük önem veren Kilbarum Klanı'nın en güçlü iki savaşçısı olan <strong>Ulthanthul</strong> ve <strong>Liarrhor</strong>'un oğlu olarak dünyaya geldi. Klanın yeni döneminin sembolü olarak ilan edilen bu erkek bebeğe lider <strong>Krearexan</strong> tarafından Druuthtikmorash ismi verildi; bu isim onun güçlü, onurlu ve klana yakışır bir savaşçı olacağını temsil ediyordu. Annesi Liarrhor, onu sevgiyle büyütürken fazlasını hiç göstermedi. Babası Ulthanthul ise 3 yaşına kadar oğluyla pek ilgilenmedi; çünkü dragonborn geleneklerine göre erkek çocuk 3 yaşını doldurunca babanın görevi başlayacaktı.</p>
+
+      <p>Druuthtikmorash 3 yaşına bastığında babası onu alıp yetiştirmeye başladı. <strong>12 yaşına kadar</strong> Ulthanthul'un yanında yetişen Druuthtikmorash, ona Yüce Ceddror'a yaraşır bir savaşçının nasıl olması gerektiğini öğrendi. Babası, klanları hakkında, Tanrı Ejder <strong>Ceddror</strong> hakkında ve kendi soyları hakkında hikayeler anlattı; gururun, onurun, vahşetin ve hiddetin ne olduğunu ve önemini aktardı. Hiddetin kontrol altında tutulduğunda ne kadar keskin bir silaha dönüşebileceğinden de sık sık bahsetti. Bu süreçte <strong>Nilthias</strong> adında çok yakın bir arkadaşı oldu; Ulthanthul'un olmadığı zamanlarda Nilthias ve onun babasıyla birlikte avlanmaya gider, öğrenme süreci asla aksamazdı.</p>
+
+      <p><strong>12 yaşına</strong> geldiğinde klan lideri Krearexan tüm çocukları gruplara ayırarak ilk av görevlerini verdi. Druuthtikmorash, Nilthias ve bir başka çocukla birlikte bir dağ keçisi avlamaya gitti. Tam keçiye saldıracaklarken Druuthtikmorash onları durdurdu; sessizce ilerleyerek keçinin boynuna saldırdı ve onu hızlıca öldürdü. Nilthias şaşkınlıkla "Ona neden sessizce saldırdın?" diye sorduğunda Druuthtikmorash "O benim avımdı çünkü. Böylesi daha etkili oldu." diye yanıtladı. Nilthias "Ama mertçe değildi." diye çıkışınca sadece "Olsun." dedi. Bu olay klan liderine bildirildi ve Krearexan memnuniyetsiz bir şekilde onu affedip Ulthanthul ile özel bir konuşma gerçekleştirdi; ardından babası ona çok daha sert davranmaya başladı. Druuthtikmorash ise bu tepkiyi bir türlü anlamlandıramıyordu. Karşısındaki düşmana neden adil davranmalıydı ki? Aklındaki bu sorularla boğuşmaya devam etti...</p>
+
+      <p><strong>15 yaşında</strong>, klanın büyük çoğunluğunun yokluğunda Druuthtikmorash aralarında Nilthias'ın da bulunduğu 4 kişiyle birlikte avlanmaya gitti. Başarılı bir avdan dönerlerken pusuya düşürüldüler. Haydut görünümlü 7 kişilik bir grupla kanlı bir savaş verdiler. Savaşın sonunda 3 arkadaşı yerde yatıyordu, Nilthias ise tek ayakta kalan kişiydi. Bir haydut Nilthias'ı yere serdiğinde son darbeyi indirecekken Druuthtikmorash dizlerinden son gücüyle fırlayarak haydudun ense köküne kısa kılıcını sapladı; kılıç boğazından çıktı. Nilthias gözleri pörtlemişti ve sadece "Ölmeyi yeğlerdim..." diyerek bayıldı. Hayal kırıklığına uğrayan Druuthtikmorash kendini yere attı. Hayatta olmadıkları sürece gerisinin ne önemi vardı ki?</p>
+
+      <p>Klana döndüklerinde lider Krearexan, babası Ulthanthul, annesi Liarrhor ve diğer dragonbornlar başlarında bekliyordu. Druuthtikmorash olanları eksiksiz anlattı; gerçeği gizlemeyi seçmedi, çünkü kendi gururuna göre yalan söylemek buna izin vermedi. Krearexan'ın gözlerindeki hayal kırıklığını ve öfkeyi görebiliyordu. Klan lideri sert bir konuşmanın ardından Yüce Babası Ceddror'un adıyla onu <strong>Kilbarum Klanı'ndan sürdüğünü</strong> ilan etti. Druuthtikmorash hiçbir şey söylemeden, kimsenin gözüne bakmadan ayağa kalktı ve eşyasız bir şekilde kapıya yürüdü. Dışarı çıkarken çok kısık bir sesle tek bir cümle mırıldandı: <em>"Yüce baba Ceddror, beni affet..."</em></p>
+
+      <p>Ne yapacağını bilemeyen Druuthtikmorash kafası karışık, sadece ilerliyordu. Kendinden utanç duyuyordu ama pişman değildi; hayal kırıklığı yaşıyordu ama onlara kırgın da değildi. Dağlardan iyice uzaklaşarak <strong>Frosty Passage</strong>'ın kuzeydoğusundaki köye, ardından Frosty Passage'a vardı. Şehirde dikkat çektiğini fark eden Druuthtikmorash küçük bir han bulup avladığı hayvanların kürkleriyle ödeme yaptı. Ama uyku bir türlü gelmiyordu; gözlerini kapattığında ölen arkadaşlarının yüzleri, babasının küçümseyici bakışları, klan liderinin son sözleri ve Nilthias'ın bayılmadan önceki son cümlesi... Günler geçtikçe kabusa dönen uyku, daralıyormuş gibi hissettiren oda duvarları. Bir karar vermeliydi: ya dibi boylayacaktı, ya da harekete geçecekti. <strong>Harekete geçmeyi seçti.</strong> İçinden <em>"Yüce baba Ceddror, affına sığınıyorum ama karşıma ufak bir umut kırıntısı çıkar."</em> diyerek şehirden ayrıldı.</p>
+
+      <p><strong>Wolf's Inn'e</strong> ulaştığında Druuthtikmorash 16 yaşındaydı. Cebinde neredeyse hiç para yoktu. Şehirde bir demircinin önünden geçerken durdu; içeri girdi, demirciyle göz göze geldiler. Demirci sessizliği bozarak "Burada çalışmak mı istiyorsun?" diye sordu. Şaşıran Druuthtikmorash'a demirci "Uzun bir yoldan gelmiş, duruşundan ödün vermeyen ama gözlerindeki umut ışığı sönmüş bir dragonborn görüyorum karşımda." dedi ve ona bir kısa kılıç uzatarak "Zamanı gelince ödersin." dedi. Druuthtikmorash kılıcı alıp parasını ödeyeceğine söz verdi. Tanımadığı biri ona bu iyiliği yapmış ve karşılığını bekliyordu. Bu, onun için yeterli bir nedendir; <em>hâlâ kendisinden bir şeyler bekleyen birileri vardı.</em> Bir tavernada iş sorunca, bir seyyar tüccarın bıraktığı çantaları getirme işini üstlendi. İşin sonunda parasını alıp güzel bir yemek yedi. O gece tavernada insanların eğlendiğini görerek önemli bir şeyin farkına vardı: işlerle oyalanmak zihnini meşgul ediyor, kafasındaki sesleri baskılıyordu. <strong>Pas tutmamayı tercih etti.</strong></p>
+
+      <p>Wolf's Inn'de tavernadan iş almaya başladı: anahtarını unutan birinin kapısını açtı, kaybolan eşyaları bulup geri getirdi, eşinden şüphelenen bir adamın karısını takip etti, yaşlı bir pazarcı kadının erzaklarını çalan kişiyi bulup yüzünü tanınmayacak hale getirdi. Bir gece ıssız bir sokakta önünü kesen ve kendini tavernada daha önce gördüğü bir adam, ona çıkışarak kılıç çekti. Druuthtikmorash "Buna gerek yok." dedi; ama adam ısrarcı olunca silahını çıkardı, adamın ilk saldırısını bekledi ve dengesi bozuk sarhoş adamın kolunun altından geçerek ense köküne kılıcını sapladı. Adam hareketsiz yere düştü. Arkasından bir ses duydu: <em>"Vay anam vay! O koca cüssenle bu kadar estetik bir şekilde adamın yanından estin geçtin, aynı bir Zephyr gibi."</em> Döndüğünde <strong>Hassan</strong> adında biriyle karşılaştı. Hassan, onun potansiyelini görmüştü; kendisine dövüş bilgisi öğreteceğini, karşılığında Druuthtikmorash'ın ona yardım edeceğini ve parayı bölüşeceklerini teklif etti. Biraz düşünen Druuthtikmorash elini uzattı. <em>"Ben varım."</em> Hassan sırıtarak "O zaman anlaştık, peki gerçekten adın ne?" diye sordu. Druuthtikmorash sırıtarak "Zephyr." dedi.</p>
+
+      <p>İkili uzun süre birlikte çalıştı. Hassan ona gerçekten bildiği şeyleri gösteriyor ve öğretiyordu. Karşılığında Zephyr hem yaklaşmaya çalışanlara gözdağı veriyor hem de işlerinde yardımcı olup parasını kazanıyordu. Etrafta zamanla <strong>Zephyr</strong> ismiyle tanındı Druuthtikmorash; bu sayede eski hayatını, klanını biraz daha kolay unutabileceğini düşünmüştü. Bir gün antrenman sırasında bazı hareketleri beceremeyince öfkesiyle etrafı dağıtmaya başladı. Yaklaşık bir saat süren öfke krizinin ardından Hassan'a "Asla senin kadar iyi olamayacağım." dedi. Hassan bir süre sessiz kaldıktan sonra yanıtladı: <em>"Benim gibi olmana gerek yok ki. Kendin ol, Zephyr ol. Özüne dönerek de bunu yapabilirsin, ölümcüllüğünü ve öfkeni birleştir, vücudun buna çok müsait."</em> Bu cevap sorusunu yanıtlamıyordu ama bir yandan da hoşuna gitmişti. Bu konuşmanın ardından Zephyr kendi içinde özüne inmeye başladı.</p>
+
+      <p>Zamanla Hassan ve Zephyr birbirlerini <strong>kardeş gibi</strong> görmeye başladılar; ikisi de birbirlerine geçmişlerini hiç anlatmamışlardı, çünkü sormamışlardı. İkisinin de umrunda değildi. Bir gece uyurken Zephyr garip bir rüya gördü: hiçliğin ortasında uzaktaki bir silüetten gelen bir ses duydu ve tek bir cümleyi anlayabildi: <em>"Biz seni koruyacağız."</em> Sabah Hassan bunu "Cadının teki lanetledi herhalde." diyerek güldü. Belirli bir süre sonra bu olay unutulup gitti.</p>
+
+      <p><strong>21 yaşında</strong>, kazandıkları parayı tavernada yedikleri bir gecenin sabahında Hassan'ın yatağının üzerinde bir not buldu. Not şunu söylüyordu: <em>"Sana bir açıklama yapmadığım için üzgünüm Zephyr. Sevdiğim insanların başları belada olabilir ve bu bok seni bulaştırmak istemeyeceğim bir bok. Beni anlayışla karşılamanı beklemiyorum, sadece bana karşı kırgın olma. Yine de bir daha karşılaşacağımızı biliyorum, o zaman sana her şeyi anlatacağım. Üzgünüm. -Hassan"</em> Sinirli bir şekilde duvara yumruk attı Zephyr. Arkadaşı olarak gördüğü tek kişi onu terk etmişti. Sinirliydi, endişeliydi, arkadaşına yardım edemeyecek kadar yetersiz olduğunu düşünüp kendini suçluyordu. Gece yarısına kadar şehri arayıp etrafı soruşturdu ama Hassan'ı gören kimse yoktu. O gece yeniden aynı silüeti rüyasında gördü; bu sefer ses şunu söylüyordu: <em>"Kim olduğunu hatırla."</em> Uyandığında kafası çok karışıktı. Artık hem rüyasında gördüklerini çözmeliydi, hem de Hassan'ın nereye gittiğini bulmalıydı. Kendine birkaç gün tanıdı; ardından tüm bu soruların yanıtını arayacaktı.</p>
+    </div>
+
+    <div class="alternative-images">
+      <div>
+        <img src="Hassan.jpg" alt="Zephyr'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan</div>
+      </div>
+      <div>
+        <img src="Oris.jpg" alt="Zephyr'in Hafızasında Unuttuğu Kader Arkadaşı Oris" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Hafızasında Unuttuğu Kader Arkadaşı Oris</div>
+      </div>
+      <div>
+        <img src="Hassan.jpg" alt="Zephyr'in Kardeş Gibi Gördüğü Hassan" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Kardeş Gibi Gördüğü Hassan</div>
+      </div>
+      <div>
+        <img src="Aziz Paul.jpg" alt="Zephyr'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul</div>
+      </div>
+      <div>
+        <img src="Veyrion Thal 2nd Phase.jpg" alt="Zephyr'in Düşmanı ve Bir Void Cleric Olmuş Eski Hocası Veyrion Thal" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Düşmanı ve Bir Void Cleric Olmuş Eski Hocası Veyrion Thal</div>
+      </div>
+      <div>
+        <img src="Koralith.jpg" alt="Zephyr'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith</div>
+      </div>
+      <div>
+        <img src="Tempest's Gale Essence.jpg" alt="Oris'in Zephyr'e Verdiği Emanet Olan Tempest's Gale Essence" onclick="openModal(this)">
+        <div class="image-title-alt">Oris'in Zephyr'e Verdiği Emanet Olan Tempest's Gale Essence</div>
+      </div>
+      <div>
+        <img src="Vicious Rapier.jpeg" alt="Zephyr'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier</div>
+      </div>
+      <div>
+        <img src="Zephyr Goggles of Night.jpeg" alt="Zephyr Goggles of Night Takıyorken" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr Goggles of Night Takıyorken</div>
+      </div>
+      <div>
+        <img src="Blood Heart.jpeg" alt="Zephyr Öldükten Sonra Neryssa'nın Yaptığı Anlaşma Sonucunda Göğüsünde Beliren Katalizör" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr Öldükten Sonra Neryssa'nın Yaptığı Anlaşma Sonucunda Göğüsünde Beliren Katalizör</div>
+      </div>
+      <div>
+        <img src="Judgment’s Ember.jpg" alt="Zephyr'in Öldürdüğü Scourge Olmuş Bir Engizisyoncu'dan Aldığı Kılıcı Olan Judgment’s Ember" onclick="openModal(this)">
+        <div class="image-title-alt">Zephyr'in Öldürdüğü Scourge Olmuş Bir Engizisyoncu'dan Aldığı Kılıcı Olan Judgment’s Ember</div>
+      </div>
+    </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </div>
+
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Çelik Azizi, Kaçak Ejderdoğan, Hassan'ın Ortağı, Son Kıvılcım'ın Üyesi, Ataların Şampiyonu, Kilbarum'un Sürgünü, Anılarını Kaybeden Hırsız<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    Son Kıvılcım'ın bünyesinde barınmış bir kanun kaçağıdır. Grubu ile birlikte Ophelia adındaki bir gölge yaratığı, Koralith adındaki bir Titanı, Veyrion Thal adındaki bir Void Cleric'ini, Gideon Harrow adındaki Eldritch Av sonucunda bir Scourge'ye dönüşmüş eski bir Engizisyoncu'yu ve Mortarossa adındaki Aberrant Eldritch bir Deity'i öldürmeyi başarmışlardır. Grup ile birlikte ayrıca Engizisyon'a karşı bir savaş içerisindedir.<br><br>
+    <a href="zephyr.pdf" target="_blank" class="character-link">⚔️ Zephyr Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Steel Saint Rogue / Ancestral Guardian Barbarian<br>
+    <strong>Level:</strong> 11 Level (Yaşıyor)<br>
+    <strong>Irk:</strong> Dragonborn (Blue)<br>
+    <strong>Yaş:</strong> 21<br>
+    <strong>Cinsiyet:</strong> Erkek
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="img01" />
+  </div>
+
+  <script>
+    function openModal(img) {
+      document.getElementById("myModal").style.display = "block";
+      document.getElementById("img01").src = img.src;
+      document.getElementById("volume-control-wrapper").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+      document.getElementById("volume-control-wrapper").style.display = "block";
+    }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      var volume = parseFloat(this.value);
+      document.getElementById('background-music').volume = volume;
+      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
+    });
+
+    window.onbeforeunload = function () {
+      document.getElementById('background-music').pause();
+    };
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.id = "imageModal";
+
+    const modalImg = document.createElement("img");
+    modalImg.className = "modal-content";
+    modalImg.id = "modalImage";
+
+    const span = document.createElement("span");
+    span.className = "close";
+    span.innerHTML = "&times;";
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+    };
+
+    modal.appendChild(span);
+    modal.appendChild(modalImg);
+    document.body.appendChild(modal);
+
+    span.onclick = function () {
+      modal.style.display = "none";
+      document.getElementById("back-button").classList.remove("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "block";
+    };
+
+    function openModal(element) {
+      modal.style.display = "block";
+      modalImg.src = element.src;
+      document.getElementById("back-button").classList.add("hidden");
+      document.getElementById("volume-control-wrapper").style.display = "none";
+    }
+  </script>
+
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+
+</body>
+</html>
