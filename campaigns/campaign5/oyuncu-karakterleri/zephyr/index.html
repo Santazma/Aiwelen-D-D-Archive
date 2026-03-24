@@ -6,16 +6,17 @@
   <title>Druuthtikmorash Zephyr Kilbarum</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --blue-glow: #87cefa;
       --gold: #ffd700;
       --gold-dim: #ffdf6e;
       --dark-glass: rgba(0, 0, 0, 0.62);
+      --ice: #a8d8ea;
+      --ice-glow: rgba(168,216,234,0.55);
     }
 
-    /* ── ANIMATIONS ── */
     @keyframes pageFadeIn {
       from { opacity: 0; transform: translateY(18px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -25,22 +26,34 @@
       to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 3px; }
     }
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+      from { opacity: 0; } to { opacity: 1; }
     }
     @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 8px rgba(135,206,250,0.35), 0 0 20px rgba(135,206,250,0.15); }
-      50%        { box-shadow: 0 0 16px rgba(135,206,250,0.7), 0 0 40px rgba(135,206,250,0.3); }
+      0%,100% { box-shadow: 0 0 8px rgba(135,206,250,.35), 0 0 20px rgba(135,206,250,.15); }
+      50%      { box-shadow: 0 0 16px rgba(135,206,250,.7), 0 0 40px rgba(135,206,250,.3); }
+    }
+    @keyframes icePulse {
+      0%,100% {
+        box-shadow: 0 0 0 4px rgba(10,30,60,.7),
+                    0 0 0 6px rgba(168,216,234,.2),
+                    0 6px 18px rgba(0,0,0,.6),
+                    inset 0 0 10px rgba(168,216,234,.06);
+      }
+      50% {
+        box-shadow: 0 0 0 4px rgba(10,30,60,.75),
+                    0 0 0 6px rgba(168,216,234,.45),
+                    0 0 22px rgba(168,216,234,.3),
+                    0 6px 18px rgba(0,0,0,.6),
+                    inset 0 0 16px rgba(168,216,234,.1);
+      }
     }
 
     body {
       font-family: 'Lora', Georgia, serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: url('https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      background-color: rgba(0, 0, 0, 0.4);
     }
 
     .container {
@@ -50,333 +63,442 @@
       padding: 20px;
       text-align: center;
       z-index: 1;
-      animation: pageFadeIn 1s ease 0.2s both;
+      animation: pageFadeIn 1s ease .2s both;
     }
-
     .container::before {
       content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.42);
+      position: absolute; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.42);
       z-index: -1;
     }
 
     h1 {
       font-family: 'Cinzel', serif;
-      font-size: 4rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      text-shadow: 0 0 30px rgba(135,206,250,0.6), 3px 3px 12px rgba(0,0,0,0.9);
+      font-size: 4rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
       margin-bottom: 20px;
-      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) 0.1s both;
+      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
     }
 
     .character-image {
-      width: 200px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+      width: 200px; height: 300px;
+      object-fit: cover; border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.5);
       margin-bottom: 10px;
-      transition: transform 0.5s ease, opacity 0.5s ease;
+      transition: transform .5s ease, opacity .5s ease;
       cursor: pointer;
-      animation: pageFadeIn 1s ease 0.5s both;
+      animation: pageFadeIn 1s ease .5s both;
     }
-    .character-image:hover { transform: scale(1.5); opacity: 0.8; }
+    .character-image:hover { transform: scale(1.5); opacity: .8; }
 
-    .image-title, .image-title-alt {
-      text-align: center;
-      margin-bottom: 20px;
-      /* Paragraf fontu (Lora) ile aynı, italik değil ve kalın yapıldı */
+    /* ── Main image title ── */
+    .image-title {
+      text-align: center; margin-bottom: 20px;
       font-family: 'Lora', Georgia, serif;
-      font-style: normal;
-      font-size: 1.15rem;
-      font-weight: 700;
-      text-shadow: 0 0 12px rgba(0,0,0,1), 0 0 4px rgba(135,206,250,0.4);
-      padding: 5px;
+      font-style: italic; font-size: 1.25rem; font-weight: 700;
+      text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
+    }
+
+    /* ── Gallery caption: Lora Bold italic, matches body font ── */
+    .image-title-alt {
+      text-align: center; margin-top: 8px; margin-bottom: 4px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic; font-size: 0.88rem; font-weight: 700;
+      color: #dff0ff;
+      text-shadow: 0 0 8px rgba(0,0,0,.9);
+      line-height: 1.35; padding: 2px;
     }
 
     .bio {
-      font-size: 1.1rem;
-      max-width: 800px;
+      font-size: 1.1rem; max-width: 800px;
       margin: 0 auto 30px auto;
-      line-height: 1.75;
-      text-align: justify;
+      line-height: 1.75; text-align: justify;
       background: var(--dark-glass);
-      padding: 24px 28px;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.6);
-      border: 1px solid rgba(135,206,250,0.12);
-      animation: pageFadeIn 1s ease 0.7s both;
+      padding: 24px 28px; border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.6);
+      border: 1px solid rgba(135,206,250,.12);
+      animation: pageFadeIn 1s ease .7s both;
     }
 
+    /* ── Gallery with winter / ice frames ── */
     .alternative-images {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 24px;
       margin-bottom: 40px;
-      animation: pageFadeIn 1s ease 0.9s both;
+      animation: pageFadeIn 1s ease .9s both;
     }
-    .alternative-images div { 
-      text-align: center; 
-      max-width: 150px; 
-      flex: 0 1 150px;
+    .alternative-images > div {
       position: relative;
+      text-align: center; max-width: 164px; flex: 0 1 164px;
     }
-    
-    /* Kış Temalı Şatafatlı Çerçeve Efekti */
+    /* tiny snowflake corner decorations */
+    .alternative-images > div::before,
+    .alternative-images > div::after {
+      content: '❄';
+      position: absolute; top: -4px;
+      font-size: .65rem; color: rgba(168,216,234,.7);
+      pointer-events: none; line-height: 1;
+    }
+    .alternative-images > div::before { left: 4px; }
+    .alternative-images > div::after  { right: 4px; }
+
     .alternative-images img {
       width: 150px; height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 3px solid #d4f1f9; /* Buz mavisi / beyaz sınır */
-      box-shadow: 
-        0 0 8px #87cefa, /* Dış mavi aydınlatma */
-        0 0 15px rgba(135, 206, 250, 0.4), /* Puslu kış efekti */
-        inset 0 0 10px rgba(255, 255, 255, 0.8); /* İç buz efekti */
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      object-fit: cover; border-radius: 10px;
+      /* layered ice border */
+      border: 2px solid var(--ice);
+      outline: 1px solid rgba(168,216,234,.28);
+      outline-offset: 3px;
+      filter: brightness(.92) saturate(.95);
       cursor: pointer;
-      position: relative;
-      z-index: 1;
+      animation: icePulse 4s ease-in-out infinite;
+      transition: transform .35s ease, filter .35s ease, box-shadow .35s ease;
     }
-    
-    .alternative-images img:hover { 
-      transform: scale(1.5); 
-      border-color: #ffffff;
-      box-shadow: 
-        0 0 15px #ffffff,
-        0 0 30px #87cefa,
-        inset 0 0 15px #ffffff;
-      z-index: 10; /* Büyüdüğünde diğer elementlerin üstünde kalması için */
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      filter: brightness(1.08) saturate(1.1);
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,.8),
+        0 0 0 7px rgba(168,216,234,.6),
+        0 0 32px rgba(168,216,234,.45),
+        0 10px 30px rgba(0,0,0,.7),
+        inset 0 0 20px rgba(168,216,234,.15);
     }
 
-    /* ── INFO BOXES ── */
+    /* ── INFO BOXES — z-index 10 so fixed buttons (z:999) always sit on top ── */
     .info-box {
       position: fixed;
+      top: 100px;          /* JS will adjust this on scroll */
+      z-index: 10;         /* below fixed-back-button & music-widget (999) */
       background-color: var(--dark-glass);
-      padding: 15px;
-      border-radius: 10px;
-      width: 220px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      border: 1px solid rgba(135,206,250,0.18);
-      animation: pageFadeIn 1s ease 0.6s both;
-      transition: top 0.15s ease;
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
     }
     .info-box h2 {
       font-family: 'Cinzel', serif;
-      font-size: 1.1rem;
-      color: var(--gold-dim);
-      margin-top: 0;
-      margin-bottom: 10px;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
     }
     .info-box strong { color: var(--gold); }
     .left-box  { left: 20px; }
     .right-box { right: 20px; }
 
-    /* ── CHARACTER SHEET LINK ── */
+    /* ── Character sheet link ── */
     .character-link {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 6px 14px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--gold);
-      text-decoration: none;
-      border: 1px solid rgba(255,215,0,0.45);
-      border-radius: 6px;
-      background: rgba(255,215,0,0.07);
-      transition: background 0.25s, box-shadow 0.25s, transform 0.15s;
+      display: inline-block; margin-top: 8px;
+      padding: 6px 14px; font-size: .88rem; font-weight: 600;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(255,215,0,.45); border-radius: 6px;
+      background: rgba(255,215,0,.07);
+      transition: background .25s, box-shadow .25s, transform .15s;
     }
     .character-link:hover {
-      background: rgba(255,215,0,0.18);
-      box-shadow: 0 0 14px rgba(255,215,0,0.5);
+      background: rgba(255,215,0,.18);
+      box-shadow: 0 0 14px rgba(255,215,0,.5);
       transform: translateY(-1px);
     }
-    .character-link:active { transform: scale(0.96); }
+    .character-link:active { transform: scale(.96); }
 
-    /* ── BACK LINK (bottom) ── */
+    /* ── Bottom nav buttons ── */
     .back-link {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 0.6rem 1.4rem;
-      font-family: 'Cinzel', serif;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-decoration: none;
-      color: #fff;
+      display: inline-block; margin-top: 20px;
+      padding: .6rem 1.4rem;
+      font-family: 'Cinzel', serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: 1px;
+      text-decoration: none; color: #fff;
       border-radius: 8px;
-      border: 1px solid rgba(135,206,250,0.5);
-      background: linear-gradient(135deg, rgba(30,80,120,0.75) 0%, rgba(10,30,60,0.85) 100%);
-      box-shadow: 0 0 10px rgba(135,206,250,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
-      transition: transform 0.18s, box-shadow 0.25s, background 0.25s;
+      border: 1px solid rgba(135,206,250,.5);
+      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
+      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .18s, box-shadow .25s, background .25s;
       animation: glowPulse 3s ease-in-out infinite;
     }
     .back-link:hover {
-      background: linear-gradient(135deg, rgba(50,120,180,0.85) 0%, rgba(20,60,110,0.9) 100%);
-      box-shadow: 0 0 22px rgba(135,206,250,0.65), inset 0 1px 0 rgba(255,255,255,0.12);
+      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
+      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
       transform: translateY(-2px);
     }
-    .back-link:active { transform: scale(0.96) translateY(0); }
+    .back-link:active { transform: scale(.96) translateY(0); }
 
-    /* ── FIXED BACK BUTTON (top-LEFT, away from music widget) ── */
+    /* ── Fixed top-LEFT back button — z:999 ── */
     .fixed-back-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 999;
-      padding: 0.45rem 1rem;
-      font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-      color: #fff;
+      position: fixed; top: 20px; left: 20px; z-index: 999;
+      padding: .45rem 1rem;
+      font-family: 'Cinzel', serif; font-size: .9rem;
+      font-weight: 700; letter-spacing: .5px;
+      text-decoration: none; color: #fff;
       border-radius: 8px;
-      border: 1px solid rgba(135,206,250,0.45);
-      background: linear-gradient(135deg, rgba(20,60,100,0.82) 0%, rgba(8,24,50,0.9) 100%);
-      box-shadow: 0 0 8px rgba(135,206,250,0.2);
-      transition: transform 0.18s, box-shadow 0.25s, background 0.25s;
+      border: 1px solid rgba(135,206,250,.45);
+      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      transition: transform .18s, box-shadow .25s, background .25s;
       animation: glowPulse 3s ease-in-out infinite;
     }
     .fixed-back-button:hover {
-      background: linear-gradient(135deg, rgba(50,120,180,0.88) 0%, rgba(20,60,110,0.94) 100%);
-      box-shadow: 0 0 20px rgba(135,206,250,0.6);
+      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
+      box-shadow: 0 0 20px rgba(135,206,250,.6);
       transform: translateY(-2px);
     }
-    .fixed-back-button:active { transform: scale(0.95); }
+    .fixed-back-button:active { transform: scale(.95); }
 
-    /* ── MUSIC WIDGET (collapsible) ── */
+    /* ── Music widget — z:999, top-right ── */
     #music-widget {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
+      position: fixed; top: 20px; right: 20px; z-index: 999;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
     }
-
     #music-toggle-btn {
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      display: flex; align-items: center; gap: 7px;
       padding: 7px 14px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #fff;
-      border: 1px solid rgba(135,206,250,0.45);
-      border-radius: 8px;
-      background: linear-gradient(135deg, rgba(20,60,100,0.88) 0%, rgba(8,24,50,0.95) 100%);
-      cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-      box-shadow: 0 0 8px rgba(135,206,250,0.2);
+      font-family: 'Cinzel', serif; font-size: .8rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
+      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
+      cursor: pointer; white-space: nowrap;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
       animation: glowPulse 3s ease-in-out infinite;
-      white-space: nowrap;
     }
     #music-toggle-btn:hover {
-      background: linear-gradient(135deg, rgba(50,120,180,0.92) 0%, rgba(18,55,110,0.98) 100%);
-      box-shadow: 0 0 18px rgba(135,206,250,0.55);
+      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
+      box-shadow: 0 0 18px rgba(135,206,250,.55);
       transform: translateY(-1px);
     }
-    #music-toggle-btn:active { transform: scale(0.96); }
+    #music-toggle-btn:active { transform: scale(.96); }
 
     #volume-control-wrapper {
-      background: linear-gradient(135deg, rgba(10,28,55,0.92) 0%, rgba(5,15,35,0.97) 100%);
-      border: 1px solid rgba(135,206,250,0.25);
-      padding: 12px 15px;
-      border-radius: 12px;
-      box-shadow: 0 0 16px rgba(135,206,250,0.15);
-      min-width: 200px;
-      overflow: hidden;
-      max-height: 200px;
-      opacity: 1;
-      transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
+      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
+      border: 1px solid rgba(135,206,250,.25);
+      padding: 12px 15px; border-radius: 12px;
+      box-shadow: 0 0 16px rgba(135,206,250,.15);
+      min-width: 200px; overflow: hidden;
+      max-height: 200px; opacity: 1;
+      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
     }
     #volume-control-wrapper.collapsed {
-      max-height: 0;
-      opacity: 0;
-      padding-top: 0;
-      padding-bottom: 0;
+      max-height: 0; opacity: 0;
+      padding-top: 0; padding-bottom: 0;
     }
-
     #volume-control-label {
-      display: block;
-      margin-bottom: 6px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.78rem;
-      letter-spacing: 0.5px;
-      color: rgba(255,255,255,0.75);
+      display: block; margin-bottom: 6px;
+      font-family: 'Cinzel', serif; font-size: .78rem;
+      letter-spacing: .5px; color: rgba(255,255,255,.75);
     }
-    #volume-level { color: var(--gold); font-size: 0.85rem; margin-left: 4px; }
-
+    #volume-level { color: var(--gold); font-size: .85rem; margin-left: 4px; }
     #play-pause-btn {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 5px 0;
-      font-family: 'Cinzel', serif;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #fff;
-      border: 1px solid rgba(135,206,250,0.4);
-      border-radius: 7px;
-      background: linear-gradient(135deg, rgba(30,80,130,0.8) 0%, rgba(10,35,70,0.9) 100%);
+      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
+      font-family: 'Cinzel', serif; font-size: .82rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
+      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
       cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-      box-shadow: 0 0 8px rgba(135,206,250,0.2);
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
     }
     #play-pause-btn:hover {
-      background: linear-gradient(135deg, rgba(55,130,200,0.88) 0%, rgba(20,65,120,0.95) 100%);
-      box-shadow: 0 0 18px rgba(135,206,250,0.5);
+      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
+      box-shadow: 0 0 18px rgba(135,206,250,.5);
       transform: translateY(-1px);
     }
-    #play-pause-btn:active { transform: scale(0.96); }
+    #play-pause-btn:active { transform: scale(.96); }
+    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
 
-    #volume-control {
-      width: 100%;
-      accent-color: var(--blue-glow);
-      cursor: pointer;
-    }
-
-    /* ── MODAL ── */
+    /* ── Modal ── */
     .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.78);
-      opacity: 0;
-      animation: fadeIn 0.4s forwards;
+      display: none; position: fixed; z-index: 10;
+      left:0; top:0; width:100%; height:100%;
+      overflow: auto; background-color: rgba(0,0,0,.78);
+      opacity: 0; animation: fadeIn .4s forwards;
     }
     .modal-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      border-radius: 15px;
-      box-shadow: 0 0 40px rgba(135,206,250,0.3);
+      margin: auto; display: block;
+      width: 80%; max-width: 700px; border-radius: 15px;
+      box-shadow: 0 0 40px rgba(135,206,250,.3);
     }
     .close {
-      position: absolute;
-      top: 15px; right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.2s, text-shadow 0.2s;
+      position: absolute; top:15px; right:35px;
+      color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
+      transition: color .2s, text-shadow .2s;
     }
-    .close:hover { color: #f44336; text-shadow: 0 0 10px rgba(244,67,54,0.6); }
+    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
+    /* ══════════════ CAROUSEL ══════════════ */
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.82) translateY(14px); filter: blur(4px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0);   }
+    }
+    @keyframes cardOut {
+      from { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0);   }
+      to   { opacity: 0; transform: scale(0.82) translateY(-14px); filter: blur(4px); }
+    }
+
+    .carousel-section {
+      max-width: 520px;
+      margin: 0 auto 48px auto;
+      animation: pageFadeIn 1s ease 0.9s both;
+    }
+
+    /* ── Tabs ── */
+    .carousel-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+    .carousel-tab {
+      padding: 8px 16px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(135,206,250,0.22);
+      border-radius: 8px;
+      background: rgba(10,28,55,0.55);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .carousel-tab:hover {
+      color: #fff;
+      border-color: rgba(135,206,250,0.55);
+      background: rgba(30,75,130,0.65);
+    }
+    .carousel-tab.active {
+      color: #fff;
+      border-color: rgba(135,206,250,0.85);
+      background: linear-gradient(135deg, rgba(30,80,130,0.88), rgba(10,35,70,0.96));
+      box-shadow: 0 0 16px rgba(135,206,250,0.4);
+    }
+
+    /* ── Panel container ── */
+    .carousel-wrapper { position: relative; }
+    .carousel-panel   { display: none; flex-direction: column; align-items: center; gap: 0; }
+    .carousel-panel.active { display: flex; }
+
+    /* ── Row: arrow + card + arrow ── */
+    .carousel-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* ── Arrow buttons ── */
+    .carousel-arrow {
+      flex-shrink: 0;
+      width: 42px; height: 42px;
+      font-size: 1.3rem;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.82), rgba(10,35,70,0.92));
+      border: 1px solid rgba(135,206,250,0.4);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .carousel-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 18px rgba(135,206,250,0.55);
+      transform: scale(1.12);
+    }
+    .carousel-arrow:active { transform: scale(0.93); }
+
+    /* ── Card stage — fixed size, clips animation ── */
+    .carousel-stage {
+      position: relative;
+      width: 220px;
+      height: 320px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    /* ── Each card ── */
+    .carousel-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .carousel-card.visible {
+      opacity: 1;
+      pointer-events: auto;
+      animation: cardIn 0.55s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .carousel-card.leaving {
+      animation: cardOut 0.35s ease forwards;
+    }
+
+    .carousel-card img {
+      width: 210px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #a8d8ea;
+      outline: 1px solid rgba(168,216,234,0.28);
+      outline-offset: 3px;
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.7),
+        0 0 0 6px rgba(168,216,234,0.25),
+        0 8px 24px rgba(0,0,0,0.65),
+        inset 0 0 14px rgba(168,216,234,0.08);
+      cursor: pointer;
+      transition: box-shadow 0.3s, filter 0.3s;
+      filter: brightness(0.93) saturate(0.95);
+    }
+    .carousel-card img:hover {
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.8),
+        0 0 0 7px rgba(168,216,234,0.6),
+        0 0 32px rgba(168,216,234,0.45),
+        0 10px 30px rgba(0,0,0,0.7);
+      filter: brightness(1.08) saturate(1.1);
+    }
+
+    /* ── Caption below stage ── */
+    .carousel-caption {
+      margin-top: 10px;
+      min-height: 44px;
+      width: 100%;
+      text-align: center;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #dff0ff;
+      text-shadow: 0 0 8px rgba(0,0,0,0.9);
+      line-height: 1.4;
+      padding: 0 6px;
+    }
+
+    /* ── Dot indicators ── */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(135,206,250,0.28);
+      border: 1px solid rgba(135,206,250,0.4);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+    }
+    .dot.active {
+      background: rgba(135,206,250,0.92);
+      transform: scale(1.3);
+      box-shadow: 0 0 7px rgba(135,206,250,0.75);
+    }
 
     .hidden { display: none; }
   </style>
@@ -386,6 +508,8 @@
     <source src="Zephyr, the Steel Saint.mp3" type="audio/mp3" />
     Your browser does not support the audio element.
   </audio>
+
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
 
   <div id="music-widget">
     <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
@@ -422,57 +546,100 @@
 
       <p>Zamanla Hassan ve Zephyr birbirlerini <strong>kardeş gibi</strong> görmeye başladılar; ikisi de birbirlerine geçmişlerini hiç anlatmamışlardı, çünkü sormamışlardı. İkisinin de umrunda değildi. Bir gece uyurken Zephyr garip bir rüya gördü: hiçliğin ortasında uzaktaki bir silüetten gelen bir ses duydu ve tek bir cümleyi anlayabildi: <em>"Biz seni koruyacağız."</em> Sabah Hassan bunu "Cadının teki lanetledi herhalde." diyerek güldü. Belirli bir süre sonra bu olay unutulup gitti.</p>
 
-      <p><strong>21 yaşında</strong>, kazandıkları parayı tavernada yedikleri bir gecenin sabahında Hassan'ın yatağının üzerinde bir not buldu. Not şunu söylüyordu: <em>"Sana bir açıklama yapmadığım için üzgünüm Zephyr. Sevdiğim insanların başları belada olabilir ve bu bok seni bulaştırmak istemeyeceğim bir bok. Beni anlayışla karşılamanı beklemiyorum, sadece bana karşı kırgın olma. Yine de bir daha karşılaşacağımızı biliyorum, o zaman sana her şeyi anlatacağım. Üzgünüm. -Hassan"</em> Sinirli bir şekilde duvara yumruk attı Zephyr. Arkadaşı olarak gördüğü tek kişi onu terk etmişti. Sinirliydi, endişeliydi, arkadaşına yardım edemeyecek kadar yetersiz olduğunu düşünüp kendini suçluyordu. Gece yarısına kadar şehri arayıp etrafı soruşturdu ama Hassan'ı gören kimse yoktu. O gece yeniden aynı silüeti rüyasında gördü; this sefer ses şunu söylüyordu: <em>"Kim olduğunu hatırla."</em> Uyandığında kafası çok karışıktı. Artık hem rüyasında gördüklerini çözmeliydi, hem de Hassan'ın nereye gittiğini bulmalıydı. Kendine birkaç gün tanıdı; ardından tüm bu soruların yanıtını arayacaktı...</p>
+      <p><strong>21 yaşında</strong>, kazandıkları parayı tavernada yedikleri bir gecenin sabahında Hassan'ın yatağının üzerinde bir not buldu. Not şunu söylüyordu: <em>"Sana bir açıklama yapmadığım için üzgünüm Zephyr. Sevdiğim insanların başları belada olabilir ve bu bok seni bulaştırmak istemeyeceğim bir bok. Beni anlayışla karşılamanı beklemiyorum, sadece bana karşı kırgın olma. Yine de bir daha karşılaşacağımızı biliyorum, o zaman sana her şeyi anlatacağım. Üzgünüm. -Hassan"</em> Sinirli bir şekilde duvara yumruk attı Zephyr. Arkadaşı olarak gördüğü tek kişi onu terk etmişti. Sinirliydi, endişeliydi, arkadaşına yardım edemeyecek kadar yetersiz olduğunu düşünüp kendini suçluyordu. Gece yarısına kadar şehri arayıp etrafı soruşturdu ama Hassan'ı gören kimse yoktu. O gece yeniden aynı silüeti rüyasında gördü; bu sefer ses şunu söylüyordu: <em>"Kim olduğunu hatırla."</em> Uyandığında kafası çok karışıktı. Artık hem rüyasında gördüklerini çözmeliydi, hem de Hassan'ın nereye gittiğini bulmalıydı. Kendine birkaç gün tanıdı; ardından tüm bu soruların yanıtını arayacaktı...</p>
     </div>
 
-    <div class="alternative-images">
-      <div>
-        <img src="Hassan.jpg" alt="Zephyr'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan</div>
-      </div>
-      <div>
-        <img src="Oris.jpg" alt="Zephyr'in Hafızasında Unuttuğu Kader Arkadaşı Oris" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Hafızasında Unuttuğu Kader Arkadaşı Oris</div>
-      </div>
-      <div>
-        <img src="Aziz Paul.jpg" alt="Zephyr'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul</div>
-      </div>
-      <div>
-        <img src="Steel Saint Zephyr.png" alt="Beyaz Engizisyoncu Kıyafetlerini Giyip Çelik Azizi Olduktan Sonra Zephyr" onclick="openModal(this)">
-        <div class="image-title-alt">Beyaz Engizisyoncu Kıyafetlerini Giyip Çelik Azizi Olduktan Sonra Zephyr</div>
-      </div>
-      <div>
-        <img src="Veyrion Thal 2nd Phase.jpg" alt="Zephyr'in Düşmanı ve Bir Void Cleric Olmuş Eski Hocası Veyrion Thal" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Düşmanı ve Bir Void Cleric Olmuş Eski Hocası Veyrion Thal</div>
-      </div>
-      <div>
-        <img src="Koralith.jpg" alt="Zephyr'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith</div>
-      </div>
-      <div>
-        <img src="Tempest's Gale Essence.jpg" alt="Oris'in Zephyr'e Verdiği Emanet Olan Tempest's Gale Essence" onclick="openModal(this)">
-        <div class="image-title-alt">Oris'in Zephyr'e Verdiği Emanet Olan Tempest's Gale Essence</div>
-      </div>
-      <div>
-        <img src="Vicious Rapier.jpeg" alt="Zephyr'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier</div>
-      </div>
-      <div>
-        <img src="Zephyr Goggles of Night.jpeg" alt="Zephyr Goggles of Night Takıyorken" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr Goggles of Night Takıyorken</div>
-      </div>
-      <div>
-        <img src="Blood Heart.jpeg" alt="Zephyr Öldükten Sonra Neryssa'nın Yaptığı Anlaşma Sonucunda Göğüsünde Beliren Katalizör" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr Öldükten Sonra Neryssa'nın Yaptığı Anlaşma Sonucunda Göğüsünde Beliren Katalizör</div>
-      </div>
-      <div>
-        <img src="Judgment’s Ember.jpg" alt="Zephyr'in Öldürdüğü Scourge Olmuş Bir Engizisyoncu'dan Aldığı Kılıcı Olan Judgment's Ember" onclick="openModal(this)">
-        <div class="image-title-alt">Zephyr'in Öldürdüğü Scourge Olmuş Bir Engizisyoncu'dan Aldığı Kılıcı Olan Judgment's Ember</div>
-      </div>
-    </div>
+    <!-- ══════════════ CAROUSEL ══════════════ -->
+    <div class="carousel-section">
 
-    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px;">
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+
+      <div class="carousel-wrapper">
+
+        <!-- Panel 0: Dostlar -->
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Hassan.jpg" alt="Hassan" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Oris.jpg" alt="Oris" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Aziz Paul.jpg" alt="Aziz Paul" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Zephyr'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan</div>
+          <div class="carousel-dots" id="dots-0">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+        <!-- Panel 1: Düşmanlar -->
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Koralith.jpg" alt="Koralith" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="1">
+                <img src="Veyrion Thal 2nd Phase.jpg" alt="Veyrion Thal" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Zephyr'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith</div>
+          <div class="carousel-dots" id="dots-1">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Formlar & Eşyalar -->
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Steel Saint Zephyr.png" alt="Steel Saint Zephyr" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Tempest's Gale Essence.jpg" alt="Tempest's Gale Essence" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="2">
+                <img src="Vicious Rapier.jpeg" alt="Vicious Rapier" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="3">
+                <img src="Zephyr Goggles of Night.jpeg" alt="Goggles of Night" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="4">
+                <img src="Blood Heart.jpeg" alt="Blood Heart" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="5">
+                <img src="Judgment's Ember.jpg" alt="Judgment's Ember" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Beyaz Engizisyoncu Kıyafetlerini Giyip Çelik Azizi Olduktan Sonra Zephyr</div>
+          <div class="carousel-dots" id="dots-2">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+      </div><!-- /.carousel-wrapper -->
+    </div><!-- /.carousel-section -->
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
       <a class="back-link" href="../index.html">← Geri Dön</a>
       <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
     </div>
@@ -502,6 +669,7 @@
   </div>
 
   <script>
+    /* ── Music ── */
     const music = document.getElementById('background-music');
     const btn   = document.getElementById('play-pause-btn');
     let isPlaying = true;
@@ -514,22 +682,17 @@
     });
 
     function toggleMusic() {
-      if (isPlaying) {
-        music.pause();
-        btn.textContent = '▶ Müziği Başlat';
-      } else {
-        music.play();
-        btn.textContent = '⏸ Müziği Duraklat';
-      }
+      if (isPlaying) { music.pause(); btn.textContent = '▶ Müziği Başlat'; }
+      else           { music.play();  btn.textContent = '⏸ Müziği Duraklat'; }
       isPlaying = !isPlaying;
     }
 
     function togglePanel() {
       const panel = document.getElementById('volume-control-wrapper');
-      const toggleBtn = document.getElementById('music-toggle-btn');
+      const tBtn  = document.getElementById('music-toggle-btn');
       panelOpen = !panelOpen;
       panel.classList.toggle('collapsed', !panelOpen);
-      toggleBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
+      tBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
     }
 
     document.getElementById('volume-control').addEventListener('input', function () {
@@ -543,42 +706,119 @@
     const modal    = document.getElementById('myModal');
     const modalImg = document.getElementById('img01');
 
-    function openModal(element) {
+    function openModal(el) {
       modal.style.display = 'block';
-      modalImg.src = element.src;
+      modalImg.src = el.src;
       document.getElementById('back-button').classList.add('hidden');
       document.getElementById('music-widget').style.display = 'none';
     }
-
     function closeModal() {
       modal.style.display = 'none';
       document.getElementById('back-button').classList.remove('hidden');
       document.getElementById('music-widget').style.display = 'flex';
     }
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-    /* ── Info box scroll tracking ── */
+    /* ── Info-box scroll tracking ──
+       Boxes start at top:100px and slide up to a min of 20px as you scroll.
+       z-index is 10, so fixed buttons (z:999) always render on top — no overlap. */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
-    const OFFSET = 80; // Üst kısımdan 80px pay bırakıyoruz.
 
     function updateInfoBoxes() {
-      const scrollY = window.scrollY;
-      const top = Math.max(OFFSET, 100 - scrollY + OFFSET);
-      // Kutu en fazla 80px'e kadar yukarı çıkabilir (Math.max(80, ...)), böylece butonlarla çakışmaz.
-      const clamped = Math.max(80, 100 - scrollY);
-      leftBox.style.top  = clamped + 'px';
-      rightBox.style.top = clamped + 'px';
+      const top = Math.max(20, 100 - window.scrollY);
+      leftBox.style.top  = top + 'px';
+      rightBox.style.top = top + 'px';
+    }
+    window.addEventListener('scroll', updateInfoBoxes, { passive: true });
+    updateInfoBoxes();
+    /* ══════════════ CAROUSEL — single card fade+scale ══════════════ */
+    const CAROUSEL_AUTO_MS = 6000;
+
+    // caption text per panel per index
+    const captions = [
+      [
+        'Zephyr\'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan',
+        'Zephyr\'in Hafızasında Unuttuğu Kader Arkadaşı Oris',
+        'Zephyr\'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul',
+      ],
+      [
+        'Zephyr\'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith',
+        'Zephyr\'in Düşmanı ve Bir Void Cleric Olmuş Eski Hocası Veyrion Thal',
+      ],
+      [
+        'Beyaz Engizisyoncu Kıyafetlerini Giyip Çelik Azizi Olduktan Sonra Zephyr',
+        'Oris\'in Zephyr\'e Verdiği Emanet Olan Tempest\'s Gale Essence',
+        'Zephyr\'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier',
+        'Zephyr Goggles of Night Takıyorken',
+        'Zephyr Öldükten Sonra Neryssa\'nın Yaptığı Anlaşma Sonucunda Göğüsünde Beliren Katalizör',
+        'Zephyr\'in Öldürdüğü Scourge Olmuş Bir Engizisyoncu\'dan Aldığı Kılıcı Olan Judgment\'s Ember',
+      ],
+    ];
+
+    const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
+    let activeTab = 0;
+    let autoTimer = null;
+
+    function getCards(panelIdx) {
+      return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${panelIdx}"]`));
     }
 
-    window.addEventListener('scroll', updateInfoBoxes);
-    updateInfoBoxes();
+    function showCard(panelIdx, newIdx) {
+      const cards = getCards(panelIdx);
+      const oldIdx = state[panelIdx].idx;
+      if (oldIdx === newIdx) return;
 
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) closeModal();
-    });
+      // animate out old card
+      const oldCard = cards[oldIdx];
+      oldCard.classList.remove('visible');
+      oldCard.classList.add('leaving');
+      oldCard.addEventListener('animationend', () => {
+        oldCard.classList.remove('leaving');
+      }, { once: true });
+
+      // animate in new card
+      const newCard = cards[newIdx];
+      newCard.classList.add('visible');
+
+      state[panelIdx].idx = newIdx;
+
+      // update caption
+      document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
+
+      // update dots
+      const dots = document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot');
+      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
+    }
+
+    function carouselShift(panelIdx, dir) {
+      const total  = getCards(panelIdx).length;
+      const newIdx = (state[panelIdx].idx + dir + total) % total;
+      showCard(panelIdx, newIdx);
+      resetAutoTimer();
+    }
+
+    function switchTab(idx) {
+      document.getElementById(`panel-${activeTab}`).classList.remove('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active');
+      activeTab = idx;
+      document.getElementById(`panel-${activeTab}`).classList.add('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active');
+      resetAutoTimer();
+    }
+
+    function autoAdvance() {
+      const total  = getCards(activeTab).length;
+      const newIdx = (state[activeTab].idx + 1) % total;
+      showCard(activeTab, newIdx);
+    }
+
+    function resetAutoTimer() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS);
+    }
+
+    resetAutoTimer();
   </script>
-
-  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
-
 </body>
 </html>
