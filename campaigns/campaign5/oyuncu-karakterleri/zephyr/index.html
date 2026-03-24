@@ -6,7 +6,7 @@
   <title>Druuthtikmorash Zephyr Kilbarum</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
   <style>
     :root {
       --blue-glow: #87cefa;
@@ -30,7 +30,7 @@
     }
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 8px rgba(135,206,250,0.35), 0 0 20px rgba(135,206,250,0.15); }
-      50%       { box-shadow: 0 0 16px rgba(135,206,250,0.7), 0 0 40px rgba(135,206,250,0.3); }
+      50%        { box-shadow: 0 0 16px rgba(135,206,250,0.7), 0 0 40px rgba(135,206,250,0.3); }
     }
 
     body {
@@ -89,10 +89,12 @@
     .image-title, .image-title-alt {
       text-align: center;
       margin-bottom: 20px;
-      font-style: italic;
-      font-size: 1.25rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+      /* Paragraf fontu (Lora) ile aynı, italik değil ve kalın yapıldı */
+      font-family: 'Lora', Georgia, serif;
+      font-style: normal;
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(0,0,0,1), 0 0 4px rgba(135,206,250,0.4);
       padding: 5px;
     }
 
@@ -118,17 +120,38 @@
       margin-bottom: 40px;
       animation: pageFadeIn 1s ease 0.9s both;
     }
-    .alternative-images div { text-align: center; max-width: 150px; flex: 0 1 150px; }
+    .alternative-images div { 
+      text-align: center; 
+      max-width: 150px; 
+      flex: 0 1 150px;
+      position: relative;
+    }
+    
+    /* Kış Temalı Şatafatlı Çerçeve Efekti */
     .alternative-images img {
       width: 150px; height: 200px;
       object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-      border: 3px solid #fff;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      border-radius: 10px;
+      border: 3px solid #d4f1f9; /* Buz mavisi / beyaz sınır */
+      box-shadow: 
+        0 0 8px #87cefa, /* Dış mavi aydınlatma */
+        0 0 15px rgba(135, 206, 250, 0.4), /* Puslu kış efekti */
+        inset 0 0 10px rgba(255, 255, 255, 0.8); /* İç buz efekti */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       cursor: pointer;
+      position: relative;
+      z-index: 1;
     }
-    .alternative-images img:hover { transform: scale(1.5); opacity: 0.8; }
+    
+    .alternative-images img:hover { 
+      transform: scale(1.5); 
+      border-color: #ffffff;
+      box-shadow: 
+        0 0 15px #ffffff,
+        0 0 30px #87cefa,
+        inset 0 0 15px #ffffff;
+      z-index: 10; /* Büyüdüğünde diğer elementlerin üstünde kalması için */
+    }
 
     /* ── INFO BOXES ── */
     .info-box {
@@ -399,7 +422,7 @@
 
       <p>Zamanla Hassan ve Zephyr birbirlerini <strong>kardeş gibi</strong> görmeye başladılar; ikisi de birbirlerine geçmişlerini hiç anlatmamışlardı, çünkü sormamışlardı. İkisinin de umrunda değildi. Bir gece uyurken Zephyr garip bir rüya gördü: hiçliğin ortasında uzaktaki bir silüetten gelen bir ses duydu ve tek bir cümleyi anlayabildi: <em>"Biz seni koruyacağız."</em> Sabah Hassan bunu "Cadının teki lanetledi herhalde." diyerek güldü. Belirli bir süre sonra bu olay unutulup gitti.</p>
 
-      <p><strong>21 yaşında</strong>, kazandıkları parayı tavernada yedikleri bir gecenin sabahında Hassan'ın yatağının üzerinde bir not buldu. Not şunu söylüyordu: <em>"Sana bir açıklama yapmadığım için üzgünüm Zephyr. Sevdiğim insanların başları belada olabilir ve bu bok seni bulaştırmak istemeyeceğim bir bok. Beni anlayışla karşılamanı beklemiyorum, sadece bana karşı kırgın olma. Yine de bir daha karşılaşacağımızı biliyorum, o zaman sana her şeyi anlatacağım. Üzgünüm. -Hassan"</em> Sinirli bir şekilde duvara yumruk attı Zephyr. Arkadaşı olarak gördüğü tek kişi onu terk etmişti. Sinirliydi, endişeliydi, arkadaşına yardım edemeyecek kadar yetersiz olduğunu düşünüp kendini suçluyordu. Gece yarısına kadar şehri arayıp etrafı soruşturdu ama Hassan'ı gören kimse yoktu. O gece yeniden aynı silüeti rüyasında gördü; bu sefer ses şunu söylüyordu: <em>"Kim olduğunu hatırla."</em> Uyandığında kafası çok karışıktı. Artık hem rüyasında gördüklerini çözmeliydi, hem de Hassan'ın nereye gittiğini bulmalıydı. Kendine birkaç gün tanıdı; ardından tüm bu soruların yanıtını arayacaktı...</p>
+      <p><strong>21 yaşında</strong>, kazandıkları parayı tavernada yedikleri bir gecenin sabahında Hassan'ın yatağının üzerinde bir not buldu. Not şunu söylüyordu: <em>"Sana bir açıklama yapmadığım için üzgünüm Zephyr. Sevdiğim insanların başları belada olabilir ve bu bok seni bulaştırmak istemeyeceğim bir bok. Beni anlayışla karşılamanı beklemiyorum, sadece bana karşı kırgın olma. Yine de bir daha karşılaşacağımızı biliyorum, o zaman sana her şeyi anlatacağım. Üzgünüm. -Hassan"</em> Sinirli bir şekilde duvara yumruk attı Zephyr. Arkadaşı olarak gördüğü tek kişi onu terk etmişti. Sinirliydi, endişeliydi, arkadaşına yardım edemeyecek kadar yetersiz olduğunu düşünüp kendini suçluyordu. Gece yarısına kadar şehri arayıp etrafı soruşturdu ama Hassan'ı gören kimse yoktu. O gece yeniden aynı silüeti rüyasında gördü; this sefer ses şunu söylüyordu: <em>"Kim olduğunu hatırla."</em> Uyandığında kafası çok karışıktı. Artık hem rüyasında gördüklerini çözmeliydi, hem de Hassan'ın nereye gittiğini bulmalıydı. Kendine birkaç gün tanıdı; ardından tüm bu soruların yanıtını arayacaktı...</p>
     </div>
 
     <div class="alternative-images">
@@ -536,13 +559,13 @@
     /* ── Info box scroll tracking ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
-    const OFFSET = 80; // px from top of viewport
+    const OFFSET = 80; // Üst kısımdan 80px pay bırakıyoruz.
 
     function updateInfoBoxes() {
       const scrollY = window.scrollY;
       const top = Math.max(OFFSET, 100 - scrollY + OFFSET);
-      // clamp so boxes don't go above 20px from top
-      const clamped = Math.max(20, 100 - scrollY);
+      // Kutu en fazla 80px'e kadar yukarı çıkabilir (Math.max(80, ...)), böylece butonlarla çakışmaz.
+      const clamped = Math.max(80, 100 - scrollY);
       leftBox.style.top  = clamped + 'px';
       rightBox.style.top = clamped + 'px';
     }
