@@ -1,1 +1,1001 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neryssa Snow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue-glow: #87cefa;
+      --gold: #ffd700;
+      --gold-dim: #ffdf6e;
+      --dark-glass: rgba(0, 0, 0, 0.62);
+      --ice: #a8d8ea;
+      --ice-glow: rgba(168,216,234,0.55);
+    }
 
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-30px) scale(0.95); letter-spacing: 12px; }
+      to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 3px; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px rgba(135,206,250,.35), 0 0 20px rgba(135,206,250,.15); }
+      50%      { box-shadow: 0 0 16px rgba(135,206,250,.7), 0 0 40px rgba(135,206,250,.3); }
+    }
+    @keyframes icePulse {
+      0%,100% {
+        box-shadow: 0 0 0 4px rgba(10,30,60,.7),
+                    0 0 0 6px rgba(168,216,234,.2),
+                    0 6px 18px rgba(0,0,0,.6),
+                    inset 0 0 10px rgba(168,216,234,.06);
+      }
+      50% {
+        box-shadow: 0 0 0 4px rgba(10,30,60,.75),
+                    0 0 0 6px rgba(168,216,234,.45),
+                    0 0 22px rgba(168,216,234,.3),
+                    0 6px 18px rgba(0,0,0,.6),
+                    inset 0 0 16px rgba(168,216,234,.1);
+      }
+    }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      margin: 0; padding: 0;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      z-index: 1;
+      animation: pageFadeIn 1s ease .2s both;
+    }
+    .container::before {
+      content: '';
+      position: absolute; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.42);
+      z-index: -1;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 4rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
+      margin-bottom: 20px;
+      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
+    }
+
+    .character-image {
+      width: 200px; height: 300px;
+      object-fit: cover; border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.5);
+      margin-bottom: 10px;
+      transition: transform .5s ease, opacity .5s ease;
+      cursor: pointer;
+      animation: pageFadeIn 1s ease .5s both;
+    }
+    .character-image:hover { transform: scale(1.5); opacity: .8; }
+
+    .image-title {
+      text-align: center; margin-bottom: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic; font-size: 1.25rem; font-weight: 700;
+      text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
+    }
+
+    .image-title-alt {
+      text-align: center; margin-top: 8px; margin-bottom: 4px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic; font-size: 0.88rem; font-weight: 700;
+      color: #dff0ff;
+      text-shadow: 0 0 8px rgba(0,0,0,.9);
+      line-height: 1.35; padding: 2px;
+    }
+
+    .bio {
+      font-size: 1.1rem; max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.75; text-align: justify;
+      background: var(--dark-glass);
+      padding: 24px 28px; border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.6);
+      border: 1px solid rgba(135,206,250,.12);
+      animation: pageFadeIn 1s ease .7s both;
+    }
+
+    .alternative-images {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 24px;
+      margin-bottom: 40px;
+      animation: pageFadeIn 1s ease .9s both;
+    }
+    .alternative-images > div {
+      position: relative;
+      text-align: center; max-width: 164px; flex: 0 1 164px;
+    }
+    .alternative-images > div::before,
+    .alternative-images > div::after {
+      content: '❄';
+      position: absolute; top: -4px;
+      font-size: .65rem; color: rgba(168,216,234,.7);
+      pointer-events: none; line-height: 1;
+    }
+    .alternative-images > div::before { left: 4px; }
+    .alternative-images > div::after  { right: 4px; }
+
+    .alternative-images img {
+      width: 150px; height: 200px;
+      object-fit: cover; border-radius: 10px;
+      border: 2px solid var(--ice);
+      outline: 1px solid rgba(168,216,234,.28);
+      outline-offset: 3px;
+      filter: brightness(.92) saturate(.95);
+      cursor: pointer;
+      animation: icePulse 4s ease-in-out infinite;
+      transition: transform .35s ease, filter .35s ease, box-shadow .35s ease;
+    }
+    .alternative-images img:hover {
+      transform: scale(1.5);
+      filter: brightness(1.08) saturate(1.1);
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,.8),
+        0 0 0 7px rgba(168,216,234,.6),
+        0 0 32px rgba(168,216,234,.45),
+        0 10px 30px rgba(0,0,0,.7),
+        inset 0 0 20px rgba(168,216,234,.15);
+    }
+
+    .info-box {
+      position: fixed;
+      top: 100px;
+      z-index: 10;
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
+    }
+    .info-box h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box strong { color: var(--gold); }
+    .left-box  { left: 20px; }
+    .right-box { right: 20px; }
+
+    .character-link {
+      display: inline-block; margin-top: 8px;
+      padding: 6px 14px; font-size: .88rem; font-weight: 600;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(255,215,0,.45); border-radius: 6px;
+      background: rgba(255,215,0,.07);
+      transition: background .25s, box-shadow .25s, transform .15s;
+    }
+    .character-link:hover {
+      background: rgba(255,215,0,.18);
+      box-shadow: 0 0 14px rgba(255,215,0,.5);
+      transform: translateY(-1px);
+    }
+    .character-link:active { transform: scale(.96); }
+
+    .back-link {
+      display: inline-block; margin-top: 20px;
+      padding: .6rem 1.4rem;
+      font-family: 'Cinzel', serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: 1px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.5);
+      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
+      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
+      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
+      transform: translateY(-2px);
+    }
+    .back-link:active { transform: scale(.96) translateY(0); }
+
+    .fixed-back-button {
+      position: fixed; top: 20px; left: 20px; z-index: 999;
+      padding: .45rem 1rem;
+      font-family: 'Cinzel', serif; font-size: .9rem;
+      font-weight: 700; letter-spacing: .5px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.45);
+      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .fixed-back-button:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
+      box-shadow: 0 0 20px rgba(135,206,250,.6);
+      transform: translateY(-2px);
+    }
+    .fixed-back-button:active { transform: scale(.95); }
+
+    #music-widget {
+      position: fixed; top: 20px; right: 20px; z-index: 999;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    }
+    #music-toggle-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px;
+      font-family: 'Cinzel', serif; font-size: .8rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
+      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
+      cursor: pointer; white-space: nowrap;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    #music-toggle-btn:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
+      box-shadow: 0 0 18px rgba(135,206,250,.55);
+      transform: translateY(-1px);
+    }
+    #music-toggle-btn:active { transform: scale(.96); }
+
+    #volume-control-wrapper {
+      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
+      border: 1px solid rgba(135,206,250,.25);
+      padding: 12px 15px; border-radius: 12px;
+      box-shadow: 0 0 16px rgba(135,206,250,.15);
+      min-width: 200px; overflow: hidden;
+      max-height: 200px; opacity: 1;
+      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
+    }
+    #volume-control-wrapper.collapsed {
+      max-height: 0; opacity: 0;
+      padding-top: 0; padding-bottom: 0;
+    }
+    #volume-control-label {
+      display: block; margin-bottom: 6px;
+      font-family: 'Cinzel', serif; font-size: .78rem;
+      letter-spacing: .5px; color: rgba(255,255,255,.75);
+    }
+    #volume-level { color: var(--gold); font-size: .85rem; margin-left: 4px; }
+    #play-pause-btn {
+      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
+      font-family: 'Cinzel', serif; font-size: .82rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
+      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
+      cursor: pointer;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+    }
+    #play-pause-btn:hover {
+      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
+      box-shadow: 0 0 18px rgba(135,206,250,.5);
+      transform: translateY(-1px);
+    }
+    #play-pause-btn:active { transform: scale(.96); }
+    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
+
+    /* ── Modal ── */
+    .modal {
+      display: none; position: fixed; z-index: 1000;
+      left:0; top:0; width:100%; height:100%;
+      overflow: hidden;
+      background-color: rgba(0,0,0,.88);
+      opacity: 0; animation: fadeIn .4s forwards;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .modal.open { display: flex; }
+
+    .modal-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      max-width: 96vw;
+      max-height: 96vh;
+      padding: 12px;
+      box-sizing: border-box;
+      cursor: default;
+    }
+
+    .modal-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    @keyframes modalSlideInRight {
+      from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);  filter: blur(0);   }
+    }
+    @keyframes modalSlideInLeft {
+      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+    }
+    @keyframes modalSlideOutLeft {
+      from { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+    }
+    @keyframes modalSlideOutRight {
+      from { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);   filter: blur(0);   }
+      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg);  filter: blur(5px); }
+    }
+
+    .modal-content {
+      display: block;
+      max-width: 78vw;
+      max-height: 76vh;
+      width: auto; height: auto;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 0 50px rgba(135,206,250,.35);
+      object-fit: contain;
+    }
+    .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation: modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation: modalSlideOutRight 0.32s ease forwards; }
+
+    .modal-caption {
+      width: 100%; max-width: 78vw;
+      padding: 10px 16px 12px;
+      box-sizing: border-box;
+      background: rgba(5,15,40,0.88);
+      border-radius: 0 0 15px 15px;
+      border-top: 1px solid rgba(135,206,250,0.2);
+      font-family: 'Lora', Georgia, serif;
+      font-style: normal; font-size: 1.05rem; font-weight: 700;
+      color: #e8f6ff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      text-align: center; line-height: 1.45; letter-spacing: 0.01em;
+    }
+
+    .modal-counter {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700;
+      color: rgba(168,216,234,0.9); letter-spacing: 1.5px;
+      pointer-events: none; z-index: 1002;
+      background: rgba(5,15,40,0.6); padding: 4px 12px;
+      border-radius: 20px; border: 1px solid rgba(135,206,250,0.2);
+    }
+
+    .modal-arrow {
+      flex-shrink: 0; width: 52px; height: 52px; font-size: 1.5rem; color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
+      border: 1px solid rgba(135,206,250,0.45); border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite; z-index: 1002;
+    }
+    .modal-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 22px rgba(135,206,250,0.65); transform: scale(1.12);
+    }
+    .modal-arrow:active { transform: scale(0.93); }
+
+    .close {
+      position: fixed; top:15px; right:25px;
+      color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
+      transition: color .2s, text-shadow .2s; z-index: 1003; line-height: 1;
+    }
+    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
+
+    /* ══════════════ CAROUSEL ══════════════ */
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(6px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0);   }
+    }
+    @keyframes cardOut {
+      from { opacity: 1; transform: scale(1)    translateY(0);     filter: blur(0);   }
+      to   { opacity: 0; transform: scale(0.88) translateY(-20px); filter: blur(6px); }
+    }
+
+    .carousel-section {
+      max-width: 600px; margin: 0 auto 48px auto;
+      animation: pageFadeIn 1s ease 0.9s both;
+    }
+
+    .carousel-tabs {
+      display: flex; justify-content: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 22px;
+    }
+    .carousel-tab {
+      padding: 9px 18px;
+      font-family: 'Lora', Georgia, serif; font-size: 0.92rem;
+      font-weight: 700; letter-spacing: 0.2px;
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(135,206,250,0.22); border-radius: 8px;
+      background: rgba(10,28,55,0.55); cursor: pointer; transition: all 0.25s;
+    }
+    .carousel-tab:hover {
+      color: #fff; border-color: rgba(135,206,250,0.55);
+      background: rgba(30,75,130,0.65);
+    }
+    .carousel-tab.active {
+      color: #fff; border-color: rgba(135,206,250,0.85);
+      background: linear-gradient(135deg, rgba(30,80,130,0.88), rgba(10,35,70,0.96));
+      box-shadow: 0 0 16px rgba(135,206,250,0.4);
+    }
+
+    .carousel-wrapper { position: relative; }
+    .carousel-panel   { display: none; flex-direction: column; align-items: center; gap: 0; }
+    .carousel-panel.active { display: flex; }
+
+    .carousel-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; width: 100%;
+    }
+
+    .carousel-arrow {
+      flex-shrink: 0; width: 46px; height: 46px; font-size: 1.4rem; color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.82), rgba(10,35,70,0.92));
+      border: 1px solid rgba(135,206,250,0.4); border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .carousel-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 18px rgba(135,206,250,0.55); transform: scale(1.12);
+    }
+    .carousel-arrow:active { transform: scale(0.93); }
+
+    .carousel-stage {
+      position: relative; width: 320px; height: 400px; border-radius: 16px;
+    }
+
+    .carousel-card {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+    }
+    .carousel-card.visible {
+      opacity: 1; pointer-events: auto;
+      animation: cardIn 0.85s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .carousel-card.leaving { animation: cardOut 0.55s ease forwards; }
+
+    .carousel-card img {
+      width: 300px; height: 390px;
+      object-fit: contain; border-radius: 14px;
+      border: 2px solid #a8d8ea;
+      outline: 1px solid rgba(168,216,234,0.28); outline-offset: 3px;
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.7), 0 0 0 6px rgba(168,216,234,0.25),
+        0 10px 28px rgba(0,0,0,0.7), inset 0 0 14px rgba(168,216,234,0.08);
+      cursor: pointer; background: rgba(5,15,35,0.6);
+      transition: box-shadow 0.3s, filter 0.3s;
+      filter: brightness(0.96) saturate(0.97);
+    }
+    .carousel-card img:hover {
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.8), 0 0 0 7px rgba(168,216,234,0.6),
+        0 0 36px rgba(168,216,234,0.45), 0 12px 32px rgba(0,0,0,0.75);
+      filter: brightness(1.06) saturate(1.08);
+    }
+
+    .carousel-caption {
+      margin-top: 14px; min-height: 48px; max-width: 340px; text-align: center;
+      font-family: 'Lora', Georgia, serif; font-style: normal;
+      font-size: 1rem; font-weight: 700; color: #e8f6ff;
+      text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.8);
+      line-height: 1.45; padding: 0 8px; letter-spacing: 0.01em;
+    }
+
+    .carousel-dots {
+      display: flex; justify-content: center; gap: 9px; margin-top: 14px;
+    }
+    .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(135,206,250,0.28); border: 1px solid rgba(135,206,250,0.4);
+      cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+    }
+    .dot.active {
+      background: rgba(135,206,250,0.92); transform: scale(1.35);
+      box-shadow: 0 0 8px rgba(135,206,250,0.8);
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <audio id="background-music" autoplay loop preload="auto">
+    <source src="Neryssa Snow, the Exiled Rogue Noble.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+
+  <div id="music-widget">
+    <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
+    <div id="volume-control-wrapper">
+      <button id="play-pause-btn" onclick="toggleMusic()">⏸ Müziği Duraklat</button>
+      <label id="volume-control-label">Ses: <span id="volume-level">50%</span></label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Neryssa Snow</h1>
+    <img src="Neryssa Snow.jpg" alt="Neryssa Snow" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Sürgün Asil Neryssa Snow</div>
+
+    <div class="bio">
+      <p><strong>Aiwelen'in kuzeyinde</strong>, karlı fırtınaların ebedî dans ettiği, rüzgarların uluyan kurtların ezgisi gibi çığlık attığı o efsanevi topraklarda, <strong>Kurt İni'nin</strong> çetin ve soğuk yamaçlarında, kaderin demir yumruğu altında <strong>Neryssa Snow</strong> dünyaya geldi. Bembeyaz kar tanelerinin arasında, asırlık dağların ve buz tutmuş vadilerin gölgesinde yükselen bu coşkun topraklar, Neryssa'nın soylu ailesinin kanla, onurla ve <strong>Ulu Kurt</strong> tanrısına duyulan sarsılmaz bağlılıkla yoğrulduğu bir yerdi.</p>
+
+      <p>Genç Neryssa, küçüklüğünden itibaren kuzeyin acımasız rüzgarları ve keskin soğuğu, tanrısının kudreti ile ailesinin taşıdığı ağır sorumlulukları öğrenmişti. Fakat tüm bu yüce güç ve görev bilincinin arasında, ruhunun derinliklerinde, fısıldayan ve yanını hep doldurmaya çalışan bir eksiklik, tarifsiz bir boşluk yankılanıyordu. Doğduktan kısa bir süre sonra, <strong>annesi</strong> esrarengiz bir şekilde ortadan kaybolmuştu — gizemli fısıltılar, annesinin kimliği bilinmeyen, acımasız kelle avcıları tarafından kaçırıldığına dair söylentiler taşıyordu; çünkü onun kuzeyin karanlık güçlerine dair bilgeliği, tehlikenin ta kendisiydi.</p>
+
+      <p>Babasının dudaklarında asla anılmayan o isim, evin soğuk duvarlarına bile sızmamıştı. Bir üvey anne, bu gizemi örtbas etmek için yerleştirilmişti. Neryssa'nın babası, demir gibi sert, sarsılmaz bir liderdi; yalnızca kızını zorlu bir kaderin öncüsü olarak yetiştirmekle meşguldü. Babasının sevgisi, uzaklarda süzülen buzlu bir şarkı gibi, mesafelerle ve görevlerin ağırlığıyla örülmüştü.</p>
+
+      <p>Henüz <strong>beş yaşındayken</strong>, masum bir ninni mırıldanırken, evin karanlık bir köşesinde hayat bulan ışık oyunları duvarlarda buz desenleri gibi nağmeler bırakmıştı. Babası, bu mistik anın içinde, kızının yüce büyü potansiyelinin ilk kıvılcımlarını sezinlemiş ve onu eğitmeye karar vermişti. Yıllar akıp giderken, Neryssa'nın <strong>buz büyüleri</strong> ustalıkla yoğrulmuş, kudreti öyle bir derinleşmişti ki, artık ailesinin tüm sorumluluklarına layık bir lider olma merhemiyle donanmıştı. Damarlarında akan <strong>beyaz ejder kanı</strong>, annesinden kalan kutsal miras, soğuk güçlerin kaynağıydı.</p>
+
+      <p><strong>On sekiz yaşına</strong> geldiğinde, büyüleri adeta elementlerin doğasını andırırdı. Babası onu <strong>İmparatorluk'a</strong> karşı, bu soğuk topraklarda hayatta kalmak için sürecek amansız bir savaşın içine çekti. Bu kanlı arenada Neryssa'nın yanında çocukluk dostları yer aldı: kurnaz suikastçı <strong>Orm</strong>, cesur savaşçı <strong>Gunnarr</strong> ve sadık yoldaşı <strong>Sölvi</strong>. Savaşın kaderi, Neryssa'nın imparatorluk kanından <strong>Gian-Franco Külmızrağı'nı</strong> katletmesiyle altüst oldu.</p>
+
+      <p>Savaşın bitiminden <strong>6 yıl</strong> sonra, <strong>Engizisyon</strong> ve Veteriner birliğinin ilan ettiği cadı avı sonucunda Neryssa cadı ilan edildi. İmparatorluk araştırmaları onun <strong>gayrimeşru</strong> doğduğunu kanıtlayınca, Kuzey halkı ona yabancı bir tutum sergilemeye başladı. Üvey annesinin kimliği ifşalanmış, soylu adı silinmişti — artık yalnızca <strong>Snow</strong> olarak anılacaktı.</p>
+
+      <p>Babası nam kaybetmiş olsa da son bir kez devreye girerek Neryssa'ya bir haftalık süre kopardı. <strong>Kurt İni'nin</strong> geleneklerine göre bu süre içinde şehri terk etmezse, Büyük Kurt'un huzuruna adanacak şekilde <strong>"Kan Kartalı"</strong>na mağruz bırakılacaktı. Sokaklarda kaldığında Sölvi'nin yardım ettiği öğrenilince, Sölvi halka açık şekilde kırbaç cezasına çarptırıldı ve Neryssa orada dikilmek zorunda kaldı.</p>
+
+      <p>Gece vakitlerinde sadece <strong>Orm</strong> çaktırmadan yanına gelebiliyordu. Ve sonra, kuzeyin ayazının ruhu donduracak kadar keskin estiği bir gecede rüyasında bir ses duydu: <em>"Gel, kızım... Yardımına ihtiyacım var, güzel kızım…"</em> Bu rüya, annesi hakkındaki söylentilerle birleşince Neryssa kararını verdi. Annesini kurtarmak, kimliğini bulmak için ağır kapıdan adımını attığında, geride yalnızca karlarla örülü bir boşluk kalmıştı.</p>
+    </div>
+
+    <!-- ══════════════ CAROUSEL ══════════════ -->
+    <div class="carousel-section">
+
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+
+      <div class="carousel-wrapper">
+
+        <!-- Panel 0: Dostlar -->
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Neryssa'nın Annesi Ursula.jpg" alt="Ursula" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Waldron Vampir Formu.jpg" alt="Waldron" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Lavinia, Neryssa'nın Üvey Kardeşi.jpg" alt="Lavinia" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="3">
+                <img src="Orm.jpg" alt="Orm" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="4">
+                <img src="Orv Bezmadan Parlakçekiç.jpg" alt="Orv Bezmadan Parlakçekiç" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="5">
+                <img src="Steel Saint Zephyr.png" alt="Zephyr" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="6">
+                <img src="Stephen.png" alt="Stephen" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="7">
+                <img src="Luwanna Maria Jacquelyn Gaetana Günkalkanı.jpg" alt="Luwanna" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="8">
+                <img src="Arthas Reborn.jpg" alt="Arthas Reborn" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="9">
+                <img src="Theresia.jpg" alt="Theresia" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="10">
+                <img src="Belzes.jpg" alt="Belzes" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Neryssa'nın Çocukluğundan Beri Aradığı Annesi Ursula</div>
+          <div class="carousel-dots" id="dots-0">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+        <!-- Panel 1: Düşmanlar -->
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Engizisyoncu Davrel (Öldü).jpg" alt="Engizisyoncu Davrel" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="1">
+                <img src="Engizisyoncu Frumaz (Öldü).jpg" alt="Engizisyoncu Frumaz" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="2">
+                <img src="Exodus.jpg" alt="Exodus" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="3">
+                <img src="Coil.jpg" alt="Coil" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="4">
+                <img src="Mortarossa.jpg" alt="Mortarossa" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Neryssa'yı Kurt İni'nden Süren Engizisyon'un Tetikçisi Davrel</div>
+          <div class="carousel-dots" id="dots-1">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Formlar & Eşyalar -->
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Neryssa Eyes of Minute Seeing Takarken.jpeg" alt="Eyes of Minute Seeing" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Wand of Binding.jpeg" alt="Wand of Binding" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="2">
+                <img src="Staff of Frost.jpeg" alt="Staff of Frost" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="3">
+                <img src="Argentflame Diadem.jpg" alt="Argentflame Diadem" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="4">
+                <img src="Inevitable Force Necklace.png" alt="Inevitable Force Necklace" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="5">
+                <img src="Ring of Shooting Stars.jpg" alt="Ring of Shooting Stars" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="6">
+                <img src="Warlock'un Eldritch Defteri (Mortarossa ile Alakalı).jpg" alt="Eldritch Defteri" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Neryssa'nın Eyes of Minute Seeing Takarken</div>
+          <div class="carousel-dots" id="dots-2">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+
+      </div><!-- /.carousel-wrapper -->
+    </div><!-- /.carousel-section -->
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      <a class="back-link" href="../index.html">← Geri Dön</a>
+      <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
+    </div>
+  </div>
+
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong><br>
+    Sürgün Asil, Kuzey'in Cadısı, Son Kıvılcım'ın Üyesi, Kurt İni'nin Kızı, Mortarossa'nın Warlock'u<br><br>
+    <strong>Lore Etkisi:</strong><br>
+    Kurt İni'nden sürgün edilmiş eski bir asilzadedir. Son Kıvılcım grubuyla birlikte Ophelia, Koralith, Veyrion Thal, Gideon Harrow ve Mortarossa adındaki tehditleri bertaraf etmeyi başarmıştır. Annesi Ursula'nın kayboluşunun ardındaki sırrı çözme yolculuğu devam etmektedir.<br><br>
+    <a href="neryssa snow.pdf" target="_blank" class="character-link">🔮 Neryssa Snow Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <strong>Class ve Subclass:</strong> Sorcerer / Warlock<br>
+    <strong>Level:</strong> 11 Level (Yaşıyor)<br>
+    <strong>Irk:</strong> İnsan (Beyaz Ejder Kanı)<br>
+    <strong>Yaş:</strong> 24<br>
+    <strong>Cinsiyet:</strong> Kadın
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
+  </div>
+
+  <script>
+    /* ── Music ── */
+    const music = document.getElementById('background-music');
+    const btn   = document.getElementById('play-pause-btn');
+    let isPlaying = true;
+    let panelOpen = true;
+
+    music.volume = 0.5;
+    music.play().catch(() => {
+      isPlaying = false;
+      btn.textContent = '▶ Müziği Başlat';
+    });
+
+    function toggleMusic() {
+      if (isPlaying) { music.pause(); btn.textContent = '▶ Müziği Başlat'; }
+      else           { music.play();  btn.textContent = '⏸ Müziği Duraklat'; }
+      isPlaying = !isPlaying;
+    }
+
+    function togglePanel() {
+      const panel = document.getElementById('volume-control-wrapper');
+      const tBtn  = document.getElementById('music-toggle-btn');
+      panelOpen = !panelOpen;
+      panel.classList.toggle('collapsed', !panelOpen);
+      tBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
+    }
+
+    document.getElementById('volume-control').addEventListener('input', function () {
+      music.volume = parseFloat(this.value);
+      document.getElementById('volume-level').innerText = Math.round(this.value * 100) + '%';
+    });
+
+    window.onbeforeunload = () => music.pause();
+
+    /* ── Info-box scroll tracking ── */
+    const leftBox  = document.querySelector('.left-box');
+    const rightBox = document.querySelector('.right-box');
+
+    function updateInfoBoxes() {
+      const top = Math.max(70, 100 - window.scrollY);
+      leftBox.style.top  = top + 'px';
+      rightBox.style.top = top + 'px';
+    }
+    window.addEventListener('scroll', updateInfoBoxes, { passive: true });
+    updateInfoBoxes();
+
+    /* ══════════════ CAROUSEL ══════════════ */
+    const CAROUSEL_AUTO_MS = 5000;
+
+    const captions = [
+      [
+        'Neryssa\'nın Çocukluğundan Beri Aradığı Annesi Ursula',
+        'Neryssa\'nın Babası ve Kuzey\'in Asil Kanından Gelen Vampir Formuyla Waldron',
+        'Neryssa\'nın Üvey Kardeşi Lavinia',
+        'Neryssa\'nın Çocukluktan Beri Yanında Olan Sadık Dostu ve Suikastçı Orm',
+        'Son Kıvılcım\'ın Demirci Cüce Babası Orv Bezmadan Parlakçekiç',
+        'Son Kıvılcım\'ın Üyesi ve Neryssa\'nın Grubundaki Ejderdoğan Savaşçı Zephyr',
+        'Son Kıvılcım\'ın Üyesi Stephen',
+        'Son Kıvılcım\'ın Üyesi Eski Asil Luwanna',
+        'Neryssa\'nın Yolculuğunda Karşılaştığı Arthas Reborn',
+        'Neryssa\'nın Yolculuğunda Tanıştığı Theresia',
+        'Neryssa\'nın Yolculuğunda Karşılaştığı Belzes',
+      ],
+      [
+        'Neryssa\'yı Kurt İni\'nden Süren Engizisyon\'un Tetikçisi Davrel',
+        'Neryssa\'yı Cadı İlan Eden Engizisyonculardan Frumaz',
+        'Son Kıvılcım İçinde Bulunmuş Fakat Güvenilmez Çıkmış Exodus',
+        'Neryssa\'nın Düşmanı Coil',
+        'Neryssa\'nın Warlock Paktı Yaptığı ve Sonradan Öldürdüğü Aberrant Deity Mortarossa',
+      ],
+      [
+        'Neryssa\'nın Eyes of Minute Seeing Takarken',
+        'Neryssa\'nın Büyülü Eşyası Wand of Binding',
+        'Neryssa\'nın Buz Güçlerini Yansıtan Staff of Frost',
+        'Neryssa\'nın Giydiği Argentflame Diadem',
+        'Neryssa\'nın Eşyası Inevitable Force Necklace',
+        'Neryssa\'nın Parmağındaki Ring of Shooting Stars',
+        'Mortarossa İle Olan Warlock Paktına Dair Eldritch Defteri',
+      ],
+    ];
+
+    const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
+    let activeTab  = 0;
+    let autoTimer  = null;
+    let isPaused   = false;
+
+    function getCards(panelIdx) {
+      return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${panelIdx}"]`));
+    }
+
+    function showCard(panelIdx, newIdx) {
+      const cards  = getCards(panelIdx);
+      const oldIdx = state[panelIdx].idx;
+      if (oldIdx === newIdx) return;
+
+      const oldCard = cards[oldIdx];
+      oldCard.classList.remove('visible');
+      oldCard.classList.add('leaving');
+      oldCard.addEventListener('animationend', () => oldCard.classList.remove('leaving'), { once: true });
+
+      const newCard = cards[newIdx];
+      newCard.classList.add('visible');
+
+      state[panelIdx].idx = newIdx;
+      document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
+      const dots = document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot');
+      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
+    }
+
+    function carouselShift(panelIdx, dir) {
+      const total  = getCards(panelIdx).length;
+      const newIdx = (state[panelIdx].idx + dir + total) % total;
+      showCard(panelIdx, newIdx);
+      resetAutoTimer();
+    }
+
+    function switchTab(idx) {
+      document.getElementById(`panel-${activeTab}`).classList.remove('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active');
+      activeTab = idx;
+      document.getElementById(`panel-${activeTab}`).classList.add('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active');
+      resetAutoTimer();
+    }
+
+    function autoAdvance() {
+      if (isPaused) return;
+      const total  = getCards(activeTab).length;
+      const newIdx = (state[activeTab].idx + 1) % total;
+      showCard(activeTab, newIdx);
+    }
+
+    function startAutoTimer() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS);
+    }
+
+    function resetAutoTimer() { startAutoTimer(); }
+    function pauseCarousel()  { isPaused = true; }
+    function resumeCarousel() { isPaused = false; resetAutoTimer(); }
+
+    document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
+
+    startAutoTimer();
+
+    [0, 1, 2].forEach(panelIdx => {
+      document.getElementById(`dots-${panelIdx}`)
+        .querySelectorAll('.dot')
+        .forEach((dot, idx) => {
+          dot.addEventListener('click', () => {
+            showCard(panelIdx, idx);
+            resetAutoTimer();
+          });
+        });
+    });
+
+    /* ── Modal ── */
+    const modal      = document.getElementById('myModal');
+    const modalImg   = document.getElementById('img01');
+    const modalCap   = document.getElementById('modal-caption');
+    const modalCount = document.getElementById('modal-counter');
+
+    let modalImages    = [];
+    let modalIdx       = 0;
+    let modalAnimating = false;
+    let modalPanel     = -1;
+
+    function buildModalImages(panelIdx) {
+      modalImages = [];
+      getCards(panelIdx).forEach((card, i) => {
+        modalImages.push({
+          src:     card.querySelector('img').src,
+          caption: captions[panelIdx][i] || ''
+        });
+      });
+    }
+
+    function setModalImage(idx, dir) {
+      if (modalAnimating) return;
+      modalAnimating = true;
+
+      const img = modalImg;
+      const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
+      const inClass  = dir > 0 ? 'slide-in-right'   : 'slide-in-left';
+
+      img.classList.add(outClass);
+      img.addEventListener('animationend', () => {
+        img.classList.remove(outClass);
+        modalIdx = (idx + modalImages.length) % modalImages.length;
+        img.src = modalImages[modalIdx].src;
+        modalCap.textContent   = modalImages[modalIdx].caption;
+        modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+        img.classList.add(inClass);
+        img.addEventListener('animationend', () => {
+          img.classList.remove(inClass);
+          modalAnimating = false;
+        }, { once: true });
+      }, { once: true });
+    }
+
+    function openModal(el) {
+      const card = el.closest('.carousel-card');
+      if (card) {
+        modalPanel = parseInt(card.dataset.panel);
+      } else {
+        modalPanel = -1;
+        modalImages = [{ src: el.src, caption: el.alt || '' }];
+        modalIdx = 0;
+        modalImg.src           = modalImages[0].src;
+        modalCap.textContent   = modalImages[0].caption;
+        modalCount.textContent = `1 / 1`;
+        modalAnimating = false;
+        modal.classList.add('open');
+        document.getElementById('back-button').classList.add('hidden');
+        document.getElementById('music-widget').style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        pauseCarousel();
+        return;
+      }
+
+      buildModalImages(modalPanel);
+      const src = el.src;
+      modalIdx = modalImages.findIndex(m => m.src === src);
+      if (modalIdx < 0) modalIdx = 0;
+
+      modalImg.src           = modalImages[modalIdx].src;
+      modalCap.textContent   = modalImages[modalIdx].caption;
+      modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+      modalAnimating = false;
+
+      modal.classList.add('open');
+      document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display = 'none';
+      document.body.style.overflow = 'hidden';
+      pauseCarousel();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.getElementById('back-button').classList.remove('hidden');
+      document.getElementById('music-widget').style.display = 'flex';
+      document.body.style.overflow = '';
+      resumeCarousel();
+    }
+
+    function modalNav(dir) { setModalImage(modalIdx + dir, dir); }
+
+    modal.addEventListener('click', e => {
+      const allowed = [
+        document.getElementById('img01'),
+        document.getElementById('modal-caption'),
+        document.getElementById('modal-prev'),
+        document.getElementById('modal-next'),
+      ];
+      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'ArrowRight') modalNav(1);
+      if (e.key === 'ArrowLeft')  modalNav(-1);
+      if (e.key === 'Escape')     closeModal();
+    });
+  </script>
+</body>
+</html>
