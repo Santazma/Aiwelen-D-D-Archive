@@ -308,20 +308,31 @@
 
     /* ── Modal ── */
     .modal {
-      display: none; position: fixed; z-index: 10;
+      display: none; position: fixed; z-index: 1000;
       left:0; top:0; width:100%; height:100%;
-      overflow: auto; background-color: rgba(0,0,0,.78);
+      overflow: hidden;
+      background-color: rgba(0,0,0,.85);
       opacity: 0; animation: fadeIn .4s forwards;
+      align-items: center; justify-content: center;
     }
+    .modal.open { display: flex; }
     .modal-content {
-      margin: auto; display: block;
-      width: 80%; max-width: 700px; border-radius: 15px;
+      display: block;
+      /* fill viewport while keeping aspect ratio, never overflow */
+      max-width: 92vw;
+      max-height: 90vh;
+      width: auto;
+      height: auto;
+      border-radius: 15px;
       box-shadow: 0 0 40px rgba(135,206,250,.3);
+      object-fit: contain;
     }
     .close {
-      position: absolute; top:15px; right:35px;
+      position: fixed; top:15px; right:25px;
       color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
       transition: color .2s, text-shadow .2s;
+      z-index: 1001;
+      line-height: 1;
     }
     .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
     /* ══════════════ CAROUSEL ══════════════ */
@@ -627,7 +638,7 @@
                 <img src="Blood Heart.jpeg" alt="Blood Heart" onclick="openModal(this)">
               </div>
               <div class="carousel-card" data-panel="2" data-idx="5">
-                <img src="Judgment’s Ember.jpg" alt="Judgment's Ember" onclick="openModal(this)">
+                <img src="Judgment's Ember.jpg" alt="Judgment's Ember" onclick="openModal(this)">
               </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
@@ -705,42 +716,21 @@
 
     window.onbeforeunload = () => music.pause();
 
-    /* ── Modal ── */
-    const modal    = document.getElementById('myModal');
-    const modalImg = document.getElementById('img01');
-
-    function openModal(el) {
-      modal.style.display = 'block';
-      modalImg.src = el.src;
-      document.getElementById('back-button').classList.add('hidden');
-      document.getElementById('music-widget').style.display = 'none';
-    }
-    function closeModal() {
-      modal.style.display = 'none';
-      document.getElementById('back-button').classList.remove('hidden');
-      document.getElementById('music-widget').style.display = 'flex';
-    }
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-    /* ── Info-box scroll tracking ──
-       Boxes start at top:100px and slide up to a min of 20px as you scroll.
-       z-index is 10, so fixed buttons (z:999) always render on top — no overlap. */
+    /* ── Info-box scroll tracking ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
 
     function updateInfoBoxes() {
-      /* Clamp to 70px minimum — fixed buttons are ~52px tall at top:20px,
-         so 70px keeps boxes safely below them at all scroll positions */
       const top = Math.max(70, 100 - window.scrollY);
       leftBox.style.top  = top + 'px';
       rightBox.style.top = top + 'px';
     }
     window.addEventListener('scroll', updateInfoBoxes, { passive: true });
     updateInfoBoxes();
-    /* ══════════════ CAROUSEL — single card fade+scale ══════════════ */
-    const CAROUSEL_AUTO_MS = 10000;
 
-    // caption text per panel per index
+    /* ══════════════ CAROUSEL — single card fade+scale ══════════════ */
+    const CAROUSEL_AUTO_MS = 5000;
+
     const captions = [
       [
         'Zephyr\'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan',
@@ -762,36 +752,29 @@
     ];
 
     const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
-    let activeTab = 0;
-    let autoTimer = null;
+    let activeTab  = 0;
+    let autoTimer  = null;
+    let isPaused   = false;  // hover or modal pause
 
     function getCards(panelIdx) {
       return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${panelIdx}"]`));
     }
 
     function showCard(panelIdx, newIdx) {
-      const cards = getCards(panelIdx);
+      const cards  = getCards(panelIdx);
       const oldIdx = state[panelIdx].idx;
       if (oldIdx === newIdx) return;
 
-      // animate out old card
       const oldCard = cards[oldIdx];
       oldCard.classList.remove('visible');
       oldCard.classList.add('leaving');
-      oldCard.addEventListener('animationend', () => {
-        oldCard.classList.remove('leaving');
-      }, { once: true });
+      oldCard.addEventListener('animationend', () => oldCard.classList.remove('leaving'), { once: true });
 
-      // animate in new card
       const newCard = cards[newIdx];
       newCard.classList.add('visible');
 
       state[panelIdx].idx = newIdx;
-
-      // update caption
       document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
-
-      // update dots
       const dots = document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot');
       dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
     }
@@ -813,17 +796,48 @@
     }
 
     function autoAdvance() {
+      if (isPaused) return;
       const total  = getCards(activeTab).length;
       const newIdx = (state[activeTab].idx + 1) % total;
       showCard(activeTab, newIdx);
     }
 
-    function resetAutoTimer() {
+    function startAutoTimer() {
       clearInterval(autoTimer);
       autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS);
     }
 
-    resetAutoTimer();
+    function resetAutoTimer() {
+      startAutoTimer();
+    }
+
+    function pauseCarousel()  { isPaused = true;  }
+    function resumeCarousel() { isPaused = false; resetAutoTimer(); }
+
+    // Pause on hover over any carousel section
+    document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
+
+    startAutoTimer();
+
+    /* ── Modal ── */
+    const modal    = document.getElementById('myModal');
+    const modalImg = document.getElementById('img01');
+
+    function openModal(el) {
+      modalImg.src = el.src;
+      modal.classList.add('open');
+      document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display = 'none';
+      pauseCarousel();   // stop rotating while image is open
+    }
+    function closeModal() {
+      modal.classList.remove('open');
+      document.getElementById('back-button').classList.remove('hidden');
+      document.getElementById('music-widget').style.display = 'flex';
+      resumeCarousel();  // resume after closing
+    }
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   </script>
 </body>
 </html>
