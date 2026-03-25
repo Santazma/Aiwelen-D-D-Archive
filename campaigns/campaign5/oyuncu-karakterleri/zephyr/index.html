@@ -314,23 +314,20 @@
       background-color: rgba(0,0,0,.88);
       opacity: 0; animation: fadeIn .4s forwards;
       align-items: center; justify-content: center;
-      /* clicking the dark backdrop (outside modal-inner) closes it */
       cursor: pointer;
     }
     .modal.open { display: flex; }
 
-    /* modal-inner & its children should NOT trigger backdrop close */
     .modal-inner {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 20px;
-      /* don't fill full width/height so backdrop is still clickable */
       max-width: 96vw;
       max-height: 96vh;
       padding: 12px;
       box-sizing: border-box;
-      cursor: default; /* reset cursor inside */
+      cursor: default;
     }
 
     /* Image + caption stacked vertically */
@@ -1076,10 +1073,17 @@
       setModalImage(modalIdx + dir, dir);
     }
 
-    // Backdrop click: modal has cursor:pointer, modal-inner has cursor:default
-    // So clicking the dark area (outside modal-inner) triggers close
+    // Backdrop click: close only when clicking outside the image, caption, and arrows
     modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal();
+      const allowed = [
+        document.getElementById('img01'),
+        document.getElementById('modal-caption'),
+        document.getElementById('modal-prev'),
+        document.getElementById('modal-next'),
+      ];
+      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) {
+        closeModal();
+      }
     });
 
     // Keyboard navigation
