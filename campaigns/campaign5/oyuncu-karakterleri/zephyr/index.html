@@ -311,27 +311,126 @@
       display: none; position: fixed; z-index: 1000;
       left:0; top:0; width:100%; height:100%;
       overflow: hidden;
-      background-color: rgba(0,0,0,.85);
+      background-color: rgba(0,0,0,.88);
       opacity: 0; animation: fadeIn .4s forwards;
       align-items: center; justify-content: center;
     }
     .modal.open { display: flex; }
+
+    /* Modal inner wrapper holds image + nav in a row */
+    .modal-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Image stage — fixed size, clips slide animation */
+    .modal-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 82vw;
+      max-height: 88vh;
+      overflow: hidden;
+    }
+
+    @keyframes modalSlideInRight {
+      from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);  filter: blur(0);   }
+    }
+    @keyframes modalSlideInLeft {
+      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+    }
+    @keyframes modalSlideOutLeft {
+      from { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+    }
+    @keyframes modalSlideOutRight {
+      from { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);   filter: blur(0);   }
+      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg);  filter: blur(5px); }
+    }
+
     .modal-content {
       display: block;
-      /* fill viewport while keeping aspect ratio, never overflow */
-      max-width: 92vw;
-      max-height: 90vh;
+      max-width: 82vw;
+      max-height: 88vh;
       width: auto;
       height: auto;
       border-radius: 15px;
-      box-shadow: 0 0 40px rgba(135,206,250,.3);
+      box-shadow: 0 0 50px rgba(135,206,250,.35);
       object-fit: contain;
     }
+    .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation: modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation: modalSlideOutRight 0.32s ease forwards; }
+
+    /* Modal navigation arrows */
+    .modal-arrow {
+      flex-shrink: 0;
+      width: 52px; height: 52px;
+      font-size: 1.5rem;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
+      border: 1px solid rgba(135,206,250,0.45);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite;
+      z-index: 1002;
+    }
+    .modal-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 22px rgba(135,206,250,0.65);
+      transform: scale(1.12);
+    }
+    .modal-arrow:active { transform: scale(0.93); }
+
+    /* Modal caption */
+    .modal-caption {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e8f6ff;
+      text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 14px rgba(0,0,0,0.9);
+      text-align: center;
+      max-width: 70vw;
+      line-height: 1.4;
+      pointer-events: none;
+      z-index: 1002;
+    }
+
+    /* Modal counter */
+    .modal-counter {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      color: rgba(168,216,234,0.85);
+      letter-spacing: 1px;
+      pointer-events: none;
+      z-index: 1002;
+    }
+
     .close {
       position: fixed; top:15px; right:25px;
       color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
       transition: color .2s, text-shadow .2s;
-      z-index: 1001;
+      z-index: 1003;
       line-height: 1;
     }
     .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
@@ -661,7 +760,7 @@
                 <img src="Blood Heart.jpeg" alt="Blood Heart" onclick="openModal(this)">
               </div>
               <div class="carousel-card" data-panel="2" data-idx="6">
-                <img src="Judgment’s Ember.jpg" alt="Judgment's Ember" onclick="openModal(this)">
+                <img src="Judgment's Ember.jpg" alt="Judgment's Ember" onclick="openModal(this)">
               </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
@@ -703,7 +802,15 @@
 
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="img01" />
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
+    <div class="modal-caption" id="modal-caption"></div>
   </div>
 
   <script>
@@ -759,13 +866,7 @@
       [
         'Zephyr\'i Yetiştiren Kişi ve Onun Kadim Dostu Hassan',
         'Zephyr\'in Hafızasında Unuttuğu Kader Arkadaşı Oris',
-        'Zephyr\'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Ve Manevi Babası Olarak Gördüğü Eski Engizisyoncu Peder Aziz Paul',
-        'Zephyr\'in Son Kıvılcım İçerisindeki Tanıdığı En Eski Dostu Ve Hürmet Ettiği Cüce Orv Bezmadan Parlakçekiç',
-        'Zephyr\'in Kurt İni\'nde Tanıştığı Fakat Kuzey\'deki Yolculuğu Sırasında Kaybettiği Ve Ölmesinden Pişmanlık Duyduğu Eski Dostu Exodus',
-        'Zephyr\'in Sevgilisi Ve Uğruna Bir Kaçak Olarak Yaşayarak Engizisyon İle Savaşmaya Göz Yumduğu Kadın Neryssa Snow',
-        'Zephyr\'in Yolculuk Esnasında Tanıştığı Ve Bir İstihbarat Ajanı Olan Theron Nightgale',
-        'Zephyr\'in Bu Yolculukta En Çok Güvendiği Dostu Ve En Yakın Arkadaşı Olan Stephen',
-        'Zephyr\'in Son Kıvılcım İle Birlikte Kuzey\'in Karlı Dağlarının Arasında Bulduğu Ve Daha Sonrasında Gruplarına Dahil Ettikleri Eski Asil Ve Engizisyoncu Luwanna',
+        'Zephyr\'in Mentoru ve Onun Çelik Azizi Olmasını Sağlayan Eski Engizisyoncu Peder Aziz Paul',
       ],
       [
         'Zephyr\'in Düşmanı ve Onunla Magma Platosunda Savaşmış Bir Titan Olan Koralith',
@@ -773,7 +874,6 @@
       ],
       [
         'Beyaz Engizisyoncu Kıyafetlerini Giyip Çelik Azizi Olduktan Sonra Zephyr',
-        'Zephyr\'in Engizisyonculardan Aldıktan Sonra Ölen Arkadaşının Adını Yaşatmak İçin Koyduğu Eski Büyülü Kılıcı Exodus',
         'Oris\'in Zephyr\'e Verdiği Emanet Olan Tempest\'s Gale Essence',
         'Zephyr\'in Kariyerinin Başlarında Kullandığı Eşyası Vicious Rapier',
         'Zephyr Goggles of Night Takıyorken',
@@ -863,24 +963,98 @@
         });
     });
 
-    /* ── Modal ── */
-    const modal    = document.getElementById('myModal');
-    const modalImg = document.getElementById('img01');
+    /* ── Modal with navigation ── */
+    const modal      = document.getElementById('myModal');
+    const modalImg   = document.getElementById('img01');
+    const modalCap   = document.getElementById('modal-caption');
+    const modalCount = document.getElementById('modal-counter');
+
+    // Flat list of all images across all panels in order
+    // Built dynamically so adding cards to HTML is enough
+    let modalImages = [];   // [{ src, caption }]
+    let modalIdx    = 0;
+    let modalAnimating = false;
+
+    function buildModalImages() {
+      modalImages = [];
+      [0, 1, 2].forEach(panelIdx => {
+        getCards(panelIdx).forEach((card, i) => {
+          modalImages.push({
+            src:     card.querySelector('img').src,
+            caption: captions[panelIdx][i] || ''
+          });
+        });
+      });
+    }
+
+    function setModalImage(idx, dir) {
+      // dir: 1 = next (slide left), -1 = prev (slide right)
+      if (modalAnimating) return;
+      modalAnimating = true;
+
+      const img = modalImg;
+      const outClass = dir > 0 ? 'slide-out-left' : 'slide-out-right';
+      const inClass  = dir > 0 ? 'slide-in-right'  : 'slide-in-left';
+
+      // Animate out current image
+      img.classList.add(outClass);
+      img.addEventListener('animationend', () => {
+        img.classList.remove(outClass);
+        // Switch source
+        modalIdx = (idx + modalImages.length) % modalImages.length;
+        img.src = modalImages[modalIdx].src;
+        // Caption & counter
+        modalCap.textContent   = modalImages[modalIdx].caption;
+        modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+        // Animate in
+        img.classList.add(inClass);
+        img.addEventListener('animationend', () => {
+          img.classList.remove(inClass);
+          modalAnimating = false;
+        }, { once: true });
+      }, { once: true });
+    }
 
     function openModal(el) {
-      modalImg.src = el.src;
+      buildModalImages();
+      // Find which image was clicked
+      const src = el.src;
+      modalIdx = modalImages.findIndex(m => m.src === src);
+      if (modalIdx < 0) modalIdx = 0;
+
+      // Set initial state without animation
+      modalImg.src           = modalImages[modalIdx].src;
+      modalCap.textContent   = modalImages[modalIdx].caption;
+      modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+      modalAnimating = false;
+
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
       document.getElementById('music-widget').style.display = 'none';
-      pauseCarousel();   // stop rotating while image is open
+      pauseCarousel();
     }
+
     function closeModal() {
       modal.classList.remove('open');
       document.getElementById('back-button').classList.remove('hidden');
       document.getElementById('music-widget').style.display = 'flex';
-      resumeCarousel();  // resume after closing
+      resumeCarousel();
     }
+
+    function modalNav(dir) {
+      setModalImage(modalIdx + dir, dir);
+    }
+
+    // Close on backdrop click
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'ArrowRight') modalNav(1);
+      if (e.key === 'ArrowLeft')  modalNav(-1);
+      if (e.key === 'Escape')     closeModal();
+    });
   </script>
 </body>
 </html>
