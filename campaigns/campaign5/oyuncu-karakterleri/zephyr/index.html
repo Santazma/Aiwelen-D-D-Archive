@@ -314,29 +314,32 @@
       background-color: rgba(0,0,0,.88);
       opacity: 0; animation: fadeIn .4s forwards;
       align-items: center; justify-content: center;
+      /* clicking the dark backdrop (outside modal-inner) closes it */
+      cursor: pointer;
     }
     .modal.open { display: flex; }
 
-    /* Modal inner wrapper holds image + nav in a row */
+    /* modal-inner & its children should NOT trigger backdrop close */
     .modal-inner {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 20px;
-      width: 100%;
-      height: 100%;
-      padding: 20px;
+      /* don't fill full width/height so backdrop is still clickable */
+      max-width: 96vw;
+      max-height: 96vh;
+      padding: 12px;
       box-sizing: border-box;
+      cursor: default; /* reset cursor inside */
     }
 
-    /* Image stage — fixed size, clips slide animation */
+    /* Image + caption stacked vertically */
     .modal-stage {
       position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      max-width: 82vw;
-      max-height: 88vh;
       overflow: hidden;
     }
 
@@ -359,11 +362,11 @@
 
     .modal-content {
       display: block;
-      max-width: 82vw;
-      max-height: 88vh;
+      max-width: 78vw;
+      max-height: 76vh;
       width: auto;
       height: auto;
-      border-radius: 15px;
+      border-radius: 15px 15px 0 0;
       box-shadow: 0 0 50px rgba(135,206,250,.35);
       object-fit: contain;
     }
@@ -371,6 +374,45 @@
     .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
     .modal-content.slide-out-left  { animation: modalSlideOutLeft  0.32s ease forwards; }
     .modal-content.slide-out-right { animation: modalSlideOutRight 0.32s ease forwards; }
+
+    /* Caption glued directly below the image */
+    .modal-caption {
+      width: 100%;
+      max-width: 78vw;
+      padding: 10px 16px 12px;
+      box-sizing: border-box;
+      background: rgba(5,15,40,0.88);
+      border-radius: 0 0 15px 15px;
+      border-top: 1px solid rgba(135,206,250,0.2);
+      font-family: 'Lora', Georgia, serif;
+      font-style: normal;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #e8f6ff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      text-align: center;
+      line-height: 1.45;
+      letter-spacing: 0.01em;
+    }
+
+    /* Counter top-center */
+    .modal-counter {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(168,216,234,0.9);
+      letter-spacing: 1.5px;
+      pointer-events: none;
+      z-index: 1002;
+      background: rgba(5,15,40,0.6);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(135,206,250,0.2);
+    }
 
     /* Modal navigation arrows */
     .modal-arrow {
@@ -393,38 +435,6 @@
       transform: scale(1.12);
     }
     .modal-arrow:active { transform: scale(0.93); }
-
-    /* Modal caption */
-    .modal-caption {
-      position: fixed;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Lora', Georgia, serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #e8f6ff;
-      text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 14px rgba(0,0,0,0.9);
-      text-align: center;
-      max-width: 70vw;
-      line-height: 1.4;
-      pointer-events: none;
-      z-index: 1002;
-    }
-
-    /* Modal counter */
-    .modal-counter {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Cinzel', serif;
-      font-size: 0.82rem;
-      color: rgba(168,216,234,0.85);
-      letter-spacing: 1px;
-      pointer-events: none;
-      z-index: 1002;
-    }
 
     .close {
       position: fixed; top:15px; right:25px;
@@ -807,10 +817,10 @@
       <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
       <div class="modal-stage">
         <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
       </div>
       <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
     </div>
-    <div class="modal-caption" id="modal-caption"></div>
   </div>
 
   <script>
@@ -976,44 +986,37 @@
     const modalCap   = document.getElementById('modal-caption');
     const modalCount = document.getElementById('modal-counter');
 
-    // Flat list of all images across all panels in order
-    // Built dynamically so adding cards to HTML is enough
-    let modalImages = [];   // [{ src, caption }]
-    let modalIdx    = 0;
+    let modalImages    = [];  // [{ src, caption }] — scoped to current panel
+    let modalIdx       = 0;
     let modalAnimating = false;
+    let modalPanel     = -1;  // which panel was clicked
 
-    function buildModalImages() {
+    function buildModalImages(panelIdx) {
+      // Only collect images from the clicked panel
       modalImages = [];
-      [0, 1, 2].forEach(panelIdx => {
-        getCards(panelIdx).forEach((card, i) => {
-          modalImages.push({
-            src:     card.querySelector('img').src,
-            caption: captions[panelIdx][i] || ''
-          });
+      getCards(panelIdx).forEach((card, i) => {
+        modalImages.push({
+          src:     card.querySelector('img').src,
+          caption: captions[panelIdx][i] || ''
         });
       });
     }
 
     function setModalImage(idx, dir) {
-      // dir: 1 = next (slide left), -1 = prev (slide right)
       if (modalAnimating) return;
       modalAnimating = true;
 
       const img = modalImg;
-      const outClass = dir > 0 ? 'slide-out-left' : 'slide-out-right';
-      const inClass  = dir > 0 ? 'slide-in-right'  : 'slide-in-left';
+      const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
+      const inClass  = dir > 0 ? 'slide-in-right'   : 'slide-in-left';
 
-      // Animate out current image
       img.classList.add(outClass);
       img.addEventListener('animationend', () => {
         img.classList.remove(outClass);
-        // Switch source
         modalIdx = (idx + modalImages.length) % modalImages.length;
         img.src = modalImages[modalIdx].src;
-        // Caption & counter
         modalCap.textContent   = modalImages[modalIdx].caption;
         modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
-        // Animate in
         img.classList.add(inClass);
         img.addEventListener('animationend', () => {
           img.classList.remove(inClass);
@@ -1023,13 +1026,32 @@
     }
 
     function openModal(el) {
-      buildModalImages();
-      // Find which image was clicked
+      // Determine which panel this image belongs to
+      const card = el.closest('.carousel-card');
+      if (card) {
+        modalPanel = parseInt(card.dataset.panel);
+      } else {
+        // Clicked the main character image — treat as standalone (panel -1)
+        modalPanel = -1;
+        modalImages = [{ src: el.src, caption: el.alt || '' }];
+        modalIdx = 0;
+        modalImg.src           = modalImages[0].src;
+        modalCap.textContent   = modalImages[0].caption;
+        modalCount.textContent = `1 / 1`;
+        modalAnimating = false;
+        modal.classList.add('open');
+        document.getElementById('back-button').classList.add('hidden');
+        document.getElementById('music-widget').style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        pauseCarousel();
+        return;
+      }
+
+      buildModalImages(modalPanel);
       const src = el.src;
       modalIdx = modalImages.findIndex(m => m.src === src);
       if (modalIdx < 0) modalIdx = 0;
 
-      // Set initial state without animation
       modalImg.src           = modalImages[modalIdx].src;
       modalCap.textContent   = modalImages[modalIdx].caption;
       modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
@@ -1038,6 +1060,7 @@
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
       document.getElementById('music-widget').style.display = 'none';
+      document.body.style.overflow = 'hidden';   // lock scroll
       pauseCarousel();
     }
 
@@ -1045,6 +1068,7 @@
       modal.classList.remove('open');
       document.getElementById('back-button').classList.remove('hidden');
       document.getElementById('music-widget').style.display = 'flex';
+      document.body.style.overflow = '';          // restore scroll
       resumeCarousel();
     }
 
@@ -1052,8 +1076,11 @@
       setModalImage(modalIdx + dir, dir);
     }
 
-    // Close on backdrop click
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    // Backdrop click: modal has cursor:pointer, modal-inner has cursor:default
+    // So clicking the dark area (outside modal-inner) triggers close
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
 
     // Keyboard navigation
     document.addEventListener('keydown', e => {
