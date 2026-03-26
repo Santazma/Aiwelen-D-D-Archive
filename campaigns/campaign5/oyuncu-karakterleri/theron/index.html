@@ -48,6 +48,9 @@
       }
     }
 
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       font-family: 'Lora', Georgia, serif;
       margin: 0; padding: 0;
@@ -56,165 +59,7 @@
       color: #fff;
     }
 
-    .container {
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      z-index: 1;
-      animation: pageFadeIn 1s ease .2s both;
-    }
-    .container::before {
-      content: '';
-      position: absolute; top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,.42);
-      z-index: -1;
-    }
-
-    h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 4rem; font-weight: 900;
-      text-transform: uppercase; letter-spacing: 3px;
-      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
-      margin-bottom: 20px;
-      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
-    }
-
-    .character-image {
-      width: 200px; height: 300px;
-      object-fit: cover; border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,.5);
-      margin-bottom: 10px;
-      transition: transform .5s ease, opacity .5s ease;
-      cursor: pointer;
-      animation: pageFadeIn 1s ease .5s both;
-    }
-    .character-image:hover { transform: scale(1.5); opacity: .8; }
-
-    .image-title {
-      text-align: center; margin-bottom: 20px;
-      font-family: 'Lora', Georgia, serif;
-      font-style: italic; font-size: 1.25rem; font-weight: 700;
-      text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
-    }
-
-    .image-title-alt {
-      text-align: center; margin-top: 8px; margin-bottom: 4px;
-      font-family: 'Lora', Georgia, serif;
-      font-style: italic; font-size: 0.88rem; font-weight: 700;
-      color: #dff0ff;
-      text-shadow: 0 0 8px rgba(0,0,0,.9);
-      line-height: 1.35; padding: 2px;
-    }
-
-    .bio {
-      font-size: 1.1rem; max-width: 800px;
-      margin: 0 auto 30px auto;
-      line-height: 1.75; text-align: justify;
-      background: var(--dark-glass);
-      padding: 24px 28px; border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.6);
-      border: 1px solid rgba(135,206,250,.12);
-      animation: pageFadeIn 1s ease .7s both;
-    }
-
-    .alternative-images {
-      display: flex; flex-wrap: wrap;
-      justify-content: center; gap: 24px;
-      margin-bottom: 40px;
-      animation: pageFadeIn 1s ease .9s both;
-    }
-    .alternative-images > div {
-      position: relative;
-      text-align: center; max-width: 164px; flex: 0 1 164px;
-    }
-    .alternative-images > div::before,
-    .alternative-images > div::after {
-      content: '❄';
-      position: absolute; top: -4px;
-      font-size: .65rem; color: rgba(168,216,234,.7);
-      pointer-events: none; line-height: 1;
-    }
-    .alternative-images > div::before { left: 4px; }
-    .alternative-images > div::after  { right: 4px; }
-
-    .alternative-images img {
-      width: 150px; height: 200px;
-      object-fit: cover; border-radius: 10px;
-      border: 2px solid var(--ice);
-      outline: 1px solid rgba(168,216,234,.28);
-      outline-offset: 3px;
-      filter: brightness(.92) saturate(.95);
-      cursor: pointer;
-      animation: icePulse 4s ease-in-out infinite;
-      transition: transform .35s ease, filter .35s ease, box-shadow .35s ease;
-    }
-    .alternative-images img:hover {
-      transform: scale(1.5);
-      filter: brightness(1.08) saturate(1.1);
-      box-shadow:
-        0 0 0 4px rgba(10,30,60,.8),
-        0 0 0 7px rgba(168,216,234,.6),
-        0 0 32px rgba(168,216,234,.45),
-        0 10px 30px rgba(0,0,0,.7),
-        inset 0 0 20px rgba(168,216,234,.15);
-    }
-
-    .info-box {
-      position: fixed;
-      top: 100px;
-      z-index: 10;
-      background-color: var(--dark-glass);
-      padding: 15px; border-radius: 10px;
-      width: 210px; font-size: .9rem; line-height: 1.5;
-      border: 1px solid rgba(135,206,250,.18);
-      animation: pageFadeIn 1s ease .6s both;
-      transition: top .1s linear;
-    }
-    .info-box h2 {
-      font-family: 'Cinzel', serif;
-      font-size: 1.05rem; color: var(--gold-dim);
-      margin-top: 0; margin-bottom: 10px;
-    }
-    .info-box strong { color: var(--gold); }
-    .left-box  { left: 20px; }
-    .right-box { right: 20px; }
-
-    .character-link {
-      display: inline-block; margin-top: 8px;
-      padding: 6px 14px; font-size: .88rem; font-weight: 600;
-      color: var(--gold); text-decoration: none;
-      border: 1px solid rgba(255,215,0,.45); border-radius: 6px;
-      background: rgba(255,215,0,.07);
-      transition: background .25s, box-shadow .25s, transform .15s;
-    }
-    .character-link:hover {
-      background: rgba(255,215,0,.18);
-      box-shadow: 0 0 14px rgba(255,215,0,.5);
-      transform: translateY(-1px);
-    }
-    .character-link:active { transform: scale(.96); }
-
-    .back-link {
-      display: inline-block; margin-top: 20px;
-      padding: .6rem 1.4rem;
-      font-family: 'Cinzel', serif; font-size: 1rem;
-      font-weight: 700; letter-spacing: 1px;
-      text-decoration: none; color: #fff;
-      border-radius: 8px;
-      border: 1px solid rgba(135,206,250,.5);
-      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
-      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
-      transition: transform .18s, box-shadow .25s, background .25s;
-      animation: glowPulse 3s ease-in-out infinite;
-    }
-    .back-link:hover {
-      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
-      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
-      transform: translateY(-2px);
-    }
-    .back-link:active { transform: scale(.96) translateY(0); }
+    /* ══════════════ FIXED UI: back button + music widget ══════════════ */
 
     .fixed-back-button {
       position: fixed; top: 20px; left: 20px; z-index: 999;
@@ -236,9 +81,12 @@
     }
     .fixed-back-button:active { transform: scale(.95); }
 
+    /* Music widget — top right, z:999, panel expands DOWNWARD only */
     #music-widget {
       position: fixed; top: 20px; right: 20px; z-index: 999;
       display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+      /* limit total height so it never overlaps info-box */
+      max-height: calc(100vh - 40px);
     }
     #music-toggle-btn {
       display: flex; align-items: center; gap: 7px;
@@ -251,6 +99,7 @@
       transition: background .2s, box-shadow .2s, transform .15s;
       box-shadow: 0 0 8px rgba(135,206,250,.2);
       animation: glowPulse 3s ease-in-out infinite;
+      flex-shrink: 0;
     }
     #music-toggle-btn:hover {
       background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
@@ -264,13 +113,15 @@
       border: 1px solid rgba(135,206,250,.25);
       padding: 12px 15px; border-radius: 12px;
       box-shadow: 0 0 16px rgba(135,206,250,.15);
-      min-width: 200px; overflow: hidden;
-      max-height: 200px; opacity: 1;
-      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
-    }
-    #volume-control-wrapper.collapsed {
+      width: 210px; overflow: hidden;
+      /* collapsed by default — JS toggles max-height */
       max-height: 0; opacity: 0;
       padding-top: 0; padding-bottom: 0;
+      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
+    }
+    #volume-control-wrapper.open {
+      max-height: 160px; opacity: 1;
+      padding-top: 12px; padding-bottom: 12px;
     }
     #volume-control-label {
       display: block; margin-bottom: 6px;
@@ -296,7 +147,146 @@
     #play-pause-btn:active { transform: scale(.96); }
     #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
 
-    /* ── Modal ── */
+    /* ══════════════ INFO BOXES ══════════════
+       Desktop: fixed left/right panels.
+       Tablet/mobile: hidden from fixed position, shown inline instead.
+    ══════════════ */
+    .info-box {
+      position: fixed;
+      top: 100px;
+      z-index: 10;           /* below music widget (z:999) — no overlap */
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
+    }
+    .info-box h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box strong { color: var(--gold); }
+    .left-box  { left: 20px; }
+    .right-box { right: 20px; }
+
+    /* Inline info boxes shown only on small screens */
+    .info-boxes-inline {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 28px auto;
+      padding: 0 16px;
+    }
+    .info-box-inline {
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+    }
+    .info-box-inline h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box-inline strong { color: var(--gold); }
+
+    /* ══════════════ MAIN CONTAINER ══════════════ */
+    .container {
+      position: relative;
+      /* side padding creates room for fixed info-boxes on desktop */
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 260px; /* 260px = 210px box + 30px gap + 20px margin */
+      text-align: center;
+      z-index: 1;
+      animation: pageFadeIn 1s ease .2s both;
+    }
+    .container::before {
+      content: '';
+      position: absolute; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.42);
+      z-index: -1;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
+      margin-bottom: 20px;
+      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
+    }
+
+    .character-image {
+      width: 200px; height: 300px;
+      object-fit: cover; border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.5);
+      margin-bottom: 10px;
+      transition: transform .5s ease, opacity .5s ease;
+      cursor: pointer;
+      animation: pageFadeIn 1s ease .5s both;
+    }
+    .character-image:hover { transform: scale(1.5); opacity: .8; }
+
+    .image-title {
+      text-align: center; margin-bottom: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic; font-size: 1.25rem; font-weight: 700;
+      text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem; max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.75; text-align: justify;
+      background: var(--dark-glass);
+      padding: 24px 28px; border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.6);
+      border: 1px solid rgba(135,206,250,.12);
+      animation: pageFadeIn 1s ease .7s both;
+    }
+
+    /* ── Character sheet link ── */
+    .character-link {
+      display: inline-block; margin-top: 8px;
+      padding: 6px 14px; font-size: .88rem; font-weight: 600;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(255,215,0,.45); border-radius: 6px;
+      background: rgba(255,215,0,.07);
+      transition: background .25s, box-shadow .25s, transform .15s;
+    }
+    .character-link:hover {
+      background: rgba(255,215,0,.18);
+      box-shadow: 0 0 14px rgba(255,215,0,.5);
+      transform: translateY(-1px);
+    }
+    .character-link:active { transform: scale(.96); }
+
+    /* ── Bottom nav buttons ── */
+    .back-link {
+      display: inline-block; margin-top: 20px;
+      padding: .6rem 1.4rem;
+      font-family: 'Cinzel', serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: 1px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.5);
+      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
+      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
+      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
+      transform: translateY(-2px);
+    }
+    .back-link:active { transform: scale(.96) translateY(0); }
+
+    /* ══════════════ MODAL ══════════════ */
     .modal {
       display: none; position: fixed; z-index: 1000;
       left:0; top:0; width:100%; height:100%;
@@ -309,51 +299,39 @@
     .modal.open { display: flex; }
 
     .modal-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      max-width: 96vw;
-      max-height: 96vh;
-      padding: 12px;
-      box-sizing: border-box;
-      cursor: default;
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; max-width: 96vw; max-height: 96vh;
+      padding: 12px; box-sizing: border-box; cursor: default;
     }
 
     .modal-stage {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: relative; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
       overflow: hidden;
     }
 
     @keyframes modalSlideInRight {
       from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
-      to   { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);  filter: blur(0);   }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
     }
     @keyframes modalSlideInLeft {
-      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
-      to   { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
     }
     @keyframes modalSlideOutLeft {
-      from { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
-      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
     }
     @keyframes modalSlideOutRight {
-      from { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);   filter: blur(0);   }
-      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg);  filter: blur(5px); }
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
     }
 
     .modal-content {
-      display: block;
-      max-width: 78vw;
-      max-height: 76vh;
+      display: block; max-width: 78vw; max-height: 76vh;
       width: auto; height: auto;
       border-radius: 15px 15px 0 0;
-      box-shadow: 0 0 50px rgba(135,206,250,.35);
-      object-fit: contain;
+      box-shadow: 0 0 50px rgba(135,206,250,.35); object-fit: contain;
     }
     .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
     .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
@@ -362,15 +340,13 @@
 
     .modal-caption {
       width: 100%; max-width: 78vw;
-      padding: 10px 16px 12px;
-      box-sizing: border-box;
+      padding: 10px 16px 12px; box-sizing: border-box;
       background: rgba(5,15,40,0.88);
       border-radius: 0 0 15px 15px;
       border-top: 1px solid rgba(135,206,250,0.2);
       font-family: 'Lora', Georgia, serif;
       font-style: normal; font-size: 1.05rem; font-weight: 700;
-      color: #e8f6ff;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      color: #e8f6ff; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
       text-align: center; line-height: 1.45; letter-spacing: 0.01em;
     }
 
@@ -384,7 +360,7 @@
     }
 
     .modal-arrow {
-      flex-shrink: 0; width: 52px; height: 52px; font-size: 1.5rem; color: #fff;
+      flex-shrink: 0; width: 48px; height: 48px; font-size: 1.4rem; color: #fff;
       background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
       border: 1px solid rgba(135,206,250,0.45); border-radius: 50%;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -407,10 +383,10 @@
     /* ══════════════ CAROUSEL ══════════════ */
     @keyframes cardIn {
       from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(6px); }
-      to   { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0);   }
+      to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
     }
     @keyframes cardOut {
-      from { opacity: 1; transform: scale(1)    translateY(0);     filter: blur(0);   }
+      from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
       to   { opacity: 0; transform: scale(0.88) translateY(-20px); filter: blur(6px); }
     }
 
@@ -432,8 +408,7 @@
       background: rgba(10,28,55,0.55); cursor: pointer; transition: all 0.25s;
     }
     .carousel-tab:hover {
-      color: #fff; border-color: rgba(135,206,250,0.55);
-      background: rgba(30,75,130,0.65);
+      color: #fff; border-color: rgba(135,206,250,0.55); background: rgba(30,75,130,0.65);
     }
     .carousel-tab.active {
       color: #fff; border-color: rgba(135,206,250,0.85);
@@ -520,6 +495,73 @@
     }
 
     .hidden { display: none; }
+
+    /* ══════════════ RESPONSIVE BREAKPOINTS ══════════════ */
+
+    /* Tablet: 1024px and below — info-boxes still visible but narrower */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 20px 230px;
+      }
+      .info-box { width: 190px; font-size: .82rem; }
+      .left-box  { left: 12px; }
+      .right-box { right: 12px; }
+    }
+
+    /* Narrow tablet: 860px and below — switch to inline info-boxes */
+    @media (max-width: 860px) {
+      /* Hide fixed side info-boxes */
+      .info-box { display: none; }
+
+      /* Show inline info-boxes inside the flow */
+      .info-boxes-inline { display: flex; }
+
+      /* Remove side padding — no more fixed boxes to avoid */
+      .container { padding: 20px 16px; }
+
+      h1 { font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: 1px; }
+
+      .bio { padding: 18px 16px; font-size: 1rem; }
+
+      /* Carousel: scale down stage for narrow screens */
+      .carousel-stage { width: 280px; height: 360px; }
+      .carousel-card img { width: 260px; height: 350px; }
+      .carousel-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .carousel-section { max-width: 100%; }
+    }
+
+    /* Mobile: 540px and below */
+    @media (max-width: 540px) {
+      /* Fixed top bar: back button stays top-left, music stays top-right */
+      .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; }
+      #music-toggle-btn  { font-size: .7rem;  padding: 5px 10px; }
+
+      h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; }
+
+      .character-image { width: 160px; height: 240px; }
+
+      /* Carousel: tighten further */
+      .carousel-stage { width: 240px; height: 310px; }
+      .carousel-card img { width: 220px; height: 300px; }
+      .carousel-row { gap: 8px; }
+      .carousel-arrow { width: 34px; height: 34px; font-size: 1rem; }
+      .carousel-caption { font-size: .88rem; }
+      .carousel-tab { padding: 7px 12px; font-size: .82rem; }
+
+      /* Modal arrows smaller on phone */
+      .modal-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+      .modal-content { max-width: 90vw; max-height: 70vh; }
+      .modal-caption { font-size: .9rem; }
+
+      .back-link { padding: .5rem 1rem; font-size: .88rem; }
+    }
+
+    /* Very small: 380px */
+    @media (max-width: 380px) {
+      h1 { font-size: 1.2rem; }
+      .carousel-stage { width: 200px; height: 270px; }
+      .carousel-card img { width: 185px; height: 260px; }
+    }
   </style>
 </head>
 <body>
@@ -541,7 +583,8 @@
 
   <div class="container">
     <h1>Theron Nightgale</h1>
-    <img src="Theron Nightgale.jpg" alt="Theron Nightgale" class="character-image" onclick="openModal(this)"><div class="image-title">Gölge Avcısı Theron Nightgale</div>
+    <img src="Theron Nightgale.jpg" alt="Theron Nightgale" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Gölge Avcısı Theron Nightgale</div>
 
     <div class="bio">
       <p><strong>Çağıl Cengiz ERSER</strong> tarafından canlandırılmış ve oynanmıştır. Çağıl'ın ikinci karakteridir. <strong>Theron</strong>, kuzeyin sert vahşi doğasında; kış gecelerinin sonsuz göründüğü ve gölgelerin kötü niyetli bir amaçla dans ettiği bir coğrafyada doğdu. İlk yıllarını; babası <strong>Garrett</strong>'in kasaba demircisi, annesi <strong>Lyanna</strong>'nın ise küçük büyü yeteneklerini <strong>Engizisyon</strong>'dan gizleyen bir şifacı olduğu <strong>Frosty Passage'nin Üzerindeki Köy</strong>'de geçirdi.</p>
@@ -560,13 +603,33 @@
 
       <p><strong>En Büyük Kahramanlık Anı:</strong> <strong>Engizisyon</strong> baskını ve <strong>gölge yaratığı</strong> saldırısı altındaki bir sığınaktan; yaşlı bir büyücü kadın, bir adam ve 8 yaşındaki kızını, <strong>Moonbow</strong>'un gerçek gücünü ilk kez kullanarak sağ salim çıkarmayı başardı.</p>
 
-      <p><strong>En Büyük Şehvet Anı:</strong> <strong>Wolf’s Inn</strong>’deki fırtınalı bir gecede, <strong>Corvina</strong> ile olan buluşması. Göğsündeki <strong>gümüş kolye</strong> tenini dağlarken, iki yaralı ruhun birbirine teslimiyetiyle şekillenen, <em>"huzurun yozlaşmanın ilk belirtisi olduğu"</em> zehirli ve gerçek bir gece.</p>
+      <p><strong>En Büyük Şehvet Anı:</strong> <strong>Wolf's Inn</strong>'deki fırtınalı bir gecede, <strong>Corvina</strong> ile olan buluşması. Göğsündeki <strong>gümüş kolye</strong> tenini dağlarken, iki yaralı ruhun birbirine teslimiyetiyle şekillenen, <em>"huzurun yozlaşmanın ilk belirtisi olduğu"</em> zehirli ve gerçek bir gece.</p>
 
-      <p><strong>En Büyük Utanç Anı:</strong> <strong>"Aptal Tepeler"</strong> tavernasındaki bir kumar masasına dalarak korumakla görevli olduğu sığınağı ihmal etmesi. Bu hata sonucunda 16 yaşındaki <strong>Sera</strong>, <strong>Engizisyon</strong> tarafından bacağından yaralanarak yakalandı. Sera'nın kurtarılsa bile Theron'a sorduğu o soru —<em>"Neredeydin?"</em>— Theron'un peşini bırakmayan en büyük gölgesi oldu.</p>
+      <p><strong>En Büyük Utanç Anı:</strong> <strong>"Aptal Tepeler"</strong> tavernasındaki bir kumar masasına dalarak korumakla görevli olduğu sığınağı ihmal etmesi. Bu hata sonucunda 16 yaşındaki <strong>Sera</strong>, <strong>Engizisyon</strong> tarafından bacağından yaralanarak yakalandı. Sera'nın kurtarılsa bile Theron'a sorduğu o soru — <em>"Neredeydin?"</em> — Theron'un peşini bırakmayan en büyük gölgesi oldu.</p>
     </div>
 
-    <div class="carousel-section">
+    <!-- Inline info-boxes: only shown on narrow screens via CSS -->
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong><br>
+        Gölge Yaratık Avcısı, İstihbarat Ajanı, Son Kıvılcım'ın Üyesi, Gaspçı, Siyahlara Bürünmüş Korucu<br><br>
+        <strong>Lore Etkisi:</strong><br>
+        Son Kıvılcım'ın bünyesinde barınmış hem korucu hem de bir istihbarat ajanıdır. Grubu ile birlikte Ophelia adındaki bir gölge yaratığı ve Mortarossa adındaki Aberrant Eldritch bir Deity'i öldürmeyi başarmışlardır. Grup ile birlikte ayrıca Engizisyon'a karşı bir savaş içerisindedir. Engizisyoncu Mordain Blackthorne ile şahsi davası sürmektedir.<br><br>
+        <a href="theron nightgale.pdf" target="_blank" class="character-link">🏹 Theron Olarak En Son Char Sheeti</a>
+      </div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <strong>Class ve Subclass:</strong> Gloom Stalker Ranger / Battle Master Fighter / Rogue<br>
+        <strong>Level:</strong> 11 Level<br>
+        <strong>Irk:</strong> Human<br>
+        <strong>Yaş:</strong> 28<br>
+        <strong>Cinsiyet:</strong> Erkek
+      </div>
+    </div>
 
+    <!-- ══════════════ CAROUSEL ══════════════ -->
+    <div class="carousel-section">
       <div class="carousel-tabs">
         <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
         <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
@@ -575,6 +638,7 @@
 
       <div class="carousel-wrapper">
 
+        <!-- Panel 0: Dostlar -->
         <div class="carousel-panel active" id="panel-0">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
@@ -609,7 +673,7 @@
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-0">Theron'un istihbarattan dostu ve ona görevleri söyleyen halfling Dusty</div>
+          <div class="carousel-caption" id="caption-0">Theron'un İstihbarattan Dostu Ve Ona Görevleri Söyleyen Halfling Dusty</div>
           <div class="carousel-dots" id="dots-0">
             <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -617,6 +681,7 @@
           </div>
         </div>
 
+        <!-- Panel 1: Düşmanlar -->
         <div class="carousel-panel" id="panel-1">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
@@ -636,12 +701,14 @@
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-1">Madam Corvina için çalışan ve Theron'dan haz almamanın yanı sıra onu bir düşmanı olarak gören Barthosh</div>
+          <div class="carousel-caption" id="caption-1">Madame Corvina İçin Çalışan Ve Theron'dan Gaz Almamanın Yanı Sıra Onu Bir Düşmanı Olarak Gören Barthosh</div>
           <div class="carousel-dots" id="dots-1">
-            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot active"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
           </div>
         </div>
 
+        <!-- Panel 2: Formlar & Eşyalar -->
         <div class="carousel-panel" id="panel-2">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
@@ -670,26 +737,31 @@
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-2">Theron'un macerası sırasında edindiği büyülü çizmeleri olan Boots Of Elvenkind</div>
+          <div class="carousel-caption" id="caption-2">Theron'un Macerası Sırasında Edindiği Büyülü Çizmeleri Olan Boots Of Elvenkind</div>
           <div class="carousel-dots" id="dots-2">
-            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
           </div>
         </div>
 
-      </div></div><div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      </div>
+    </div><!-- /.carousel-section -->
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
       <a class="back-link" href="../index.html">← Geri Dön</a>
       <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
     </div>
   </div>
 
+  <!-- Fixed info-boxes (desktop only) -->
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong><br>
     Gölge Yaratık Avcısı, İstihbarat Ajanı, Son Kıvılcım'ın Üyesi, Gaspçı, Siyahlara Bürünmüş Korucu<br><br>
     <strong>Lore Etkisi:</strong><br>
     Son Kıvılcım'ın bünyesinde barınmış hem korucu hem de bir istihbarat ajanıdır. Grubu ile birlikte Ophelia adındaki bir gölge yaratığı ve Mortarossa adındaki Aberrant Eldritch bir Deity'i öldürmeyi başarmışlardır. Grup ile birlikte ayrıca Engizisyon'a karşı bir savaş içerisindedir. Engizisyoncu Mordain Blackthorne ile şahsi davası sürmektedir.<br><br>
-    <a href="theron nightgale.pdf" target="_blank" class="character-link">🔮 Theron Olarak En Son Char Sheeti</a>
+    <a href="theron nightgale.pdf" target="_blank" class="character-link">🏹 Theron Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
@@ -719,7 +791,7 @@
     const music = document.getElementById('background-music');
     const btn   = document.getElementById('play-pause-btn');
     let isPlaying = true;
-    let panelOpen = true;
+    let panelOpen = false; // starts CLOSED
 
     music.volume = 0.5;
     music.play().catch(() => {
@@ -737,7 +809,7 @@
       const panel = document.getElementById('volume-control-wrapper');
       const tBtn  = document.getElementById('music-toggle-btn');
       panelOpen = !panelOpen;
-      panel.classList.toggle('collapsed', !panelOpen);
+      panel.classList.toggle('open', panelOpen);
       tBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
     }
 
@@ -748,14 +820,14 @@
 
     window.onbeforeunload = () => music.pause();
 
-    /* ── Info-box scroll tracking ── */
+    /* ── Info-box scroll tracking (desktop only) ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
 
     function updateInfoBoxes() {
       const top = Math.max(70, 100 - window.scrollY);
-      leftBox.style.top  = top + 'px';
-      rightBox.style.top = top + 'px';
+      if (leftBox)  leftBox.style.top  = top + 'px';
+      if (rightBox) rightBox.style.top = top + 'px';
     }
     window.addEventListener('scroll', updateInfoBoxes, { passive: true });
     updateInfoBoxes();
@@ -811,19 +883,16 @@
       oldCard.classList.add('leaving');
       oldCard.addEventListener('animationend', () => oldCard.classList.remove('leaving'), { once: true });
 
-      const newCard = cards[newIdx];
-      newCard.classList.add('visible');
-
+      cards[newIdx].classList.add('visible');
       state[panelIdx].idx = newIdx;
       document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
-      const dots = document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot');
-      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
+        .forEach((d, i) => d.classList.toggle('active', i === newIdx));
     }
 
     function carouselShift(panelIdx, dir) {
       const total  = getCards(panelIdx).length;
-      const newIdx = (state[panelIdx].idx + dir + total) % total;
-      showCard(panelIdx, newIdx);
+      showCard(panelIdx, (state[panelIdx].idx + dir + total) % total);
       resetAutoTimer();
     }
 
@@ -839,32 +908,22 @@
     function autoAdvance() {
       if (isPaused) return;
       const total  = getCards(activeTab).length;
-      const newIdx = (state[activeTab].idx + 1) % total;
-      showCard(activeTab, newIdx);
+      showCard(activeTab, (state[activeTab].idx + 1) % total);
     }
 
-    function startAutoTimer() {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS);
-    }
-
+    function startAutoTimer() { clearInterval(autoTimer); autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS); }
     function resetAutoTimer() { startAutoTimer(); }
     function pauseCarousel()  { isPaused = true; }
     function resumeCarousel() { isPaused = false; resetAutoTimer(); }
 
     document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
     document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
-
     startAutoTimer();
 
     [0, 1, 2].forEach(panelIdx => {
-      document.getElementById(`dots-${panelIdx}`)
-        .querySelectorAll('.dot')
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
         .forEach((dot, idx) => {
-          dot.addEventListener('click', () => {
-            showCard(panelIdx, idx);
-            resetAutoTimer();
-          });
+          dot.addEventListener('click', () => { showCard(panelIdx, idx); resetAutoTimer(); });
         });
     });
 
@@ -874,39 +933,30 @@
     const modalCap   = document.getElementById('modal-caption');
     const modalCount = document.getElementById('modal-counter');
 
-    let modalImages    = [];
-    let modalIdx       = 0;
-    let modalAnimating = false;
-    let modalPanel     = -1;
+    let modalImages = [], modalIdx = 0, modalAnimating = false, modalPanel = -1;
 
     function buildModalImages(panelIdx) {
       modalImages = [];
       getCards(panelIdx).forEach((card, i) => {
-        modalImages.push({
-          src:     card.querySelector('img').src,
-          caption: captions[panelIdx][i] || ''
-        });
+        modalImages.push({ src: card.querySelector('img').src, caption: captions[panelIdx][i] || '' });
       });
     }
 
     function setModalImage(idx, dir) {
       if (modalAnimating) return;
       modalAnimating = true;
-
-      const img = modalImg;
       const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
       const inClass  = dir > 0 ? 'slide-in-right'   : 'slide-in-left';
-
-      img.classList.add(outClass);
-      img.addEventListener('animationend', () => {
-        img.classList.remove(outClass);
+      modalImg.classList.add(outClass);
+      modalImg.addEventListener('animationend', () => {
+        modalImg.classList.remove(outClass);
         modalIdx = (idx + modalImages.length) % modalImages.length;
-        img.src = modalImages[modalIdx].src;
+        modalImg.src = modalImages[modalIdx].src;
         modalCap.textContent   = modalImages[modalIdx].caption;
         modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
-        img.classList.add(inClass);
-        img.addEventListener('animationend', () => {
-          img.classList.remove(inClass);
+        modalImg.classList.add(inClass);
+        modalImg.addEventListener('animationend', () => {
+          modalImg.classList.remove(inClass);
           modalAnimating = false;
         }, { once: true });
       }, { once: true });
@@ -916,32 +966,18 @@
       const card = el.closest('.carousel-card');
       if (card) {
         modalPanel = parseInt(card.dataset.panel);
+        buildModalImages(modalPanel);
+        modalIdx = modalImages.findIndex(m => m.src === el.src);
+        if (modalIdx < 0) modalIdx = 0;
       } else {
         modalPanel = -1;
         modalImages = [{ src: el.src, caption: el.alt || '' }];
         modalIdx = 0;
-        modalImg.src           = modalImages[0].src;
-        modalCap.textContent   = modalImages[0].caption;
-        modalCount.textContent = `1 / 1`;
-        modalAnimating = false;
-        modal.classList.add('open');
-        document.getElementById('back-button').classList.add('hidden');
-        document.getElementById('music-widget').style.display = 'none';
-        document.body.style.overflow = 'hidden';
-        pauseCarousel();
-        return;
       }
-
-      buildModalImages(modalPanel);
-      const src = el.src;
-      modalIdx = modalImages.findIndex(m => m.src === src);
-      if (modalIdx < 0) modalIdx = 0;
-
       modalImg.src           = modalImages[modalIdx].src;
       modalCap.textContent   = modalImages[modalIdx].caption;
       modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
       modalAnimating = false;
-
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
       document.getElementById('music-widget').style.display = 'none';
@@ -961,14 +997,10 @@
 
     modal.addEventListener('click', e => {
       const allowed = [
-        document.getElementById('img01'),
-        document.getElementById('modal-caption'),
-        document.getElementById('modal-prev'),
-        document.getElementById('modal-next'),
+        document.getElementById('img01'), document.getElementById('modal-caption'),
+        document.getElementById('modal-prev'), document.getElementById('modal-next'),
       ];
-      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) {
-        closeModal();
-      }
+      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) closeModal();
     });
 
     document.addEventListener('keydown', e => {
