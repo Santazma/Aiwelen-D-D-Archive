@@ -32,21 +32,8 @@
       0%,100% { box-shadow: 0 0 8px rgba(135,206,250,.35), 0 0 20px rgba(135,206,250,.15); }
       50%      { box-shadow: 0 0 16px rgba(135,206,250,.7), 0 0 40px rgba(135,206,250,.3); }
     }
-    @keyframes icePulse {
-      0%,100% {
-        box-shadow: 0 0 0 4px rgba(10,30,60,.7),
-                    0 0 0 6px rgba(168,216,234,.2),
-                    0 6px 18px rgba(0,0,0,.6),
-                    inset 0 0 10px rgba(168,216,234,.06);
-      }
-      50% {
-        box-shadow: 0 0 0 4px rgba(10,30,60,.75),
-                    0 0 0 6px rgba(168,216,234,.45),
-                    0 0 22px rgba(168,216,234,.3),
-                    0 6px 18px rgba(0,0,0,.6),
-                    inset 0 0 16px rgba(168,216,234,.1);
-      }
-    }
+
+    *, *::before, *::after { box-sizing: border-box; }
 
     body {
       font-family: 'Lora', Georgia, serif;
@@ -56,11 +43,138 @@
       color: #fff;
     }
 
+    /* ══════════════ FIXED UI ══════════════ */
+    .fixed-back-button {
+      position: fixed; top: 20px; left: 20px; z-index: 999;
+      padding: .45rem 1rem;
+      font-family: 'Cinzel', serif; font-size: .9rem;
+      font-weight: 700; letter-spacing: .5px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.45);
+      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .fixed-back-button:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
+      box-shadow: 0 0 20px rgba(135,206,250,.6);
+      transform: translateY(-2px);
+    }
+    .fixed-back-button:active { transform: scale(.95); }
+
+    #music-widget {
+      position: fixed; top: 20px; right: 20px; z-index: 999;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+      max-height: calc(100vh - 40px);
+    }
+    #music-toggle-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px;
+      font-family: 'Cinzel', serif; font-size: .8rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
+      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
+      cursor: pointer; white-space: nowrap;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      animation: glowPulse 3s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    #music-toggle-btn:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
+      box-shadow: 0 0 18px rgba(135,206,250,.55);
+      transform: translateY(-1px);
+    }
+    #music-toggle-btn:active { transform: scale(.96); }
+
+    #volume-control-wrapper {
+      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
+      border: 1px solid rgba(135,206,250,.25);
+      padding: 12px 15px; border-radius: 12px;
+      box-shadow: 0 0 16px rgba(135,206,250,.15);
+      width: 210px; overflow: hidden;
+      max-height: 0; opacity: 0;
+      padding-top: 0; padding-bottom: 0;
+      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
+    }
+    #volume-control-wrapper.open {
+      max-height: 160px; opacity: 1;
+      padding-top: 12px; padding-bottom: 12px;
+    }
+    #volume-control-label {
+      display: block; margin-bottom: 6px;
+      font-family: 'Cinzel', serif; font-size: .78rem;
+      letter-spacing: .5px; color: rgba(255,255,255,.75);
+    }
+    #volume-level { color: var(--gold); font-size: .85rem; margin-left: 4px; }
+    #play-pause-btn {
+      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
+      font-family: 'Cinzel', serif; font-size: .82rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
+      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
+      cursor: pointer;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+    }
+    #play-pause-btn:hover {
+      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
+      box-shadow: 0 0 18px rgba(135,206,250,.5);
+      transform: translateY(-1px);
+    }
+    #play-pause-btn:active { transform: scale(.96); }
+    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
+
+    /* ══════════════ INFO BOXES ══════════════ */
+    .info-box {
+      position: fixed;
+      top: 100px;
+      z-index: 10;
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
+    }
+    .info-box h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box strong { color: var(--gold); }
+    .left-box  { left: 20px; }
+    .right-box { right: 20px; }
+
+    .info-boxes-inline {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 28px auto;
+      padding: 0 16px;
+    }
+    .info-box-inline {
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+    }
+    .info-box-inline h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box-inline strong { color: var(--gold); }
+
+    /* ══════════════ MAIN CONTAINER ══════════════ */
     .container {
       position: relative;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 20px 260px;
       text-align: center;
       z-index: 1;
       animation: pageFadeIn 1s ease .2s both;
@@ -74,7 +188,7 @@
 
     h1 {
       font-family: 'Cinzel', serif;
-      font-size: 4rem; font-weight: 900;
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
       text-transform: uppercase; letter-spacing: 3px;
       text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
       margin-bottom: 20px;
@@ -99,15 +213,6 @@
       text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
     }
 
-    .image-title-alt {
-      text-align: center; margin-top: 8px; margin-bottom: 4px;
-      font-family: 'Lora', Georgia, serif;
-      font-style: italic; font-size: 0.88rem; font-weight: 700;
-      color: #dff0ff;
-      text-shadow: 0 0 8px rgba(0,0,0,.9);
-      line-height: 1.35; padding: 2px;
-    }
-
     .bio {
       font-size: 1.1rem; max-width: 800px;
       margin: 0 auto 30px auto;
@@ -118,68 +223,6 @@
       border: 1px solid rgba(135,206,250,.12);
       animation: pageFadeIn 1s ease .7s both;
     }
-
-    .alternative-images {
-      display: flex; flex-wrap: wrap;
-      justify-content: center; gap: 24px;
-      margin-bottom: 40px;
-      animation: pageFadeIn 1s ease .9s both;
-    }
-    .alternative-images > div {
-      position: relative;
-      text-align: center; max-width: 164px; flex: 0 1 164px;
-    }
-    .alternative-images > div::before,
-    .alternative-images > div::after {
-      content: '❄';
-      position: absolute; top: -4px;
-      font-size: .65rem; color: rgba(168,216,234,.7);
-      pointer-events: none; line-height: 1;
-    }
-    .alternative-images > div::before { left: 4px; }
-    .alternative-images > div::after  { right: 4px; }
-
-    .alternative-images img {
-      width: 150px; height: 200px;
-      object-fit: cover; border-radius: 10px;
-      border: 2px solid var(--ice);
-      outline: 1px solid rgba(168,216,234,.28);
-      outline-offset: 3px;
-      filter: brightness(.92) saturate(.95);
-      cursor: pointer;
-      animation: icePulse 4s ease-in-out infinite;
-      transition: transform .35s ease, filter .35s ease, box-shadow .35s ease;
-    }
-    .alternative-images img:hover {
-      transform: scale(1.5);
-      filter: brightness(1.08) saturate(1.1);
-      box-shadow:
-        0 0 0 4px rgba(10,30,60,.8),
-        0 0 0 7px rgba(168,216,234,.6),
-        0 0 32px rgba(168,216,234,.45),
-        0 10px 30px rgba(0,0,0,.7),
-        inset 0 0 20px rgba(168,216,234,.15);
-    }
-
-    .info-box {
-      position: fixed;
-      top: 100px;
-      z-index: 10;
-      background-color: var(--dark-glass);
-      padding: 15px; border-radius: 10px;
-      width: 210px; font-size: .9rem; line-height: 1.5;
-      border: 1px solid rgba(135,206,250,.18);
-      animation: pageFadeIn 1s ease .6s both;
-      transition: top .1s linear;
-    }
-    .info-box h2 {
-      font-family: 'Cinzel', serif;
-      font-size: 1.05rem; color: var(--gold-dim);
-      margin-top: 0; margin-bottom: 10px;
-    }
-    .info-box strong { color: var(--gold); }
-    .left-box  { left: 20px; }
-    .right-box { right: 20px; }
 
     .character-link {
       display: inline-block; margin-top: 8px;
@@ -216,87 +259,7 @@
     }
     .back-link:active { transform: scale(.96) translateY(0); }
 
-    .fixed-back-button {
-      position: fixed; top: 20px; left: 20px; z-index: 999;
-      padding: .45rem 1rem;
-      font-family: 'Cinzel', serif; font-size: .9rem;
-      font-weight: 700; letter-spacing: .5px;
-      text-decoration: none; color: #fff;
-      border-radius: 8px;
-      border: 1px solid rgba(135,206,250,.45);
-      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
-      box-shadow: 0 0 8px rgba(135,206,250,.2);
-      transition: transform .18s, box-shadow .25s, background .25s;
-      animation: glowPulse 3s ease-in-out infinite;
-    }
-    .fixed-back-button:hover {
-      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
-      box-shadow: 0 0 20px rgba(135,206,250,.6);
-      transform: translateY(-2px);
-    }
-    .fixed-back-button:active { transform: scale(.95); }
-
-    #music-widget {
-      position: fixed; top: 20px; right: 20px; z-index: 999;
-      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
-    }
-    #music-toggle-btn {
-      display: flex; align-items: center; gap: 7px;
-      padding: 7px 14px;
-      font-family: 'Cinzel', serif; font-size: .8rem;
-      font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
-      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
-      cursor: pointer; white-space: nowrap;
-      transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(135,206,250,.2);
-      animation: glowPulse 3s ease-in-out infinite;
-    }
-    #music-toggle-btn:hover {
-      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
-      box-shadow: 0 0 18px rgba(135,206,250,.55);
-      transform: translateY(-1px);
-    }
-    #music-toggle-btn:active { transform: scale(.96); }
-
-    #volume-control-wrapper {
-      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
-      border: 1px solid rgba(135,206,250,.25);
-      padding: 12px 15px; border-radius: 12px;
-      box-shadow: 0 0 16px rgba(135,206,250,.15);
-      min-width: 200px; overflow: hidden;
-      max-height: 200px; opacity: 1;
-      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
-    }
-    #volume-control-wrapper.collapsed {
-      max-height: 0; opacity: 0;
-      padding-top: 0; padding-bottom: 0;
-    }
-    #volume-control-label {
-      display: block; margin-bottom: 6px;
-      font-family: 'Cinzel', serif; font-size: .78rem;
-      letter-spacing: .5px; color: rgba(255,255,255,.75);
-    }
-    #volume-level { color: var(--gold); font-size: .85rem; margin-left: 4px; }
-    #play-pause-btn {
-      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
-      font-family: 'Cinzel', serif; font-size: .82rem;
-      font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
-      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
-      cursor: pointer;
-      transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(135,206,250,.2);
-    }
-    #play-pause-btn:hover {
-      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
-      box-shadow: 0 0 18px rgba(135,206,250,.5);
-      transform: translateY(-1px);
-    }
-    #play-pause-btn:active { transform: scale(.96); }
-    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
-
-    /* ── Modal ── */
+    /* ══════════════ MODAL ══════════════ */
     .modal {
       display: none; position: fixed; z-index: 1000;
       left:0; top:0; width:100%; height:100%;
@@ -309,51 +272,39 @@
     .modal.open { display: flex; }
 
     .modal-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      max-width: 96vw;
-      max-height: 96vh;
-      padding: 12px;
-      box-sizing: border-box;
-      cursor: default;
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; max-width: 96vw; max-height: 96vh;
+      padding: 12px; box-sizing: border-box; cursor: default;
     }
 
     .modal-stage {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: relative; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
       overflow: hidden;
     }
 
     @keyframes modalSlideInRight {
       from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
-      to   { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);  filter: blur(0);   }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
     }
     @keyframes modalSlideInLeft {
-      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
-      to   { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
+      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
     }
     @keyframes modalSlideOutLeft {
-      from { opacity: 1; transform: translateX(0)     scale(1)    rotateY(0deg);  filter: blur(0);   }
-      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg);  filter: blur(5px); }
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
     }
     @keyframes modalSlideOutRight {
-      from { opacity: 1; transform: translateX(0)    scale(1)    rotateY(0deg);   filter: blur(0);   }
-      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg);  filter: blur(5px); }
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
     }
 
     .modal-content {
-      display: block;
-      max-width: 78vw;
-      max-height: 76vh;
+      display: block; max-width: 78vw; max-height: 76vh;
       width: auto; height: auto;
       border-radius: 15px 15px 0 0;
-      box-shadow: 0 0 50px rgba(135,206,250,.35);
-      object-fit: contain;
+      box-shadow: 0 0 50px rgba(135,206,250,.35); object-fit: contain;
     }
     .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
     .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
@@ -362,15 +313,13 @@
 
     .modal-caption {
       width: 100%; max-width: 78vw;
-      padding: 10px 16px 12px;
-      box-sizing: border-box;
+      padding: 10px 16px 12px; box-sizing: border-box;
       background: rgba(5,15,40,0.88);
       border-radius: 0 0 15px 15px;
       border-top: 1px solid rgba(135,206,250,0.2);
       font-family: 'Lora', Georgia, serif;
       font-style: normal; font-size: 1.05rem; font-weight: 700;
-      color: #e8f6ff;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      color: #e8f6ff; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
       text-align: center; line-height: 1.45; letter-spacing: 0.01em;
     }
 
@@ -384,7 +333,7 @@
     }
 
     .modal-arrow {
-      flex-shrink: 0; width: 52px; height: 52px; font-size: 1.5rem; color: #fff;
+      flex-shrink: 0; width: 48px; height: 48px; font-size: 1.4rem; color: #fff;
       background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
       border: 1px solid rgba(135,206,250,0.45); border-radius: 50%;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -407,10 +356,10 @@
     /* ══════════════ CAROUSEL ══════════════ */
     @keyframes cardIn {
       from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(6px); }
-      to   { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0);   }
+      to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
     }
     @keyframes cardOut {
-      from { opacity: 1; transform: scale(1)    translateY(0);     filter: blur(0);   }
+      from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
       to   { opacity: 0; transform: scale(0.88) translateY(-20px); filter: blur(6px); }
     }
 
@@ -432,8 +381,7 @@
       background: rgba(10,28,55,0.55); cursor: pointer; transition: all 0.25s;
     }
     .carousel-tab:hover {
-      color: #fff; border-color: rgba(135,206,250,0.55);
-      background: rgba(30,75,130,0.65);
+      color: #fff; border-color: rgba(135,206,250,0.55); background: rgba(30,75,130,0.65);
     }
     .carousel-tab.active {
       color: #fff; border-color: rgba(135,206,250,0.85);
@@ -520,6 +468,49 @@
     }
 
     .hidden { display: none; }
+
+    /* ══════════════ RESPONSIVE ══════════════ */
+    @media (max-width: 1024px) {
+      .container { padding: 20px 230px; }
+      .info-box { width: 190px; font-size: .82rem; }
+      .left-box  { left: 12px; }
+      .right-box { right: 12px; }
+    }
+
+    @media (max-width: 860px) {
+      .info-box { display: none; }
+      .info-boxes-inline { display: flex; }
+      .container { padding: 20px 16px; }
+      h1 { font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: 1px; }
+      .bio { padding: 18px 16px; font-size: 1rem; }
+      .carousel-stage { width: 280px; height: 360px; }
+      .carousel-card img { width: 260px; height: 350px; }
+      .carousel-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .carousel-section { max-width: 100%; }
+    }
+
+    @media (max-width: 540px) {
+      .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; }
+      #music-toggle-btn  { font-size: .7rem;  padding: 5px 10px; }
+      h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; }
+      .character-image { width: 160px; height: 240px; }
+      .carousel-stage { width: 240px; height: 310px; }
+      .carousel-card img { width: 220px; height: 300px; }
+      .carousel-row { gap: 8px; }
+      .carousel-arrow { width: 34px; height: 34px; font-size: 1rem; }
+      .carousel-caption { font-size: .88rem; }
+      .carousel-tab { padding: 7px 12px; font-size: .82rem; }
+      .modal-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+      .modal-content { max-width: 90vw; max-height: 70vh; }
+      .modal-caption { font-size: .9rem; }
+      .back-link { padding: .5rem 1rem; font-size: .88rem; }
+    }
+
+    @media (max-width: 380px) {
+      h1 { font-size: 1.2rem; }
+      .carousel-stage { width: 200px; height: 270px; }
+      .carousel-card img { width: 185px; height: 260px; }
+    }
   </style>
 </head>
 <body>
@@ -541,16 +532,17 @@
 
   <div class="container">
     <h1>Exodus</h1>
-    <img src="Exodus.jpg" alt="Exodus" class="character-image" onclick="openModal(this)"><div class="image-title">Göksel Sehhar Exodus</div>
+    <img src="Exodus.jpg" alt="Exodus" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Göksel Sehhar Exodus</div>
 
     <div class="bio">
-      <p><strong>Çağıl Cengiz ERSER</strong> tarafından canlandırılmış ve oynanmıştır. Çağıl'ın ilk karakteridir. <strong>Exodus</strong>, bir <strong>Baezelub Tiefling</strong> kadını, gözlerini <strong>Beyaz Şehir</strong>’in acımasız sokaklarında açtı. Cehennem düzlemlerinden üç nesil önce göç eden yoksul Tiefling bir ailenin çocuğu olarak dünyaya geldi ve hikayesi kayıpla başladı. Annesi doğum sırasında öldü, babası ise alkolik bir meyve satıcısıydı ve hem Exodus’u hem de beş yaşındaki ağabeyi <strong>Amadeus</strong>’u terk etti; sorumluluk ve yasla baş edemedi.</p>
+      <p><strong>Çağıl Cengiz ERSER</strong> tarafından canlandırılmış ve oynanmıştır. Çağıl'ın ilk karakteridir. <strong>Exodus</strong>, bir <strong>Baezelub Tiefling</strong> kadını, gözlerini <strong>Beyaz Şehir</strong>'in acımasız sokaklarında açtı. Cehennem düzlemlerinden üç nesil önce göç eden yoksul Tiefling bir ailenin çocuğu olarak dünyaya geldi ve hikayesi kayıpla başladı. Annesi doğum sırasında öldü, babası ise alkolik bir meyve satıcısıydı ve hem Exodus'u hem de beş yaşındaki ağabeyi <strong>Amadeus</strong>'u terk etti; sorumluluk ve yasla baş edemedi.</p>
 
-      <p>Exodus henüz bir aylıkken, Amadeus çaresizlik içinde kız kardeşine bakmanın bir yolunu arayarak Beyaz Şehir’in tehlikeli arka sokaklarında dolaşmaya başladı. Kader, yollarını <strong>Grimbon</strong> adında bir tüccarla kesiştirdi. Kısa süre sonra, iki kardeşi <strong>Desmond Bain</strong> ile tanıştırdı. Bain, Beyaz Şehir’in dışında birkaç küçük kasabayı kontrol eden sofistike bir suç örgütünün lideriydi. Bain’in himayesinde iki çocuk kendilerine özgü bir tür istikrar buldu. Exodus da suç dünyasının çeşitli işlerini öğrenerek büyüdü ve İkna ve Gözdağı yeteneklerindeki ustalığı sayesinde suçlularla ve yasal tüccarlarla yapılan pazarlıklarda önemli bir rol üstlendi.</p>
+      <p>Exodus henüz bir aylıkken, Amadeus çaresizlik içinde kız kardeşine bakmanın bir yolunu arayarak Beyaz Şehir'in tehlikeli arka sokaklarında dolaşmaya başladı. Kader, yollarını <strong>Grimbon</strong> adında bir tüccarla kesiştirdi. Kısa süre sonra, iki kardeşi <strong>Desmond Bain</strong> ile tanıştırdı. Bain, Beyaz Şehir'in dışında birkaç küçük kasabayı kontrol eden sofistike bir suç örgütünün lideriydi. Bain'in himayesinde iki çocuk kendilerine özgü bir tür istikrar buldu. Exodus da suç dünyasının çeşitli işlerini öğrenerek büyüdü ve İkna ve Gözdağı yeteneklerindeki ustalığı sayesinde suçlularla ve yasal tüccarlarla yapılan pazarlıklarda önemli bir rol üstlendi.</p>
 
       <p>Amadeus, bir gün pazardan çaldığı eski, yıpranmış bir büyü kitabıyla çıkageldi. Kitap, şehirde ünlü olan ancak yıllar önce ölen bir büyücü olan <strong>Thethus the Veilbinder</strong>'a ait olan <strong>"Solipsium Arcanum: Gerçeklik Çöküşü"</strong> kitabıydı. Thethus, evrenin gerisindeki "görünmeyen elleri" fark ettiğinde paranoyak hale gelmiş ve "her şeyin bir hikâye olduğuna" inancını bu kitaba aktarmıştı. Geceleri, eski bir mum ışığında bu sayfaları fısıldayarak okuyan kardeşler, her zaman bir büyücü olmayı hayal ettiler. Büyü akademisinden sihirli kitaplar çalma girişimleri, <strong>Engizisyon</strong>'un onları yeraltına daha da itmesine neden oldu.</p>
 
-      <p>Sonunda felaket geldi – Amadeus, kanalizasyon tünellerinde <strong>"Sewer Plague" (Lağım Vebası)</strong> hastalığına kapıldı. Exodus, abisinin yatağının başında çaresizce beklerken bir şifacı bulmaya yemin etti. Grimbon’un ticaret ağları aracılığıyla kuzey topraklarında <strong>Wolf’s Inn</strong> adlı bir handa bir şifacı olduğunu öğrendi. Amadeus’u güvenceye alıp kuzeye giden bir kervana katıldı, Thethus'un kitabını da kabanının içindeki gizli bir bölmede taşıyordu.</p>
+      <p>Sonunda felaket geldi – Amadeus, kanalizasyon tünellerinde <strong>"Sewer Plague" (Lağım Vebası)</strong> hastalığına kapıldı. Exodus, abisinin yatağının başında çaresizce beklerken bir şifacı bulmaya yemin etti. Grimbon'un ticaret ağları aracılığıyla kuzey topraklarında <strong>Wolf's Inn</strong> adlı bir handa bir şifacı olduğunu öğrendi. Amadeus'u güvenceye alıp kuzeye giden bir kervana katıldı, Thethus'un kitabını da kabanının içindeki gizli bir bölmede taşıyordu.</p>
 
       <p>Kervanın muhafızları aslında rakip bir suç grubunun paralı askerleriydi. Gece uykusunda saldırıya uğrayan Exodus, yaralanmış ve tüm eşyaları elinden alınmıştı. Ölüm ile arasında bir kılıç kadar mesafe varken, içinde kalan bir tutam umutla <strong>Yeryüzü Tanrıları</strong>'na yakardı. Ölümü kabullendiği son anlarda farazi, dünyevi olmayan bir dokunuş hissetti. Gözlerini açtığında Exodus yaşıyordu; hiçbir yara izi yoktu ve sol elinin üzerinde çizgilerden, bir daireden ve bir ay figüründen oluşan gizemli bir sembol belirmişti. Etrafındaki tüm pusucular mistik bir biçimde cansız yatıyordu.</p>
 
@@ -562,8 +554,28 @@
       <p>Geçmişte Engizisyon baskınından, örgütün haberci sokak çocuklarını kurtarmak için kendi hayatını tehlikeye atması, sokaklarda onun <strong>"Gölgelerin Ablası"</strong> olarak anılmasını sağlamıştı. Artık sadece hayatta kalmak için değil, abisini kurtarmak ve varlığının arkasındaki amacı bulmak için yürüyen kararlı bir Warlock'tu.</p>
     </div>
 
-    <div class="carousel-section">
+    <!-- Inline info-boxes: only shown on narrow screens -->
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong><br>
+        Göksel Sehhar, Son Kıvılcım'ın Eski Üyesi, Geyik Formundaki Büyücü, Acemi Warlock<br><br>
+        <strong>Lore Etkisi:</strong><br>
+        Beyaz Şehir'in acımasız yeraltı suç örgütlerinde büyüyen Exodus, Lağım Vebası'na yakalanan abisi Amadeus'u kurtarmak için yola çıkmış, ölümün kıyısında gizemli bir varlıkla bağ kurarak güçlü bir Warlock'a dönüşmüştür. Engizisyon'un dikkatini üzerine çeken ve yeraltı çocuklarının kurtarıcısı olmak isteyen gizemli bir tieflingdir.<br><br>
+        <a href="exodus.pdf" target="_blank" class="character-link">🔮 Exodus Olarak En Son Char Sheeti</a>
+      </div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <strong>Class ve Subclass:</strong> Celestial Warlock (Patronu Aeris) / Divine Soul Sorcerer<br>
+        <strong>Level:</strong> 6 Level'da Öldü<br>
+        <strong>Irk:</strong> Tiefling (Baezelub)<br>
+        <strong>Yaş:</strong> 21 Yaşında Öldü<br>
+        <strong>Cinsiyet:</strong> Kadın
+      </div>
+    </div>
 
+    <!-- ══════════════ CAROUSEL ══════════════ -->
+    <div class="carousel-section">
       <div class="carousel-tabs">
         <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
         <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
@@ -572,6 +584,7 @@
 
       <div class="carousel-wrapper">
 
+        <!-- Panel 0: Dostlar -->
         <div class="carousel-panel active" id="panel-0">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
@@ -591,12 +604,14 @@
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-0">Exodus'un hamisi ve ona güçlerini veren patronu Aeris</div>
+          <div class="carousel-caption" id="caption-0">Exodus'un Hamisi Ve Ona Güçlerini Veren Patronu Aeris</div>
           <div class="carousel-dots" id="dots-0">
-            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot active"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
           </div>
         </div>
 
+        <!-- Panel 1: Düşmanlar -->
         <div class="carousel-panel" id="panel-1">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
@@ -629,6 +644,7 @@
           </div>
         </div>
 
+        <!-- Panel 2: Formlar & Eşyalar -->
         <div class="carousel-panel" id="panel-2">
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
@@ -648,18 +664,23 @@
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-2">Exodus'un Eldritch Aylar neticesinde mutasyona uğramasıyle birlikte değişen gizemli Cervus Formu</div>
+          <div class="carousel-caption" id="caption-2">Exodus'un Eldritch Aylar Neticesinde Mutasyona Uğramasıyla Birlikte Değişen Gizemli Cervus Formu</div>
           <div class="carousel-dots" id="dots-2">
-            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot active"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
           </div>
         </div>
 
-      </div></div><div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      </div>
+    </div><!-- /.carousel-section -->
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
       <a class="back-link" href="../index.html">← Geri Dön</a>
       <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
     </div>
   </div>
 
+  <!-- Fixed info-boxes (desktop only) -->
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong><br>
@@ -696,7 +717,7 @@
     const music = document.getElementById('background-music');
     const btn   = document.getElementById('play-pause-btn');
     let isPlaying = true;
-    let panelOpen = true;
+    let panelOpen = false;
 
     music.volume = 0.5;
     music.play().catch(() => {
@@ -714,7 +735,7 @@
       const panel = document.getElementById('volume-control-wrapper');
       const tBtn  = document.getElementById('music-toggle-btn');
       panelOpen = !panelOpen;
-      panel.classList.toggle('collapsed', !panelOpen);
+      panel.classList.toggle('open', panelOpen);
       tBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
     }
 
@@ -731,8 +752,8 @@
 
     function updateInfoBoxes() {
       const top = Math.max(70, 100 - window.scrollY);
-      leftBox.style.top  = top + 'px';
-      rightBox.style.top = top + 'px';
+      if (leftBox)  leftBox.style.top  = top + 'px';
+      if (rightBox) rightBox.style.top = top + 'px';
     }
     window.addEventListener('scroll', updateInfoBoxes, { passive: true });
     updateInfoBoxes();
@@ -745,7 +766,7 @@
         'Exodus\'un Hamisi Ve Ona Güçlerini Veren Patronu Aeris',
         'Exodus\'un Canından Çok Sevdiği Ve Yaşatmak İçin Her Şeyi Göze Aldığı Ağabeyi Amadeus',
         'Karanlık Yollarda Exodus\'a Eşlik Etmiş Eski Bir Engizisyoncu Ve Veteriner Birliği\'nin Üyesi Corvus Blackmane',
-        'Exodus\'un Kuzey Serüveninde Başından Beri Güvendiği Ve Belki De Gruptaki Tek Dostu Olan Güçlü Savaşçı Dragonborn Zephyr'
+        'Exodus\'un Kuzey Serüveninde Başından Beri Güvendiği Ve Belki De Gruptaki Tek Dostu Olan Güçlü Savaşçı Dragonborn Zephyr',
       ],
       [
         'Exodus\'u Kurt İni Gözetleme Kuleleri\'nde Sıkıştırıp Öldürmeyi Deneyen Engizisyon Tetikçisi Davrel',
@@ -753,14 +774,14 @@
         'Exodus\'un Hayatını Değiştiren Savaşta Karşısında Olan Ay Sonucunda Mutasyona Uğramış Bir Yaratık Olan Hollow Kin',
         'Exodus\'un Delirdiğini Düşünen Ve En Nihayetinde Magma Platosu\'nda Onu Büyüsüyle Öldüren Eski Dostu Neryssa Snow',
         'Exodus\'a Karşı Her Zaman Cephe Almış Ve Onu Benimsemeyi Reddederek En Nihayetinde Ölümüne Göz Yummuş Olan Grubun Demirci Rahibi Orv Bezmadan Parlakçekiç',
-        'Gruba Daha Sonradan Dahil Olsa Da Neryssa İle Birlikte Exodus\'a Karşı Cephe Alan Grup Üyesi Owlin Stephen'
+        'Gruba Daha Sonradan Dahil Olsa Da Neryssa İle Birlikte Exodus\'a Karşı Cephe Alan Grup Üyesi Owlin Stephen',
       ],
       [
-        'Exodus\'un Eldritch Aylar neticesinde mutasyona uğramasıyle birlikte değişen gizemli Cervus Formu',
-        'Exodus\'un büyü gücünü besleyen Pearl of Power',
-        'Thethus the Veilbinder\'a ait olan ve Exodus\'un kaderini değiştiren Solipsium Arcanum Kitabı',
-        'Exodus\'un düşmanlarına ölüm saçtığı Asası Olan Staff of Withering'
-      ]
+        'Exodus\'un Eldritch Aylar Neticesinde Mutasyona Uğramasıyla Birlikte Değişen Gizemli Cervus Formu',
+        'Exodus\'un Büyü Gücünü Besleyen Pearl of Power',
+        'Thethus The Veilbinder\'a Ait Olan Ve Exodus\'un Kaderini Değiştiren Solipsium Arcanum Kitabı',
+        'Exodus\'un Düşmanlarına Ölüm Saçtığı Asası Olan Staff of Withering',
+      ],
     ];
 
     const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
@@ -782,19 +803,16 @@
       oldCard.classList.add('leaving');
       oldCard.addEventListener('animationend', () => oldCard.classList.remove('leaving'), { once: true });
 
-      const newCard = cards[newIdx];
-      newCard.classList.add('visible');
-
+      cards[newIdx].classList.add('visible');
       state[panelIdx].idx = newIdx;
       document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
-      const dots = document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot');
-      dots.forEach((d, i) => d.classList.toggle('active', i === newIdx));
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
+        .forEach((d, i) => d.classList.toggle('active', i === newIdx));
     }
 
     function carouselShift(panelIdx, dir) {
       const total  = getCards(panelIdx).length;
-      const newIdx = (state[panelIdx].idx + dir + total) % total;
-      showCard(panelIdx, newIdx);
+      showCard(panelIdx, (state[panelIdx].idx + dir + total) % total);
       resetAutoTimer();
     }
 
@@ -810,32 +828,22 @@
     function autoAdvance() {
       if (isPaused) return;
       const total  = getCards(activeTab).length;
-      const newIdx = (state[activeTab].idx + 1) % total;
-      showCard(activeTab, newIdx);
+      showCard(activeTab, (state[activeTab].idx + 1) % total);
     }
 
-    function startAutoTimer() {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS);
-    }
-
+    function startAutoTimer() { clearInterval(autoTimer); autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS); }
     function resetAutoTimer() { startAutoTimer(); }
     function pauseCarousel()  { isPaused = true; }
     function resumeCarousel() { isPaused = false; resetAutoTimer(); }
 
     document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
     document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
-
     startAutoTimer();
 
     [0, 1, 2].forEach(panelIdx => {
-      document.getElementById(`dots-${panelIdx}`)
-        .querySelectorAll('.dot')
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
         .forEach((dot, idx) => {
-          dot.addEventListener('click', () => {
-            showCard(panelIdx, idx);
-            resetAutoTimer();
-          });
+          dot.addEventListener('click', () => { showCard(panelIdx, idx); resetAutoTimer(); });
         });
     });
 
@@ -845,39 +853,30 @@
     const modalCap   = document.getElementById('modal-caption');
     const modalCount = document.getElementById('modal-counter');
 
-    let modalImages    = [];
-    let modalIdx       = 0;
-    let modalAnimating = false;
-    let modalPanel     = -1;
+    let modalImages = [], modalIdx = 0, modalAnimating = false, modalPanel = -1;
 
     function buildModalImages(panelIdx) {
       modalImages = [];
       getCards(panelIdx).forEach((card, i) => {
-        modalImages.push({
-          src:     card.querySelector('img').src,
-          caption: captions[panelIdx][i] || ''
-        });
+        modalImages.push({ src: card.querySelector('img').src, caption: captions[panelIdx][i] || '' });
       });
     }
 
     function setModalImage(idx, dir) {
       if (modalAnimating) return;
       modalAnimating = true;
-
-      const img = modalImg;
       const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
       const inClass  = dir > 0 ? 'slide-in-right'   : 'slide-in-left';
-
-      img.classList.add(outClass);
-      img.addEventListener('animationend', () => {
-        img.classList.remove(outClass);
+      modalImg.classList.add(outClass);
+      modalImg.addEventListener('animationend', () => {
+        modalImg.classList.remove(outClass);
         modalIdx = (idx + modalImages.length) % modalImages.length;
-        img.src = modalImages[modalIdx].src;
+        modalImg.src = modalImages[modalIdx].src;
         modalCap.textContent   = modalImages[modalIdx].caption;
         modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
-        img.classList.add(inClass);
-        img.addEventListener('animationend', () => {
-          img.classList.remove(inClass);
+        modalImg.classList.add(inClass);
+        modalImg.addEventListener('animationend', () => {
+          modalImg.classList.remove(inClass);
           modalAnimating = false;
         }, { once: true });
       }, { once: true });
@@ -887,32 +886,18 @@
       const card = el.closest('.carousel-card');
       if (card) {
         modalPanel = parseInt(card.dataset.panel);
+        buildModalImages(modalPanel);
+        modalIdx = modalImages.findIndex(m => m.src === el.src);
+        if (modalIdx < 0) modalIdx = 0;
       } else {
         modalPanel = -1;
         modalImages = [{ src: el.src, caption: el.alt || '' }];
         modalIdx = 0;
-        modalImg.src           = modalImages[0].src;
-        modalCap.textContent   = modalImages[0].caption;
-        modalCount.textContent = `1 / 1`;
-        modalAnimating = false;
-        modal.classList.add('open');
-        document.getElementById('back-button').classList.add('hidden');
-        document.getElementById('music-widget').style.display = 'none';
-        document.body.style.overflow = 'hidden';
-        pauseCarousel();
-        return;
       }
-
-      buildModalImages(modalPanel);
-      const src = el.src;
-      modalIdx = modalImages.findIndex(m => m.src === src);
-      if (modalIdx < 0) modalIdx = 0;
-
       modalImg.src           = modalImages[modalIdx].src;
       modalCap.textContent   = modalImages[modalIdx].caption;
       modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
       modalAnimating = false;
-
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
       document.getElementById('music-widget').style.display = 'none';
@@ -932,14 +917,10 @@
 
     modal.addEventListener('click', e => {
       const allowed = [
-        document.getElementById('img01'),
-        document.getElementById('modal-caption'),
-        document.getElementById('modal-prev'),
-        document.getElementById('modal-next'),
+        document.getElementById('img01'), document.getElementById('modal-caption'),
+        document.getElementById('modal-prev'), document.getElementById('modal-next'),
       ];
-      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) {
-        closeModal();
-      }
+      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) closeModal();
     });
 
     document.addEventListener('keydown', e => {
