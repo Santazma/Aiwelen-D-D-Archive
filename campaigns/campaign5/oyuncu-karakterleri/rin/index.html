@@ -29,25 +29,26 @@
       from { opacity: 0; } to { opacity: 1; }
     }
     @keyframes glowPulse {
-      0%,100% { box-shadow: 0 0 8px rgba(224,92,58,.35), 0 0 20px rgba(224,92,58,.15); }
-      50%      { box-shadow: 0 0 16px rgba(224,92,58,.7), 0 0 40px rgba(224,92,58,.3); }
+      0%,100% { box-shadow: 0 0 8px rgba(135,206,250,.35), 0 0 20px rgba(135,206,250,.15); }
+      50%      { box-shadow: 0 0 16px rgba(135,206,250,.7), 0 0 40px rgba(135,206,250,.3); }
     }
-    @keyframes emberPulse {
+    @keyframes icePulse {
       0%,100% {
-        box-shadow: 0 0 0 4px rgba(60,10,10,.7),
-                    0 0 0 6px rgba(192,57,43,.2),
+        box-shadow: 0 0 0 4px rgba(10,30,60,.7),
+                    0 0 0 6px rgba(168,216,234,.2),
                     0 6px 18px rgba(0,0,0,.6),
-                    inset 0 0 10px rgba(192,57,43,.06);
+                    inset 0 0 10px rgba(168,216,234,.06);
       }
       50% {
-        box-shadow: 0 0 0 4px rgba(60,10,10,.75),
-                    0 0 0 6px rgba(192,57,43,.45),
-                    0 0 22px rgba(192,57,43,.3),
+        box-shadow: 0 0 0 4px rgba(10,30,60,.75),
+                    0 0 0 6px rgba(168,216,234,.45),
+                    0 0 22px rgba(168,216,234,.3),
                     0 6px 18px rgba(0,0,0,.6),
-                    inset 0 0 16px rgba(192,57,43,.1);
+                    inset 0 0 16px rgba(168,216,234,.1);
       }
     }
 
+    /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
@@ -58,7 +59,7 @@
       color: #fff;
     }
 
-    /* ══════════════ FIXED UI ══════════════ */
+    /* ══════════════ FIXED UI: back button + music widget ══════════════ */
 
     .fixed-back-button {
       position: fixed; top: 20px; left: 20px; z-index: 999;
@@ -67,22 +68,24 @@
       font-weight: 700; letter-spacing: .5px;
       text-decoration: none; color: #fff;
       border-radius: 8px;
-      border: 1px solid rgba(224,92,58,.45);
-      background: linear-gradient(135deg,rgba(100,20,10,.82),rgba(50,8,8,.9));
-      box-shadow: 0 0 8px rgba(224,92,58,.2);
+      border: 1px solid rgba(135,206,250,.45);
+      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
       transition: transform .18s, box-shadow .25s, background .25s;
       animation: glowPulse 3s ease-in-out infinite;
     }
     .fixed-back-button:hover {
-      background: linear-gradient(135deg,rgba(180,50,20,.88),rgba(110,20,10,.94));
-      box-shadow: 0 0 20px rgba(224,92,58,.6);
+      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
+      box-shadow: 0 0 20px rgba(135,206,250,.6);
       transform: translateY(-2px);
     }
     .fixed-back-button:active { transform: scale(.95); }
 
+    /* Music widget — top right, z:999, panel expands DOWNWARD only */
     #music-widget {
       position: fixed; top: 20px; right: 20px; z-index: 999;
       display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+      /* limit total height so it never overlaps info-box */
       max-height: calc(100vh - 40px);
     }
     #music-toggle-btn {
@@ -90,27 +93,28 @@
       padding: 7px 14px;
       font-family: 'Cinzel', serif; font-size: .8rem;
       font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(224,92,58,.45); border-radius: 8px;
-      background: linear-gradient(135deg,rgba(100,20,10,.88),rgba(50,8,8,.95));
+      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
+      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
       cursor: pointer; white-space: nowrap;
       transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(224,92,58,.2);
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
       animation: glowPulse 3s ease-in-out infinite;
       flex-shrink: 0;
     }
     #music-toggle-btn:hover {
-      background: linear-gradient(135deg,rgba(180,50,20,.92),rgba(110,20,10,.98));
-      box-shadow: 0 0 18px rgba(224,92,58,.55);
+      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
+      box-shadow: 0 0 18px rgba(135,206,250,.55);
       transform: translateY(-1px);
     }
     #music-toggle-btn:active { transform: scale(.96); }
 
     #volume-control-wrapper {
-      background: linear-gradient(135deg,rgba(55,10,5,.92),rgba(35,5,5,.97));
-      border: 1px solid rgba(224,92,58,.25);
+      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
+      border: 1px solid rgba(135,206,250,.25);
       padding: 12px 15px; border-radius: 12px;
-      box-shadow: 0 0 16px rgba(224,92,58,.15);
+      box-shadow: 0 0 16px rgba(135,206,250,.15);
       width: 210px; overflow: hidden;
+      /* collapsed by default — JS toggles max-height */
       max-height: 0; opacity: 0;
       padding-top: 0; padding-bottom: 0;
       transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
@@ -129,29 +133,32 @@
       display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
       font-family: 'Cinzel', serif; font-size: .82rem;
       font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(224,92,58,.4); border-radius: 7px;
-      background: linear-gradient(135deg,rgba(130,30,10,.8),rgba(70,10,5,.9));
+      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
+      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
       cursor: pointer;
       transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(224,92,58,.2);
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
     }
     #play-pause-btn:hover {
-      background: linear-gradient(135deg,rgba(200,55,20,.88),rgba(120,20,10,.95));
-      box-shadow: 0 0 18px rgba(224,92,58,.5);
+      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
+      box-shadow: 0 0 18px rgba(135,206,250,.5);
       transform: translateY(-1px);
     }
     #play-pause-btn:active { transform: scale(.96); }
-    #volume-control { width: 100%; accent-color: var(--red-glow); cursor: pointer; }
+    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
 
-    /* ══════════════ INFO BOXES ══════════════ */
+    /* ══════════════ INFO BOXES ══════════════
+       Desktop: fixed left/right panels.
+       Tablet/mobile: hidden from fixed position, shown inline instead.
+    ══════════════ */
     .info-box {
       position: fixed;
       top: 100px;
-      z-index: 10;
+      z-index: 10;           /* below music widget (z:999) — no overlap */
       background-color: var(--dark-glass);
       padding: 15px; border-radius: 10px;
       width: 210px; font-size: .9rem; line-height: 1.5;
-      border: 1px solid rgba(224,92,58,.18);
+      border: 1px solid rgba(135,206,250,.18);
       animation: pageFadeIn 1s ease .6s both;
       transition: top .1s linear;
     }
@@ -164,6 +171,7 @@
     .left-box  { left: 20px; }
     .right-box { right: 20px; }
 
+    /* Inline info boxes shown only on small screens */
     .info-boxes-inline {
       display: none;
       flex-direction: column;
@@ -176,7 +184,7 @@
       background-color: var(--dark-glass);
       padding: 15px; border-radius: 10px;
       font-size: .9rem; line-height: 1.5;
-      border: 1px solid rgba(224,92,58,.18);
+      border: 1px solid rgba(135,206,250,.18);
     }
     .info-box-inline h2 {
       font-family: 'Cinzel', serif;
@@ -188,9 +196,10 @@
     /* ══════════════ MAIN CONTAINER ══════════════ */
     .container {
       position: relative;
+      /* side padding creates room for fixed info-boxes on desktop */
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px 260px;
+      padding: 20px 260px; /* 260px = 210px box + 30px gap + 20px margin */
       text-align: center;
       z-index: 1;
       animation: pageFadeIn 1s ease .2s both;
@@ -206,7 +215,7 @@
       font-family: 'Cinzel', serif;
       font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
       text-transform: uppercase; letter-spacing: 3px;
-      text-shadow: 0 0 30px rgba(224,92,58,.6), 3px 3px 12px rgba(0,0,0,.9);
+      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
       margin-bottom: 20px;
       animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
     }
@@ -236,10 +245,11 @@
       background: var(--dark-glass);
       padding: 24px 28px; border-radius: 12px;
       box-shadow: 0 4px 24px rgba(0,0,0,.6);
-      border: 1px solid rgba(224,92,58,.12);
+      border: 1px solid rgba(135,206,250,.12);
       animation: pageFadeIn 1s ease .7s both;
     }
 
+    /* ── Character sheet link ── */
     .character-link {
       display: inline-block; margin-top: 8px;
       padding: 6px 14px; font-size: .88rem; font-weight: 600;
@@ -255,6 +265,7 @@
     }
     .character-link:active { transform: scale(.96); }
 
+    /* ── Bottom nav buttons ── */
     .back-link {
       display: inline-block; margin-top: 20px;
       padding: .6rem 1.4rem;
@@ -262,15 +273,15 @@
       font-weight: 700; letter-spacing: 1px;
       text-decoration: none; color: #fff;
       border-radius: 8px;
-      border: 1px solid rgba(224,92,58,.5);
-      background: linear-gradient(135deg,rgba(120,30,10,.75),rgba(60,10,5,.85));
-      box-shadow: 0 0 10px rgba(224,92,58,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      border: 1px solid rgba(135,206,250,.5);
+      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
+      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
       transition: transform .18s, box-shadow .25s, background .25s;
       animation: glowPulse 3s ease-in-out infinite;
     }
     .back-link:hover {
-      background: linear-gradient(135deg,rgba(180,50,20,.85),rgba(110,20,10,.9));
-      box-shadow: 0 0 22px rgba(224,92,58,.65), inset 0 1px 0 rgba(255,255,255,.12);
+      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
+      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
       transform: translateY(-2px);
     }
     .back-link:active { transform: scale(.96) translateY(0); }
@@ -320,7 +331,7 @@
       display: block; max-width: 78vw; max-height: 76vh;
       width: auto; height: auto;
       border-radius: 15px 15px 0 0;
-      box-shadow: 0 0 50px rgba(224,92,58,.35); object-fit: contain;
+      box-shadow: 0 0 50px rgba(135,206,250,.35); object-fit: contain;
     }
     .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
     .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
@@ -330,35 +341,35 @@
     .modal-caption {
       width: 100%; max-width: 78vw;
       padding: 10px 16px 12px; box-sizing: border-box;
-      background: rgba(40,5,5,0.88);
+      background: rgba(5,15,40,0.88);
       border-radius: 0 0 15px 15px;
-      border-top: 1px solid rgba(224,92,58,0.2);
+      border-top: 1px solid rgba(135,206,250,0.2);
       font-family: 'Lora', Georgia, serif;
       font-style: normal; font-size: 1.05rem; font-weight: 700;
-      color: #ffe8e0; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      color: #e8f6ff; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
       text-align: center; line-height: 1.45; letter-spacing: 0.01em;
     }
 
     .modal-counter {
       position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
       font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700;
-      color: rgba(234,168,130,0.9); letter-spacing: 1.5px;
+      color: rgba(168,216,234,0.9); letter-spacing: 1.5px;
       pointer-events: none; z-index: 1002;
-      background: rgba(40,5,5,0.6); padding: 4px 12px;
-      border-radius: 20px; border: 1px solid rgba(224,92,58,0.2);
+      background: rgba(5,15,40,0.6); padding: 4px 12px;
+      border-radius: 20px; border: 1px solid rgba(135,206,250,0.2);
     }
 
     .modal-arrow {
       flex-shrink: 0; width: 48px; height: 48px; font-size: 1.4rem; color: #fff;
-      background: linear-gradient(135deg, rgba(130,30,10,0.75), rgba(70,10,5,0.85));
-      border: 1px solid rgba(224,92,58,0.45); border-radius: 50%;
+      background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
+      border: 1px solid rgba(135,206,250,0.45); border-radius: 50%;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
       animation: glowPulse 3s ease-in-out infinite; z-index: 1002;
     }
     .modal-arrow:hover {
-      background: linear-gradient(135deg, rgba(200,55,20,0.9), rgba(120,20,10,0.96));
-      box-shadow: 0 0 22px rgba(224,92,58,0.65); transform: scale(1.12);
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 22px rgba(135,206,250,0.65); transform: scale(1.12);
     }
     .modal-arrow:active { transform: scale(0.93); }
 
@@ -367,7 +378,7 @@
       color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
       transition: color .2s, text-shadow .2s; z-index: 1003; line-height: 1;
     }
-    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(224,92,58,.6); }
+    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
 
     /* ══════════════ CAROUSEL ══════════════ */
     @keyframes cardIn {
@@ -393,16 +404,16 @@
       font-family: 'Lora', Georgia, serif; font-size: 0.92rem;
       font-weight: 700; letter-spacing: 0.2px;
       color: rgba(255,255,255,0.55);
-      border: 1px solid rgba(224,92,58,0.22); border-radius: 8px;
-      background: rgba(55,10,5,0.55); cursor: pointer; transition: all 0.25s;
+      border: 1px solid rgba(135,206,250,0.22); border-radius: 8px;
+      background: rgba(10,28,55,0.55); cursor: pointer; transition: all 0.25s;
     }
     .carousel-tab:hover {
-      color: #fff; border-color: rgba(224,92,58,0.55); background: rgba(130,30,10,0.65);
+      color: #fff; border-color: rgba(135,206,250,0.55); background: rgba(30,75,130,0.65);
     }
     .carousel-tab.active {
-      color: #fff; border-color: rgba(224,92,58,0.85);
-      background: linear-gradient(135deg, rgba(130,30,10,0.88), rgba(70,10,5,0.96));
-      box-shadow: 0 0 16px rgba(224,92,58,0.4);
+      color: #fff; border-color: rgba(135,206,250,0.85);
+      background: linear-gradient(135deg, rgba(30,80,130,0.88), rgba(10,35,70,0.96));
+      box-shadow: 0 0 16px rgba(135,206,250,0.4);
     }
 
     .carousel-wrapper { position: relative; }
@@ -416,15 +427,15 @@
 
     .carousel-arrow {
       flex-shrink: 0; width: 46px; height: 46px; font-size: 1.4rem; color: #fff;
-      background: linear-gradient(135deg, rgba(130,30,10,0.82), rgba(70,10,5,0.92));
-      border: 1px solid rgba(224,92,58,0.4); border-radius: 50%; cursor: pointer;
+      background: linear-gradient(135deg, rgba(30,80,130,0.82), rgba(10,35,70,0.92));
+      border: 1px solid rgba(135,206,250,0.4); border-radius: 50%; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
       animation: glowPulse 3s ease-in-out infinite;
     }
     .carousel-arrow:hover {
-      background: linear-gradient(135deg, rgba(200,55,20,0.9), rgba(120,20,10,0.96));
-      box-shadow: 0 0 18px rgba(224,92,58,0.55); transform: scale(1.12);
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 18px rgba(135,206,250,0.55); transform: scale(1.12);
     }
     .carousel-arrow:active { transform: scale(0.93); }
 
@@ -447,25 +458,25 @@
       width: 300px; height: 390px;
       object-fit: contain; border-radius: 14px;
       border: 2px solid #a8d8ea;
-      outline: 1px solid rgba(192,57,43,0.28); outline-offset: 3px;
+      outline: 1px solid rgba(168,216,234,0.28); outline-offset: 3px;
       box-shadow:
-        0 0 0 4px rgba(60,10,10,0.7), 0 0 0 6px rgba(192,57,43,0.25),
-        0 10px 28px rgba(0,0,0,0.7), inset 0 0 14px rgba(192,57,43,0.08);
-      cursor: pointer; background: rgba(35,5,5,0.6);
+        0 0 0 4px rgba(10,30,60,0.7), 0 0 0 6px rgba(168,216,234,0.25),
+        0 10px 28px rgba(0,0,0,0.7), inset 0 0 14px rgba(168,216,234,0.08);
+      cursor: pointer; background: rgba(5,15,35,0.6);
       transition: box-shadow 0.3s, filter 0.3s;
       filter: brightness(0.96) saturate(0.97);
     }
     .carousel-card img:hover {
       box-shadow:
-        0 0 0 4px rgba(60,10,10,0.8), 0 0 0 7px rgba(192,57,43,0.6),
-        0 0 36px rgba(192,57,43,0.45), 0 12px 32px rgba(0,0,0,0.75);
+        0 0 0 4px rgba(10,30,60,0.8), 0 0 0 7px rgba(168,216,234,0.6),
+        0 0 36px rgba(168,216,234,0.45), 0 12px 32px rgba(0,0,0,0.75);
       filter: brightness(1.06) saturate(1.08);
     }
 
     .carousel-caption {
       margin-top: 14px; min-height: 48px; max-width: 340px; text-align: center;
       font-family: 'Lora', Georgia, serif; font-style: normal;
-      font-size: 1rem; font-weight: 700; color: #ffe8e0;
+      font-size: 1rem; font-weight: 700; color: #e8f6ff;
       text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.8);
       line-height: 1.45; padding: 0 8px; letter-spacing: 0.01em;
     }
@@ -475,53 +486,77 @@
     }
     .dot {
       width: 9px; height: 9px; border-radius: 50%;
-      background: rgba(224,92,58,0.28); border: 1px solid rgba(224,92,58,0.4);
+      background: rgba(135,206,250,0.28); border: 1px solid rgba(135,206,250,0.4);
       cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
     }
     .dot.active {
-      background: rgba(224,92,58,0.92); transform: scale(1.35);
-      box-shadow: 0 0 8px rgba(224,92,58,0.8);
+      background: rgba(135,206,250,0.92); transform: scale(1.35);
+      box-shadow: 0 0 8px rgba(135,206,250,0.8);
     }
 
     .hidden { display: none; }
 
-    /* ══════════════ RESPONSIVE ══════════════ */
+    /* ══════════════ RESPONSIVE BREAKPOINTS ══════════════ */
+
+    /* Tablet: 1024px and below — info-boxes still visible but narrower */
     @media (max-width: 1024px) {
-      .container { padding: 20px 230px; }
+      .container {
+        padding: 20px 230px;
+      }
       .info-box { width: 190px; font-size: .82rem; }
       .left-box  { left: 12px; }
       .right-box { right: 12px; }
     }
 
+    /* Narrow tablet: 860px and below — switch to inline info-boxes */
     @media (max-width: 860px) {
+      /* Hide fixed side info-boxes */
       .info-box { display: none; }
+
+      /* Show inline info-boxes inside the flow */
       .info-boxes-inline { display: flex; }
+
+      /* Remove side padding — no more fixed boxes to avoid */
       .container { padding: 20px 16px; }
+
       h1 { font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: 1px; }
+
       .bio { padding: 18px 16px; font-size: 1rem; }
+
+      /* Carousel: scale down stage for narrow screens */
       .carousel-stage { width: 280px; height: 360px; }
       .carousel-card img { width: 260px; height: 350px; }
       .carousel-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
       .carousel-section { max-width: 100%; }
     }
 
+    /* Mobile: 540px and below */
     @media (max-width: 540px) {
+      /* Fixed top bar: back button stays top-left, music stays top-right */
       .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; }
       #music-toggle-btn  { font-size: .7rem;  padding: 5px 10px; }
+
       h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; }
+
       .character-image { width: 160px; height: 240px; }
+
+      /* Carousel: tighten further */
       .carousel-stage { width: 240px; height: 310px; }
       .carousel-card img { width: 220px; height: 300px; }
       .carousel-row { gap: 8px; }
       .carousel-arrow { width: 34px; height: 34px; font-size: 1rem; }
       .carousel-caption { font-size: .88rem; }
       .carousel-tab { padding: 7px 12px; font-size: .82rem; }
+
+      /* Modal arrows smaller on phone */
       .modal-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
       .modal-content { max-width: 90vw; max-height: 70vh; }
       .modal-caption { font-size: .9rem; }
+
       .back-link { padding: .5rem 1rem; font-size: .88rem; }
     }
 
+    /* Very small: 380px */
     @media (max-width: 380px) {
       h1 { font-size: 1.2rem; }
       .carousel-stage { width: 200px; height: 270px; }
@@ -552,39 +587,241 @@
     <div class="image-title">Fırtınanın Kızı Rin Stormbringer</div>
 
     <div class="bio">
-      <p><strong>Çağıl Cengiz ERSER</strong> tarafından canlandırılmış ve oynanmıştır. <strong>Rin</strong>, <strong>Wano</strong>'nun iç bölgelerinde, <strong>Onigashima</strong> volkanik dağının eteklerindeki bir yamajiroda doğdu. Annesi <strong>Lyura</strong> doğumda hayatını kaybetti; babası <strong>Daisuke Stormbringer</strong>, klana hizmet eden sert ve mesafeli bir askerdi. Rin, mavi tenli ve siyah boynuzlu bir <strong>oni</strong> olarak, <strong>Stormbringer</strong> klanının sancağı — <strong>Fırtınanın Gözü</strong> — altında büyüdü. Klanın sancağında dikey bir göz bebeğine sahip parlayan bir göz ve etrafında üç adet kıvrımlı yıldırım hattı yer alırdı: <strong>Üçlü Yıldırım Sarmalı ve Göz</strong>.</p>
+      <p>Wano'nun iç bölgelerinde, <strong>Onigashima</strong> volkanik dağının eteklerinde bir <strong>yamajiro</strong> vardı, yükseltiye kurulmuş taş bir hisar. Taşları volkanik kül ve yıldırım çarpıklarıyla kara lekeler içindeydi, surlarının tepesinde ise <strong>Stormbringer</strong> klanının sancağı rüzgârda çırpınırdı. Koyu lacivert kumaşın üzerinde klanın sigili işlenmişti: <strong>Fırtınanın Gözü</strong>. Sigilin tam ortasında dikey bir göz bebeğine sahip, parlayan bir göz bulunurdu, her şeyi yukarıdan gören göksel gözetimin simgesi. Gözün etrafından saat yönünde dönen, Japon tomoe sembolüne benzeyen ancak uçları keskin birer şimşek şeklinde biten üç adet kıvrımlı yıldırım hattı vardı. Parlak elektrik mavisi ve gümüşi beyaz renklerle işlenmiş bu sigil, <strong>Üçlü Yıldırım Sarmalı ve Göz</strong> olarak bilinirdi.</p>
 
-      <p>Stormbringer klanı, yıkımın ve yıldırımın tanrısı <strong>Raiko</strong>'ya tapan Wano'nun en eski <strong>oni</strong> klanlarından biriydi. Raiko inananlara itaat değil güç isterdi; dua değil eylem beklerdi. Klanın en saygın üyeleri savaşçılardı, ikinci sırada ise <strong>Raiko</strong>'nun gücünü <strong>ofudalara</strong> bağlayabilen <strong>onmyojiler</strong> gelirdi. Rin çocukluğundan itibaren bu güce takıntılıydı. Klanın dövüş turnuvalarını ateşli gözlerle izler, eğitmenlerin sınırlarını zorlar ve kaybetmeye tahammül edemezdi.</p>
+      <p><strong>Stormbringer</strong> klanı <strong>Wano</strong>'nun en eski <strong>oni</strong> klanlarından biriydi. Yıkımın ve yıldırımın tanrısı <strong>Raiko</strong>'ya taparlardı. <strong>Raiko</strong> merhametli bir tanrı değildi. İnananlarından itaat değil güç isterdi, dua değil eylem beklerdi. Stormbringer'lar da bu inancın biçimlendirdiği bir halktı: sert, gürültülü, kavgacı. Zayıflığa tahammülleri yoktu. Klanın en saygın üyeleri savaşçılardı, ama onların hemen ardından gelen ikinci bir sınıf vardı, <strong>onmyojiler</strong>. Ruhani işlerle uğraşan bu kişiler, <strong>Raiko</strong>'nun gücünü <strong>ofudalara</strong> bağlayabilirlerdi.</p>
 
-      <p>Küçüklüğünde babasının sessiz mesafesinin ağırlığını taşırken, ağabeyi <strong>Raiden</strong> onun için her şeydi. Dört yaş büyük olan <strong>Raiden</strong>, kız kardeşine ilk kılıç tutuşunu öğreten, düştüğünde kaldıran, yanlış yaptığında yanına oturup tek kelime etmeden orada olan kişiydi. <em>"Bir gün başını büyük belaya sokacaksın"</em> derdi Raiden. <em>"Biliyorum"</em> derdi Rin. <em>"Ben de gelip seni kurtaracağım."</em> <em>"Onu da biliyorum."</em></p>
+      <p><strong>Rin</strong> bu kalenin avlusunda büyüdü. Mavi tenli, siyah boynuzlu bir <strong>oni</strong> kızı. Annesi yoktu, doğumda ölmüştü. Babası <strong>Daisuke Stormbringer</strong> klana hizmet eden bir askerdi. Sert bir adamdı <strong>Daisuke</strong>. Sesini yükseltmeye ihtiyaç duymayan türden bir sertliği vardı, bakışı yeterdi. Çocuklarına sevgisini gösterme konusunda beceriksizdi ya da bunu gereksiz buluyordu, <strong>Rin</strong> hiçbir zaman hangisi olduğunu çözemedi. <strong>Daisuke</strong> evde az konuşurdu. Yemekte sessiz otururdu. Çocuklarından disiplin ve itaat beklerdi ve bunları alamadığında hayal kırıklığını yine sessizlikle ifade ederdi. Bu sessizlik bazen herhangi bir bağırıştan daha ağır gelirdi.</p>
 
-      <p>On altısında klanın savaşçı sınavına giren Rin, dişleri kırılmış ve sol kaşı yarılmış halde ama gülümseyerek ayakta kaldı. Ardından klanın nadir uyguladığı <strong>Raiko ritüelini</strong> talep etti. Baş onmyoji, kör gözlü yaşlı <strong>Kasumi</strong>, Rin'in içindeki öfkenin sahici olduğunu hissetti: <em>"Raiko sahte öfkeyi reddeder. Seninki gerçek."</em> Ritüel bir gece sürdü; sabaha karşı Rin ayağa kalktığında gözlerinin etrafında geçici kırmızı damarlar belirmişti ve nefes aldığında havanın <strong>statikle</strong> dolduğunu hissedebiliyordu. <strong>Raiko</strong>'nun öfkesi artık ondaydı.</p>
+      <p><strong>Rin</strong>'in abisi <strong>Raiden</strong>, ondan dört yaş büyüktü. <strong>Daisuke</strong>'nin yapamadığı her şeyi <strong>Raiden</strong> yaptı. Kız kardeşiyle ilgilenen, ona ilk kılıç tutuşunu gösteren, düştüğünde kaldıran oydu. <strong>Raiden</strong> klanın gözde savaşçılarından biriydi, güçlü, disiplinli, sakin. Babalarının onayladığı türden bir <strong>oni</strong>. <strong>Rin</strong>'in tam tersi gibi görünürdü dışarıdan: <strong>Raiden</strong> kontrolü temsil ederdi, <strong>Rin</strong> kaos'u. Ama <strong>Raiden</strong> kız kardeşini hiçbir zaman değiştirmeye çalışmadı. <strong>Rin</strong> avluda eğitmenlerle kavga ettiğinde, sınırları zorladığında, ceza aldığında <strong>Raiden</strong> gidip onu bulur, yanına otururdu. Çoğu zaman bir şey söylemezdi bile. Orada olması yeterdi.</p>
 
-      <p>İlk büyük sınavı, <strong>Onigashima</strong>'nın yamaçlarında keşfedilen bir <strong>Tsuchigumo</strong> yuvasının temizlenmesiydi. Rin birlikten kopup tek başına ilerledi, dev örümceğin zihinsel sisiniteği reddederek yaratığı devirdi. Ağabeyi <strong>Raiden</strong> onu çıkışta bulduğunda sesi sert ama altında gerçek bir korku vardı: <em>"Birlikten kopma. Tsuchigumo illüzyonist bir avcı. Bu sefer şansın varmış."</em></p>
+      <p><em>"Bir gün başını büyük belaya sokacaksın,"</em> derdi <strong>Raiden</strong> ara sıra. <em>"Biliyorum,"</em> derdi <strong>Rin</strong>. <em>"Ben de gelip seni kurtaracağım."</em> <em>"Onu da biliyorum."</em></p>
 
-      <p>Klanın kervanlarına gardiyan olarak atanmasıyla birlikte <strong>Wano</strong>'dan kuzeye doğru yola çıktı. Yanına <strong>gofu hat</strong>'ını ve <strong>gece gözlüklerini</strong> alacağını düşünürken saldırı geldi: <strong>Buzyürek kabilesi</strong>'nin <strong>Goliath</strong> yağmacıları. Komutanları <strong>Gorath</strong>, onu birkaç darbeyle devirdi ve <em>"Bu da ölür nasılsa"</em> diyerek sırtını döndü. Rin karda, kan ve soğuk içinde yalnız kaldı.</p>
+      <p>Bu ikisi arasındaki şeydi. <strong>Raiden</strong> klandaki herkesin gözünde mükemmel askerdi, <strong>Daisuke</strong>'nin gurur duyduğu oğul. Ama <strong>Rin</strong>'in yanında sadece ağabeydi. <strong>Rin</strong> de onun yanında rahat edebildiği tek yerde rahat ederdi, savunmasını indirirdi, takıntılarını ve hırsını bir kenara koyar, sadece kardeş olurdu.</p>
 
-      <p>Onu ölümden kurtaran gezgin büyücü cüce <strong>Dolgrim Tepedoğan</strong> oldu. <strong>Dolgrim</strong>, Rin'i Wolf's Inn'deki demirci dostu <strong>Orv Bezmadan</strong>'ın dükkanına taşıdı. Tedavi sürecinde <strong>Dolgrim</strong> Rin'in içindeki <strong>ofudaların</strong>, <strong>rünlerle</strong> aynı temel prensiple çalıştığını keşfetti: gücü bir sembole hapsetmek. <em>"Farklı alfabe, aynı gramer."</em> Ve Rin'i kuzey rün geleneğiyle tanıştırdı. Aylarca süren bu eğitimde <strong>Dolgrim</strong> son düşüncesini de paylaştı: dağlarda, <strong>Godhood Peak</strong>'in zirvesinde, rün geleneğinin efsanevi son ustası <strong>Barbara</strong>'nın yaşadığı söylenirdi.</p>
+      <p><strong>Rin</strong>'in çocukluğu böyle geçti. <strong>Daisuke</strong>'nin sert ama mesafeli gölgesinde, <strong>Raiden</strong>'ın koruyucu varlığında ve kalenin taş duvarları arasında. Arkadaşları da vardı, eğitim avlusundaki diğer genç savaşçılar. Ama <strong>Rin</strong> kolay arkadaşlık kuran birisi değildi. Rekabetçiydi, sivri dilliydi ve kaybetmeye tahammülü yoktu. Yine de birkaç kişi onun bu sert kabuğunun altına girmeyi başarmıştı. Beraber eğitim gördüğü bir grup vardı, klanın genç savaşçı adayları. Akşamları eğitimden sonra kalenin duvarlarına tırmanıp <strong>Onigashima</strong>'ya bakarlardı. Bazen sake içerlerdi, çalıntı, çünkü yaşları yetmiyordu. <strong>Rin</strong> bu anlarda bile kavga çıkarabilirdi, ama bu kavgalar gerçek düşmanlıktan değil, içindeki o söndürülemeyen ateştendi. Arkadaşları bunu öğrenmişti. <strong>Rin</strong> öyle biriydi.</p>
 
-      <p>Wano'ya dönen Rin, <strong>Daisuke</strong>'nin atalarından kalma kuşağını iade etti. Babası kuşağı geri uzattı: <em>"Senin olsun artık."</em> Ardından klanın yaşlıları toplantısında oy çokluğuyla <strong>emanet katana</strong>'yı hak ettiğine karar verildi; <strong>kurogane</strong>'den dövülmüş, kabzasında şimşek motifi işlenmiş, koyu gri namlusu rün kazımaya uygun bir silah. <strong>Karakuma</strong>'da ise <strong>Nomi</strong> yokai avına katılıp kabuto kabuğundan elde ettiği harvest malzemeyle usta demirci <strong>Hagane</strong>'ye <strong>oni zırhı</strong> yaptırdı. Kuzeye dönmek için hazırdı.</p>
+      <p>Ama arkadaşlıklar <strong>Rin</strong> için her zaman ikinci plandaydı. Birinci planda güç vardı. Her zaman güç.</p>
+
+      <p><strong>Rin</strong> küçüklüğünden beri buna takıntılıydı. Klanın turnuvalarını izlerken gözleri parlar, en sert darbelerle en yüksek sesle bağıranlara hayran kalırdı. Babası ona <em>"sakin ol"</em> derdi. <strong>Rin</strong> sakin kalamıyordu. Dövüş eğitiminde hep ilk vuran, en son durdurulan oydu. Eğitmenleri onun hakkında ikiye bölünmüştü, bir kısmı bu kızda büyük potansiyel görüyordu, diğer kısmı kontrol edilemeyen bir tehlike.</p>
+
+      <p>On altısına geldiğinde <strong>Rin</strong>, klanın savaşçı sınavına girdi. Sınav basitti: klanın deneyimli bir savaşçısına karşı dayanmak. Yenmek şart değildi, ama ayakta kalmak şarttı. <strong>Rin</strong> ayakta kaldı. Dişleri kırılmış, sol kaşı yarılmış halde ayakta kaldı. Gülümseyerek.</p>
+
+      <p><strong>Raiden</strong> sınavdan sonra onu bekliyordu. Yüzündeki kanı silmesine yardım etti. <em>"Gülümsemen gerekmiyor bunu yaparken,"</em> dedi. <em>"Gülümsemiyordum,"</em> dedi <strong>Rin</strong>. <em>"Dişlerim gözüküyordu, o kadar."</em> <strong>Raiden</strong> güldü. <strong>Daisuke</strong> ise uzaktan izledi. Bir an durdu, kızına baktı, sonra yanına geldi. <strong>Daisuke</strong> elini kızının başına koydu. Kısa bir an. Sonra elini çekti. <em>"Yüzünü yıka,"</em> dedi. <em>"Kan kurumuş."</em> Döndü ve gitti. <strong>Raiden</strong> kız kardeşine baktı. <em>"Bu onun tebriği,"</em> dedi. <em>"Biliyorum,"</em> dedi <strong>Rin</strong>. Sesi sert çıkmıştı ama içinde bir şey sızladı. Babasının elinin sıcaklığı hâlâ başının tepesindeydi.</p>
+
+      <p>Ama <strong>Rin</strong> için bu yetmiyordu. Klanın sıradan savaşçıları arasına girmek onun gözünde küçük bir adımdı. O daha fazlasını istiyordu. <strong>Raiko</strong>'nun kendisinden bir parça istiyordu.</p>
+
+      <p><strong>Stormbringer</strong> klanında nadir uygulanan ama bilinen bir ritüel vardı. Klanın en güçlü <strong>onmyojisi</strong>, <strong>Raiko</strong>'nun öfkesini taşıyan özel <strong>ofudalar</strong> hazırlar ve bunları bir savaşçının ruhuna işlerdi. Bu, sıradan bir kutsama değildi. <strong>Ofudalar</strong> savaşçının içine fiziksel olarak enjekte edilir, deriye değil, ruha. İşlem acı vericiydi ve herkes dayanamıyordu. Dayanamayanlara ne olduğu pek konuşulmazdı.</p>
+
+      <p><strong>Rin</strong> bunu istedi. Babası karşı çıktı, bu sefer sessizliğini bozdu. <em>"Hazır değilsin,"</em> dedi, kısa ve kesin. Klanın yaşlıları da tereddüt etti. Ama klanın baş <strong>onmyojisi</strong>, yaşlı, kör gözlü bir <strong>oni</strong> kadın olan <strong>Kasumi</strong>, <strong>Rin</strong>'i bir süre inceledikten sonra kabul etti.</p>
+
+      <p><strong>Kasumi</strong>'nin kör gözleri <strong>Rin</strong>'in üzerinde gezindi, görmüyordu ama bir şekilde bakıyordu. Parmaklarını <strong>Rin</strong>'in göğsüne doğru uzattı, dokunmadan, havada tuttu. <em>"Burası yanıyor,"</em> dedi <strong>Kasumi</strong>. <em>"Hissediyorum. Senin öfken sahici, çocuğum. Çoğu genç savaşçı öfkeli olduğunu sanır ama aslında sadece sabırsızdır. Seninki öyle değil. Senin öfken derinlerden geliyor, kaynağını bilmiyorum, belki annesiz büyümenin verdiği bir şey, belki Raiko'nun sana doğuştan verdiği bir hediye. Ama gerçek."</em> <strong>Kasumi</strong> gülümsedi, dişsiz, yaşlı bir gülümseme. <em>"Raiko sahte öfkeyi reddeder. Seninki gerçek. Gel."</em></p>
+
+      <p><strong>Raiden</strong> ritüelden önceki gece <strong>Rin</strong>'i buldu. Kalenin çatısında oturuyordu, bacaklarını sarkıtmış, aşağıdaki avluya bakıyordu. <em>"Vazgeçmeni söylemeyeceğim,"</em> dedi <strong>Raiden</strong>, yanına oturarak. <em>"Söylesem de dinlemezsin."</em> <em>"Dinlemem."</em> <em>"Biliyorum."</em> <strong>Raiden</strong> bir süre sessiz kaldı, aşağıdaki avluya baktı. Sonra konuştu, sesi alçaktı, sadece ikisinin duyabileceği bir ses. <em>"Ama korkuyorum. Bunu sana ilk kez söylüyorum. Ritüel başarısız olursa ne olacağını biliyorsun. Geçemeyenlerden bazıları bir daha aynı olmadı. Ve sen... sen benim tek kardeşimsin, Rin."</em></p>
+
+      <p><strong>Rin</strong> abisine baktı. <strong>Raiden</strong> hiçbir zaman böyle konuşmazdı. Avluda herkesin gördüğü <strong>Raiden</strong>, kusursuz savaşçı, kontrollü, soğukkanlıydı. Ama burada, çatıda, karanlıkta, sadece ağabeydi. <em>"Dayanamasan bile utanılacak bir şey yok,"</em> dedi <strong>Raiden</strong>. <em>"Ritüeli geçemeyenler zayıf oldukları için değil, Raiko onları seçmediği için geçemezler. Ama sen... Eğer Raiko seni seçmezse, eve gel. Burada ol. Yeter."</em></p>
+
+      <p><strong>Rin</strong> abisinin yüzüne baktı. <em>"Ben geçeceğim,"</em> dedi. Bunda kibir yoktu. Bir tür kesinlik vardı, sanki hava suyun üstüne çıkar demek gibi bir şeydi. <em>"Ama dinlediğimi bil. Seni duydum."</em> <strong>Raiden</strong> başını salladı. Elini kız kardeşinin omzuna koydu, sıktı, bıraktı. İkisi de bir süre sessizce avluya baktılar.</p>
+
+      <p>Ritüel bir gece sürdü. <strong>Rin</strong> tapınağın en alt katında, karanlık bir odada yere çivilenmişçesine yatarken <strong>Kasumi</strong> <strong>ofudaları</strong> tek tek göğsüne, kollarına, sırtına yerleştirdi. Her biri yanarken <strong>Rin</strong> çığlık attı. Her çığlıkta <strong>ofuda</strong> biraz daha derinine gömüldü. Sabaha karşı <strong>Rin</strong> ayağa kalktığında, gözlerinin etrafında geçici kırmızı damarlar belirmişti ve nefes aldığında havanın <strong>statikle</strong> dolduğunu hissedebiliyordu. <strong>Raiko</strong>'nun öfkesi artık ondaydı.</p>
+
+      <p>Sonraki aylarda <strong>Rin</strong> bu gücü kullanmayı öğrendi. <strong>Ofudalar</strong> ona kontrollü bir öfke veriyordu, savaşta bedeninin sınırlarını aşmasını, yaralarına aldırmamasını, düşmanlarına ilahi bir enerjiyle vurmasını sağlıyordu. Barbar dövüşçülerin o tanıdık çılgınlığıydı bu, ama <strong>Rin</strong>'in versiyonu <strong>Raiko</strong>'nun yıldırımıyla besleniyordu. <strong>Rage</strong>'e girdiğinde vücudundan hafif bir elektrik kıvılcımı yayılırdı.</p>
+
+      <p><strong>Rin</strong> güçlüydü. Ama yine de yetmiyordu. Hiçbir zaman yetmiyordu.</p>
+
+      <p>Asıl sınavı ritüelden birkaç ay sonra geldi. <strong>Onigashima</strong>'nın yamaçlarında bir yokai yuvası keşfedilmişti, klanın topraklarına yakın, köylere tehdit oluşturabilecek mesafede. Bir <strong>Tsuchigumo</strong>. <strong>Dünya Örümceği</strong>. Yaşlılar bir temizlik birliği göndermeye karar verdi. Küçük bir operasyondu, altı kişilik bir grup yeterdi. <strong>Raiden</strong> birliğin komutanı olarak atandı. <strong>Rin</strong> de gruba dahil edildi, ritüelden sonra ilk ciddi göreviydi.</p>
+
+      <p><strong>Tsuchigumo</strong> yuvası beklenenden büyük çıktı. Yamaçtaki kayalıkların arasına gizlenmiş bir mağara sistemiydi, duvarlar yapışkan ipekle kaplıydı ve içeride düzinelerce küçük yokai dolanıyordu, <strong>Tsuchigumo</strong>'nun beslenme ağının parçaları. Tehlikeli değillerdi tek tek, ama sayıları fazlaydı ve mağaranın derinlerinde asıl tehlike bekliyordu.</p>
+
+      <p>Birlik mağaraya girdiğinde işler hızla karıştı. Dar geçitler, karanlık, her yandan gelen tıslama sesleri. Ve bir şey daha: zihinsel bir sis. <strong>Tsuchigumo</strong>'lar sadece avcı değildi, aynı zamanda illüzyonistlerdi. Yaratığın yaydığı psikonik bulanıklık mağaranın içine yayılmıştı, yönleri karıştırıyor, mesafeleri çarpıtıyor, insanların aklına yanlış sesler fısıldıyordu. <strong>Raiden</strong> grubu bir arada tutmaya çalıştı ama <strong>Rin</strong> çoktan kopmuştu. <strong>Rage</strong>'e girdi ve ileri atıldı. Tek başına. Zihinsel sisin onu mu çektiğini yoksa kendi dürtüsüyle mi gittiğini sonradan bile çözemedi, muhtemelen ikisi birden. <strong>Raiko</strong>'nun enerjisi vücudundan akarken dar tünellerde küçük yokaileri biçti. Arkasındaki grubu düşünmüyordu. Sadece ileriye bakıyordu, daha derinine, daha güçlü olana doğru.</p>
+
+      <p><strong>Tsuchigumo</strong>'yu bulduğunda duraksadı. Büyük bir yaratıktı, tavanı dolduran, kayalara sekiz bacağıyla tutunmuş, gövdesinin ön kısmında neredeyse insansı bir yüzü olan dev bir örümcek. Gözleri, düzinelerce gözü, karanlıkta parlıyordu. Ve o zihinsel sis burada en yoğun halindeydi, <strong>Rin</strong>'in görüşü bulanıklaştı, yerle tavan yer değiştirdi, bir an için hangi yönün yukarı olduğunu bilemedi. Kurnaz bir avcıya karşı tek başına gitmek resmen intihardı. <strong>Rin</strong> bir an düşündü. Sonra düşünmeyi bıraktı ve saldırdı.</p>
+
+      <p>Savaş uzun sürmedi ama <strong>Rin</strong>'i zorladı. Yaratığın bir bacağı onu duvara fırlattı, bir diğeri göğsünü tırmaladı, ipek ağları onu birkaç kez yavaşlattı. İllüzyon dalgaları kafasının içinde patladı ama <strong>rage</strong> halinde <strong>Raiko</strong>'nun öfkesi zihinsel sisi bir şekilde yardı, saf öfke illüzyondan daha güçlüydü. <strong>Rin</strong> ayağa kalktı, her seferinde kalktı, ve sonunda yaratığı devirdi. Mağaranın zemini titredi, küçük yokailer dağıldı.</p>
+
+      <p><strong>Raiden</strong> onu mağaranın çıkışında buldu. <strong>Rin</strong> kan ve ipek içindeydi ama ayaktaydı. <strong>Raiden</strong>'ın yüzünde hem rahatlama hem de öfke vardı. <em>"Birlikten kopma,"</em> dedi <strong>Raiden</strong>. Sesi sakindi ama altında sertlik vardı. <em>"Tsuchigumo illüzyonist bir avcı. Seni içeri çekti ve sen farkında bile olmadan yürüdün. Tek başına bir illüzyonistin inine girmek intihar. Bu sefer şansın varmış, bir sonraki sefer olmayabilir."</em> <em>"Kurtarmana gerek yoktu,"</em> dedi <strong>Rin</strong>. <em>"Bu sefer yoktu. Ya bir sonraki sefer?"</em> <strong>Rin</strong> cevap vermedi. Haklı olduğunu biliyordu ama kabul etmeye niyeti yoktu.</p>
+
+      <p>Kaleye döndüklerinde haber yayıldı. <strong>Rin Tsuchigumo</strong> yuvasını neredeyse tek başına temizlemişti. Klanın genç savaşçıları arasında adı geçmeye başladı, kimi hayranlıkla, kimi tedirginlikle. <strong>Daisuke</strong> kızını çağırdı. <strong>Rin</strong> babasının odasına girdiğinde, <strong>Daisuke</strong> pencereden dışarı bakıyordu. Döndüğünde yüzünde her zamanki sertlik vardı ama gözlerinde başka bir şey de vardı. <em>"Raiden sana ne dedi?"</em> dedi <strong>Daisuke</strong>. <em>"Birlikten kopmamamı söyledi."</em> <strong>Daisuke</strong> bir süre sessiz kaldı. Sonra masasına oturdu, ellerini birleştirdi. <em>"Annen de böyleydi,"</em> dedi. Sesi alçaktı, neredeyse fısıltı. <em>"Durdurulamazdı. Ne söylesen, ne yaparsan yap, kafasına koyduğu şeye giderdi. Cesareti vardı ama sabrı yoktu."</em> Duraksadı. <em>"Onu da kaybettik."</em></p>
+
+      <p><strong>Rin</strong> dondu. Babası annesi hakkında hiç konuşmazdı. Hiçbir zaman. Bu ilk kez duyduğu şeydi. <em>"Dinle Raiden'ı,"</em> dedi <strong>Daisuke</strong>. Sesi yeniden sertleşmişti ama tam olarak eskisi gibi değildi. <em>"Cesaret seni canlı tutmaz. Akıl tutar."</em> <strong>Rin</strong> bir şey söylemek istedi ama söyleyecek kelime bulamadı. Babasının yüzüne baktı ve orada, o sert çizgilerin altında, korkuyu gördü. Kızını kaybetme korkusunu. <strong>Daisuke</strong>'den gelebilecek en yakın şey sevgiye.</p>
+
+      <p>Yokai operasyonundan sonra <strong>Rin</strong>'in klan içindeki konumu değişti. Artık sadece <strong>Daisuke</strong>'nin kızı ya da <strong>Raiden</strong>'ın kardeşi değildi. Kendi adıyla tanınıyordu. Ve bu tanınma ona yeni bir kapı açtı.</p>
+
+      <p>Klan bir kuzeye gidecek kervan hazırlıyordu. Her yıl yapılan ticaret seferlerinden biriydi, <strong>kurogane</strong>, uchigatanalar, baltalar, <strong>Wano</strong> içkileri, <strong>oni</strong> rakısı, harvest parçaları ve birkaç abduct edilmiş yokai. Uzun ve tehlikeli bir yoldu, gardiyanlar dikkatlice seçilirdi. <strong>Rin</strong>'in adı bu sefer listeye düştü. Yokai yuvasındaki performansı klanın komutanlarının gözüne girmişti. Genç ama güçlüydü, <strong>Raiko</strong>'nun işaretini taşıyordu ve en önemlisi, tehlikeden kaçmayan türdendi, kervan gardiyanları için aranan bir özellik.</p>
+
+      <p>Kervan hazırlıkları sırasında <strong>Rin</strong> donanımını topladı. <strong>Gofu hat</strong>'ını aldı, <strong>Raiko</strong>'nun işaretini taşıyan, zealot savaşçılarına verilen kutsal başlığı, ritüeli geçtiğinde ona verilmişti. Keşif birliklerinin deposundan da <strong>gece gözlükleri</strong> temin etti, goggles of the night. Kuzeyde gecelerin uzun olduğu söyleniyordu, karanlıkta görmek hayati önemde olabilirdi.</p>
+
+      <p><strong>Raiden</strong> haberini duyduğunda kardeşini buldu. <em>"Kuzeye mi gidiyorsun?"</em> <em>"Gardiyan olarak seçildim."</em> <strong>Raiden</strong> bir süre sessiz kaldı. Pencereden dışarı baktı, sonra kız kardeşine döndü. <em>"Uzun yol. Tehlikeli yol. Ve sen orada olduğunda ben burada olacağım."</em> <em>"Her zaman böyle oldu,"</em> dedi <strong>Rin</strong>. <em>"Hayır,"</em> dedi <strong>Raiden</strong>. Sesi yumuşamıştı, o her zamanki kontrollü tonundan farklı. <em>"Tsuchigumo'da senden elli adım uzaktaydım. Seni kaybetsem koşar gelirdim. Kuzey öyle değil. Bir şey olursa haberim bile olmaz, Rin."</em></p>
+
+      <p><strong>Rin</strong> abisine baktı. <strong>Raiden</strong>'ın gözlerinde her zaman gördüğü o sakin güç vardı ama altında başka bir şey belirmişti. Korku değildi tam olarak, <strong>Raiden</strong> korkmayan biriydi, ama bir tür çaresizlik. <em>"Geri döneceğim,"</em> dedi <strong>Rin</strong>. Bunu söylerken sesinin ne kadar yumuşak çıktığına kendisi de şaşırdı. <em>"Söz mü?"</em> <em>"Söz."</em> <em>"Dikkatli ol. Ve birlikten kopma."</em> <strong>Rin</strong> gülümsedi. <em>"Her seferinde aynı şeyi söylüyorsun."</em> <em>"Sen her seferinde aynı şeyi yaptığın için."</em> Vedalaştılar. <strong>Raiden</strong> kız kardeşine sarıldı, kısa, sıkı, <strong>oni</strong> usulü bir sarılma. <strong>Rin</strong> bunu beklemiyordu. Gözlerini kaçırdı, çünkü beklenmedik şeylere karşı en az hazırlıklı olduğu anlardı bunlar.</p>
+
+      <hr>
+      <h3>Kuzey'e Giden Kervan</h3>
+
+      <p><strong>Wano</strong>'dan kuzeye düzenli kervanlar giderdi. <strong>Kurogane</strong>, <strong>Wano</strong>'nun ünlü kara demiri, kuzeyde yüksek fiyata satılırdı. Bu demirden dövülen uchigatanalar ve baltalar kuzey pazarlarında rağbet görürdü. Kervanlar yanlarında <strong>Wano</strong> içkileri, özellikle <strong>oni</strong> rakısı, çeşitli harvest parçaları ve hatta abduct edilmiş küçük yokailer bile götürürdü. Karşılığında kuzeyin madenleri, kürkleri ve işlenmiş metalleriyle dönerlerdi. Tehlikeli bir yoldu. Kervanların bir kısmı geri dönmezdi.</p>
+
+      <p><strong>Rin</strong>'in kervana atanması <strong>Daisuke</strong>'yi şaşırtmadı. Kızına baktı, uzun bir süre sessiz kaldı ve sonra klanın armasını taşıyan bir kuşak uzattı. <em>"Bu benim babamındı,"</em> dedi <strong>Daisuke</strong>. Sesi düzdü ama kuşağı uzatan elleri bir an titredi. <em>"Onun babası da taşımış. Geri getir."</em> <strong>Rin</strong> kuşağı aldı. Ağırdı, yılların biriktirdiği bir ağırlık. <em>"Getireceğim,"</em> dedi. <strong>Daisuke</strong> başını salladı. Kapıya doğru döndü ama eşikte durdu. Arkasını dönmeden konuştu. <em>"Dikkatli ol, Rin."</em> İlk kez ismini söylüyordu, <em>"kızım"</em> ya da <em>"sen"</em> değil, ismini. Sonra gitti.</p>
+
+      <p>Kervan yirmi kişilik bir gruptu. Tüccarlar, birkaç muhafız, iki at arabası dolusu mal. <strong>Rin</strong> muhafızlardan biri olarak katıldı. Yol uzundu, <strong>Wano</strong>'nun iç bölgelerinden çıkıp batı sahili boyunca kuzeye doğru ilerleyeceklerdi. İlk birkaç hafta olaysız geçti. Yol <strong>Wano</strong> sınırlarından çıktıkça manzara değişti. Kiraz ağaçları yerini çamlara bıraktı, sıcak rüzgârlar soğuk esintilere dönüştü. <strong>Rin</strong> hayatında bu kadar karı bir arada ilk kez gördüğünde bir an duraksadı. Güzeldi ama işe yaramıyordu. Kervan <strong>Wolf's Inn</strong> bölgesini geçip <strong>Frosty Passage</strong>'a doğru ilerlediğinde saldırı geldi.</p>
+
+      <p>Gece yarısından hemen sonra oldu. <strong>Rin</strong> nöbet değildi, uyuyordu. İlk çığlığı duyduğunda ayağa fırladı, silahını kavradı. Dışarı çıktığında gördüğü şey onu bir anlığına duraklattı. <strong>Goliathlar</strong>. Büyük, gri tenli, boyalı yüzlü devler. Sayıları on beş, belki yirmi. At arabalarını çevirmişlerdi, muhafızlardan ikisi çoktan yerdeydi. Bu rastgele bir saldırı değildi, pozisyonları hesaplanmıştı, çıkış yollarını kesmişlerdi. Profesyonel haydutlardı.</p>
+
+      <p><strong>Rin</strong> <strong>rage</strong>'e girdi. <strong>Raiko</strong>'nun enerjisi vücudundan aktı, elektrik kıvılcımları parmaklarının ucunda dans etti. Birincisini devirdi, omzundan vurdu, yere düşürdü. İkinciyi de. Karanlıkta, kar fırtınasının ortasında, mavi tenli bir <strong>oni</strong> şimşekler saçarak dövüşüyordu ve bir an için <strong>goliathlar</strong> tereddüt etti. Sonra komutanları öne çıktı. İri bir <strong>goliath</strong>, diğerlerinden yarım baş uzun, çenesinde kabile dövmesi, gözlerinde soğuk bir hesap. Elinde geniş ağızlı bir savaş baltası vardı. Göğsünde kazınmış bir sembol taşıyordu, çatlamış bir buz parçasının içinde bir yumruk. <strong>Buzyürek</strong> kabilesinin işareti.</p>
+
+      <p><strong>Rin</strong>'e baktı ve sırıttı. <em>"Cesur küçük oni,"</em> dedi goliathça ağır bir aksanla. <em>"Ben Gorath. Tarmak Buzyürek'in Yağma Ordusu'nun komutanıyım. Ve sen yanlış gecede nöbetçilik yapıyorsun."</em></p>
+
+      <p><strong>Rin</strong> cevap vermedi. Saldırdı. <strong>Rage</strong> halinde, <strong>Raiko</strong>'nun enerjisiyle, birkaç darbe hitleyebildi, baltanın sapına bir vuruş, <strong>Gorath</strong>'ın koluna sıyıran bir kesik. Ama genç bir savaşçının deneyimli bir yağma komutanına karşı şansı yoktu. <strong>Gorath</strong> baltasını savurdu, ilk darbe <strong>Rin</strong>'in omzuna geldi ve onu sendeletti. İkincisi göğsüne, üçüncüsü bacağına. <strong>Rin</strong> yüzüstü kara düştü. <strong>Gorath</strong> arkasını döndü. <em>"Malları yükleyin,"</em> dedi adamlarına. <em>"Bu da ölür nasılsa."</em> Onu bitirmeye bile tenezzül etmemişti. Soğuk ve kan kaybı işi bitirecekti. Kervanın kalanına ne olduğunu <strong>Rin</strong> hiçbir zaman tam olarak öğrenemedi. Ama o gece hayatta kalan tek kişi olduğunu biliyordu.</p>
+
+      <p><strong>Rin</strong> öldüğünü düşündü. Belki de bir süreliğine gerçekten ölmüştü, ya da ölüme o kadar yakındı ki aradaki fark anlamsızdı. Bilinci gelip gidiyordu. Karın soğuğunu hissediyordu ama hareket edemiyordu. Göğsündeki <strong>ofudalar</strong> zonkluyordu; <strong>Raiko</strong>'nun enerjisi onu bir şekilde tutuyordu, tam gitmesine izin vermiyordu, ama iyileştirmiyordu da. Askıda bırakıyordu. İlk gün tamamen bilinçsiz geçti. İkinci günün sabahında gözlerini aralayabildi ama gördüğü tek şey beyazdı. Kan kaybı, soğuk ve açlık onu yavaşça öldürüyordu. Arada bir bilinci açıldığında tek düşünebildiği şey <strong>Raiden</strong>'dı. Abisinin yüzü. <em>"Bir gün seni kurtaramam"</em> demişti. Haklıydı. <strong>Raiden</strong> burada değildi. Kimse burada değildi. İkinci günün akşamına doğru ayak sesleri duydu. Bir ses, boğuk, kısa, bir cücenin sesi, küfretti. Sonra sıcak bir el yüzüne dokundu.</p>
+
+      <p>Büyücünün adı <strong>Dolgrim Ironfist</strong>'ti. <strong>Rin</strong> bunu günler sonra, ilk kez bilinci tam olarak yerine geldiğinde öğrendi. O an için sadece bulanık bir siluetti, kısa, geniş, ağarmış sakalı çelik gibi sert bir figür. <strong>Dolgrim</strong> onu sırtına alamazdı, ama bir kızak doğaçladı, kervandan arta kalan tahta parçaları ve ip, ve onu en yakın yerleşim yerine sürükledi. Yakın arkadaşı <strong>Orv Bezmadan</strong>'ın dükkanına.</p>
+
+      <p><strong>Dolgrim</strong> bu yolu iyi bilirdi. <strong>Wolf's Inn</strong> ile <strong>Frosty Passage</strong> arasındaki geçitte otlar toplardı, iyileştirme iksirlerinin hammaddesi olan kuzey kekiği ve buzul yosunu bu bölgede yetişirdi. Kervan enkazını gördüğünde başka sağ kalan aramıştı ama bulmamıştı. Sadece bu mavi <strong>oni</strong> kızını, karlara gömülmüş, neredeyse bulmuştu. Normal şartlarda iki gün açıkta kalan birinin yaşama şansı yoktu. Ama bu kız normal değildi. İçinde bir şey hâlâ yanıyordu.</p>
+
+      <p><strong>Orv</strong>'un dükkanı <strong>Wolf's Inn</strong>'deydi, ana yolun üzerinde, gezginlerin ve tüccarların uğrak noktasının yakınında. Sıcak, kömür kokulu, dağınık bir yerdi. <strong>Dolgrim</strong> <strong>Rin</strong>'i dükkanın arka odasına, <strong>Orv</strong>'un misafirler için kullandığı bir sedire yatırdı. <em>"Bu ne?"</em> dedi <strong>Orv</strong>, yarı ölü mavi <strong>oniyi</strong> süzerken. <em>"Dolgrim. Dükkanıma bir oni getirdin. Yarı ölü bir oni. Bunu nasıl açıklamamı bekliyorsun müşterilerime?"</em> <em>"Kervan baskınından sağ kalan,"</em> dedi <strong>Dolgrim</strong>. <em>"Goliathların işi. Tarmak'ın grubu olabilir, yağma tarzı onunkine benziyor."</em></p>
+
+      <p><strong>Orv</strong>'un yüzü değişti. <strong>Tarmak</strong>'ı tanıyordu, herkes tanıyordu. <strong>Wolf's Inn</strong> ve <strong>Frosty Passage</strong> arasındaki geçit son iki yıldır <strong>Buzyürek</strong> kabilesinin avlanma alanıydı. <strong>Tarmak</strong> seçici değildi. Değerli ne varsa alır, gerisini karla örterdi. Yerel otoriteler birkaç kez temizlik operasyonu denemişti ama goliathlar dağları iyi biliyordu, her seferinde buhar oluyorlardı. <em>"Yaşıyor mu bari?"</em> dedi <strong>Orv</strong>. <em>"Zar zor,"</em> dedi <strong>Dolgrim</strong>. <em>"Ama içinde tuhaf bir şey var, Orv. Bir enerji. İki gündür açıkta yatmış, soğuk ve kan kaybıyla ölmesi gerekirdi ama bu enerji onu bırakmıyor. Hiç böyle bir şey görmedim."</em> <strong>Orv</strong> kaşlarını çattı. <em>"Sen ve senin tuhaf enerjilerin,"</em> dedi ama itiraz etmedi. <em>"Sedire yatır. Ama yarın sabah bunu konuşacağız."</em></p>
+
+      <p><strong>Dolgrim</strong> <strong>Rin</strong>'i tedavi etmeye başladığında o tuhaf enerjiyi daha yakından inceledi. Parmaklarının altında hissetti, tanıdık ama farklı. <strong>Ofudaların</strong> kalıntısıydı bu. <strong>Raiko</strong>'nun öfkesi, kuzey soğuğunda bile <strong>Rin</strong>'in bedeninde titreşiyordu. <strong>Dolgrim</strong> bu enerjiyi daha önce bu biçimde görmemişti, ama altında yatan prensibi tanıyordu. Çünkü aynı prensip <strong>rünlerin</strong> de temeliydi. Bir gücü alıyorsun. Onu bir sembole, bir işarete hapsediyorsun. Ve o sembol aracılığıyla gücü kontrol ediyorsun. <strong>Wano</strong>'nun <strong>onmyojileri</strong> bunu <strong>ofudalarla</strong> yapıyordu, kağıda mürekkeplerle yazılan semboller, ruhani enerjiyle yüklenen tılsımlar. Kuzeyin rün ustaları ise aynı şeyi taşa ve metale kazınan <strong>rünlerle</strong> yapıyordu. Farklı alfabe, aynı gramer.</p>
+
+      <p><strong>Dolgrim</strong> bu bağlantıyı yıllardır biliyordu. Gezgin bir akademisyendi, gençliğinde dünyanın dört bir yanını dolaşmıştı. <strong>Wano</strong>'ya da uğramış, oradaki <strong>onmyojilerin</strong> çalışmalarını incelemişti. <strong>Ofuda</strong> sistemini incelemiş, <strong>rünlerle</strong> yapısal benzerliklerini not etmişti. O zaman için teorik bir meraktan ibaretti bu bilgi. Ama şimdi, sedirine yatırdığı bu yarı ölü <strong>oninin</strong> bedeninde, o bağlantının canlı kanıtını görüyordu.</p>
+
+      <p><strong>Rin</strong>'i iyileştirmek haftalarca sürdü. <strong>Dolgrim</strong> ve <strong>Orv</strong> dönüşümlü olarak ilgilendiler. <strong>Dolgrim</strong> yaraları sardı, ilaçlar hazırladı, iyileştirme büyüleri uyguladı. <strong>Orv</strong> yemek pişirdi, iyi pişiremezdi ama doyurucuydu, ve <strong>Rin</strong>'in ateşi çıktığında başında bekledi.</p>
+
+      <p><strong>Rin</strong> ilk kez düzgünce ayağa kalkabildiğinde dışarıda kar yağıyordu. Dükkanın penceresinden baktı. Hayatında gördüğü her şeyden farklıydı burası. <strong>Wano</strong>'nun sıcak taşları, kiraz çiçekleri, ahşap tapınakları yoktu. Onların yerine granit, çam ve buz vardı. Hava keskin, kuru ve acımasızdı. <em>"Neredeyim?"</em> dedi <strong>Rin</strong>. Sesi çatlamıştı, haftalardır düzgünce konuşmamıştı. <strong>Orv</strong> tezgâhında bir şeyleri çekiçlerken durdu, <strong>Rin</strong>'e baktı. <em>"Ayaktasın demek. İyi. Kuzey'desin. Wolf's Inn. Wano'dan bayağı uzaktasın."</em> Tezgâhın altından bir kase çıkardı, içine sıcak bir şey doldurup <strong>Rin</strong>'in önüne bıraktı. <em>"İç şunu. Tadı berbat ama midenin ihtiyacı var."</em></p>
+
+      <p><strong>Rin</strong> bir süre sessiz kaldı. Çorbayı içti, <strong>Orv</strong> haklıydı, tadı berbattı. Sonra sordu. <em>"Kervana saldıranlar kimdi?"</em> <strong>Orv</strong> ve <strong>Dolgrim</strong> birbirlerine baktılar. <strong>Dolgrim</strong> sandalyesine oturdu, ellerini kavuşturdu. <em>"Goliathlar. Buzyürek kabilesi. Tarmak Buzyürek'in yağma ordusu. Dağ geçitlerinde pusu kurarlar, kervanları, tüccarları soyarlar. Sana saldıranların başında muhtemelen komutanlarından biri vardı. Tarmak'ın kendisi nadiren sahaya iner, ordusunu komutanları yönetir."</em> <em>"Komutan kendini tanıttı,"</em> dedi <strong>Rin</strong>. <em>"Gorath. Tarmak'ın Yağma Ordusu'nun komutanı olduğunu söyledi."</em> <strong>Dolgrim</strong> kaşlarını kaldırdı. <em>"Gorath... Onu duydum. Buzyürek'in en acımasız komutanlarından biri. Seni yenmiş olması utanılacak bir şey değil kızım, o adam senin liğinin çok üstünde."</em> <strong>Orv</strong> araya girdi. <em>"Gorath bu geçitte en az altı kervanı yağmaladı son iki yılda. Yerel otoriteler birkaç kez peşine düştü, her seferinde dağlarda kayboldu. Herif profesyonel, ve arkasında Tarmak'ın tüm gücü var."</em></p>
+
+      <p><em>"Arkasını dönüp gitti,"</em> dedi <strong>Rin</strong>. Sesi titriyordu, öfkeden değil, aşağılanmanın acısından. <em>"Bitirmeye bile değer görmedi. Ben orada kanlar içinde yatarken o yağma emri veriyordu. Ben hiçbir şeydim onun gözünde. Hiçbir şey."</em> <strong>Dolgrim</strong> ve <strong>Orv</strong> birbirlerine baktılar. İkisi de bu tür bir yarayı tanıyordu. Fiziksel yara iyileşirdi. Bu iyileşmezdi. <em>"Önce Gorath'ı bulacağım,"</em> dedi <strong>Rin</strong>. Sesi artık titrememişti. Soğumuştu. <em>"Sonra Tarmak'ı."</em> <strong>Dolgrim</strong> hiçbir şey söylemedi. <strong>Orv</strong> da. Durdurulamayacak bir şeye müdahale etmeye çalışmanın anlamı yoktu.</p>
+
+      <p><strong>Rin</strong> iyileştikçe dükkan bir tür ev oldu. Tuhaf, planlanmamış, hiçbirinin beklemediği bir düzen kuruldu. <strong>Orv</strong> sabahları erken kalkar, dükkanını açar, demirle uğraşırdı. <strong>Dolgrim</strong> çoğu günü <strong>Wolf's Inn</strong> çevresinde geçirirdi, ot toplardı, iksir hazırlardı, kasabanın çeşitli yerlerinde işleri vardı. <strong>Rin</strong> de yavaş yavaş iyileşirken boş duramadı. <strong>Orv</strong>'a dükkan işlerinde yardım etmeye başladı. Taşıma işleri, temizlik, bazen körüğü çalıştırmak.</p>
+
+      <p>İlk haftalarda <strong>Rin</strong> az konuştu. Yabancı bir toprakta, yabancı insanların arasında, neredeyse ölmüş bir halde uyanmak onu içine kapatmıştı. <strong>Wano</strong>'yu düşünüyordu, <strong>Raiden</strong>'ı, <strong>Daisuke</strong>'yi, kalenin avlusunu. Burada her şey farklıydı. Yemekler farklıydı, hava farklıydı, insanların konuşma biçimi farklıydı. Ama <strong>Orv</strong> ve <strong>Dolgrim</strong> ona alan verdiler. Zorlamadılar, sorgulamadılar, sadece orada oldular. Bu <strong>Rin</strong>'in alışık olmadığı bir şeydi. <strong>Daisuke</strong> sert ve mesafeliydi, klanın yaşlıları otoriter, eğitmenleri talepkârdı. Bu iki cüce ise sadece... oradaydı.</p>
+
+      <p><strong>Orv</strong> konuşkan değildi ama gerektiğinde konuşurdu. <strong>Rin</strong>'e kuzeyi anlattı, buranın kültürünü, insanlarını, tehlikelerini. Kuzey halkı sert insanlardı, <strong>Wano</strong>'dakiler gibi onur ve güce değer verirlerdi ama bunu farklı biçimde ifade ederlerdi. <strong>Wano</strong>'da güç zarafet ve disiplindi. Kuzeyde güç dayanıklılık ve hayatta kalmaktı. <strong>Wano</strong>'da bir savaşçı kılıcının keskinliğiyle övünürdü. Kuzeyde bir savaşçı kışın ortasında kaç gün hayatta kaldığıyla.</p>
+
+      <p><strong>Dolgrim</strong> ise başka bir şey öğretti: düşünmeyi. <strong>Dolgrim</strong> savaşçı değildi, hiçbir zaman olmamıştı. Büyücüydü, akademisyendi, araştırmacıydı. Gençliğinde dünyayı dolaşmış, farklı kültürlerin büyü sistemlerini incelemiş, notlar almıştı. <strong>Wano</strong> da dahil. Ama esas uzmanlığı <strong>rünlerdeydi</strong>, devlere ve cücelere ait kadim bir büyü geleneği. <strong>Rin</strong> dinledi. Her şeyi dinledi. Aklının bir köşesinde hep <strong>Gorath</strong> vardı. Gri teni, kabile dövmesi, baltası, ve arkasını dönüp gidişi.</p>
+
+      <p>Ama o haliyle yeterince güçlü olmadığını biliyordu. <strong>Rage</strong>'i vardı, <strong>Raiko</strong>'nun öfkesi vardı, ve yetmemişti. <strong>Gorath</strong> onu birkaç darbeyle devirmiş, bitirmişti. Daha fazlasına ihtiyacı vardı. <strong>Dolgrim</strong>, <strong>Rin</strong>'in bu açlığını gördü. Tedavi sürecinde zaten fark ettiği şeyi, <strong>ofudaların</strong> <strong>rünlerle</strong> olan benzerliğini, bir gün <strong>Rin</strong>'e açıklamaya karar verdi.</p>
+
+      <p><strong>Dolgrim</strong> bir akşam <strong>Orv</strong>'un dükkanında ateşin karşısında oturmuş, ellerindeki rün taşını çevirirken konuştu. <strong>Rin</strong> arka odada uyuyordu. <em>"Bu kızı tedavi ederken bir şey buldum. İçindeki ofudalar, Wano büyüsü, rünlerle aynı prensiple çalışıyor. Bunu yıllardır teorik olarak biliyordum. Ama kimse dinlememişti. Cüceler arasında bu teoriyi savunduğumda yüzüme güldüler. 'Rünler devlerin mirası, uzak diyarların kağıt büyüleriyle işi olmaz' dediler."</em> <strong>Orv</strong> kaşlarını çattı. <em>"Nereye varıyorsun?"</em> <em>"Bu kız benim teorimin canlı kanıtı, Orv. Bu bilgiyi birine aktarmazsam benimle birlikte gömülecek."</em></p>
+
+      <p><strong>Orv</strong> bir süre düşündü. <em>"Dükkanımda rün çalışması olmaz. Engizisyon buralarda zayıf ama sıfır değil. Bunu başka yerde yap."</em> <strong>Dolgrim</strong> çoktan bir yer bulmuştu. <strong>Wolf's Inn</strong>'in güneybatısında, kayalıkların arasına gizlenmiş eski bir maden girişi. Çoktan terk edilmişti. İçerisi kuruydu, rüzgâr kesmiyordu ve en önemlisi kimse gelmiyordu. <strong>Dolgrim</strong> burayı yıllar önce keşfetmiş ve kendine bir çalışma alanı yapmıştı. Masası vardı, rün taşları vardı, birkaç raf dolusu parşömen vardı. Dışarıdan bakıldığında sadece bir kaya yarığıydı. İçeriden bakıldığında bir atölyeydi.</p>
+
+      <p><strong>Dolgrim</strong> <strong>Rin</strong>'i buraya götürdü. Masada bir rün taşı vardı, düz, gri, üzerine ince çizgilerle bir sembol kazınmıştı. <em>"Bunu tanıyor musun?"</em> <strong>Rin</strong> başını salladı. Tanımıyordu. <em>"Bu bir rün. Kuzeyin ofudasıdır, bir bakıma."</em> <strong>Rin</strong>'in ilgisini çekmişti. <strong>Dolgrim</strong> açıkladı. <strong>Rünler</strong> kuzeyin eski bir geleneğiydi. Dev ırkından, giant'lardan, miras kalmış bir bilgi. Bir gücü bir sembole hapsedip o sembol aracılığıyla kullanmak. Ateşi, buzu, fırtınayı, taşı. <strong>Ofudalarla</strong> aynı temel mantık. <em>"Seni tedavi ederken fark ettim. İçindeki ofudalar, Raiko'nun enerjisi, rünlerle aynı prensiple çalışıyor. Gücü bir sembole bağlamak. Senin bedenin bunu zaten tanıyor. Farklı bir dil, aynı gramer."</em> <strong>Rin</strong> tereddüt etmedi. <em>"Öğret bana,"</em> dedi. <strong>Dolgrim</strong> gülümsemedi, pek gülümseyen bir adam değildi, ama başıyla onayladı.</p>
+
+      <p>Kolay olmadı. <strong>Rin</strong> sabırlı bir öğrenci değildi. <strong>Ofudalar</strong> hızlı çalışırdı, onmyoji hazırlar, savaşçı kullanır, bitti. <strong>Rünler</strong> öyle değildi. Bir <strong>rünü</strong> kazımak saatler alırdı. Doğru taşı seçmek, doğru açıda çalışmak, doğru niyetle çizmek gerekiyordu. <strong>Rin</strong> ilk birkaç haftada düzinelerce taşı paramparça etti. <strong>Dolgrim</strong> her seferinde sabırla yenisini verdi. <em>"Ofudalar sana hazır güç veriyor,"</em> dedi <strong>Dolgrim</strong> bir gün. <em>"Rünler senden güç istiyor. Farkı anlayana kadar öğrenemezsin."</em> <strong>Rin</strong> bunu anlamak istemedi ama eninde sonunda anladı. <strong>Rünlerde</strong> kendi <strong>rününü</strong> kazıyan kişi o gücün hem yaratıcısı hem yönlendiricisi oluyordu. Bu <strong>Rin</strong>'e hitap etti. Başkasının hazırladığı bir şeyi taşımak yerine, gücü kendi elleriyle yaratmak.</p>
+
+      <p><strong>Dolgrim</strong> iyi bir öğretmendi ama sınırlı bir öğretmendi. Bunu kendisi söyledi, açıkça. <em>"Ben akademisyenim. Rünlerin nasıl çalıştığını bilirim, tarihini bilirim, teorisini bilirim. Ama ben bir rune knight değilim. Savaşta rün kullanmayı sana öğretecek kadar pratik tecrübem yok. Sana temeli verdim. Gerisini kendin geliştirmelisin, savaşarak, deneyerek, hata yaparak."</em> <strong>Rin</strong> bunu kabul etti. <strong>Dolgrim</strong>'in öğrettikleri <strong>rünlerin</strong> dilini konuşmayı sağlamıştı. Cümle kurmayı pratikte öğrenecekti.</p>
+
+      <p>Ama <strong>Dolgrim</strong> bir akşam daha bir şeyden bahsetti. <strong>Rin</strong> dükkanın üst katında rün çalışırken, <strong>Dolgrim</strong> masasının çekmecesinden eski bir parşömen çıkardı. Üzerinde <strong>Godhood Peak</strong>'in haritası vardı, kuzey dağ sırasının en yüksek noktası. <em>"Bir gün buraya çıkmak isteyeceksin. Godhood Peak. Rün ustalarının arasında bir efsane var. Barbara diye biri. Kimse onu gerçekten tanımıyor, kimse onunla konuştuğunu kanıtlayamıyor, ama herkes hikayeyi biliyor. Godhood Peak'in tepesinde yaşayan bir figür. Rün geleneğinin son ustası, belki en büyüğü. Devlerin bilgisini taşıyan, taşa ve fırtınaya hükmeden biri. Ama bir insan mı, bir ruh mu, bir dev mi, kimse emin değil."</em> <em>"Bir efsane mi?"</em> dedi <strong>Rin</strong>. <em>"Efsaneler boşluktan doğmaz. Rün geleneğinin en eski parşömenlerinde Barbara'dan bahsediliyor, farklı isimlerle, farklı çağlarda, ama hep aynı yer: Godhood Peak. Ve sen henüz hazır değilsin. O dağa gideceksen, rünlerin temelinden fazlasını taşıman lazım. Savaş tecrübesi lazım."</em></p>
+
+      <p><strong>Rin</strong> parşömene baktı. <strong>Godhood Peak</strong>. Uzak, yüksek, ulaşılması zor bir yer. Ama bir hedefti. <strong>Tarmak</strong>'ın yanında ikinci bir hedef. <em>"Hazır olduğumda gideceğim,"</em> dedi <strong>Rin</strong>. <em>"Biliyorum,"</em> dedi <strong>Dolgrim</strong>. <em>"O yüzden söylüyorum."</em></p>
+
+      <p>Aylar geçtikçe <strong>Rin</strong> ilerledi. İlk başarılı <strong>rünü</strong> bir ateş rünüydü, küçük bir taşa kazıdığında taş hafifçe ısındı ve bir an için yüzeyinde turuncu bir ışık parladı. <strong>Dolgrim</strong> bu sefer hafifçe gülümsedi. <em>"Wano'dan gelen bir oninin kuzey rünlerini bu kadar çabuk kavramasını beklemiyordum. Ama senin içindeki ofudalar yolu açmış. Bedenin sembollerle çalışmaya alışık."</em> <strong>Rin</strong> giderek daha karmaşık <strong>rünleri</strong> öğrendi. <strong>Dolgrim</strong> ona giant geleneğinin temellerini aktardı, <strong>rünlerin</strong> kökenini, farklı türlerini, nasıl birleştirileceğini. <strong>Rin</strong> bu bilgiyi bir sünger gibi emdi. Güce olan açlığı burada işe yarıyordu. Sıkılmadı, vazgeçmedi, her gün çalıştı.</p>
+
+      <p>Bu süreçte <strong>Rin</strong> fark etmeden değişti. <strong>Wano</strong>'dan ayrıldığında tek bildiği <strong>Raiko</strong>'nun öfkesi ve kendi gücüydü. Kuzeyde iki cücenin yanında geçirdiği aylarda başka şeyler de öğrendi. <strong>Orv</strong>'dan pratik olmanın değerini öğrendi, her şeyin savaşla çözülmediğini, bazen bir çekiç ve sabrın kılıçtan daha işe yaradığını. <strong>Dolgrim</strong>'den disiplini öğrendi, ham gücün tek başına bir şey ifade etmediğini, onu yönlendirecek bilgi olmadan sadece gürültü olduğunu. Ama özü değişmedi. Güce olan takıntısı hâlâ oradaydı. Sadece biçim değiştirmişti. Artık kör bir açlık değildi, bir yönü ve bir ismi vardı. <strong>Gorath</strong>. Ve onun üstünde <strong>Tarmak</strong>.</p>
+
+      <p>Aylar geçtikçe <strong>Rin</strong> gelişti. <strong>Dolgrim</strong>'in öğretebileceği her şeyi öğrenmişti. Kuzeyde kalıp kalmamak sorusu kendiliğinden cevaplandı. <strong>Engizisyon</strong> yüzünden.</p>
+
+      <p><strong>Rin</strong> <strong>Engizisyon</strong>'la ilk kez <strong>Orv</strong>'un dükkanına gelen bir müşteri aracılığıyla karşılaştı. Zırhlı, disiplinli, soğuk gözlü bir adam. Dükkanı inceledi, <strong>Orv</strong>'la konuştu, <strong>Rin</strong>'i gördüğünde duraksadı. Mavi tene, boynuzlara, <strong>oni</strong> fiziğine baktı. Bir şey söylemedi ama bakışı yeterliydi. <strong>Rin</strong> o bakışı tanıyordu, <strong>Wano</strong>'da yokailere bakan köylülerin bakışıydı. Şüphe, tedirginlik, gizlenmiş tiksinme.</p>
+
+      <p>Adam gittikten sonra <strong>Orv</strong> açıkladı. <em>"Engizisyon. Kendi hukuk sistemleri, kendi mahkemeleri, kendi orduları var. Sapkınlığa, karanlık büyüye ve 'doğal olmayan' varlıklara karşı savaştıklarını iddia ediyorlar. Pratikte bu, insan olmayan ırklara karşı sistematik bir düşmanlık anlamına geliyor. Rün kullanıcıları, cadılar, büyücüler, onların gözünde sapkınlık listesi uzun. Güçlüler, organize bir yapıları var, ve en kötüsü kendilerini haklı görüyorlar."</em> <strong>Oniler</strong> bu kategorinin tam ortasında duruyordu. <em>"Şimdilik sorun yok. Buralarda Engizisyon'un gücü sınırlı. Ama merkeze yaklaştıkça işler değişir. Ve sen... pek de gizlenebilecek bir görünüşün yok."</em> <strong>Dolgrim</strong> daha doğrudan konuştu. <em>"Kuzeyde kalırsan eninde sonunda Engizisyon'la sorun yaşarsın. Seni hemen tutuklamazlar ama hayatını zorlaştırırlar. Ve eğer Gorath'ı veya Buzyürek'leri ararken dikkat çekersen, Engizisyon seni onlardan önce bulur."</em></p>
+
+      <p><strong>Rin</strong> bu bilgiyi sindirdi. <strong>Wano</strong>'da <strong>oni</strong> olmak doğaldı, klanı vardı, yeri vardı. Burada ise varlığı bile bir sorundu. Kuzeyde kalıp hem <strong>Gorath</strong>'ı arayıp hem <strong>Engizisyon</strong>'dan kaçınmak ikisi birden yapılabilecek şeyler değildi. Daha güçlü olması gerekiyordu. Ve güçlenmek için ihtiyacı olan şeyler burada değildi. <strong>Wano</strong>'daydı.</p>
+
+      <p><strong>Rin</strong> bütün bunları kafasında bir araya getirdi. <strong>Wano</strong>'ya dönecekti. <strong>Gofu hat</strong>'ı ve <strong>gece gözlüklerini</strong> alacaktı. Klana döndüğünde, ölmediğini gösterdikten sonra, <strong>emanet katanayı</strong> hak edecekti. Ve bir <strong>Nomi</strong> avına katılıp zırh malzemesini elde edecek, <strong>Karakuma</strong>'daki demirciye <strong>oni zırhını</strong> yaptıracaktı. Ve sonra geri dönecekti. Kuzeye. Çünkü artık iki evi vardı. Ve ikisinde de yapması gereken işler vardı.</p>
+
+      <p><strong>Dolgrim</strong> ve <strong>Orv</strong>'a veda etmek kolay olmadı. Bu iki cüce onu kurtarmış, beslemişti, ona bir çatı altı vermişti. Babası <strong>Daisuke</strong>'nin hiçbir zaman veremediği bir şeyi vermişlerdi belki de, sabır. <strong>Orv</strong> dükkanının önünde durmuş, kollarını kavuşturmuştu. <em>"Geri dönecek misin?"</em> <em>"Döneceğim. Buzyürek'ler hâlâ buralarda bir yerde. Ve Dolgrim bana bir dağdan bahsetti."</em> <strong>Dolgrim</strong> hafifçe gülümsedi. Sonra ciddi bir yüzle <strong>Rin</strong>'e baktı. <em>"Sana öğrettiğim şey bir araç. Araçlar iyi de kullanılır, kötü de. İntikamın seni yiyip bitirmesine izin verme. Rünler berraklık ister, hatırla."</em> <strong>Orv</strong> gözlerini devirdi. <em>"İhtiyar gene vaaz veriyor."</em> Ama sesi yumuşaktı. Tezgâhının altından küçük, deriden yapılmış bir kese çıkardı. <em>"Al şunu. İçinde birkaç gümüş var. Hediye filan değil, hesabını tutuyorum, döndüğünde ödersin."</em> <strong>Rin</strong> keseyi aldı. <em>"Teşekkür ederim,"</em> dedi. Sesi titredi. Bu iki kelimeye yüklediği şey sadece kese değildi. <em>"Rünlerini temiz tut,"</em> dedi <strong>Dolgrim</strong>. <em>"Paslanan rün çalışmaz."</em> <em>"Ve dükkanıma geri geldiğinde,"</em> dedi <strong>Orv</strong>, <em>"kapıyı çal. Son seferki gibi yarı ölü gelme."</em> <strong>Rin</strong> güldü. Gerçek bir gülüştü, kuzeyde ilk kez bu kadar gerçek güldüğünü fark etti. Dışarıda kar yağıyordu, her zamanki gibi. Sırtına çantasını aldı ve güneye doğru yürümeye başladı. <strong>Wano</strong>'ya doğru. Eve doğru, evlerden birine. Çünkü artık iki evi vardı. Ve ikisinde de yapması gereken işler vardı.</p>
 
       <hr>
 
-      <p><strong>En Büyük Kahramanlık Anı:</strong> <strong>Tsuchigumo</strong>'nun illüzyon dalgaları kafasında patlarken, <strong>Raiko</strong>'nun saf öfkesinin zihinsel sisi yardığı o anda — tek başına, karanlık mağaranın derinliklerinde, dev örümceği devirmek.</p>
+      <p>Yol uzun sürdü. <strong>Wano</strong> sınırlarını geçtiğinde havadaki değişimi hissetti. Kuzeyin kuru, keskin soğuğu yerini <strong>Wano</strong>'nun nemli sıcağına bıraktı. Çam ormanları inceldi, yerlerine bambu korulukları ve kiraz ağaçları geldi. Yol kenarlarında tanıdık taş fenerler belirdi. Uzakta, ufuk çizgisinde <strong>Onigashima</strong>'nın dumanı tüten silueti göründü.</p>
 
-      <p><strong>En Büyük Utanç Anı:</strong> <strong>Gorath</strong>'ın <em>"Bu da ölür nasılsa"</em> diyerek sırtını dönmesi. Rin'i bitirmeye bile tenezzül etmemesi. Karda kanlar içinde yatarken, o soğuk aşağılamayı taşımak — ve buna rağmen yaşıyor olmak.</p>
+      <p>Kalenin kapısına vardığında güneş batıyordu. Nöbetçiler onu tanımadı. <em>"Rin Stormbringer,"</em> dedi <strong>Rin</strong>. <em>"Daisuke'nin kızı. Raiden'ın kız kardeşi."</em> Nöbetçilerden biri koşarak içeri gitti. Diğeri <strong>Rin</strong>'e bakıyordu, gözlerinde şaşkınlık, tedirginlik, belki biraz korku. <strong>Rin</strong> bunun ne anlama geldiğini anladı. Onu ölü sanıyorlardı.</p>
 
-      <p><strong>En Büyük Acı Anı:</strong> Kuzeye ikinci kez döndüğünde <strong>Orv</strong>'un dükkanının başka birinin olduğunu, <strong>Dolgrim</strong>'in nerede olduğunun bilinmediğini öğrenmek. Eve dönmek istedi ve ev artık yoktu.</p>
+      <p>İlk gelen <strong>Raiden</strong> oldu. Kalenin iç avlusundan koşarak çıktı. Koşması bile tuhaftı, <strong>Raiden</strong> koşmayan biriydi. Kapıya ulaştığında durdu. <strong>Rin</strong>'e baktı. Uzun bir an. Sonra sarıldı. Sıkı, uzun, sessiz. <strong>Rin</strong> bu sefer gözlerini kaçırmadı. <em>"Seni ölü sandık. Kervan dönmeyince arama grubu gönderdiler. Enkazı buldular ama seni bulamadılar. Herkes öldü dediler."</em> <em>"Herkes öldü,"</em> dedi <strong>Rin</strong>. <em>"Ben hariç."</em> <strong>Raiden</strong> geri çekildi, kız kardeşinin yüzüne baktı. Bir şey farklıydı, sadece kuzey kıyafetleri değil, gözlerindeki bir şey. Daha sert, daha derin. <strong>Raiden</strong> bunu gördü ama sormadı. Zamanı gelirdi.</p>
+
+      <p><strong>Daisuke</strong> daha sonra geldi. Acele etmeden, her zamanki gibi. Avluyu geçti, kızının karşısında durdu. Uzun süre baktı. Yüzünde hiçbir şey okunmuyordu, her zamanki gibi. Sonra bir şey yaptı ki <strong>Rin</strong> bunu ölene kadar unutmayacaktı. <strong>Daisuke</strong> elini uzattı ve kızının yüzüne dokundu. Parmakları <strong>Rin</strong>'in yanağındaki yeni yara izini izledi. Eli titriyordu. <em>"Kuşağı getirdin mi?"</em> dedi <strong>Daisuke</strong>. Sesi kısıktı. <strong>Rin</strong> çantasından babasının kuşağını çıkardı. Kirlenmiş, yıpranmıştı ama sağlamdı. <strong>Daisuke</strong> kuşağı aldı, baktı, sonra kızına geri uzattı. <em>"Senin olsun artık. Ben... ihtiyacım yok."</em> Döndü ve gitti. Ama <strong>Rin</strong> babasının sırtı dönükken omuzlarının titrediğini gördü. O titreme, o kısa, neredeyse görünmez titreme, <strong>Rin</strong>'in gördüğü en dürüst duyguydu babasından.</p>
+
+      <p><strong>Rin</strong>'in dönüşü kalede hızla yayıldı. Ölü sanılan gardiyan geri dönmüştü, üstelik tek sağ kalan olarak. <strong>Rin</strong> ilk birkaç günü <strong>Raiden</strong>'la geçirdi. Abisine her şeyi anlattı, saldırıyı, karları, <strong>Dolgrim</strong>'i, <strong>Orv</strong>'u, <strong>rünleri</strong>. <strong>Raiden</strong> sessizce dinledi. <strong>Rünler</strong> konusunda kaşlarını çattı. <em>"Kuzey büyüsü."</em> <em>"Ofudalarla aynı prensip. Farklı dil, aynı gramer."</em> <strong>Raiden</strong> bir süre düşündü. <em>"Bunu yaşlılara söyleme. En azından şimdilik. Klan dışı bir geleneği benimsemiş olmak... herkes iyi karşılamaz."</em> <strong>Rin</strong> zaten bunu biliyordu. <strong>Rünleri</strong> şimdilik kendine saklayacaktı.</p>
+
+      <p><strong>Rin</strong>'in ilk işi kaybettiği donanımı geri temin etmekti. <strong>Gofu hat</strong> ve <strong>gece gözlükleri</strong> kervan saldırısında kaybolmuştu. Klanın <strong>onmyojileri</strong> yeni bir <strong>gofu hat</strong> hazırladılar, <strong>Raiko</strong>'nun işaretini taşıyan kutsal başlığı. <strong>Rin</strong> onu ellerinde tuttuğunda üzerindeki <strong>Raiko</strong> sembolünü parmağıyla izledi. <strong>Raiko</strong>'nun öfkesi göğsünde zonkluyordu, hat'a yanıt veriyordu. Bir bütünün eksik parçasıydı bu. <strong>Gece gözlükleri</strong> de klanın keşif birliklerinin deposundan yeniden temin edildi.</p>
+
+      <hr>
+
+      <p>Dönüşünden iki hafta sonra, klanın batı karakollarından bir haberci geldi. <strong>Onigashima</strong>'nın batı yamaçlarında bir sorun vardı. Bir <strong>Enkon</strong>, volkanik ısıdan beslenen, yanan elemental bir dev maymun yokaisi, dağdan inmiş ve batı köylerinden birini tehdit ediyordu. <strong>Enkon</strong>'lar nadir görülen yaratıklardı ama göründüklerinde ciddi yıkım bırakırlardı, kızgın kayadan oluşmuş bir bedene sahiptiler, dokundukları şeyi yakarlardı. Köyde klan yaşlılarından biri yaşıyordu, emekli bir savaşçı. Yaşlılar bir kurtarma birliği organize etti. <strong>Raiden</strong> yine komutan olarak atandı. <strong>Rin</strong> de dahil edildi.</p>
+
+      <p>Birlik köye ulaştığında <strong>Enkon</strong> beklenen yerde değildi. Köyün içine girmişti. Devasa bir maymun silueti, kızgın kayadan oluşmuş gövdesi turuncu ışıkla parlıyordu. Birlik ikiye bölündü: bir grup yaşlıyı çıkaracaktı, diğer grup <strong>Enkon</strong>'un dikkatini çekecekti. <strong>Rin</strong> dikkat çekme grubundaydı. <strong>Raiden</strong> de.</p>
+
+      <p><strong>Enkon</strong> beklenenden dayanıklıydı. Kızgın kaya bedeni normal darbelerle kırılmıyordu. <strong>Rin</strong> <strong>rage</strong>'e girdi, <strong>Raiko</strong>'nun enerjisi vücudundan aktı, elektrik kıvılcımları parmaklarında dans etti, ve <strong>Enkon</strong>'a saldırdı. Yıldırımla yüklü darbeleri kızgın kaya kabuğunu çatlattı. <strong>Enkon</strong> <strong>Rin</strong>'e döndü, yanan bir yumruğunu savurdu, ve o an <strong>Raiden</strong> fırsatı değerlendirip çatlaktan içeri bir darbe indirdi. <strong>Enkon</strong> sendeledi. İkisi birlikte, abi ve kız kardeş, kontrol ve kaos, yaratığı köyden geri sürdüler. <strong>Enkon</strong> ölmedi. Dağa doğru çekildi, yaralı ve öfkeli. Ama köy kurtulmuştu.</p>
+
+      <p>Kaleye döndüklerinde yaşlı adam, <strong>Moritaka</strong>, klanın eski savaş şeflerinden biri, doğrudan klan meclisine gitti. <strong>Rin</strong>'in savaştaki performansını anlattı. Meclis toplandığında <strong>Moritaka</strong> bir teklifte bulundu: <strong>Rin Stormbringer</strong>'a <strong>emanet katana</strong> verilmesini öneriyordu. Tartışma oldu ama <strong>Moritaka</strong> ısrar etti. <em>"Bu kız kuzeyde tek başına hayatta kaldı. Dönüp klana hizmet etmeye devam etti. Bugün benim hayatımı kurtardı. Emanet katanayı hak edecek daha ne yapması lazım?"</em> Meclis kabul etti.</p>
+
+      <p>Katana töreni sade oldu. <strong>Stormbringer</strong> klanı gösterişli törenler yapmayan bir klantı. Klanın baş demircisi, <strong>kurogane</strong>'den dövülmüş, klanın armasını taşıyan bir katanayı <strong>Rin</strong>'e uzattı. Silahın kabzasında şimşek motifi işlenmişti, namlusu koyu gri, neredeyse siyahtı, <strong>kurogane</strong>'nin doğal rengi. Ağırdı ama dengesi mükemmeldi. <strong>Rin</strong>'in eline oturdu. <strong>Daisuke</strong> törende yoktu. Ama o akşam <strong>Rin</strong>'in odasına geldi. <em>"İyi denge. Kurogane'nin en iyi özelliği budur. Ağır hissettirir ama elin alıştıktan sonra bedeninin uzantısı olur."</em> Katanayı masaya bıraktı. Sonra kızına baktı, ve bir an için sertlik düştü. <em>"Annen bunu görseydi gurur duyardı."</em> <strong>Daisuke</strong> toparlandı, yüzü yeniden sertleşti. <em>"Keskin tut."</em> Döndü ve gitti. <strong>Rin</strong> gülümsedi. Gözleri yanıyordu ama ağlamadı. Babası buydu. Kırık, eksik, ama orada.</p>
+
+      <hr>
+
+      <p>Katana tamamdı. Sırada zırh vardı. Ve zırh için <strong>Nomi</strong> lazımdı. <strong>Rin</strong> <strong>Karakuma</strong>'ya gitti, <strong>Onigashima</strong>'nın güney eteklerinde, demircileriyle ünlü küçük bir kasaba. <strong>Rin</strong> aradığı demirciyi buldu: <strong>Hagane</strong> adında yaşlı bir oniborne kadın, kırışık yüzlü, kalın kollu. <strong>Wano</strong>'nun en iyi zırh ustalarından biriydi. <strong>Rin</strong> ona ne istediğini anlattı. Bir <strong>oni</strong> zırhı. Dayanıklı, hareket kısıtlamayan, ve — aklında vardı ama söylemedi — <strong>rün</strong> kazımaya uygun bir yüzey. <strong>Hagane</strong> onu dinledi. Sonra tek bir soru sordu: <em>"Malzeme?"</em> <em>"Nomi,"</em> dedi <strong>Rin</strong>. <strong>Hagane</strong>'nin kaşları kalktı. <em>"Nomi malzemesi getirirsen yaparım. Getirmezsen boşuna geldin."</em></p>
+
+      <p><strong>Nomi</strong> avı tek başına yapılacak bir iş değildi. <strong>Rin</strong> <strong>Karakuma</strong>'da <strong>Nomi</strong> haberi beklerken kasabadaki avcılarla tanıştı. Tuzakçı <strong>Jiro</strong>, milisçi <strong>Kaede</strong> ve bıçak ustası <strong>Daishin</strong>. <strong>Nomi</strong> haberi güneydoğudaki <strong>Nishikin</strong> yerleşkesinden geldi. <strong>Nishikinler</strong>, kırmızı tenli, suda ve karada yaşayabilen bir halk. Bir <strong>Nomi</strong> gölün yakınına kuluçka alanı kurmuştu. <strong>Nomi</strong>'ler yumurtalarını yetiştirebilmek için su kaynaklarını asitlendirirlerdi. <strong>Nishikin</strong> yerleşkesinin temiz su kaynağı zehirlenmeye başlamıştı.</p>
+
+      <p><strong>Rin</strong>, <strong>Jiro</strong>, <strong>Kaede</strong> ve <strong>Daishin</strong> <strong>Nishikin</strong> yerleşkesine gittiklerinde durumu kendi gözleriyle gördüler. Göl kenarında su bulanıklaşmıştı, koyu yeşilimsi bir renk almıştı, ve havada keskin, asidik bir koku vardı. <strong>Jiro</strong> planı yaptı. <strong>Kaede</strong> ve <strong>Rin Nomi</strong>'yi meşgul edecekti, <strong>Jiro</strong> tuzaklarını kuracaktı, <strong>Daishin</strong> ise yaratığın zayıf noktalarını gözlemleyip yönlendirecekti.</p>
+
+      <p><strong>Nomi</strong>'yi bulmak zor olmadı. Dev böcek kuluçka alanının ortasında, asitleşmiş suyun içinde duruyordu. <strong>Rin</strong>'in beklediğinden büyüktü. Kabuklu, çok bacaklı, parlak siyah gözleri olan bir şey. Savaş planlıydı. <strong>Jiro</strong> <strong>Nomi</strong>'nin hareketini yavaşlattı, yapışkan ağlar ve diken tuzakları. <strong>Kaede</strong> yandan saldırdı, disiplinli ve ölçülü hareketlerle. <strong>Rin</strong> doğrudan önden girdi. <strong>Nomi</strong>'nin kabuğu inanılmaz sertti. Normal darbeler iz bırakmıyordu. Ama <strong>Rin</strong> bunu zaten biliyordu. <strong>Rage</strong>'e girdi. <strong>Raiko</strong>'nun yıldırımı parmaklarından silahına aktı ve <strong>kurogane</strong> katana elektrikle parladı. Kabuklu yaratığın eklem noktalarını hedef aldı. İlk darbede bir eklem çatladı. İkincide kırıldı. Asidik su dalgaları yükseldi, <strong>Rin</strong>'in bacaklarını yaktı. <strong>Nomi</strong>'nin boynuzu <strong>Rin</strong>'i neredeyse yerden kaldırdı. Göğsüne aldığı darbe onu geri fırlattı ama <strong>rage</strong> halinde acıyı hissetmedi. Ayağa kalktı, yeniden saldırdı. Son darbeyi <strong>Rin</strong> indirdi. Katana <strong>Nomi</strong>'nin baş kabuğunun altındaki yumuşak noktaya saplandı. Yaratık titredi, bacakları büküldü ve devrildi. Asidik su yavaşça durulmaya başladı.</p>
+
+      <p>Av bittikten sonra harvest başladı. <strong>Daishin</strong> bu işi biliyordu. <strong>Nomi</strong>'nin kabuk parçaları, eklem zırhları, iç organlarından elde edilen sertleştirici sıvılar, hepsi dikkatlice ayrıldı. <strong>Rin</strong>'in payına düşen kısım zırh yapmaya yetecek miktardaydı. <strong>Hagane</strong> malzemeleri görünce ilk kez bir şeye benzeyen bir ifade takındı, tam olarak gülümseme değildi ama mesleki bir memnuniyetti. <em>"İki hafta,"</em> dedi <strong>Hagane</strong>. <em>"Bekle."</em></p>
+
+      <p>İki haftanın sonunda <strong>Hagane</strong> zırhı teslim etti. <strong>Oni</strong> zırhı. <strong>Nomi</strong> kabuğundan yapılmış göğüslük, omuzluklar, kolçaklar. Koyu renkliydi, neredeyse siyah, ışıkta hafifçe mor yansımalar yapıyordu, <strong>Nomi</strong> kabuğunun doğal özelliği. Hafif değildi ama bir <strong>oni</strong> için taşınabilirdi. Ve yüzeyi pürüzsüzdü, düzgündü, <strong>rün</strong> kazımak için ideal. <strong>Rin</strong> zırhı giydiğinde <strong>Hagane</strong> onu süzdü. <em>"Yakışmış. Şimdi git. Dükkanım kapanıyor."</em></p>
+
+      <hr>
+
+      <p><strong>Rin</strong> <strong>Wano</strong>'da yapması gereken her şeyi yapmıştı. <strong>Gofu hat</strong>, <strong>gece gözlükleri</strong>, <strong>emanet katana</strong>, <strong>oni</strong> zırhı. Hepsi tamamdı. Gitmeden önce <strong>Raiden</strong>'ı görmesi gerekiyordu. Abisini kalenin çatısında buldu, eskiden birlikte oturdukları yer. <em>"Gidiyorsun."</em> Soru değildi. <em>"Kuzeye."</em> <em>"Neden?"</em> <em>"Orada bitmemiş işlerim var. Ve orada... bana yer açan insanlar var."</em> <strong>Raiden</strong> uzun süre sessiz kaldı. <em>"Seni kervanda saldırganlardan kurtaramadım. Orada değildim."</em> <em>"Orada olsaydın da olmasa da saldırı olacaktı."</em> <em>"Biliyorum. Ama orada olmak isterdim."</em> <em>"Geri döneceğim."</em> <em>"Bunu son seferinde de söyledin."</em> <em>"Son seferinde de döndüm."</em> <strong>Raiden</strong> güldü. Kısa, kuru bir gülüştü ama gerçekti. <em>"Birlikten kopma."</em> <em>"Her seferinde aynı şeyi söylüyorsun."</em> <em>"Sen her seferinde aynı şeyi yaptığın için."</em> Aynı diyaloğun tekrarıydı, çocukluklarından beri. Ama bu sefer farklı hissettirdi. Daha ağır. Çünkü ikisi de biliyordu ki kuzeyde <strong>Rin</strong>'i bekleyen şeyler <strong>Wano</strong>'daki yokai yuvalarından çok daha tehlikeliydi. <strong>Raiden</strong> kız kardeşine sarıldı. Kısa, sıkı, <strong>oni</strong> usulü. <em>"Dikkatli ol."</em> <em>"Olurum."</em></p>
+
+      <p><strong>Daisuke</strong>'yle vedalaşma daha kısa oldu ama daha ağırdı. Babası kalenin kapısına kadar geldi. <strong>Rin</strong> karşısında durduğunda <strong>Daisuke</strong> cebinden küçük bir şey çıkardı. Eski bir <strong>ofuda</strong>, solmuş, yıpranmış, mürekkebi neredeyse görünmez. <em>"Annenindi. Doğumdan önce tapınaktan almıştı. Koruma ofudası. İşe yaramadı ama... Taşı. Belki sana yarar."</em> <strong>Rin</strong> <strong>ofudayı</strong> aldı. Kağıt incecikti, neredeyse dağılacak gibiydi. <em>"Baba..."</em> <em>"Git,"</em> dedi <strong>Daisuke</strong>. Sesi sert çıkmıştı ama gözleri parlıyordu. <em>"Ve geri dön. Bu sefer de geri dön."</em> <strong>Rin</strong> gülümsedi. <strong>Dolgrim</strong> de benzer bir şey söylemişti. Belki babalar böyleydi, kan bağı olsun olmasın.</p>
+
+      <p><strong>Rin</strong> <strong>Wano</strong>'dan ikinci kez ayrıldı. Bu sefer bir kervanın gardiyanı olarak değil, tek başına, kendi kararıyla. Sırtında <strong>Nomi</strong> zırhı, belinde <strong>kurogane</strong> katana, çantasında <strong>gofu hat</strong> ve <strong>gece gözlükleri</strong>. İçinde <strong>Raiko</strong>'nun öfkesi ve kuzeyin <strong>rünleri</strong>. Kuzeye doğru yürüdü. Tanıdık yol. Tanıdık soğuk. Tanıdık karlar. Ama tanıdık olmayan şeyler de vardı.</p>
+
+      <hr>
+
+      <p>Yolculuk elli küsur gün sürdü. <strong>Rin</strong> bu sefer yolu biliyordu, geçitleri tanıyordu. Tek başınaydı ama tek başına olmak artık eskisi gibi korkutucu değildi. Sırtında <strong>Nomi</strong> zırhı, belinde <strong>kurogane</strong> katana, içinde <strong>Raiko</strong>'nun öfkesi ve <strong>rünlerin</strong> sessiz bilgisi. Farklı bir insandı.</p>
+
+      <p>Yol boyunca düşündü. <strong>Dolgrim</strong>'i düşündü, <em>"rünlerini temiz tut"</em> demişti. <strong>Orv</strong>'u düşündü, <em>"kapıyı çal, son seferki gibi yarı ölü gelme"</em> demişti. İkisinin de orada olacağını varsayıyordu. <strong>Wolf's Inn</strong>'e vardığında ilk fark ettiği şey dükkanın tabelasıydı. <strong>Orv</strong>'un eski, yıpranmış tabelası yoktu. Yerine daha temiz, daha düzgün bir tabela asılmıştı. Farklı bir isim. <strong>Rin</strong> durdu. Kapıya baktı. İçeriden çekiç sesi gelmiyordu. <strong>Orv</strong>'un çekiç sesi çok belirgin bir ritmde olurdu, düzensiz, sabırsız, işini bitirmeye çalışan birinin ritmi. Şimdi sessizlik vardı.</p>
+
+      <p>Kapıyı açtığında içeride <strong>Orv</strong>'u değil, başka birini buldu. Orta boylu, zayıf, düzgün giyimli bir insan. <em>"Yardımcı olabilir miyim?"</em> dedi adam. <em>"Orv nerede?"</em> dedi <strong>Rin</strong>. <em>"Bu onun dükkanıydı. Ben burada kaldım, aylarca. Ne oldu buraya?"</em> Adam kaşlarını kaldırdı. <em>"Orv Bezmadan mı? Dükkanı bana sattı, birkaç ay önce. Ben Gervan. Buranın yeni sahibiyim. Orv bir maceracı grubuna katıldı. Frosty Passage'ın yukarılarında bir bastion inşa ettirmek istiyorlar. Orv 'gel, burada demirci lazım olacak' dedi. Ben de geldim, dükkanını da devraldım."</em> <em>"Ya Dolgrim?"</em> dedi <strong>Rin</strong>. <em>"Dolgrim Ironfist. Orv'un arkadaşı, yaşlı bir cüce büyücü. Onu gördün mü?"</em> <strong>Gervan</strong> düşündü. Başını salladı. <em>"O ismi duymadım."</em> <strong>Rin</strong>'in midesi burktu. <strong>Dolgrim</strong>. Neredeydi? Sorular kafasında döndü ama cevap yoktu.</p>
+
+      <p><em>"Bastion alanına ne zaman gidiyorsun?"</em> dedi <strong>Rin</strong>. <em>"Yarın sabah. Malzeme kervanım hazır. Gelmek istersen kervanıma katılabilirsin. Yol güvenli sayılmaz, son haftalarda aç yaratıklar görüldü, kış sert geçti."</em> <em>"Gelirim,"</em> dedi <strong>Rin</strong>. Tereddüt etmedi.</p>
+
+      <p>O gece <strong>Rin</strong> <strong>Wolf's Inn</strong>'in hanında kaldı. Tavana bakarken düşündü. <strong>Wano</strong>'da her şey yerindeydi, <strong>Raiden</strong> kalede, <strong>Daisuke</strong> odasında, klan olması gereken yerde. Ama kuzeyde her şey değişmişti. <strong>Orv</strong> maceracı olmuştu, <strong>Dolgrim</strong> kayıptı, dükkan satılmıştı. Eve döndüğünde evin aynı olacağını varsaymıştı ve yanılmıştı. Bu acıttı. Beklenmedik bir şekilde, derinden acıttı.</p>
+
+      <hr>
+      <h3>Gervan'ın Kervanı</h3>
+
+      <p>Sabah erkenden yola çıktılar. <strong>Gervan</strong>'ın kervanı küçüktü, üç araba dolusu malzeme, birkaç at. <strong>Rin</strong> kervanın önünde yürüdü, gözleri yolda, kulakları açık. <strong>Gervan</strong> yolda konuşkan biriydi. <strong>Rin</strong>'e kuzeyin son aylardaki durumunu anlattı: kışın sert geçtiğini, ticaret yollarının yavaşladığını, bastion projesinin bölgeye hareketlilik getirdiğini. <strong>Rin</strong> dinledi ama aklı başka yerdeydi. <strong>Dolgrim</strong>. Neredeydi? Neden kimse onu bilmiyordu?</p>
+
+      <p><strong>Frosty Passage</strong>'ı geçtikten sonra yol daraldı. Ana ticaret yolundan ayrılıp dağlara tırmanan bir patikaya dönüştü. Kar burada daha derindi, rüzgâr daha kesiciydi. <strong>Rin</strong> <strong>gofu hat</strong>'ını taktı, <strong>Raiko</strong>'nun işareti alnında hafifçe zonkladı, <strong>ofudaların</strong> sıcaklığı bedenine yayıldı. <strong>Gece gözlüklerini</strong> de hazır tuttu, güneş erken batıyordu bu mevsimde.</p>
+
+      <p>Yolun yarısında <strong>Rin</strong> bir şey hissetti. Durdu. Elini kaldırıp kervanı durdurdu. Kar altında bir titreşim. Yerden gelen, ritmik, büyüyen. Bir şey yaklaşıyordu. Büyük bir şey. Ağaçların arasından çıktığında <strong>Rin</strong> onu gördü. Büyük, beyaz kürklü, altı bacaklı bir yaratık. Kurttan çok daha büyük, omuz hizası bir insanın göğsüne geliyordu. Gözleri soluk maviydi, açlığın ve kış öfkesinin mavisi. Tek başınaydı, sürü avcısı değildi, yalnız bir avcıydı bu, daha tehlikeli türden. <em>"Arabaları geri çek,"</em> dedi <strong>Rin</strong> <strong>Gervan</strong>'a. <em>"Ben hallederim."</em> <em>"Tek başına mı?"</em> <strong>Gervan</strong>'ın sesi titriyordu. <em>"Evet. Arada mesafe bırak. Eğer düşersem kaçın. Ama düşmeyeceğim."</em></p>
+
+      <p>Yaratık saldırdı. Hızlıydı, altı bacağı karın üzerinde stabilite sağlıyordu, kayma yoktu, tereddüt yoktu. <strong>Rin</strong> yana atladı, yaratığın momentumunu geçirdi, katanayla arka bacağına bir kesik attı. Yaratık çığlık attı ama durmadı, döndü, pençeleriyle <strong>Rin</strong>'e saldırdı. <strong>Nomi</strong> zırhı ilk darbeyi tuttu, pençeler kabukta iz bıraktı ama geçmedi. İkinci darbe <strong>Rin</strong>'in kalkanı olmayan koluna geldi, yüzeysel bir kesik. <strong>Rin</strong> <strong>rage</strong>'e girdi. Bu sefer bilinçli bir karardı, dürtü değil, karar. <strong>Raiko</strong>'nun enerjisi vücudundan aktı, elektrik kıvılcımları <strong>kurogane</strong> katanaya yüklendi. Yaratığa doğru adım attı, katanayı savurdu. Yıldırımla yüklü darbe yaratığın omzuna geldi, et yandı, kürk tutuştu. Yaratık geri sendeledi, acı içinde bağırdı. <strong>Rin</strong> ikinci darbeyi göğsüne indirdi, üçüncüyü boynuna. Yaratık devrildi, bacakları seğirdi, sonra durdu.</p>
+
+      <p><strong>Rin</strong> <strong>rage</strong>'den çıktı. Nefes aldı. Kolundaki kesik yanıyordu ama derin değildi. <strong>Gervan</strong> kervanla birlikte ileriye geldi. Yüzü bembeyazdı. <em>"Teşekkür ederim."</em> <em>"İşimi yaptım,"</em> dedi <strong>Rin</strong>. Ama içinden başka bir şey hissediyordu. <strong>Wano</strong>'dan ayrılmadan önceki <strong>Rin</strong> bu savaşta <strong>rage</strong>'e hemen girerdi, düşünmeden, hesap yapmadan. Şimdi önce durmuş, değerlendirmiş, kervanı güvene almış, sonra savaşmıştı. Ve <strong>rage</strong>'e girme kararını bilinçli vermişti, kontrollü, zamanlanmış. <strong>Dolgrim</strong>'in sözü aklına geldi. <em>"Rünler berraklık ister."</em> <strong>Rage</strong> ve berraklık. İkisini bir arada taşımak. Henüz tam başaramamıştı ama ilerliyordu.</p>
+
+      <p>Yolun geri kalanı olaysız geçti. Yaratığın kanı karda iz bırakmıştı, diğer avcılar bundan uzak dururdu. Bastion inşaat alanını dağ yolunun sonunda, <strong>Frosty Passage</strong>'ın üzerindeki bir platoda gördü. Büyük bir yapıydı, henüz tamamlanmamış ama iskeletinden ne olacağı belliydi, taş ve ahşaptan bir üs, savunma duvarları, gözetleme kuleleri, bir avlu. Cüceler çalışıyordu her yerde. Taş kesen, ahşap taşıyan, plan tartışan, birbirine bağıran cüceler.</p>
+
+      <p><strong>Gervan</strong> kervanı platoya çıkardığında cücelerden birkaçı malzemeyi karşılamaya geldi. <strong>Rin</strong> kervanın yanından ayrılıp bastion alanını dolaştı. <strong>Orv</strong>'u aradı. Çekiç sesini dinledi, o tanıdık düzensiz ritmi aradı. Bulamadı. <strong>Rin</strong> cücelerden birine sordu. <em>"Orv Bezmadan burada mı?"</em> Cüce başını kaldırdı, <strong>Rin</strong>'e baktı, mavi tene ve boynuzlara baktı. <em>"Orv mu? Hayır, şu an burada değil. Macera grubunun gelmesini bekliyoruz. Orv onlarla birlikte gelecek. Ne zaman gelirler bilmiyorum, kendi işleri var."</em> <em>"Ne tür işler?"</em> dedi <strong>Rin</strong>. Cüce omzunu silkti. <em>"Macera işleri. Bizim işimiz bastion'u dikmek, onların işi... ne yapıyorlarsa o. Bize söylemediler, biz de sormadık."</em></p>
+
+      <p><strong>Rin</strong> bastion'un kenarına yürüdü. Platonun ucundan kuzeye baktı. <strong>Frosty Passage</strong>'ın aşağıda kıvrılan yolu görünüyordu, ötesinde dağlar, ormanlar, kar. <strong>Orv</strong> bir yerlerde, oralarda, bir macera grubunun içinde. <strong>Dolgrim</strong> bir yerlerde, nerede olduğu bilinmiyor. Ve <strong>Rin</strong> burada, yarı tamamlanmış bir bastion'un kenarında, bekliyordu. Beklemek <strong>Rin</strong>'in en zayıf olduğu şeydi. Her zaman öyle olmuştu. Ama şimdi bekledi. Başka seçeneği yoktu.</p>
     </div>
 
-    <!-- Inline info-boxes: only shown on narrow screens -->
+    <!-- Inline info-boxes: only shown on narrow screens via CSS -->
     <div class="info-boxes-inline">
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
         <strong>Unvanlar:</strong><br>
         Fırtınanın Kızı, Raiko'nun Öfkesi, Kuzeyin Yabancısı, Gorath'ın Alacaklısı<br><br>
         <strong>Lore Etkisi:</strong><br>
-        Stormbringer klanının savaşçısı ve Raiko'nun ritüelini geçmiş bir oni. Wano'daki görev sırasında Buzyürek kabilesinin saldırısından tek sağ kalan olarak kuzeye ulaştı. Rün geleneğini öğrenerek gücünü iki koldan geliştiren Rin, hem Raiko'nun öfkesini hem de kuzey rünlerini taşımaktadır. Gorath ve Tarmak Buzyürek ile hesabı bitmemiştir. Godhood Peak'e giden yolda ilerlemektedir.<br><br>
+        Stormbringer klanının savaşçısı ve Raiko'nun ritüelini geçmiş bir oni. Wano'daki görev sırasında Buzyürek kabilesinin saldırısından tek sağ kalan olarak kuzeye ulaştı. Rün geleneğini öğrenerek gücünü iki koldan geliştiren Rin, hem Raiko'nun öfkesini hem de kuzey rünlerini taşımaktadır. Gorath ve Tarmak Buzyürek ile hesabı bitmemiştir. Godhood Peak'e giden yolda ilerlemektedir. Bu yolda Son Kıvılcım grubuna katılmıştır ve grup ile birlikte Gideon Harrow adındaki Eldritch Av sonucunda bir Scourge'ye dönüşmüş eski bir Engizisyoncu'yu yenmiştir.<br><br>
         <a href="rin stormbringer.pdf" target="_blank" class="character-link">⚔️ Rin Olarak En Son Char Sheeti</a>
       </div>
       <div class="info-box-inline">
@@ -602,7 +839,7 @@
       <div class="carousel-tabs">
         <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
         <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
-        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Eşyaları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
       </div>
 
       <div class="carousel-wrapper">
@@ -696,17 +933,17 @@
     <strong>Unvanlar:</strong><br>
     Fırtınanın Kızı, Raiko'nun Öfkesi, Kuzeyin Yabancısı, Gorath'ın Alacaklısı<br><br>
     <strong>Lore Etkisi:</strong><br>
-    Stormbringer klanının savaşçısı ve Raiko'nun ritüelini geçmiş bir oni. Wano'daki görev sırasında Buzyürek kabilesinin saldırısından tek sağ kalan olarak kuzeye ulaştı. Rün geleneğini öğrenerek gücünü iki koldan geliştiren Rin, hem Raiko'nun öfkesini hem de kuzey rünlerini taşımaktadır. Gorath ve Tarmak Buzyürek ile hesabı bitmemiştir. Godhood Peak'e giden yolda ilerlemektedir.<br><br>
+    Stormbringer klanının savaşçısı ve Raiko'nun ritüelini geçmiş bir oni. Wano'daki görev sırasında Buzyürek kabilesinin saldırısından tek sağ kalan olarak kuzeye ulaştı. Rün geleneğini öğrenerek gücünü iki koldan geliştiren Rin, hem Raiko'nun öfkesini hem de kuzey rünlerini taşımaktadır. Gorath ve Tarmak Buzyürek ile hesabı bitmemiştir. Godhood Peak'e giden yolda ilerlemektedir. Bu yolda Son Kıvılcım grubuna katılmıştır ve grup ile birlikte Gideon Harrow adındaki Eldritch Av sonucunda bir Scourge'ye dönüşmüş eski bir Engizisyoncu'yu yenmiştir.<br><br>
     <a href="rin stormbringer.pdf" target="_blank" class="character-link">⚔️ Rin Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
     <strong>Class ve Subclass:</strong> Zealot Barbarian / Rune Knight Fighter<br>
+    <strong>Level:</strong> 11 Level<br>
     <strong>Irk:</strong> Oni (Custom Lineage)<br>
     <strong>Yaş:</strong> 20<br>
     <strong>Cinsiyet:</strong> Kadın<br>
-    <strong>Köken:</strong> Wano — Stormbringer Kalesi
   </div>
 
   <div id="myModal" class="modal">
@@ -727,7 +964,7 @@
     const music = document.getElementById('background-music');
     const btn   = document.getElementById('play-pause-btn');
     let isPlaying = true;
-    let panelOpen = false;
+    let panelOpen = false; // starts CLOSED
 
     music.volume = 0.5;
     music.play().catch(() => {
@@ -756,7 +993,7 @@
 
     window.onbeforeunload = () => music.pause();
 
-    /* ── Info-box scroll tracking ── */
+    /* ── Info-box scroll tracking (desktop only) ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
 
