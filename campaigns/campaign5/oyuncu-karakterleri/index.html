@@ -34,17 +34,9 @@
       0%,100% { box-shadow: 0 0 10px var(--gold-dim), 0 0 30px rgba(201,168,76,0.1); }
       50%      { box-shadow: 0 0 22px var(--gold), 0 0 50px rgba(201,168,76,0.25); }
     }
-    @keyframes sealSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
     @keyframes cardIn {
       from { opacity: 0; transform: translateY(30px) scale(0.94); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes borderMarch {
-      0%   { background-position: 0% 0%; }
-      100% { background-position: 200% 0%; }
     }
 
     body {
@@ -57,7 +49,6 @@
       overflow-x: hidden;
     }
 
-    /* Overlay layers */
     body::before {
       content: "";
       position: fixed;
@@ -72,7 +63,6 @@
       z-index: 0;
     }
 
-    /* Subtle vignette */
     body::after {
       content: "";
       position: fixed;
@@ -99,7 +89,6 @@
       width: 72px;
       height: 72px;
       margin: 0 auto 1.4rem;
-      position: relative;
     }
     .inquisition-seal svg {
       width: 100%;
@@ -163,66 +152,54 @@
       margin-top: 0.6rem;
     }
 
-    /* ── GRID ── */
+    /* ── GRID ──
+       FIX 1: flex ile ortala — grid son satırı sola hizalar,
+       flex + wrap ise her zaman ortalar.
+    ── */
     .character-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 2rem;
       max-width: 1400px;
       margin: 0 auto 4rem;
-      justify-items: center;
     }
 
     /* ── CARD ── */
     .character-card {
-      width: 100%;
-      max-width: 210px;
+      width: 190px;
       aspect-ratio: 3/4;
       position: relative;
       cursor: pointer;
       text-decoration: none;
       display: block;
       border-radius: 6px;
+      /* FIX 2: Kaldırıldı ::before — artık altın border overlay yok.
+         Yerine sadece ince box-shadow border */
+      box-shadow:
+        0 0 0 1px rgba(201,168,76,0.25),
+        0 4px 18px rgba(0,0,0,0.6);
+      transition: box-shadow 0.3s ease, transform 0.35s ease;
       overflow: hidden;
       animation: cardIn 0.7s ease both;
     }
 
-    /* stagger cards */
-    .character-card:nth-child(1)  { animation-delay: 0.05s; }
-    .character-card:nth-child(2)  { animation-delay: 0.10s; }
-    .character-card:nth-child(3)  { animation-delay: 0.15s; }
-    .character-card:nth-child(4)  { animation-delay: 0.20s; }
-    .character-card:nth-child(5)  { animation-delay: 0.25s; }
-    .character-card:nth-child(6)  { animation-delay: 0.30s; }
-    .character-card:nth-child(7)  { animation-delay: 0.35s; }
-    .character-card:nth-child(8)  { animation-delay: 0.40s; }
+    .character-card:nth-child(1) { animation-delay: 0.05s; }
+    .character-card:nth-child(2) { animation-delay: 0.10s; }
+    .character-card:nth-child(3) { animation-delay: 0.15s; }
+    .character-card:nth-child(4) { animation-delay: 0.20s; }
+    .character-card:nth-child(5) { animation-delay: 0.25s; }
+    .character-card:nth-child(6) { animation-delay: 0.30s; }
+    .character-card:nth-child(7) { animation-delay: 0.35s; }
+    .character-card:nth-child(8) { animation-delay: 0.40s; }
 
-    /* Outer border glow container */
-    .character-card::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: 7px;
-      background: linear-gradient(
-        135deg,
-        var(--gold-dim) 0%,
-        transparent 40%,
-        transparent 60%,
-        var(--gold-dim) 100%
-      );
-      z-index: 2;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-
-    .character-card:hover::before {
-      opacity: 1;
-      background: linear-gradient(
-        135deg,
-        var(--gold-bright) 0%,
-        var(--gold) 50%,
-        var(--gold-bright) 100%
-      );
+    /* Hover: sadece hafif scale + ince altın border beliriyor */
+    .character-card:hover {
+      transform: scale(1.05);
+      box-shadow:
+        0 0 0 1.5px rgba(201,168,76,0.7),
+        0 0 18px rgba(201,168,76,0.2),
+        0 8px 28px rgba(0,0,0,0.8);
     }
 
     .card-inner {
@@ -232,7 +209,6 @@
       border-radius: 5px;
       overflow: hidden;
       background: rgba(5,3,1,0.9);
-      z-index: 1;
     }
 
     .character-card img {
@@ -242,12 +218,13 @@
       object-position: top center;
       display: block;
       filter: brightness(0.88) contrast(1.08) saturate(0.9);
-      transition: filter 0.4s ease, transform 0.5s ease;
+      /* Resim hover'da scale ile birlikte büyüsün */
+      transition: filter 0.35s ease;
     }
 
+    /* Sadece filter değişsin, scale kart üzerinde zaten oluyor */
     .character-card:hover img {
-      filter: brightness(1.05) contrast(1.1) saturate(1.05);
-      transform: scale(1.04);
+      filter: brightness(1.0) contrast(1.1) saturate(1.0);
     }
 
     /* Bottom gradient + name */
@@ -264,17 +241,6 @@
         transparent 100%
       );
       z-index: 3;
-      transform: translateY(0);
-      transition: background 0.3s;
-    }
-
-    .character-card:hover .card-overlay {
-      background: linear-gradient(
-        to top,
-        rgba(5,3,1,0.99) 0%,
-        rgba(5,3,1,0.82) 60%,
-        transparent 100%
-      );
     }
 
     .character-name {
@@ -288,11 +254,11 @@
       line-height: 1.35;
     }
 
-    /* Corner inquisition marks */
+    /* Köşe işaretleri — hover'da beliriyor */
     .card-corner {
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       z-index: 4;
       opacity: 0;
       transition: opacity 0.3s;
@@ -303,18 +269,6 @@
     .card-corner--br { bottom: 5px; right: 5px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
 
     .character-card:hover .card-corner { opacity: 1; }
-
-    /* Hover glow overlay */
-    .card-glow {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(139,26,26,0.18) 0%, transparent 65%);
-      opacity: 0;
-      transition: opacity 0.4s;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .character-card:hover .card-glow { opacity: 1; }
 
     /* ── BACK BUTTON ── */
     .back-link {
@@ -344,44 +298,30 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      .character-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1.4rem;
-      }
+      .character-card { width: 160px; }
+      .character-grid { gap: 1.4rem; }
     }
 
     @media (max-width: 540px) {
       main { padding: 2rem 1rem 4rem; }
       h1 { letter-spacing: 3px; }
-      .character-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-      .character-card { max-width: 100%; }
+      .character-grid { gap: 1rem; }
+      .character-card { width: calc(50% - 0.5rem); aspect-ratio: 3/4; }
       .character-name { font-size: 0.68rem; }
-    }
-
-    @media (max-width: 360px) {
-      .character-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
     }
   </style>
 </head>
 <body>
   <main>
     <div class="header">
-      <!-- Inquisition Seal SVG -->
       <div class="inquisition-seal">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <!-- Outer ring -->
           <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
           <circle cx="50" cy="50" r="40" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.4"/>
-          <!-- Cross -->
           <line x1="50" y1="8" x2="50" y2="92" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
           <line x1="8" y1="50" x2="92" y2="50" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
-          <!-- Diamond center -->
           <polygon points="50,38 62,50 50,62 38,50" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.9"/>
           <circle cx="50" cy="50" r="4" fill="#c9a84c" opacity="0.9"/>
-          <!-- Corner ticks -->
           <circle cx="50" cy="10" r="1.5" fill="#c9a84c" opacity="0.7"/>
           <circle cx="90" cy="50" r="1.5" fill="#c9a84c" opacity="0.7"/>
           <circle cx="50" cy="90" r="1.5" fill="#c9a84c" opacity="0.7"/>
@@ -404,10 +344,7 @@
       <a class="character-card" href="zephyr/index.html">
         <div class="card-inner">
           <img src="zephyr/Druuthtikmorash Zephyr Kilbarum.jpg" alt="Zephyr">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Zephyr</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Zephyr</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -418,10 +355,7 @@
       <a class="character-card" href="orv/index.html">
         <div class="card-inner">
           <img src="orv/Orv Bezmadan Parlakçekiç.jpg" alt="Orv">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Orv Bezmadan</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Orv Bezmadan</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -432,10 +366,7 @@
       <a class="character-card" href="neryssa/index.html">
         <div class="card-inner">
           <img src="neryssa/Neryssa Snow.jpg" alt="Neryssa Snow">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Neryssa Snow</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Neryssa Snow</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -446,10 +377,7 @@
       <a class="character-card" href="exodus/index.html">
         <div class="card-inner">
           <img src="exodus/Exodus.jpg" alt="Exodus">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Exodus</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Exodus</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -460,10 +388,7 @@
       <a class="character-card" href="theron/index.html">
         <div class="card-inner">
           <img src="theron/Theron Nightgale.jpg" alt="Theron Nightgale">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Theron Nightgale</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Theron Nightgale</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -474,10 +399,7 @@
       <a class="character-card" href="rin/index.html">
         <div class="card-inner">
           <img src="rin/Rin Stormbringer.png" alt="Rin Stormbringer">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Rin Stormbringer</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Rin Stormbringer</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -488,10 +410,7 @@
       <a class="character-card" href="cecilia/index.html">
         <div class="card-inner">
           <img src="cecilia/Cecilia.jpeg" alt="Cecilia">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Cecilia</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Cecilia</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
@@ -502,10 +421,7 @@
       <a class="character-card" href="thane/index.html">
         <div class="card-inner">
           <img src="thane/Aldric Thane Castellan.jpeg" alt="Aldric Thane Castellan" style="object-position: center top;">
-          <div class="card-glow"></div>
-          <div class="card-overlay">
-            <div class="character-name">Aldric Thane Castellan</div>
-          </div>
+          <div class="card-overlay"><div class="character-name">Aldric Thane Castellan</div></div>
           <div class="card-corner card-corner--tl"></div>
           <div class="card-corner card-corner--tr"></div>
           <div class="card-corner card-corner--bl"></div>
