@@ -4,49 +4,498 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campaign 5: Buzun Mirası</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #7a6030;
+      --gold-glow: rgba(201,168,76,0.35);
+      --crimson: #8b1a1a;
+      --parchment: #f2e8d0;
+      --dark: #080604;
+      --ice-blue: #a8cfe0;
+      --ice-dim: rgba(168,207,224,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-24px) scale(0.96); letter-spacing: 14px; }
+      to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 5px; }
+    }
+    @keyframes subtitleFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes btnSlideIn {
+      from { opacity: 0; transform: translateX(-22px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px var(--gold-dim); }
+      50%      { box-shadow: 0 0 22px var(--gold-glow); }
+    }
+    @keyframes sealSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes sealCounter {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+    @keyframes dividerExpand {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+    @keyframes flicker {
+      0%,100% { opacity: 0.85; }
+      45%      { opacity: 0.7; }
+      55%      { opacity: 0.9; }
+    }
+
+    html, body { height: 100%; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: white;
-      text-align: center;
+      font-family: 'Lora', Georgia, serif;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414')
+        no-repeat center center fixed;
+      background-size: cover;
+      color: var(--parchment);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-    h1 {
-      margin-top: 2rem;
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(20,40,70,0.4) 0%, transparent 60%),
+        linear-gradient(180deg,
+          rgba(4,6,10,0.92) 0%,
+          rgba(6,10,18,0.78) 35%,
+          rgba(6,10,18,0.82) 70%,
+          rgba(4,6,10,0.96) 100%
+        );
+      z-index: 0;
     }
-    .section-container {
+
+    body::after {
+      content: "";
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.5) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
       align-items: center;
-      margin: 3rem 0;
+      padding: 4rem 1.5rem 5rem;
+      animation: pageFadeIn 1s ease both;
     }
-    .section-button {
-      background-color: #444;
-      color: white;
-      border: 2px solid #666;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      cursor: pointer;
+
+    /* ── SEAL ── */
+    .seal-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin-bottom: 2rem;
+    }
+
+    .seal-outer {
+      position: absolute; inset: 0;
+      animation: sealSpin 50s linear infinite;
+    }
+    .seal-inner {
+      position: absolute; inset: 18px;
+      animation: sealCounter 32s linear infinite;
+    }
+    .seal-outer svg,
+    .seal-inner svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 5px var(--gold-glow));
+    }
+    .seal-center {
+      position: absolute; inset: 30px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .seal-center svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.55));
+      animation: flicker 4s ease-in-out infinite;
+    }
+
+    /* ── HEADER ── */
+    .archive-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.4rem;
+      animation: subtitleFade 1s ease 0.3s both;
+    }
+
+    .campaign-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(168,207,224,0.55);
+      margin-bottom: 0.5rem;
+      animation: subtitleFade 1s ease 0.35s both;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5.5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin: 0 0 0.4rem;
+      line-height: 1.1;
+      text-shadow:
+        0 0 40px rgba(201,168,76,0.5),
+        0 0 80px rgba(201,168,76,0.15),
+        3px 3px 10px rgba(0,0,0,0.98);
+      animation: titleDrop 1.4s cubic-bezier(.22,1,.36,1) 0.1s both;
+    }
+
+    .tagline {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: clamp(0.78rem, 2vw, 0.95rem);
+      color: rgba(168,207,224,0.45);
+      letter-spacing: 1.5px;
+      animation: subtitleFade 1s ease 0.55s both;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 520px;
+      margin: 2rem 0 2.6rem;
+      animation: subtitleFade 1s ease 0.65s both;
+    }
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      animation: dividerExpand 1.2s ease 0.75s both;
+      transform-origin: center;
+    }
+    .divider-icon {
+      color: var(--gold);
+      font-size: 0.9rem;
+      opacity: 0.75;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .divider-dot {
+      width: 5px; height: 5px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px var(--gold-glow);
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.35);
+      margin-bottom: 1.4rem;
+      animation: subtitleFade 1s ease 0.8s both;
+    }
+
+    /* ── BUTTON LIST ── */
+    .section-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .section-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
       text-decoration: none;
-      border-radius: 10px;
-      width: 300px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: rgba(4,6,10,0.80);
+      border: 1px solid rgba(201,168,76,0.18);
+      transition: border-color 0.3s, transform 0.25s ease, box-shadow 0.3s;
+      animation: btnSlideIn 0.6s ease both;
     }
-    .section-button:hover {
-      background-color: #666;
+
+    .section-btn:nth-child(1) { animation-delay: 0.85s; }
+    .section-btn:nth-child(2) { animation-delay: 0.95s; }
+    .section-btn:nth-child(3) { animation-delay: 1.05s; }
+    .section-btn:nth-child(4) { animation-delay: 1.15s; }
+
+    .section-btn:hover {
+      border-color: rgba(201,168,76,0.6);
+      transform: translateX(5px);
+      box-shadow: 0 0 18px rgba(201,168,76,0.12), -3px 0 0 var(--gold);
+    }
+
+    .btn-accent {
+      width: 3px;
+      align-self: stretch;
+      background: linear-gradient(180deg, transparent, var(--gold-dim), transparent);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .section-btn:hover .btn-accent {
+      background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+      padding: 0 0.95rem;
+      flex-shrink: 0;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      line-height: 1;
+    }
+    .section-btn:hover .btn-icon { opacity: 0.9; }
+
+    .btn-sep {
+      width: 1px; height: 28px;
+      background: rgba(201,168,76,0.12);
+      flex-shrink: 0;
+    }
+
+    .btn-body {
+      flex: 1;
+      padding: 0.95rem 1rem 0.95rem 1.1rem;
+      text-align: left;
+    }
+
+    .btn-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--parchment);
+      transition: color 0.3s;
+      line-height: 1.2;
+    }
+    .section-btn:hover .btn-title { color: var(--gold-bright); }
+
+    .btn-desc {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.7rem;
+      color: rgba(242,232,208,0.35);
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+      transition: color 0.3s;
+    }
+    .section-btn:hover .btn-desc { color: rgba(242,232,208,0.58); }
+
+    .btn-arrow {
+      padding: 0 1.1rem 0 0.5rem;
+      color: rgba(201,168,76,0.22);
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      transition: color 0.3s, transform 0.25s;
+    }
+    .section-btn:hover .btn-arrow {
+      color: var(--gold);
+      transform: translateX(3px);
+    }
+
+    /* ── BACK LINK ── */
+    .back-wrap {
+      margin-top: 3rem;
+      animation: subtitleFade 1s ease 1.3s both;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 0.6rem 1.5rem;
+      border-radius: 4px;
+      background: rgba(4,6,10,0.75);
+      transition: all 0.25s ease;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: rgba(201,168,76,0.1);
+      border-color: var(--gold);
+      box-shadow: 0 0 18px rgba(201,168,76,0.25);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    .footer-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.2);
+      margin-top: 2rem;
+      animation: subtitleFade 1s ease 1.5s both;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 540px) {
+      main { padding: 3rem 1rem 4rem; }
+      .seal-wrap { width: 85px; height: 85px; }
+      h1 { letter-spacing: 3px; }
+      .section-list { gap: 0.7rem; }
+      .btn-body { padding: 0.8rem 0.7rem 0.8rem 0.9rem; }
+      .btn-title { font-size: 0.75rem; }
     }
   </style>
 </head>
 <body>
-  <h1>Campaign 5: Buzun Mirası</h1>
-  <div class="section-container">
-    <a href="kampanyanin-hikayesi/index.html" class="section-button">Campaign 5'in Hikayesi</a>
-    <a href="yasanmis-olaylar/index.html" class="section-button">Yaşanmış Olaylar</a>
-    <a href="oyuncu-karakterleri/index.html" class="section-button">Oyuncu Karakterleri</a>
-    <a href="onemli-npcler/index.html" class="section-button">Önemli NPC'ler</a>
+<main>
+
+  <!-- ── SEAL ── -->
+  <div class="seal-wrap">
+    <div class="seal-outer">
+      <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="55" cy="55" r="52" fill="none" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="3 7" opacity="0.6"/>
+        <circle cx="55" cy="55" r="47" fill="none" stroke="#c9a84c" stroke-width="0.4" opacity="0.3"/>
+        <line x1="55" y1="3"   x2="55" y2="11"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="55" y1="99"  x2="55" y2="107" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="3"  y1="55"  x2="11" y2="55"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="99" y1="55"  x2="107" y2="55" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <polygon points="55,1 57,5 55,9 53,5"   fill="#c9a84c" opacity="0.7"/>
+        <polygon points="55,101 57,105 55,109 53,105" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="1,55 5,53 9,55 5,57"   fill="#c9a84c" opacity="0.7"/>
+        <polygon points="101,55 105,53 109,55 105,57" fill="#c9a84c" opacity="0.7"/>
+        <line x1="17" y1="17" x2="21" y2="21" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="89" y1="17" x2="93" y2="21" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="17" y1="89" x2="21" y2="93" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="89" y1="89" x2="93" y2="93" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+      </svg>
+    </div>
+    <div class="seal-inner">
+      <svg viewBox="0 0 74 74" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="37" cy="37" r="34" fill="none" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="2 9" opacity="0.4"/>
+        <polygon points="37,3 38.5,6 37,9 35.5,6"    fill="#c9a84c" opacity="0.5"/>
+        <polygon points="37,65 38.5,68 37,71 35.5,68" fill="#c9a84c" opacity="0.5"/>
+        <polygon points="3,37 6,35.5 9,37 6,38.5"    fill="#c9a84c" opacity="0.5"/>
+        <polygon points="65,37 68,35.5 71,37 68,38.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="seal-center">
+      <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <!-- Eye of the Inquisition -->
+        <ellipse cx="25" cy="25" rx="18" ry="11" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.85"/>
+        <circle cx="25" cy="25" r="5.5" fill="#c9a84c" opacity="0.9"/>
+        <circle cx="25" cy="25" r="2.5" fill="rgba(4,6,10,1)"/>
+        <!-- Upper lash -->
+        <line x1="25" y1="14" x2="25" y2="18" stroke="#c9a84c" stroke-width="1" opacity="0.6"/>
+        <!-- Lower lash -->
+        <line x1="25" y1="32" x2="25" y2="36" stroke="#c9a84c" stroke-width="1" opacity="0.6"/>
+      </svg>
+    </div>
   </div>
 
-  <a class="back-link" href="../index.html">← Geri Dön</a>
+  <!-- ── TITLE ── -->
+  <div class="archive-label">İmparatorluk Engizisyonu — Kayıtlar Arşivi</div>
+  <div class="campaign-num">Campaign V &nbsp;·&nbsp; Sınıflandırma: Açık Erişim</div>
+  <h1>Buzun Mirası</h1>
+  <div class="tagline">Kuzey'in sırları burada kayıt altına alınmıştır</div>
+
+  <!-- ── DIVIDER ── -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot"></div>
+    <div class="divider-icon">❄</div>
+    <div class="divider-dot"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="section-label">Arşiv Bölümleri</div>
+
+  <!-- ── SECTIONS ── -->
+  <nav class="section-list" aria-label="Bölümler">
+
+    <a class="section-btn" href="kampanyanin-hikayesi/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">📖</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 5'in Hikayesi</div>
+        <div class="btn-desc">Ana Anlatı ve Kronoloji</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="section-btn" href="yasanmis-olaylar/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">⚔</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Yaşanmış Olaylar</div>
+        <div class="btn-desc">Oturum Kayıtları ve Sahne Raporları</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="section-btn" href="oyuncu-karakterleri/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">🛡</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Oyuncu Karakterleri</div>
+        <div class="btn-desc">Engizisyon Takip Dosyaları</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="section-btn" href="onemli-npcler/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">👁</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Önemli NPC'ler</div>
+        <div class="btn-desc">Tanık ve Şüpheli Profilleri</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+  </nav>
+
+  <!-- ── BACK & FOOTER ── -->
+  <div class="back-wrap">
+    <a class="back-link" href="/Aiwelen-D-D-Archive/index.html">← Geri Dön</a>
+  </div>
+  <div class="footer-text">Aiwelen Arşivleri &mdash; Campaign V Dosyası</div>
+
+</main>
 </body>
 </html>
