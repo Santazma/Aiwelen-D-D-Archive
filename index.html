@@ -4,53 +4,554 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aiwelen D&D Arşivi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #6b5420;
+      --gold-glow: rgba(201,168,76,0.35);
+      --parchment: #f2e8d0;
+      --dark: #080604;
+      --red-accent: #7a1f1f;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* ── KEYFRAMES ── */
+    @keyframes pageFadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-28px) scale(0.96); letter-spacing: 14px; }
+      to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 6px; }
+    }
+    @keyframes subtitleFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes btnSlideIn {
+      from { opacity: 0; transform: translateX(-22px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px var(--gold-dim), inset 0 0 0 transparent; }
+      50%      { box-shadow: 0 0 22px var(--gold-glow), inset 0 0 8px rgba(201,168,76,0.06); }
+    }
+    @keyframes runeRotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes runeCounter {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+    @keyframes flamePulse {
+      0%,100% { opacity: 0.55; transform: scaleY(1); }
+      50%      { opacity: 0.8;  transform: scaleY(1.08); }
+    }
+    @keyframes dividerExpand {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+
+    /* ── BASE ── */
+    html, body { height: 100%; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: url('https://cdna.artstation.com/p/assets/images/images/081/683/086/large/andrej-rempel-ancient-thing.jpg?1730922224') no-repeat center center fixed;
+      font-family: 'Lora', Georgia, serif;
+      background:
+        url('https://cdna.artstation.com/p/assets/images/images/081/683/086/large/andrej-rempel-ancient-thing.jpg?1730922224')
+        no-repeat center center fixed;
       background-size: cover;
-      background-color: #111;
-      color: #fff;
-      text-align: center;
+      color: var(--parchment);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-    h1 {
-      padding: 2rem 0;
+
+    /* Multi-layer overlay for depth */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(60,30,5,0.45) 0%, transparent 60%),
+        linear-gradient(180deg,
+          rgba(4,2,1,0.88) 0%,
+          rgba(8,5,2,0.72) 35%,
+          rgba(8,5,2,0.78) 70%,
+          rgba(4,2,1,0.94) 100%
+        );
+      z-index: 0;
     }
-    .button-container {
+
+    /* Noise texture grain */
+    body::after {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
       align-items: center;
-      padding-bottom: 4rem;
+      padding: 4rem 1.5rem 5rem;
+      animation: pageFadeIn 1s ease both;
     }
-    .campaign-button {
-      background-color: #333;
-      color: white;
-      border: 2px solid #777;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      cursor: pointer;
+
+    /* ── EMBLEM ── */
+    .emblem-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 2.2rem;
+    }
+
+    /* Outer slow ring */
+    .emblem-ring-outer {
+      position: absolute; inset: 0;
+      animation: runeRotate 40s linear infinite;
+    }
+    /* Inner counter ring */
+    .emblem-ring-inner {
+      position: absolute; inset: 16px;
+      animation: runeCounter 28s linear infinite;
+    }
+
+    .emblem-ring-outer svg,
+    .emblem-ring-inner svg {
+      width: 100%; height: 100%;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px var(--gold-glow));
+    }
+
+    /* Center dragon icon */
+    .emblem-center {
+      position: absolute;
+      inset: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .emblem-center svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 10px rgba(201,168,76,0.6));
+    }
+
+    /* ── HEADER TEXT ── */
+    .world-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.5rem;
+      animation: subtitleFade 1s ease 0.3s both;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin: 0 0 0.3rem;
+      line-height: 1.1;
+      text-shadow:
+        0 0 40px rgba(201,168,76,0.55),
+        0 0 80px rgba(201,168,76,0.2),
+        3px 3px 10px rgba(0,0,0,0.95);
+      animation: titleDrop 1.4s cubic-bezier(.22,1,.36,1) 0.1s both;
+    }
+
+    .tagline {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      color: rgba(242,232,208,0.5);
+      letter-spacing: 1.5px;
+      margin-bottom: 0;
+      animation: subtitleFade 1s ease 0.5s both;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 560px;
+      margin: 2rem 0 2.6rem;
+      animation: subtitleFade 1s ease 0.6s both;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim) 50%, transparent);
+      transform-origin: center;
+      animation: dividerExpand 1.2s ease 0.7s both;
+    }
+    .divider-ornament {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--gold);
+      font-size: 0.6rem;
+    }
+    .divider-dot {
+      width: 5px; height: 5px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      box-shadow: 0 0 6px var(--gold-glow);
+    }
+    .divider-rune {
+      font-size: 1rem;
+      opacity: 0.7;
+      line-height: 1;
+    }
+
+    /* ── BUTTON LIST ── */
+    .campaign-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .campaign-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0;
       text-decoration: none;
-      border-radius: 10px;
-      width: 300px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: rgba(8,5,2,0.75);
+      border: 1px solid rgba(201,168,76,0.2);
+      transition: border-color 0.3s, transform 0.25s ease, box-shadow 0.3s;
+      animation: btnSlideIn 0.6s ease both;
+      cursor: pointer;
     }
-    .campaign-button:hover {
-      background-color: #555;
+
+    /* Stagger button animations */
+    .campaign-btn:nth-child(1) { animation-delay: 0.55s; }
+    .campaign-btn:nth-child(2) { animation-delay: 0.65s; }
+    .campaign-btn:nth-child(3) { animation-delay: 0.75s; }
+    .campaign-btn:nth-child(4) { animation-delay: 0.85s; }
+    .campaign-btn:nth-child(5) { animation-delay: 0.95s; }
+    .campaign-btn:nth-child(6) { animation-delay: 1.05s; }
+    .campaign-btn:nth-child(7) { animation-delay: 1.15s; }
+    .campaign-btn:nth-child(8) { animation-delay: 1.25s; }
+
+    .campaign-btn:hover {
+      border-color: rgba(201,168,76,0.65);
+      transform: translateX(4px);
+      box-shadow: 0 0 20px rgba(201,168,76,0.15), -3px 0 0 var(--gold);
+    }
+
+    /* Disabled / placeholder buttons */
+    .campaign-btn.disabled {
+      opacity: 0.38;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    /* Left accent bar */
+    .btn-accent {
+      width: 3px;
+      align-self: stretch;
+      background: linear-gradient(180deg, transparent, var(--gold-dim), transparent);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .campaign-btn:hover .btn-accent {
+      background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    }
+
+    /* Number badge */
+    .btn-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--gold-dim);
+      letter-spacing: 1px;
+      padding: 0 0.9rem;
+      flex-shrink: 0;
+      transition: color 0.3s;
+      user-select: none;
+    }
+    .campaign-btn:hover .btn-num { color: var(--gold); }
+
+    /* Separator */
+    .btn-sep {
+      width: 1px;
+      height: 28px;
+      background: rgba(201,168,76,0.15);
+      flex-shrink: 0;
+    }
+
+    /* Main text area */
+    .btn-body {
+      flex: 1;
+      padding: 0.95rem 1rem 0.95rem 1.1rem;
+      text-align: left;
+    }
+
+    .btn-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--parchment);
+      transition: color 0.3s;
+      line-height: 1.2;
+    }
+    .campaign-btn:hover .btn-title { color: var(--gold-bright); }
+
+    .btn-subtitle {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.72rem;
+      color: rgba(242,232,208,0.38);
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+      transition: color 0.3s;
+    }
+    .campaign-btn:hover .btn-subtitle { color: rgba(242,232,208,0.6); }
+
+    /* Right arrow */
+    .btn-arrow {
+      padding: 0 1.1rem 0 0.5rem;
+      color: rgba(201,168,76,0.25);
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      transition: color 0.3s, transform 0.25s;
+    }
+    .campaign-btn:hover .btn-arrow {
+      color: var(--gold);
+      transform: translateX(3px);
+    }
+
+    /* ── FOOTER ── */
+    .footer-divider {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; max-width: 480px;
+      margin: 2.8rem 0 1.4rem;
+      animation: subtitleFade 1s ease 1.3s both;
+    }
+    .footer-divider .divider-line {
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
+    }
+
+    .footer-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.25);
+      animation: subtitleFade 1s ease 1.4s both;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 540px) {
+      main { padding: 3rem 1rem 4rem; }
+      .emblem-wrap { width: 90px; height: 90px; }
+      h1 { letter-spacing: 3px; }
+      .campaign-list { gap: 0.7rem; }
+      .btn-body { padding: 0.8rem 0.7rem 0.8rem 0.9rem; }
+      .btn-title { font-size: 0.75rem; }
+    }
+
+    @media (max-width: 360px) {
+      h1 { font-size: 1.6rem; }
+      .btn-num { padding: 0 0.6rem; font-size: 0.56rem; }
     }
   </style>
 </head>
 <body>
-  <h1>Aiwelen D&D Campaignler</h1>
-  <div class="button-container">
-    <a href="campaigns/campaign1/index.html" class="campaign-button">Campaign 1: Carpe Diem</a>
-    <a href="#" class="campaign-button">Campaign 2</a>
-    <a href="#" class="campaign-button">Campaign 3</a>
-    <a href="#" class="campaign-button">Campaign 4</a>
-    <a href="campaigns/campaign5/index.html" class="campaign-button">Campaign 5: Buzun Mirası</a>
-    <a href="campaigns/campaign6/index.html" class="campaign-button">Campaign 6: The Dark Path</a>
-    <a href="#" class="campaign-button">One Shots & Short Campaigns</a>
-    <a href="campaigns/maps/index.html" class="campaign-button">Aiwelen Map</a>
+<main>
+
+  <!-- ── EMBLEM ── -->
+  <div class="emblem-wrap">
+    <!-- Outer rune ring -->
+    <div class="emblem-ring-outer">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="57" fill="none" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="4 6" opacity="0.6"/>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#c9a84c" stroke-width="0.4" opacity="0.3"/>
+        <!-- tick marks at cardinal & diagonal -->
+        <line x1="60" y1="3"  x2="60" y2="10" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="60" y1="110" x2="60" y2="117" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="3"  y1="60" x2="10" y2="60" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="110" y1="60" x2="117" y2="60" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <!-- diagonal ticks -->
+        <line x1="18" y1="18" x2="22" y2="22" stroke="#c9a84c" stroke-width="0.9" opacity="0.5"/>
+        <line x1="98" y1="18" x2="102" y2="22" stroke="#c9a84c" stroke-width="0.9" opacity="0.5"/>
+        <line x1="18" y1="98" x2="22" y2="102" stroke="#c9a84c" stroke-width="0.9" opacity="0.5"/>
+        <line x1="98" y1="98" x2="102" y2="102" stroke="#c9a84c" stroke-width="0.9" opacity="0.5"/>
+        <!-- small diamonds at cardinals -->
+        <polygon points="60,1 62,4 60,7 58,4" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="60,113 62,116 60,119 58,116" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="1,60 4,58 7,60 4,62" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="113,60 116,58 119,60 116,62" fill="#c9a84c" opacity="0.7"/>
+      </svg>
+    </div>
+
+    <!-- Inner counter-rotating ring -->
+    <div class="emblem-ring-inner">
+      <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="44" cy="44" r="41" fill="none" stroke="#c9a84c" stroke-width="0.6" stroke-dasharray="2 8" opacity="0.45"/>
+        <polygon points="44,3 45.5,6 44,9 42.5,6" fill="#c9a84c" opacity="0.5"/>
+        <polygon points="44,79 45.5,82 44,85 42.5,82" fill="#c9a84c" opacity="0.5"/>
+        <polygon points="3,44 6,42.5 9,44 6,45.5" fill="#c9a84c" opacity="0.5"/>
+        <polygon points="79,44 82,42.5 85,44 82,45.5" fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- Center dragon/shield emblem -->
+    <div class="emblem-center">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shield shape -->
+        <path d="M32 4 L56 14 L56 36 Q56 52 32 60 Q8 52 8 36 L8 14 Z"
+              fill="rgba(8,5,2,0.8)" stroke="#c9a84c" stroke-width="1.5" opacity="0.9"/>
+        <!-- Inner shield line -->
+        <path d="M32 9 L51 17 L51 35 Q51 48 32 55 Q13 48 13 35 L13 17 Z"
+              fill="none" stroke="#c9a84c" stroke-width="0.6" opacity="0.35"/>
+        <!-- Stylized D (for D&D) -->
+        <text x="32" y="39" text-anchor="middle"
+              font-family="Cinzel Decorative, serif" font-size="22" font-weight="900"
+              fill="#c9a84c" opacity="0.9">D</text>
+      </svg>
+    </div>
   </div>
+
+  <!-- ── TITLE ── -->
+  <div class="world-name">Aiwelen Dünyası — D&amp;D Arşivi</div>
+  <h1>Aiwelen D&amp;D</h1>
+  <div class="tagline">Aiwelen ve Oynanan Campaignler Hakkındaki Bilgileri İçerir</div>
+
+  <!-- ── DIVIDER ── -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-ornament">
+      <div class="divider-dot"></div>
+      <div class="divider-rune">⚔</div>
+      <div class="divider-dot"></div>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ── CAMPAIGN LIST ── -->
+  <nav class="campaign-list" aria-label="Campaign Listesi">
+
+    <a class="campaign-btn" href="campaigns/campaign1/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">I</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 1</div>
+        <div class="btn-subtitle">Carpe Diem</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-num">II</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 2</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-num">III</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 3</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-num">IV</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 4</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn" href="campaigns/campaign5/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">V</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 5</div>
+        <div class="btn-subtitle">Buzun Mirası</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn" href="campaigns/campaign6/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">VI</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign 6</div>
+        <div class="btn-subtitle">The Dark Path</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-num">✦</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">One Shots & Short Campaigns</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="campaign-btn" href="campaigns/maps/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">🗺</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Aiwelen Map</div>
+        <div class="btn-subtitle">Dünya Haritası</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+  </nav>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer-divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot" style="width:4px;height:4px;background:rgba(201,168,76,0.3);transform:rotate(45deg);flex-shrink:0;"></div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="footer-text">Aiwelen Dünyası — D&amp;D Arşivi</div>
+
+</main>
 </body>
 </html>
