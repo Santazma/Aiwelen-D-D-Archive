@@ -1,1 +1,875 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaign 5 — Hikaye</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #7a6030;
+      --gold-glow: rgba(201,168,76,0.35);
+      --parchment: #f2e8d0;
+      --dark: #04060a;
+      --glass: rgba(4,6,10,0.82);
+    }
 
+    *, *::before, *::after { box-sizing: border-box; }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-22px); letter-spacing: 14px; }
+      to   { opacity: 1; transform: translateY(0);     letter-spacing: 5px; }
+    }
+    @keyframes subtitleFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px var(--gold-dim); }
+      50%      { box-shadow: 0 0 22px var(--gold-glow); }
+    }
+    @keyframes sealSpin    { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+    @keyframes sealCounter { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
+    @keyframes dividerExpand {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+    @keyframes nodePopIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.88); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+    @keyframes timelineDraw {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-12px); max-height: 0; }
+      to   { opacity: 1; transform: translateY(0);     max-height: 900px; }
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.93) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes tooltipFade {
+      from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes flicker {
+      0%,100% { opacity: 0.85; } 45% { opacity: 0.65; } 55% { opacity: 0.9; }
+    }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: url('https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414')
+        no-repeat center center fixed;
+      background-size: cover;
+      color: var(--parchment);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(20,40,70,0.4) 0%, transparent 60%),
+        linear-gradient(180deg,
+          rgba(4,6,10,0.92) 0%,
+          rgba(6,10,18,0.78) 40%,
+          rgba(6,10,18,0.82) 75%,
+          rgba(4,6,10,0.96) 100%);
+      z-index: 0;
+    }
+    body::after {
+      content: "";
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.5) 100%);
+      z-index: 0; pointer-events: none;
+    }
+
+    /* ════════════════════════════════
+       PAGE LAYOUT
+    ════════════════════════════════ */
+    main {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 3.5rem 1.5rem 6rem;
+      animation: pageFadeIn 0.9s ease both;
+    }
+
+    /* ════════════════════════════════
+       SEAL
+    ════════════════════════════════ */
+    .seal-wrap {
+      position: relative; width: 100px; height: 100px;
+      margin-bottom: 1.8rem; flex-shrink: 0;
+    }
+    .seal-outer { position: absolute; inset: 0; animation: sealSpin    50s linear infinite; }
+    .seal-inner { position: absolute; inset: 17px; animation: sealCounter 32s linear infinite; }
+    .seal-outer svg, .seal-inner svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 5px var(--gold-glow));
+    }
+    .seal-center {
+      position: absolute; inset: 28px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .seal-center svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.55));
+      animation: flicker 4s ease-in-out infinite;
+    }
+
+    /* ════════════════════════════════
+       HEADER
+    ════════════════════════════════ */
+    .archive-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem; letter-spacing: 6px; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: 0.35rem;
+      animation: subtitleFade 1s ease 0.3s both;
+    }
+    .campaign-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(168,207,224,0.5); margin-bottom: 0.4rem;
+      animation: subtitleFade 1s ease 0.38s both;
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      font-weight: 900; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold-bright); margin: 0 0 0.3rem;
+      text-shadow: 0 0 40px rgba(201,168,76,0.5), 3px 3px 10px rgba(0,0,0,0.98);
+      animation: titleDrop 1.4s cubic-bezier(.22,1,.36,1) 0.1s both;
+    }
+    .tagline {
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.88rem; color: rgba(168,207,224,0.42);
+      letter-spacing: 1.5px;
+      animation: subtitleFade 1s ease 0.55s both;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%; max-width: 560px;
+      margin: 1.8rem 0 2rem;
+      animation: subtitleFade 1s ease 0.65s both;
+    }
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      animation: dividerExpand 1.2s ease 0.75s both; transform-origin: center;
+    }
+    .divider-dot  { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; box-shadow: 0 0 6px var(--gold-glow); }
+    .divider-icon { color: var(--gold); font-size: 0.85rem; opacity: 0.7; line-height: 1; }
+
+    /* ════════════════════════════════
+       STORY DROPDOWN
+    ════════════════════════════════ */
+    .story-section {
+      width: 100%; max-width: 820px;
+      margin-bottom: 3rem;
+      animation: subtitleFade 1s ease 0.85s both;
+    }
+
+    .story-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(4,6,10,0.80);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 4px;
+      padding: 0.9rem 1.3rem;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+      user-select: none;
+      gap: 12px;
+    }
+    .story-toggle:hover {
+      border-color: rgba(201,168,76,0.55);
+      background: rgba(4,6,10,0.92);
+    }
+    .story-toggle-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .story-toggle-icon {
+      font-size: 0.8rem; opacity: 0.55;
+    }
+    .story-toggle-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold-bright);
+    }
+    .story-toggle-sub {
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.7rem; color: rgba(242,232,208,0.35);
+      margin-left: 4px;
+    }
+    .story-arrow {
+      font-size: 0.75rem; color: var(--gold);
+      opacity: 0.6; transition: transform 0.35s ease, opacity 0.25s;
+      flex-shrink: 0;
+    }
+    .story-section.open .story-arrow {
+      transform: rotate(90deg); opacity: 1;
+    }
+
+    .story-body {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+      border: 1px solid transparent;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .story-section.open .story-body {
+      max-height: 1200px;
+      opacity: 1;
+      border-color: rgba(201,168,76,0.18);
+      background: rgba(4,6,10,0.78);
+    }
+
+    .story-inner {
+      padding: 1.6rem 1.8rem;
+      font-size: 0.95rem; line-height: 1.85;
+      color: rgba(242,232,208,0.78);
+      text-align: justify;
+    }
+    .story-inner h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold-dim); margin: 0 0 1rem;
+    }
+    .story-inner p { margin: 0 0 1rem; }
+    .story-inner p:last-child { margin-bottom: 0; }
+    .story-inner strong { color: var(--gold); font-style: normal; }
+
+    /* ════════════════════════════════
+       TIMELINE
+    ════════════════════════════════ */
+    .timeline-section {
+      width: 100%; max-width: 1100px;
+      animation: subtitleFade 1s ease 1s both;
+    }
+
+    .timeline-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem; letter-spacing: 5px; text-transform: uppercase;
+      color: rgba(201,168,76,0.32); text-align: center;
+      margin-bottom: 2.2rem;
+    }
+
+    .timeline-track {
+      position: relative;
+      padding: 0 40px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    /* Scrollbar */
+    .timeline-track::-webkit-scrollbar { height: 4px; }
+    .timeline-track::-webkit-scrollbar-track { background: rgba(201,168,76,0.05); border-radius: 2px; }
+    .timeline-track::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 2px; }
+
+    .timeline-inner {
+      position: relative;
+      min-width: max-content;
+      padding: 80px 20px 100px;
+      display: flex; align-items: center;
+    }
+
+    /* The golden bar */
+    .timeline-bar {
+      position: absolute;
+      top: 50%; left: 20px; right: 20px;
+      height: 2px;
+      transform: translateY(-50%);
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(201,168,76,0.3) 5%,
+        rgba(201,168,76,0.7) 20%,
+        var(--gold) 50%,
+        rgba(201,168,76,0.7) 80%,
+        rgba(201,168,76,0.3) 95%,
+        transparent 100%
+      );
+      overflow: hidden;
+    }
+    .timeline-bar::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: timelineDraw 2s ease 1.1s both;
+      transform-origin: left;
+    }
+
+    /* Nodes */
+    .nodes {
+      display: flex; align-items: center;
+      gap: 120px; position: relative; z-index: 2;
+    }
+
+    .node-wrap {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      animation: nodePopIn 0.6s ease both;
+    }
+    .node-wrap:nth-child(1) { animation-delay: 1.2s; }
+    .node-wrap:nth-child(2) { animation-delay: 1.35s; }
+    .node-wrap:nth-child(3) { animation-delay: 1.5s; }
+    .node-wrap:nth-child(4) { animation-delay: 1.65s; }
+
+    /* Alternate: odd nodes label above, even below */
+    .node-wrap:nth-child(odd)  { flex-direction: column; }
+    .node-wrap:nth-child(even) { flex-direction: column-reverse; }
+
+    .node-btn {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--dark);
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow), 0 0 0 4px rgba(201,168,76,0.08);
+      cursor: pointer; flex-shrink: 0;
+      transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+      position: relative; z-index: 3;
+    }
+    .node-btn::after {
+      content: ''; position: absolute; inset: 3px;
+      background: var(--gold); border-radius: 50%;
+      opacity: 0.6; transition: opacity 0.25s;
+    }
+    .node-wrap:hover .node-btn,
+    .node-wrap.active .node-btn {
+      transform: scale(1.35);
+      background: rgba(201,168,76,0.15);
+      box-shadow: 0 0 18px rgba(201,168,76,0.7), 0 0 0 6px rgba(201,168,76,0.15);
+    }
+    .node-wrap:hover .node-btn::after,
+    .node-wrap.active .node-btn::after { opacity: 1; }
+
+    /* Connector line from node to label */
+    .node-connector {
+      width: 1px; height: 32px;
+      background: linear-gradient(180deg, rgba(201,168,76,0.5), rgba(201,168,76,0.1));
+      flex-shrink: 0;
+    }
+    .node-wrap:nth-child(even) .node-connector {
+      background: linear-gradient(0deg, rgba(201,168,76,0.5), rgba(201,168,76,0.1));
+    }
+
+    /* Label card (visible always) */
+    .node-label {
+      background: rgba(4,6,10,0.82);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 3px;
+      padding: 0.45rem 0.7rem;
+      text-align: center; flex-shrink: 0;
+      max-width: 130px;
+      transition: border-color 0.25s;
+    }
+    .node-wrap:hover .node-label { border-color: rgba(201,168,76,0.5); }
+    .node-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(201,168,76,0.55); margin-bottom: 3px;
+    }
+    .node-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.8px;
+      color: var(--gold-bright); line-height: 1.3;
+    }
+
+    /* Tooltip on hover (small image + name) */
+    .node-tooltip {
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      background: rgba(4,6,10,0.96);
+      border: 1px solid rgba(201,168,76,0.45);
+      border-radius: 5px;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 20;
+      transition: opacity 0.22s ease;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.7);
+    }
+    .node-wrap:nth-child(even) .node-tooltip {
+      bottom: auto;
+      top: calc(100% + 14px);
+    }
+    .node-wrap:hover .node-tooltip { opacity: 1; }
+
+    .tooltip-img {
+      width: 100%; height: 100px;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.85) saturate(0.9);
+    }
+    .tooltip-body {
+      padding: 0.5rem 0.65rem 0.55rem;
+    }
+    .tooltip-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(201,168,76,0.5); margin-bottom: 3px;
+    }
+    .tooltip-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--gold-bright); line-height: 1.3;
+    }
+
+    /* ════════════════════════════════
+       MODAL
+    ════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.82);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1; pointer-events: auto;
+    }
+
+    .modal-box {
+      position: relative;
+      background: rgba(4,6,10,0.97);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 6px;
+      max-width: 860px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      display: flex; flex-direction: row;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.1) inset;
+      animation: modalIn 0.4s cubic-bezier(.22,1,.36,1) both;
+    }
+    /* Scrollbar inside modal */
+    .modal-box::-webkit-scrollbar { width: 4px; }
+    .modal-box::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 2px; }
+
+    /* Left: image column */
+    .modal-img-col {
+      flex-shrink: 0;
+      width: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-img-col img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.85) saturate(0.9);
+    }
+    /* Gold vignette overlay on image */
+    .modal-img-col::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 60%, rgba(4,6,10,0.95));
+    }
+
+    /* Right: content column */
+    .modal-content-col {
+      flex: 1;
+      padding: 2rem 2rem 2rem 1.8rem;
+      overflow-y: auto;
+    }
+
+    .modal-archive-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(201,168,76,0.35); margin-bottom: 0.6rem;
+    }
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 900; color: var(--gold-bright);
+      line-height: 1.2; margin-bottom: 0.5rem;
+      text-shadow: 0 0 20px rgba(201,168,76,0.35);
+    }
+    .modal-date-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 1.4rem;
+    }
+    .modal-date-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(201,168,76,0.45);
+    }
+    .modal-date-val {
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.82rem; color: rgba(168,207,224,0.65);
+    }
+    .modal-divider {
+      height: 1px; margin-bottom: 1.3rem;
+      background: linear-gradient(90deg, var(--gold-dim), transparent);
+    }
+    .modal-text {
+      font-size: 0.92rem; line-height: 1.85;
+      color: rgba(242,232,208,0.75);
+      text-align: justify;
+    }
+    .modal-text p { margin: 0 0 1rem; }
+    .modal-text p:last-child { margin: 0; }
+    .modal-text strong { color: var(--gold); }
+
+    /* Close button */
+    .modal-close {
+      position: absolute; top: 14px; right: 18px;
+      background: none; border: none; cursor: pointer;
+      color: rgba(201,168,76,0.45);
+      font-size: 1.4rem; line-height: 1;
+      transition: color 0.2s, transform 0.2s;
+      z-index: 5;
+    }
+    .modal-close:hover { color: var(--gold-bright); transform: scale(1.15); }
+
+    /* ════════════════════════════════
+       BACK LINK
+    ════════════════════════════════ */
+    .back-wrap {
+      margin-top: 3.5rem;
+      animation: subtitleFade 1s ease 1.7s both;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 0.6rem 1.5rem; border-radius: 4px;
+      background: rgba(4,6,10,0.75);
+      transition: all 0.25s ease;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: rgba(201,168,76,0.1); border-color: var(--gold);
+      box-shadow: 0 0 18px rgba(201,168,76,0.25); transform: translateY(-2px);
+    }
+
+    .footer-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(201,168,76,0.18); margin-top: 1.8rem;
+      animation: subtitleFade 1s ease 1.9s both;
+    }
+
+    /* ════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════ */
+    @media (max-width: 700px) {
+      .modal-box { flex-direction: column; }
+      .modal-img-col { width: 100%; height: 200px; }
+      .modal-img-col::after {
+        background: linear-gradient(180deg, transparent 50%, rgba(4,6,10,0.95));
+      }
+      .modal-content-col { padding: 1.4rem; }
+    }
+    @media (max-width: 540px) {
+      main { padding: 2.5rem 1rem 5rem; }
+      .seal-wrap { width: 80px; height: 80px; }
+      h1 { letter-spacing: 3px; }
+      .nodes { gap: 80px; }
+      .story-inner { padding: 1.2rem; font-size: 0.88rem; }
+    }
+  </style>
+</head>
+<body>
+<main>
+
+  <!-- ── SEAL ── -->
+  <div class="seal-wrap">
+    <div class="seal-outer">
+      <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="55" cy="55" r="52" fill="none" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="3 7" opacity="0.6"/>
+        <circle cx="55" cy="55" r="47" fill="none" stroke="#c9a84c" stroke-width="0.4" opacity="0.3"/>
+        <line x1="55" y1="3"   x2="55" y2="11"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="55" y1="99"  x2="55" y2="107" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="3"  y1="55"  x2="11" y2="55"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="99" y1="55"  x2="107" y2="55" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <polygon points="55,1 57,5 55,9 53,5"        fill="#c9a84c" opacity="0.7"/>
+        <polygon points="55,101 57,105 55,109 53,105" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="1,55 5,53 9,55 5,57"         fill="#c9a84c" opacity="0.7"/>
+        <polygon points="101,55 105,53 109,55 105,57" fill="#c9a84c" opacity="0.7"/>
+      </svg>
+    </div>
+    <div class="seal-inner">
+      <svg viewBox="0 0 74 74" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="37" cy="37" r="34" fill="none" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="2 9" opacity="0.4"/>
+        <polygon points="37,3 38.5,6 37,9 35.5,6"     fill="#c9a84c" opacity="0.5"/>
+        <polygon points="37,65 38.5,68 37,71 35.5,68"  fill="#c9a84c" opacity="0.5"/>
+        <polygon points="3,37 6,35.5 9,37 6,38.5"      fill="#c9a84c" opacity="0.5"/>
+        <polygon points="65,37 68,35.5 71,37 68,38.5"  fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="seal-center">
+      <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="25" cy="25" rx="18" ry="11" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.85"/>
+        <circle cx="25" cy="25" r="5.5" fill="#c9a84c" opacity="0.9"/>
+        <circle cx="25" cy="25" r="2.5" fill="rgba(4,6,10,1)"/>
+        <line x1="25" y1="14" x2="25" y2="18" stroke="#c9a84c" stroke-width="1" opacity="0.6"/>
+        <line x1="25" y1="32" x2="25" y2="36" stroke="#c9a84c" stroke-width="1" opacity="0.6"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <div class="archive-label">İmparatorluk Engizisyonu — Kayıtlar Arşivi</div>
+  <div class="campaign-num">Campaign V &nbsp;·&nbsp; Kronoloji Dosyası</div>
+  <h1>Campaign'in Hikayesi</h1>
+  <div class="tagline">Buzun Mirası — Kronolojik Arşiv Kaydı</div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot"></div>
+    <div class="divider-icon">❄</div>
+    <div class="divider-dot"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STORY DROPDOWN
+  ════════════════════════════════ -->
+  <div class="story-section" id="storySection">
+    <div class="story-toggle" onclick="toggleStory()">
+      <div class="story-toggle-left">
+        <span class="story-toggle-icon">📜</span>
+        <span class="story-toggle-title">Genel Hikaye Özeti</span>
+        <span class="story-toggle-sub">— Arşiv Girişi</span>
+      </div>
+      <span class="story-arrow">›</span>
+    </div>
+    <div class="story-body" id="storyBody">
+      <div class="story-inner">
+        <h3>Engizisyon Arşivi · Campaign V Özet Kaydı</h3>
+        <p>
+          <strong>[Olaylar Nasıl Başladı.]</strong> Campaign'in ilk oturumundan itibaren
+          grubun nasıl bir araya geldiği, hangi amaçla Kuzey'e yöneldikleri ve yolculuklarının
+          nasıl başladığı bu kısımda anlatılacak.
+        </p>
+        <p>
+          <strong>[Yolculuk Sırasında Yaşananlar.]</strong> Yolculuk sırasında karşılaşılan önemli NPC'ler, alınan
+          kararlar, yaşanan kayıplar ve kazanımlar bu paragrafta özetlenecek. Engizisyon'un
+          grubun faaliyetlerini nasıl takip ettiği de burada yer alabilir.
+        </p>
+        <p>
+          <strong>[Güncel Olaylar ve Sonuç.]</strong> En son oturumda grubun içinde bulunduğu durum,
+          bekleyen tehditler ve çözüme kavuşmamış çatışmalar burada özetlenecek.
+          Bu kısım her yeni oturumdan sonra güncellenebilir.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TIMELINE
+  ════════════════════════════════ -->
+  <section class="timeline-section">
+    <div class="timeline-label">Kronolojik Zaman Çizelgesi — Olaylar</div>
+
+    <div class="timeline-track">
+      <div class="timeline-inner">
+        <div class="timeline-bar"></div>
+
+        <div class="nodes">
+
+          <!-- NODE 1 -->
+          <div class="node-wrap" onclick="openModal(0)">
+            <div class="node-label">
+              <div class="node-date">Z.G.S. 26 · Birlik 3</div>
+              <div class="node-name">Kuzey Kapısı'nda Buluşma</div>
+            </div>
+            <div class="node-connector"></div>
+            <div class="node-btn"></div>
+            <!-- Tooltip -->
+            <div class="node-tooltip">
+              <img src="https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414"
+                   alt="Kuzey Kapısı" class="tooltip-img">
+              <div class="tooltip-body">
+                <div class="tooltip-date">Z.G.S. 26 · Birlik 3</div>
+                <div class="tooltip-name">Kuzey Kapısı'nda Buluşma</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NODE 2 -->
+          <div class="node-wrap" onclick="openModal(1)">
+            <div class="node-btn"></div>
+            <div class="node-connector"></div>
+            <div class="node-label">
+              <div class="node-date">Z.G.S. 26 · Birlik 12</div>
+              <div class="node-name">Sessiz Uçurum Baskını</div>
+            </div>
+            <!-- Tooltip (below for even) -->
+            <div class="node-tooltip">
+              <img src="https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414"
+                   alt="Sessiz Uçurum" class="tooltip-img">
+              <div class="tooltip-body">
+                <div class="tooltip-date">Z.G.S. 26 · Birlik 12</div>
+                <div class="tooltip-name">Sessiz Uçurum Baskını</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NODE 3 -->
+          <div class="node-wrap" onclick="openModal(2)">
+            <div class="node-label">
+              <div class="node-date">Z.G.S. 26 · Nova 1</div>
+              <div class="node-name">Parçalanan Ay Gecesi</div>
+            </div>
+            <div class="node-connector"></div>
+            <div class="node-btn"></div>
+            <div class="node-tooltip">
+              <img src="https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414"
+                   alt="Parçalanan Ay" class="tooltip-img">
+              <div class="tooltip-body">
+                <div class="tooltip-date">Z.G.S. 26 · Nova 1</div>
+                <div class="tooltip-name">Parçalanan Ay Gecesi</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NODE 4 -->
+          <div class="node-wrap" onclick="openModal(3)">
+            <div class="node-btn"></div>
+            <div class="node-connector"></div>
+            <div class="node-label">
+              <div class="node-date">Z.G.S. 26 · Nova 24</div>
+              <div class="node-name">Şapel Kaçışı</div>
+            </div>
+            <div class="node-tooltip">
+              <img src="https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414"
+                   alt="Şapel Kaçışı" class="tooltip-img">
+              <div class="tooltip-body">
+                <div class="tooltip-date">Z.G.S. 26 · Nova 24</div>
+                <div class="tooltip-name">Şapel Kaçışı</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.nodes -->
+      </div><!-- /.timeline-inner -->
+    </div><!-- /.timeline-track -->
+  </section>
+
+  <!-- ── BACK ── -->
+  <div class="back-wrap">
+    <a class="back-link" href="/Aiwelen-D-D-Archive/campaigns/campaign5/index.html">← Geri Dön</a>
+  </div>
+  <div class="footer-text">Aiwelen Arşivleri — Campaign V Kronik Dosyası</div>
+
+</main>
+
+<!-- ════════════════════════════════
+     MODAL
+════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div class="modal-img-col">
+      <img id="modalImg" src="" alt="">
+    </div>
+
+    <div class="modal-content-col">
+      <div class="modal-archive-tag">Engizisyon Arşivi — Olay Kaydı</div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-date-row">
+        <span class="modal-date-label">Tarih:</span>
+        <span class="modal-date-val" id="modalDate"></span>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-text" id="modalText"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Story toggle ── */
+  function toggleStory() {
+    const sec = document.getElementById('storySection');
+    sec.classList.toggle('open');
+  }
+
+  /* ── Modal data ── */
+  const events = [
+    {
+      title: "Kuzey Kapısı'nda Buluşma",
+      date: "Z.G.S. 26, Birlik Ayı 3. Günü",
+      img: "https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414",
+      text: `<p><strong>[Burada olayın detaylı anlatımı yazılacak.]</strong> Grup ilk kez bu noktada bir araya geldi. Kuzey sınırında, karlı bir geçitte beklenmedik koşullar altında tanıştılar. Bu sahne, campaign'in tonunu belirleyen ilk büyük karşılaşmaydı.</p>
+             <p><strong>[Gelişmeler.]</strong> Toplantının ardından grup bir karar vermek zorunda kaldı. Bu kararın ilerleyen olaylar üzerindeki etkisi henüz tam olarak anlaşılamamıştır. Engizisyon bu buluşmanın farkında değildi.</p>
+             <p><strong>[Sonuç.]</strong> Oturumun sonunda grup kuzeye doğru ilerleme kararı aldı. Bu an, Buzun Mirası hikayesinin başlangıç noktası olarak kayıt altına alınmıştır.</p>`
+    },
+    {
+      title: "Sessiz Uçurum Baskını",
+      date: "Z.G.S. 26, Birlik Ayı 12. Günü",
+      img: "https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414",
+      text: `<p><strong>[Burada olayın detaylı anlatımı yazılacak.]</strong> Sessiz Uçurum garnizonunda bir gece yarısı baskını yaşandı. Diplomatlar rehin alındı, birlik dağıtıldı. Thane Castellan bu baskında kritik bir rol oynadı.</p>
+             <p><strong>[Gelişmeler.]</strong> Çatışma sırasında Cecilia ve Thane ilk kez iş birliği yaptı. Kabilenin önemli bir lideri hayatını kaybetti; bu kayıp isyan dengesini değiştirdi.</p>
+             <p><strong>[Sonuç.]</strong> Hayatta kalanlar yalnızca Thane ve Cecilia oldu. Bu olay, her ikisinin de kaderini kalıcı olarak şekillendirdi ve ilerleyen olayların zeminini hazırladı.</p>`
+    },
+    {
+      title: "Parçalanan Ay Gecesi",
+      date: "Z.G.S. 26, Nova Ayı 1. Günü",
+      img: "https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414",
+      text: `<p><strong>[Burada olayın detaylı anlatımı yazılacak.]</strong> Ay gökyüzünde parçalandı. Işık yağmuru olağandışı bir geceyi işaret ediyordu. Üç kurt adam, Cecilia ve Thane'e saldırdı.</p>
+             <p><strong>[Gelişmeler.]</strong> Savaş kısa ama şiddetli geçti. Her ikisi de ağır yaralandı. Mağaraya sığınarak yaraları sardılar. O gece aralarındaki mesafe ilk kez önemli ölçüde kapandı.</p>
+             <p><strong>[Sonuç.]</strong> Parçalanan ayın anlamı henüz bilinmiyor. Engizisyon'un bazı üyeleri bu olayın Aydınlık Olan ile bağlantılı olduğunu ileri sürmektedir.</p>`
+    },
+    {
+      title: "Şapel Kaçışı",
+      date: "Z.G.S. 26, Nova Ayı 24. Günü",
+      img: "https://cdnb.artstation.com/p/assets/images/images/029/919/021/large/alessio-pontolillo-test3-snow.jpg?1599039414",
+      text: `<p><strong>[Burada olayın detaylı anlatımı yazılacak.]</strong> Cecilia için yakalama emri çıkarıldı. Thane, Neabaz ile yaptığı anlaşmanın ardından Cecilia'nın saklandığı harabe şapele ulaştı.</p>
+             <p><strong>[Gelişmeler.]</strong> Şapelde bir Engizisyon suikastçısıyla karşılaşıldı. Thane, sol gözünü kırparak Cecilia'ya işaret verdi ve suikastçıyı bertaraf etti. Neabaz anlaşmasının ilk ritüeli burada gerçekleşti.</p>
+             <p><strong>[Sonuç.]</strong> İkili Frosty Passage yakınlarına ışınlandı. Artık her ikisi de Engizisyon tarafından aranan kaçak konumundaydı. Kuzey yolculukları resmen başlamıştı.</p>`
+    }
+  ];
+
+  /* ── Modal ── */
+  function openModal(idx) {
+    const ev = events[idx];
+    document.getElementById('modalImg').src   = ev.img;
+    document.getElementById('modalImg').alt   = ev.title;
+    document.getElementById('modalTitle').textContent = ev.title;
+    document.getElementById('modalDate').textContent  = ev.date;
+    document.getElementById('modalText').innerHTML    = ev.text;
+
+    const overlay = document.getElementById('modalOverlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>
