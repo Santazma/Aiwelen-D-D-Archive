@@ -121,7 +121,6 @@
     .timeline-section{width:100%;max-width:1400px;animation:subtitleFade 1s ease 1s both}
     .timeline-label{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:5px;text-transform:uppercase;color:rgba(201,168,76,0.38);text-align:center;margin-bottom:2.4rem}
 
-    /* Scrollbar — tall + draggable */
     .timeline-track{
       position:relative;
       padding:0 60px 260px;
@@ -147,30 +146,20 @@
       background-clip:content-box;
     }
 
-    /*
-      KEY FIX for nodes on bar:
-      - .timeline-inner uses padding-top=120px for label space
-      - bar is absolutely positioned at top:120px
-      - .nodes uses align-items:center so node-wraps center on the bar
-      - each node-wrap: label (absolute, above btn) + connector (absolute, above btn) + btn (inline, centered on bar)
-      Strategy: node-wrap height = btn height only (24px).
-                label + connector float above via negative margin / absolute positioning.
-    */
     .timeline-inner{
       position:relative;
       min-width:max-content;
       padding:120px 40px 0;
       display:flex;
-      align-items:center; /* centers the 24px btn on the bar */
+      align-items:center;
     }
 
-    /* Bar at the same level as the nodes' vertical center */
     .timeline-bar{
       position:absolute;
-      top:120px; /* = padding-top, center of 24px btn lands here */
+      top:120px;
       left:40px;right:40px;
       height:3px;
-      transform:translateY(-50%); /* center bar on node-btn center */
+      transform:translateY(-50%);
       background:linear-gradient(90deg,
         transparent 0%,rgba(201,168,76,0.25) 4%,rgba(201,168,76,0.7) 18%,
         var(--gold) 50%,
@@ -180,17 +169,15 @@
 
     .nodes{
       display:flex;
-      align-items:center; /* all btns on same horizontal axis = the bar */
+      align-items:center;
       gap:100px;
       position:relative;z-index:2;
     }
 
-    /* node-wrap: only as tall as the btn (24px).
-       label + connector are positioned absolutely above the btn. */
     .node-wrap{
       position:relative;
       width:130px;
-      height:24px; /* exactly btn height — sits centered on bar */
+      height:24px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -200,10 +187,9 @@
     }
     .node-wrap:hover{ z-index:200; }
 
-    /* Label — floats above, absolutely positioned */
     .node-label{
       position:absolute;
-      bottom:calc(100% + 36px + 4px); /* above connector (36px) + gap */
+      bottom:calc(100% + 36px + 4px);
       left:50%;
       transform:translateX(-50%);
       background:rgba(4,6,10,0.88);
@@ -221,10 +207,9 @@
     .node-date{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(201,168,76,0.58);margin-bottom:3px}
     .node-name{font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.6px;color:var(--gold-bright);line-height:1.3}
 
-    /* Connector — vertical line from label bottom to btn top */
     .node-connector{
       position:absolute;
-      bottom:100%; /* starts at top of btn */
+      bottom:100%;
       left:50%;
       transform:translateX(-50%);
       width:1.5px;
@@ -233,7 +218,6 @@
       z-index:2;
     }
 
-    /* Btn — sits inline, centered on bar */
     .node-btn{
       width:24px;height:24px;border-radius:50%;
       background:var(--dark);
@@ -246,10 +230,9 @@
     .node-wrap:hover .node-btn{transform:scale(1.45);background:rgba(201,168,76,0.18);box-shadow:0 0 22px rgba(201,168,76,0.75),0 0 0 6px rgba(201,168,76,0.18);}
     .node-wrap:hover .node-btn::after{opacity:1}
 
-    /* Tooltip — anchored below btn center */
     .node-tooltip{
       position:absolute;
-      top:100%; /* below btn */
+      top:100%;
       left:50%;
       transform:translateX(-50%);
       pointer-events:none;
@@ -261,9 +244,10 @@
     .node-wrap:hover .node-tooltip{opacity:1;animation:tooltipIn .18s ease both;}
     .stem-svg{position:absolute;top:0;left:0;overflow:visible;display:block;}
 
+    /* ── FIX 1: Tooltip card wider, image taller + top-aligned ── */
     .tooltip-card{
       position:absolute;
-      top:calc(45px - 95px); /* card center (190/2=95) aligns to arm end */
+      top:calc(45px - 95px);
       width:240px;
       background:rgba(4,6,10,0.97);
       border:1px solid rgba(201,168,76,0.5);
@@ -272,25 +256,28 @@
       box-shadow:0 8px 28px rgba(0,0,0,0.8);
       z-index:501;
     }
-    /* Default: arm goes right → card to the right of arm end */
     .node-wrap.tip-right .tooltip-card{ left:49px; }
-    /* Flipped: arm goes left → card to the left of arm end */
     .node-wrap.tip-left  .tooltip-card{ right:49px; }
 
-    /* SVG arm — right version already in HTML (x2=45);
-       left version mirrors it: line goes from (0,0)→(0,45) then (-45,45) */
+    /* ── FIX 2: Tooltip image taller + object-position top so faces show ── */
     .tooltip-img{width:100%;height:140px;object-fit:cover;object-position:center top;display:block;filter:brightness(.88) saturate(.9)}
     .tooltip-body{padding:.5rem .7rem .6rem}
     .tooltip-date{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin-bottom:3px}
     .tooltip-name{font-family:'Cinzel',serif;font-size:.67rem;font-weight:700;color:var(--gold-bright);line-height:1.3}
+
     .modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .35s ease;}
     .modal-overlay.open{opacity:1;pointer-events:auto}
+
+    /* ── FIX 3: Modal box wider, image column wider ── */
     .modal-box{position:relative;background:rgba(4,6,10,.97);border:1px solid rgba(201,168,76,.32);border-radius:6px;max-width:1020px;width:100%;max-height:88vh;overflow-y:auto;display:flex;flex-direction:row;box-shadow:0 0 60px rgba(0,0,0,.8),0 0 0 1px rgba(201,168,76,.1) inset;animation:modalIn .4s cubic-bezier(.22,1,.36,1) both;}
     .modal-box::-webkit-scrollbar{width:4px}
     .modal-box::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:2px}
+
+    /* ── FIX 4: Modal image column 300→380px, top-aligned ── */
     .modal-img-col{flex-shrink:0;width:380px;position:relative;overflow:hidden}
     .modal-img-col img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:brightness(.88) saturate(.9)}
     .modal-img-col::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 60%,rgba(4,6,10,.95))}
+
     .modal-content-col{flex:1;padding:2rem 2rem 2rem 1.8rem;overflow-y:auto}
     .modal-archive-tag{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:rgba(201,168,76,.35);margin-bottom:.6rem}
     .modal-title{font-family:'Cinzel',serif;font-size:clamp(1rem,3vw,1.6rem);font-weight:900;color:var(--gold-bright);line-height:1.2;margin-bottom:.5rem;text-shadow:0 0 20px rgba(201,168,76,.35)}
@@ -449,73 +436,73 @@ function toggleStory() {
 const events = [
   {
     title:"Hikayenin Başlangıcı, Neryssa'nın Sürgün Edilmesi",
-    date:"— Tarih —", img:"img/node-001.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Neryssa Snow, Beyaz Şehir Engizisyonu tarafından yargılanarak kuzey sınırına sürgün edildi.</p>
-          <p><strong>[Gelişmeler.]</strong> Suçlama belgesi mühürlendi; Neryssa'ya itiraz hakkı tanınmadı ve aynı gece yola çıkması emredildi.</p>
-          <p><strong>[Sonuç.]</strong> Sürgün kararı Neryssa'yı kuzey yoluna düşürdü ve ilerleyen olayların fitilini ateşledi.</p>`
+    date:"— Tarih —", img:"img/Neryssa Snow.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Hikaye, Neryssa Glacefyre adındaki Kuzeyli asilin, işlediği iffetsizlik suçundan ötürü kendi halkı tarafından yargılanarak, Beyaz Şehir Engizisyonu'nun manipülasyonu neticesiyle kuzey sınırından sürgün edilmesiyle başlıyordur.</p>
+          <p><strong>[Gelişmeler.]</strong> Engizisyon'un müdahaleleri ile hazırlanan suçlama belgesinin mühürlenmesi ile birlikte Neryssa'ya itiraz hakkı tanınmadı ve aynı gece yola çıkması emredildi.</p>
+          <p><strong>[Sonuç.]</strong> Sürgün kararı Neryssa'yı depresyona soktu ve bir yandan hayata karşı küsmesine sebep oldu, fakat onun hayata tutunabileceğini gösteren yeni dostlar ile tanışmasına vesile oldu.</p>`
   },
   {
     title:"Maceracıların Bir Araya Toplanması",
-    date:"— Tarih —", img:"img/node-002.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Birbirinden farklı amaçlarla kuzey yolunda ilerleyen yabancılar, Wolf's Inn'de aynı çatı altında kesişti.</p>
-          <p><strong>[Gelişmeler.]</strong> Kısa bir değerlendirmenin ardından grup, ortak bir tehdidin varlığını fark ederek hareket etmeye karar verdi.</p>
-          <p><strong>[Sonuç.]</strong> Resmi bir yemin olmaksızın kurulan bu birliktelik, Son Kıvılcım'ın temelini attı.</p>`
+    date:"— Tarih —", img:"img/Orv Bezmadan Parlakçekiç.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Kurt İni'nde birbirinden farklı sebepler doğrultusunda aynı noktada bulunan yabancılar, Neryssa'nın yargılanmasını gördüler ve zaman içerisinde yolları aynı çatı altında kesişti.</p>
+          <p><strong>[Gelişmeler.]</strong> Bu maceranın kahramanları olan Zephyr, Orv Bezmadan ve Exodus, Neryssa ile tanıştıktan sonra onu Orv'un Demirci Dükkanı'na getirdiler ve yaşanan olayları onun ağzından dinlediler.</p>
+          <p><strong>[Sonuç.]</strong> Resmi bir yemin olmaksızın, maceracılar Neryssa'nın sözüne güvenmeyi seçtiler ve onun sürgününü, kendileri için Kuzey'de ulaşmak istedikleri bireysel amaçları doğrultusunda yürüyebilmek adına birer fırsata çevirdiler ve Neryssa'nın da aynı zamanda annesini aramasına yardımcı olmayı kabul ettiler.</p>`
   },
   {
     title:"Orv'un Demirci Dükkanında Engizisyoncu Baskını",
-    date:"— Tarih —", img:"img/node-003.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Engizisyon muhafızları, Orv'un dükkanında arama yapma bahanesiyle içeri girdi.</p>
-          <p><strong>[Gelişmeler.]</strong> Orv, dükkanını korumak için direndi; grup ilk kez birlikte bir çatışmayı göğüsledi.</p>
-          <p><strong>[Sonuç.]</strong> Baskın, grubun Engizisyon'un hedefinde olduğunu açıkça ortaya koydu.</p>`
+    date:"— Tarih —", img:"img/Orv Demirci Dükkanı.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Neryssa'nın sürgün kararının açıklanmasının ardından belirli bir sürenin geçmesi ile birlikte Engizisyon Birlikleri, Neryssa'yı işlediği bir savaş suçundan ve bir asili öldürmesinden mütevellit aramaya başlamışlardı.</p>
+          <p><strong>[Gelişmeler.]</strong> Bu arayış neticesinde Kurt İni'nde adını yapmış iyi bilinen bir demirci olan Orv'un kapısına kadar geldiler. Bu noktada Orv ve diğerleri Neryssa'yı Engizisyoncular'dan saklıyorlardı.</p>
+          <p><strong>[Sonuç.]</strong> Engizisyon baskını olaysız sonuçlansa ve Engisizyoncular Neryssa'yı bulamasalar da, bu baskın oldukça gergin bir ortam yaratmıştı. Engizisyon'un hedefi açık bir biçimde Neryssa'ydı ve grup bu duruma birincil elden şahit olmuştu. Bu baskın, grubun da Neryssa'yı korumaya devam etmesi halinde, Engizisyon'un hedefinde olacağını açıkça ortaya koymuştu. Fakat Neryssa'nın yeni dostları onu satmadı, aksine Engizisyon'a karşı Neryssa ile birlikte bir cephe aldılar.</p>`
   },
   {
     title:"Kurt İni'nden Ayrılış",
-    date:"— Tarih —", img:"img/node-004.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Grup, güvenli buldukları sığınak olan Kurt İni'ni terk etmek zorunda kaldı.</p>
-          <p><strong>[Gelişmeler.]</strong> Ayrılış sırasında bazı kişisel eşyalar ve bilgiler geride bırakıldı; herkes farklı bir yük taşıyarak yola çıktı.</p>
-          <p><strong>[Sonuç.]</strong> Kurt İni, grubun ilk ortak anılarını barındıran yer olarak hafızalara kazındı.</p>`
+    date:"— Tarih —", img:"img/Exodus.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Engizisyon'un baskısı ve aktif arayışını sürdürmesi sebebiyle grup artık Kurt İni'nin onlar için güvenli bir sığınak olmadığını anladı ve şehri terk etme kararı aldı.</p>
+          <p><strong>[Gelişmeler.]</strong> Şehri terk ederlerken Neryssa'nın çocukluk arkadaşlarından biri olan Orm, Neryssa'nın yeni edindiği dostlara güvenerek onların şehirden kaçmasına yardım etti. Neryssa ve grup şehirden kaçarken, Kuzey topraklarının bile İmparatorluk Engizisyonu'ndan korktuğunu gözlemledi, fakat şehirde hala Engizisyon'un yolunu benimsemeyen vatanseverlerin de olduğunu gözlemlediler.</p>
+          <p><strong>[Sonuç.]</strong> Grup başarılı bir şekilde sorunsuzca şehirden çıkmayı başardı. Gruptaki kişiler birbirine kaynamşa konusunda sorun çekmese de, Orv'un Exodus hakkında kendinden emin olamadığı düşünceleri ilk bu kısımda baş göstermeye başladı. Gerek şehirden kaçma konusunda yaşadıkları tartışma olsun, gerek Exodus'tan hissettiği garip uhrevi aura olsun, gerek de Exodus'un hikayesinin ve motivasyonlarının tutarsız olduğunu düşünmesi, Orv'un Exodus'a karşı bir önyargı geliştirmesine sebep oldu.</p>`
   },
   {
-    title:"Peder Marcus ve Şapel",
-    date:"— Tarih —", img:"img/node-005.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Grup, kuzey yolunda küçük bir köyün harap şapelinde Peder Marcus ile karşılaştı.</p>
-          <p><strong>[Gelişmeler.]</strong> Marcus, Engizisyon'un bölgedeki hareketleri hakkında kritik bilgiler paylaştı ve gruba yol gösterdi.</p>
-          <p><strong>[Sonuç.]</strong> Şapeldeki bu mola, grubun stratejisini şekillendiren ilk istihbarat toplantısı oldu.</p>`
+    title:"Peder Magnus ve Şapel",
+    date:"— Tarih —", img:"img/Peder Magnus.jpeg",
+    text:`<p><strong>[Başlangıç.]</strong> Grup birlikte günler boyunca kışın ayazında hareket etti. Grubun ilk güzergahı, Kurt İni'nin yakınlarındaki köy şeklinde olan yapılanmalar oldu. Kurt İni'nin yakınlarındaki yerleşkelerde kendilerine geçici olarak kalabilecekleri bir yer ararken, burada görmeyi beklemedikleri Peder Magnus adında bir din adamı ile tanıştılar.</p>
+          <p><strong>[Gelişmeler.]</strong> Peder Magnus ile Neryssa'nın tanışması önce bir tesadüf gibi gözüktü, Neryssa yolda yürürken Magnus'a çarptı. Fakat çarptığı noktada Neryssa fark etti ki, Peder ne kadar yaşlı olsa da, Peder'in vücudunun sımsıkı kas yapısını hissetmesi, onun sıradan biri olmadığını düşünmesini sağladı. Peder ile yaşadıkları bu karşılaşmanın ardının geleceğini bilmiyorlardı, fakat grubun öğrendiği şey bu Kuzey yerleşkesinde bir Şapel'in olduğuydu. Daha sonrasında grup bu Şapel'i ziyaret ederek, Peder hakkında yeni şeyler öğrendiler.</p>
+          <p><strong>[Sonuç.]</strong> Şapel'de Ölüm Rahipleri'ni görmeleriyle birlikte bu yapının burada olmaması gerektiğinin farkına vardılar. Fakat beklediklerinin aksine, İmparatorluk rahipleri olan bu adamlar, aslında Engizisyon'un bütün olarak bir parçası değillerdi ve neticede Neryssa'ya ve gruba yardım ettiler. Magnus Orv ile bazı şeyleri konuştuktan sonra onlara Kuzey'in yabanında yollarını bulabilecekleri bir harita verdi ve onlara Ölüm Rahipleri'nin onlar için bir düşman olmadığını gösterdi.</p>`
   },
   {
     title:"Sorguya Çekilen Haydut",
-    date:"— Tarih —", img:"img/node-006.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Grup, yolda yakaladıkları silahlı bir haydutla karşılaştı ve onu sorgulamak için fırsat buldu.</p>
-          <p><strong>[Gelişmeler.]</strong> Haydut, baskı altında bölgedeki karanlık bir örgütün varlığına dair ipuçları verdi.</p>
-          <p><strong>[Sonuç.]</strong> Elde edilen bilgiler, grubun rotasını yeniden değerlendirmesine neden oldu.</p>`
+    date:"— Tarih —", img:"img/Druuthtikmorash Zephyr Kilbarum.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Orv'un burada tanıştığı ve çabucak kanının ısındığı tavernacı cüce Barindras'ın tavernasının yakınlarında, Şapel'e gidilen yol doğrultusunda grup beklenmeyen bir haydut baskınına mağruz kaldı. Gece vaktini kendilerine avantaj bilen haydutlar, izole olmuş grup üyelerini gafil avlamak istediler.</p>
+          <p><strong>[Gelişmeler.]</strong> Fakat işler haydutların istediği gibi gitmedi. Özellikle Zephyr bir düzenbaz olarak yetiştirildiği için bu haydutların ne gibi numaralar kullanabileceğini biliyordu ve onların planına engel oldu ve birçoğunu grubun da gözleri önünde vahşice katletti. Aralarından bir tanesini ise grup hayatta bırakmayı tercih etti ve sorguya çekmek istedi.</p>
+          <p><strong>[Sonuç.]</strong> Haydut'a uyguladıkları sorgu pek iyi gitmese de, haydut kendi liderleri olan Kroddok'un ismini gruba verdi, fakat kısa bir süre sonra kalp krizi geçirerek işkenceye dayanamayarak hayatını kaybetti. Bu sorgu Barindras'ın tavernasında gerçekleşmişti ve tavernada işkence ile birinin ölmesi ve Engizisyon'un aradığı kaçaklarını birilerini öldürmesi, Barindras'ı zor bir duruma sokmuştu. Orv ve Zephyr ceset ile işlerini hallettikten sonra Barindras onlardan gitmelerini ve buradan uzaklaşmalarını istedi. Ertesi günün sabahına ise grup yerleşkeyi terk etti ve Kuzey'in karlı ve vahşi topraklarında tekrardan yola koyuldu.</p>`
   },
   {
     title:"Dun-Morak Adındaki Harabe",
-    date:"— Tarih —", img:"img/node-007.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Haritada işaretli Dun-Morak harabesine ulaşan grup, buranın beklenenden çok daha tehlikeli olduğunu fark etti.</p>
-          <p><strong>[Gelişmeler.]</strong> Harabe içinde eski bir uygarlığa ait kalıntılar ve tuzaklar keşfedildi.</p>
-          <p><strong>[Sonuç.]</strong> Dun-Morak, grubun ilk büyük keşif deneyimini ve ilk ortak kayıplarını yaşadığı yer oldu.</p>`
+    date:"— Tarih —", img:"img/Dun Morak Girişi.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Grup Kurt İni sınırlarından çıkmak için Kurt İni Gözetleme Kuleleri'ne doğru ilerlerken işlek yolları kullanmıyor, kendini daha da yabana atıyordu. Bu sebepten ötürü bir kar fırtınası esnasında bir harabeye dönmüş Dun-Morak adında eski bir cüce tapınağı keşfettiler.</p>
+          <p><strong>[Gelişmeler.]</strong> Yıllar yıllar öncesinde harap olduğunu varsaydıkları bu tapınak içerisinde Ejderha heykelleri, Cüce kalıntıları ve terk edilmiş sandıklar buluyorlar. Burayı araştırdıkça buranın aslında eski bir kütüphane olduğunu keşfediyor grup.</p>
+          <p><strong>[Sonuç.]</strong> Zaman içerisinde araştırmaya devam etmeleri ile birlikte yeni bulgular edinince, Orv bu tapınak hakkında ve Dun-Morak tarikatı hakkında bazı bilgileri anımsayarak hatırlıyor. Bunun sonucunda bu harabeleri daha detaylı araştırmaları ile birlikte gizli bir oda buluyorlar. Odada sönmeyen mumlar ile karşılaşıyorlar fakat herhangi bir büyü veya ritüel denemiyorlar.</p>`
   },
   {
     title:"Dun-Morak'taki Habis Geçit",
-    date:"— Tarih —", img:"img/node-008.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Harabe derinliklerinde karanlık enerjilerle kaplı gizli bir geçit ortaya çıktı.</p>
-          <p><strong>[Gelişmeler.]</strong> Geçitten yayılan bozulmuş büyü, grup üyelerini geçici olarak etkiledi ve bazıları garip vizyonlar gördü.</p>
-          <p><strong>[Sonuç.]</strong> Geçit mühürlendi; ancak bıraktığı izler uzun süre grubun gündeminde kalmaya devam etti.</p>`
+    date:"— Tarih —", img:"img/Dun Morak Abyss Perdesi.jpg",
+    text:`<p><strong>[Başlangıç.]</strong> Grup bu eski harabenin daha da derinlerine inince, kapalı ve mühürlenmiş bir geçit buldu. Bu geçit habis bir geçit gibi gözüküyordu ve Eldritch güçleri içerisinde barındırıyordu.</p>
+          <p><strong>[Gelişmeler.]</strong> Grup bu kapının başında bir fikir ayrılığı yaşadı. Exodus ve Orv, kendi çıkarları doğrultusunda onlara sağlayabileceği potansiyel avantajlardan ve meraklarından ötürü bu kapıyı açmak istediler. Öte yandan ise Zephyr ve Neryssa bu fikri desteklemediler, fakat Exodus'un ve Orv'un iknası ile birlikte Neryssa fikrini değiştirdi ve Zephyr ise buna kayıtsız kalabilmeyi göze alabildi. En nihayetinde ise kapıyı açmayı seçtiler.</p>
+          <p><strong>[Sonuç.]</strong> Kapının açılması grubu mahvetti. Kapı sanki başka bir düzleme açılan bir geçit gibiydi, sanki içeriden başka şeyler bu dünyaya gelmek istiyor gibiydi. Bu kapıdan fırlamaya çalışan gerçekliği sorgulanacak şeyler, grubu ve özellikle Neryssa'yı delirtmeyi başardı. Orv ile Zephyr kapıyı açan kişilerdi, fakat Zephyr bu noktada deliliğe yenik düşerek kapıyı bırakamadı, iradesi resmen alıkoyulmuştu sanki. Delirmiş Neryssa panikleyerek Zephyr'e zarar verme pahasına kapıyı bırakması için ona Frostbite büyüsünü attı. Zephyr burada az kalsın kolunu kaybedecek duruma gelmişti. Grup bu aldığı karardan pişman olmuş biçimde Zephyr'in bu durumdan zarar görmesinden ötürü bir vicdan azabı yaşadı ama gene de kapıyı en nihayetinde kapatmayı başardı.</p>`
   },
   {
     title:"Beyaz Ejderler Savaşı",
-    date:"— Tarih —", img:"img/node-009.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Kuzey geçitlerinde hareket eden iki beyaz ejder, grubu köşeye sıkıştırdı.</p>
-          <p><strong>[Gelişmeler.]</strong> Uzun ve yıpratıcı bir savaşın ardından ejderler geri püskürtüldü; grup ciddi yaralar aldı.</p>
-          <p><strong>[Sonuç.]</strong> Bu savaş, grubun koordinasyon yeteneğini ilk kez gerçek anlamda test etti.</p>`
+    date:"— Tarih —", img:"img/White Dragon.png",
+    text:`<p><strong>[Başlangıç.]</strong> Habis geçit olayını yaşadıktan sonra grup harabelerden dışarıya çıktı. Fakat dışarıda onlar beklemedikleri 2 Yavru Beyaz Ejder bekliyordu.</p>
+          <p><strong>[Gelişmeler.]</strong> Savaş zorlayıcı geçti. Savaşın içerisinde Exodus ve Neryssa belli bir anlamda bazı görüler gördü ve belirli uyanışlar geçirdiler. Exodus uhrevi güçlerini daha yetkin kullanabileceği şekilde bir uyanış geçirdi, Neryssa ise ölüme en çok yaklaştığı anda içindeki Ejder güçleri uyandı ve kendi iç muhakemesinde devasa bir Ejderha ile yüzleşti.</p>
+          <p><strong>[Sonuç.]</strong> Savaşın sonunda herkes çok kötü durumdaydı fakat buna rağmen grup savaştan muzaffer ayrılmıştı. Neryssa Ejderhalar ile bütünleşebilmek adına onların kanı ile bir kan banyosu yaptı. Fakat Zephyr ile aralarından yeniden bir gerginlik oluştu, ama bu gerginlik Orv tarafından çözüldü. Diğer bir taraftan ise Exodus kendi güçlerini anlamak için iç muhakemesinde kendine sorular sormaya devam ediyordu.</p>`
   },
   {
     title:"Orv'un Gölge Cüceler Keşfi",
-    date:"— Tarih —", img:"img/node-010.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Orv, bölgede yaşadığı iddia edilen efsanevi Gölge Cücelerin izlerine rastladı.</p>
-          <p><strong>[Gelişmeler.]</strong> Keşfedilen bulgular, bu halkın sandıklarından çok daha karmaşık bir geçmişe sahip olduğunu ortaya koydu.</p>
-          <p><strong>[Sonuç.]</strong> Orv için bu keşif, kökenine dair derin sorular doğuran kişisel bir yolculuğun başlangıcı oldu.</p>`
+    date:"— Tarih —", img:"img/Gölge Cüceler.png",
+    text:`<p><strong>[Başlangıç.]</strong> Beyaz Ejder savaşının ardından grubun dinlenmesi ile birlikte Orv grubu girmedikleri tek oda olan harabede keşfetmedikleri son yere doğru götürdü. Bu oda bir kütüphaneye açılıyordu ve uzun zamandır kullanılmayan bir kütüphane gibi gözüküyordu.</p>
+          <p><strong>[Gelişmeler.]</strong> Odada gölge yaratıklar vardı. Orv biraz odaklanınca bu yaratıkların hepsinin cüce formunda olduğunu, fakat agresif olmadıklarını fark etti. Odada bulunmak ve bu odanın havasını solumak zayıf iradeleri etkiliyordu, Zephyr ve Exodus bithap düşmüştü. Grup bu odadan çıkmaya karar verdi. Fakat Orv bu odadan çıkmadan önce bir şeyler almak istedi. Gözüne kütüphanedeki kitaplardan birini kestirdi.</p>
+          <p><strong>[Sonuç.]</strong> Orv bu kitabı almak için uzandı ve kitabı aldı. Fakat kitabı aldığı o noktada, gölge formundaki cüce silüetlerinden birinin Orv'a dokunması ile birlikte, O gölgenin dokunduğu yer çürümeye başladı ve Orv'u yaşlandırmaya başladı. Bu gölgeler yaşayanların ömürlerini çalabiliyorlardı. Orv bunu fark edince panikleyerek ani bir şekilde geri çekilmeye başladı ve elinde aldığı kitap ile birlikte bu kütüphaneyi terk etti. Daha sonra da grup bu harabeleri yeterince keşfettiklerini düşünerek buradan ayrılmaya ve yolculuklarına devam etmeye karar verdi.</p>`
   },
   {
     title:"Zephyr'in Oris İle Karşılaşması",
@@ -716,7 +703,7 @@ const events = [
   {
     title:"Tırpan'ın İçerisinde Hapis Olmuş Sehhar",
     date:"— Tarih —", img:"img/node-039.jpg",
-    text:`<p><strong>[Başlangıç.]</strong> Gizemli bir eserın içine hapsedilmiş, asırlardır orada kalan bir sihirbazın varlığı keşfedildi.</p>
+    text:`<p><strong>[Başlangıç.]</strong> Gizemli bir eserin içine hapsedilmiş, asırlardır orada kalan bir sihirbazın varlığı keşfedildi.</p>
           <p><strong>[Gelişmeler.]</strong> Sihirbaz, serbest bırakılması karşılığında gruba önemli büyü bilgileri sunmayı teklif etti.</p>
           <p><strong>[Sonuç.]</strong> Grup ikiye bölündü; bir kısmı serbest bırakmak isterken diğerleri bu adımın sonuçlarını tartıştı.</p>`
   },
@@ -1251,7 +1238,7 @@ const container = document.getElementById('nodesContainer');
 events.forEach((ev, i) => {
   const delay = (1.0 + i * 0.025).toFixed(3);
   const wrap = document.createElement('div');
-  wrap.className = 'node-wrap tip-right'; /* direction updated after append */
+  wrap.className = 'node-wrap tip-right';
   wrap.style.animationDelay = delay + 's';
   wrap.onclick = () => openModal(i);
   wrap.innerHTML = `
@@ -1265,14 +1252,13 @@ events.forEach((ev, i) => {
       <svg class="stem-svg" width="1" height="1" viewBox="0 0 1 1" overflow="visible">
         <line x1="0" y1="0" x2="0" y2="45" stroke="#c9a84c" stroke-width="1.5" opacity=".75"/>
         <circle cx="0" cy="45" r="2.5" fill="#c9a84c" opacity=".8"/>
-        <!-- horizontal arm: direction set by JS after layout -->
         <line class="arm-h" x1="0" y1="45" x2="45" y2="45" stroke="#c9a84c" stroke-width="1.5" opacity=".75"/>
         <circle class="arm-end" cx="45" cy="45" r="2.5" fill="#c9a84c" opacity=".9"/>
       </svg>
       <div class="tooltip-card">
         <img src="${ev.img}" class="tooltip-img" alt="${ev.title}"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div style="display:none;width:100%;height:110px;align-items:center;justify-content:center;background:rgba(15,10,5,0.95)">
+        <div style="display:none;width:100%;height:140px;align-items:center;justify-content:center;background:rgba(15,10,5,0.95)">
           <span style="font-family:'Cinzel',serif;font-size:.5rem;color:rgba(201,168,76,0.35);letter-spacing:2px">GÖRSEL YOK</span>
         </div>
         <div class="tooltip-body">
@@ -1284,27 +1270,16 @@ events.forEach((ev, i) => {
   container.appendChild(wrap);
 });
 
-/* ── After all nodes are in the DOM, decide tooltip direction per node ──
-   Logic: measure how much space is to the right of each node inside the
-   scrollable track. Card width = 200px + arm = 49px → need ~260px right.
-   If not enough space on the right, flip to the left.
-   We use the node's offsetLeft relative to .timeline-inner for this. */
 function updateTooltipDirections() {
-  const track = document.querySelector('.timeline-track');
   const inner = document.querySelector('.timeline-inner');
-  const innerWidth = inner.scrollWidth;  /* total scrollable width */
-  const cardNeed = 300; /* arm(49) + card(240) + buffer(11) */
-
+  const innerWidth = inner.scrollWidth;
+  const cardNeed = 300;
   document.querySelectorAll('.node-wrap').forEach(wrap => {
-    /* node center relative to timeline-inner left edge */
     const nodeCenter = wrap.offsetLeft + wrap.offsetWidth / 2;
     const spaceRight = innerWidth - nodeCenter;
     const goLeft = spaceRight < cardNeed;
-
     wrap.classList.toggle('tip-right', !goLeft);
     wrap.classList.toggle('tip-left',  goLeft);
-
-    /* flip SVG horizontal arm direction */
     const armH   = wrap.querySelector('.arm-h');
     const armEnd = wrap.querySelector('.arm-end');
     if (goLeft) {
@@ -1317,7 +1292,6 @@ function updateTooltipDirections() {
   });
 }
 updateTooltipDirections();
-/* Re-run on resize in case viewport width changes */
 window.addEventListener('resize', updateTooltipDirections);
 
 function openModal(idx) {
