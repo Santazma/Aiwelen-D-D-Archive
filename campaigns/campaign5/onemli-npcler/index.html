@@ -1454,40 +1454,90 @@ function showAccessScreen(granted) {
     cipherCooldown = false;
   }, duration);
 }
+</script>
 
+<!-- ── MUSIC PLAYER HTML — must come before the JS that references these elements ── -->
+<button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
+  <span class="player-toggle-icon">♪</span>
+  <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">ARŞİV MÜZİĞİ</span>
+  <span class="player-toggle-dot" id="playerDot"></span>
+</button>
+
+<div class="player-panel" id="playerPanel">
+  <div class="player-header">
+    <span class="player-header-title">Müzik Arşivi</span>
+    <span class="player-header-archive">CV-MÜZ · Campaign V</span>
+  </div>
+  <div class="player-now">
+    <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
+    <div class="player-now-info">
+      <div class="player-vinyl" id="playerVinyl">
+        <img id="playerVinylImg" src="" alt="">
+      </div>
+      <div class="player-track-info">
+        <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
+        <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
+      </div>
+    </div>
+  </div>
+  <div class="player-progress-wrap">
+    <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
+      <div class="player-progress-fill" id="progressFill"></div>
+    </div>
+    <div class="player-time-row">
+      <span id="timeElapsed">0:00</span>
+      <span id="timeDuration">0:00</span>
+    </div>
+  </div>
+  <div class="player-controls">
+    <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
+    <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
+    <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+    <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
+    <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
+  </div>
+  <div class="player-volume">
+    <span class="vol-icon" id="volIcon">🔊</span>
+    <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="70" oninput="setVolume(this.value)">
+    <span class="vol-val" id="volVal">70</span>
+  </div>
+  <div class="player-tracklist" id="trackList"></div>
+</div>
+
+<audio id="audioEl"></audio>
+
+<script>
 /* ═══════════════════════════════════════
-   MUSIC PLAYER
+   MUSIC PLAYER — runs after DOM is ready
 ═══════════════════════════════════════ */
 const tracks = [
   { name: 'Theresia, the Matriarch Reaper',  file: 'music/Theresia, the Matriarch Reaper.mp3',  img: 'img/Theresia.jpg' },
   { name: 'Stephen, the Whispering Talon',   file: 'music/Stephen, the Whispering Talon.mp3',   img: 'img/Stephen.png' },
-  { name: 'Luwanna, the Scourge Hunter',   file: 'music/Luwanna, the Scourge Hunter.mp3',   img: 'img/Luwanna Maria Jacquelyn Gaetana Günkalkanı.jpg' },
-  { name: 'Moldark Whitmore, Void Spreader',   file: 'music/Moldark Whitmore, Void Spreader.mp3',   img: 'img/Moldark Whitmore.jpg' },
-  { name: 'Belzes, the Hellish Astronomer',    file: 'music/Belzes, the Hellish Astronomer.mp3',    img: 'img/Belzes.jpg' },
+  { name: 'Luwanna, the Scourge Hunter',     file: 'music/Luwanna, the Scourge Hunter.mp3',     img: 'img/Luwanna Maria Jacquelyn Gaetana G%C3%BCnkalkan%C4%B1.jpg' },
+  { name: 'Moldark Whitmore, Void Spreader', file: 'music/Moldark Whitmore, Void Spreader.mp3', img: 'img/Moldark Whitmore.jpg' },
+  { name: 'Belzes, the Hellish Astronomer',  file: 'music/Belzes, the Hellish Astronomer.mp3',  img: 'img/Belzes.jpg' },
 ];
 
-let currentTrack  = 0;
-let isLooping     = false;
-let playerOpen    = false;
+let currentTrack = 0;
+let isLooping    = false;
+let playerOpen   = false;
 
-const audio       = document.getElementById('audioEl');
-const playBtn     = document.getElementById('playBtn');
-const playerDot   = document.getElementById('playerDot');
-const vinylEl     = document.getElementById('playerVinyl');
-const vinylImg    = document.getElementById('playerVinylImg');
-const trackNameEl = document.getElementById('playerTrackName');
-const trackSubEl  = document.getElementById('playerTrackSub');
-const progressFill= document.getElementById('progressFill');
-const timeElapsed = document.getElementById('timeElapsed');
-const timeDuration= document.getElementById('timeDuration');
-const volSlider   = document.getElementById('volSlider');
-const volVal      = document.getElementById('volVal');
-const volIcon     = document.getElementById('volIcon');
+const audio        = document.getElementById('audioEl');
+const playBtn      = document.getElementById('playBtn');
+const playerDot    = document.getElementById('playerDot');
+const vinylEl      = document.getElementById('playerVinyl');
+const vinylImg     = document.getElementById('playerVinylImg');
+const trackNameEl  = document.getElementById('playerTrackName');
+const trackSubEl   = document.getElementById('playerTrackSub');
+const progressFill = document.getElementById('progressFill');
+const timeElapsed  = document.getElementById('timeElapsed');
+const timeDuration = document.getElementById('timeDuration');
+const volSlider    = document.getElementById('volSlider');
+const volVal       = document.getElementById('volVal');
+const volIcon      = document.getElementById('volIcon');
 
-/* Set initial volume */
 audio.volume = 0.70;
 
-/* Build track list */
 function buildTrackList() {
   const tl = document.getElementById('trackList');
   tl.innerHTML = '';
@@ -1504,7 +1554,6 @@ function buildTrackList() {
       <span class="track-dur" id="dur-${i}">--:--</span>`;
     tl.appendChild(item);
   });
-  /* Pre-load durations */
   tracks.forEach((t, i) => {
     const tmp = new Audio(t.file);
     tmp.addEventListener('loadedmetadata', () => {
@@ -1527,12 +1576,10 @@ function loadTrack(idx) {
   audio.src = t.file;
   audio.loop = isLooping;
   trackNameEl.textContent = t.name;
-  trackSubEl.textContent  = 'KARAKTER MÜZİĞİ';
   vinylImg.src = t.img;
   progressFill.style.width = '0%';
-  timeElapsed.textContent = '0:00';
+  timeElapsed.textContent  = '0:00';
   timeDuration.textContent = '0:00';
-  /* Update active state */
   document.querySelectorAll('.track-item').forEach((el, i) => {
     el.classList.toggle('active', i === idx);
   });
@@ -1544,29 +1591,12 @@ function togglePlayer() {
 }
 
 function togglePlay() {
-  if (!audio.src || audio.src === window.location.href) {
-    loadTrack(currentTrack);
-    audio.play();
-    return;
-  }
-  if (audio.paused) {
-    audio.play();
-  } else {
-    audio.pause();
-  }
+  if (!audio.src || audio.src === window.location.href) { loadTrack(currentTrack); audio.play(); return; }
+  audio.paused ? audio.play() : audio.pause();
 }
 
-function prevTrack() {
-  const idx = (currentTrack - 1 + tracks.length) % tracks.length;
-  loadTrack(idx);
-  audio.play();
-}
-
-function nextTrack() {
-  const idx = (currentTrack + 1) % tracks.length;
-  loadTrack(idx);
-  audio.play();
-}
+function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); audio.play(); }
+function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); audio.play(); }
 
 function toggleLoop() {
   isLooping = !isLooping;
@@ -1586,13 +1616,12 @@ function updateVolSliderBg(v) {
 }
 
 function seekAudio(e) {
-  const bar   = document.getElementById('progressBar');
-  const rect  = bar.getBoundingClientRect();
-  const pct   = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const bar  = document.getElementById('progressBar');
+  const rect = bar.getBoundingClientRect();
+  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   if (audio.duration) audio.currentTime = pct * audio.duration;
 }
 
-/* Audio events */
 audio.addEventListener('play', () => {
   playBtn.textContent = '⏸';
   vinylEl.classList.add('spinning');
@@ -1604,83 +1633,18 @@ audio.addEventListener('pause', () => {
   playerDot.classList.remove('playing');
 });
 audio.addEventListener('ended', () => {
-  if (!isLooping) {
-    nextTrack();
-    audio.play();
-  }
+  if (!isLooping) { nextTrack(); audio.play(); }
 });
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
-  progressFill.style.width = pct + '%';
+  progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
   timeElapsed.textContent  = fmtTime(audio.currentTime);
   timeDuration.textContent = fmtTime(audio.duration);
 });
 
-/* Init */
 buildTrackList();
 loadTrack(0);
 updateVolSliderBg(70);
 </script>
-<!-- ── MUSIC PLAYER ── -->
-<button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
-  <span class="player-toggle-icon">♪</span>
-  <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">ARŞİV MÜZİĞİ</span>
-  <span class="player-toggle-dot" id="playerDot"></span>
-</button>
-
-<div class="player-panel" id="playerPanel">
-  <div class="player-header">
-    <span class="player-header-title">Müzik Arşivi</span>
-    <span class="player-header-archive">CV-MÜZ · Campaign V</span>
-  </div>
-
-  <!-- Now playing -->
-  <div class="player-now">
-    <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
-    <div class="player-now-info">
-      <div class="player-vinyl" id="playerVinyl">
-        <img id="playerVinylImg" src="" alt="">
-      </div>
-      <div class="player-track-info">
-        <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
-        <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Progress -->
-  <div class="player-progress-wrap">
-    <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
-      <div class="player-progress-fill" id="progressFill"></div>
-    </div>
-    <div class="player-time-row">
-      <span id="timeElapsed">0:00</span>
-      <span id="timeDuration">0:00</span>
-    </div>
-  </div>
-
-  <!-- Controls -->
-  <div class="player-controls">
-    <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
-    <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
-    <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
-    <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
-    <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
-  </div>
-
-  <!-- Volume -->
-  <div class="player-volume">
-    <span class="vol-icon" id="volIcon">🔊</span>
-    <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="70" oninput="setVolume(this.value)">
-    <span class="vol-val" id="volVal">70</span>
-  </div>
-
-  <!-- Track list -->
-  <div class="player-tracklist" id="trackList"></div>
-</div>
-
-<audio id="audioEl"></audio>
-
 </body>
 </html>
