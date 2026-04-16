@@ -1498,8 +1498,8 @@ function showAccessScreen(granted) {
   </div>
   <div class="player-volume">
     <span class="vol-icon" id="volIcon">🔊</span>
-    <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="70" oninput="setVolume(this.value)">
-    <span class="vol-val" id="volVal">70</span>
+    <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="10" oninput="setVolume(this.value)">
+    <span class="vol-val" id="volVal">10</span>
   </div>
   <div class="player-tracklist" id="trackList"></div>
 </div>
@@ -1536,7 +1536,7 @@ const volSlider    = document.getElementById('volSlider');
 const volVal       = document.getElementById('volVal');
 const volIcon      = document.getElementById('volIcon');
 
-audio.volume = 0.70;
+audio.volume = 0.10;
 
 function buildTrackList() {
   const tl = document.getElementById('trackList');
@@ -1644,7 +1644,8 @@ audio.addEventListener('timeupdate', () => {
 
 buildTrackList();
 loadTrack(0);
-updateVolSliderBg(70);
+updateVolSliderBg(10);
+audio.play().catch(() => {});
 </script>
 </body>
 </html>
