@@ -129,10 +129,10 @@
     /* ── TOOLTIP: BELOW the node dot, opening downward into padding-bottom space ── */
     .node-tooltip{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);pointer-events:none;opacity:0;z-index:400;width:0;height:0;overflow:visible;transition:opacity .18s ease;}
     .node-wrap:hover .node-tooltip{opacity:1;animation:tooltipFadeIn .18s ease both;}
-    .tooltip-card{position:absolute;top:0;width:260px;background:rgba(4,6,10,0.97);border:1px solid rgba(201,168,76,0.5);border-radius:6px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.8);z-index:401;}
-    .node-wrap.tip-right .tooltip-card{left:-130px;}
-    .node-wrap.tip-left  .tooltip-card{right:-130px;}
-    .tooltip-img{width:100%;height:210px;object-fit:cover;object-position:center top;display:block;background:rgba(8,5,2,0.95);filter:brightness(.9) saturate(.9);}
+    .tooltip-card{position:absolute;top:0;width:220px;background:rgba(4,6,10,0.97);border:1px solid rgba(201,168,76,0.5);border-radius:6px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.8);z-index:401;}
+    .node-wrap.tip-right .tooltip-card{left:-110px;}
+    .node-wrap.tip-left  .tooltip-card{right:-110px;}
+    .tooltip-img{width:100%;height:180px;object-fit:cover;object-position:center top;display:block;background:rgba(8,5,2,0.95);filter:brightness(.9) saturate(.9);}
     .tooltip-body{padding:.5rem .7rem .6rem}
     .tooltip-date{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin-bottom:3px}
     .tooltip-name{font-family:'Cinzel',serif;font-size:.67rem;font-weight:700;color:var(--gold-bright);line-height:1.3}
