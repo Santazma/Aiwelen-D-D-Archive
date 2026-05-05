@@ -243,7 +243,7 @@
       position:relative;
       padding:0 60px 40px;
       overflow-x:auto;
-      overflow-y:visible;
+      overflow-y:hidden;
       cursor:grab;
     }
     .timeline-track.dragging{ cursor:grabbing; user-select:none; }
@@ -271,7 +271,7 @@
     .timeline-inner{
       position:relative;
       min-width:max-content;
-      padding:100px 40px 0;
+      padding:340px 40px 20px;
       display:flex;
       align-items:center;
     }
@@ -279,7 +279,7 @@
     /* The horizontal bar sits at top:100px in .timeline-inner */
     .timeline-bar{
       position:absolute;
-      top:100px;
+      top:340px;
       left:40px;right:40px;
       height:3px;
       transform:translateY(-50%);
@@ -585,8 +585,11 @@
                onkeydown="if(event.key==='Enter') findNode()">
       </div>
       <button class="node-finder-btn" onclick="findNode()">GİT ›</button>
+      <span class="node-finder-count" id="nodeFinderCount" style="display:none;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:2px;color:rgba(201,168,76,0.6);white-space:nowrap;flex-shrink:0;"></span>
+      <button class="node-finder-nav" id="nodeNavPrev" onclick="navigateFinderResult(-1)" style="display:none;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.28);color:var(--gold);font-size:.7rem;padding:.4rem .6rem;cursor:pointer;transition:all .2s;" title="Önceki">‹</button>
+      <button class="node-finder-nav" id="nodeNavNext" onclick="navigateFinderResult(1)" style="display:none;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.28);color:var(--gold);font-size:.7rem;padding:.4rem .6rem;cursor:pointer;transition:all .2s;" title="Sonraki">›</button>
     </div>
-    <div class="node-finder-hint">Sayı tam eşleşmeli · İsimde geçen kelime yeterli</div>
+    <div class="node-finder-hint">Aradığınız sayıyı yazınız · Aradığınız kelimeyi yazınız</div>
 
     <!-- Timeline frame -->
     <div class="timeline-frame">
@@ -1631,53 +1634,81 @@ window.addEventListener('resize', updateTooltipDirections);
 /* ════════════════════════════
    NODE FINDER
 ════════════════════════════ */
+let finderResults = [];
+let finderCurrentIdx = 0;
+
 function findNode() {
   const raw = document.getElementById('nodeFinderInput').value.trim();
   if (!raw) return;
 
-  let targetIdx = -1;
+  finderResults = [];
+  finderCurrentIdx = 0;
 
-  // Try number match first (exact)
   const num = parseInt(raw, 10);
   if (!isNaN(num) && String(num) === raw && num >= 1 && num <= events.length) {
-    targetIdx = num - 1;
+    finderResults = [num - 1];
   } else {
-    // Text search: find first event whose title contains the query (case-insensitive)
     const lower = raw.toLowerCase();
-    targetIdx = events.findIndex(ev => ev.title.toLowerCase().includes(lower));
+    events.forEach((ev, i) => {
+      if (ev.title.toLowerCase().includes(lower)) finderResults.push(i);
+    });
   }
 
-  if (targetIdx === -1) {
-    // Flash input red
+  if (finderResults.length === 0) {
     const inp = document.getElementById('nodeFinderInput');
     inp.style.color = '#e74c3c';
     setTimeout(() => { inp.style.color = ''; }, 800);
+    document.getElementById('nodeFinderCount').style.display = 'none';
+    document.getElementById('nodeNavPrev').style.display = 'none';
+    document.getElementById('nodeNavNext').style.display = 'none';
     return;
   }
 
-  // Remove previous highlights
+  const countEl = document.getElementById('nodeFinderCount');
+  const prevBtn = document.getElementById('nodeNavPrev');
+  const nextBtn = document.getElementById('nodeNavNext');
+
+  if (finderResults.length > 1) {
+    countEl.style.display = 'inline';
+    prevBtn.style.display = 'inline';
+    nextBtn.style.display = 'inline';
+  } else {
+    countEl.style.display = 'none';
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+  }
+
+  scrollToFinderResult(0);
+}
+
+function navigateFinderResult(dir) {
+  if (finderResults.length === 0) return;
+  finderCurrentIdx = (finderCurrentIdx + dir + finderResults.length) % finderResults.length;
+  scrollToFinderResult(finderCurrentIdx);
+}
+
+function scrollToFinderResult(idx) {
+  finderCurrentIdx = idx;
+  const targetIdx = finderResults[idx];
+
   document.querySelectorAll('.node-wrap.finder-highlight').forEach(el => el.classList.remove('finder-highlight'));
 
   const wrap = document.getElementById('node-' + targetIdx);
   if (!wrap) return;
 
-  // Animate scroll on timeline track
   const track = document.getElementById('timelineTrack');
   const wrapLeft = wrap.offsetLeft;
   const trackCenter = track.clientWidth / 2;
-  const targetScroll = wrapLeft - trackCenter + wrap.offsetWidth / 2;
-
-  track.scrollTo({ left: targetScroll, behavior: 'smooth' });
-
-  // Also scroll page to timeline
+  track.scrollTo({ left: wrapLeft - trackCenter + wrap.offsetWidth / 2, behavior: 'smooth' });
   document.querySelector('.timeline-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // Highlight the node
   wrap.classList.add('finder-highlight');
   setTimeout(() => wrap.classList.remove('finder-highlight'), 2200);
 
-  // Clear input
-  document.getElementById('nodeFinderInput').value = '';
+  const countEl = document.getElementById('nodeFinderCount');
+  if (finderResults.length > 1) {
+    countEl.textContent = (idx + 1) + ' / ' + finderResults.length;
+  }
 }
 
 /* ════════════════════════════
@@ -1704,8 +1735,16 @@ function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
+let modalDragStartedInside = false;
+
+document.getElementById('modalOverlay').addEventListener('mousedown', e => {
+  modalDragStartedInside = !!e.target.closest('.modal-box');
+});
+
 function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
+  if (e.target === document.getElementById('modalOverlay') && !modalDragStartedInside) {
+    closeModal();
+  }
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeLightboxDirect(); }
