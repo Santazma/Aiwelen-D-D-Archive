@@ -3,562 +3,1046 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Hamlet</title>
+  <title>The Hamlet — Campaign VI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&family=UnifrakturCook:wght@700&family=MedievalSharp&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
-    * { box-sizing: border-box; }
+    :root {
+      --blood:        #c0392b;
+      --blood-deep:   #7b1a14;
+      --blood-glow:   #ff5540;
+      --blood-mid:    #e05040;
+      /* gold is now a very muted secondary — blood is primary accent */
+      --gold:         #c0392b;
+      --gold-light:   #e05040;
+      --parchment:    #f5e6cc;
+      --dark:         #0d0a08;
+      --dark-panel:   rgba(10,5,5,0.90);
+      --dark-card:    rgba(18,8,8,0.93);
+      --muted:        #7a5a5a;
+      --text-body:    #d4b8b0;
+      --text-dim:     #8a6a65;
+      --success:      #2e7d32;
+      --morale-hi:    #2e7d32;
+      --morale-mid:   #e67e22;
+      --morale-lo:    #c0392b;
+      --shadow-blood: 0 0 24px rgba(192,57,43,0.55);
+      --shadow-gold:  0 0 18px rgba(192,57,43,0.40);
+      --border-ornate: 1px solid rgba(192,57,43,0.35);
+      /* true gold kept as rare detail accent */
+      --accent-gold:  #c9a84c;
+      --accent-gold-light: #e8c96a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; user-select: none;}
 
     html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'UnifrakturCook', cursive;
-      color: #ff4444;
-      background: url('https://cdnb.artstation.com/p/assets/images/images/057/688/955/large/sfc-.jpg?1672363017') no-repeat center center fixed;
-      background-size: cover;
+      min-height: 100vh;
+      font-family: 'IM Fell English', serif;
+      color: var(--text-body);
+      background: var(--dark);
       overflow-x: hidden;
-      font-size: 1.5rem;
-      animation: fadeInBody 2s ease-in-out;
     }
 
-    @keyframes fadeInBody {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    /* ── BACKGROUND ─────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(120,20,15,0.22) 0%, transparent 65%),
+        url('https://cdnb.artstation.com/p/assets/images/images/057/688/955/large/sfc-.jpg?1672363017') center/cover no-repeat;
+      z-index: 0;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 100% 100% at 50% 100%, rgba(5,3,2,0.85) 0%, transparent 65%),
+        linear-gradient(to bottom, rgba(5,3,2,0.6) 0%, transparent 30%, transparent 70%, rgba(5,3,2,0.8) 100%);
+      z-index: 0;
+      pointer-events: none;
     }
 
-    header {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 1rem;
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 11;
-    }
-
-    .back-button {
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #ff4444;
-      border: none;
-      padding: 0.4rem 1rem;
-      font-size: 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .back-button:hover {
-      background-color: #ff4444;
-      color: black;
-    }
-
-    .info-box {
-      position: fixed;
-      bottom: 1rem;
-      left: 1rem;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 1rem;
-      max-width: 420px;
-      border-radius: 10px;
-      font-family: 'Cormorant Garamond', serif;
-      color: #ffdddd;
-      font-size: 1.2rem;
-      line-height: 1.5;
-      z-index: 10;
-      overflow-y: auto;
-      max-height: 70vh;
-      box-shadow: 0 0 10px #ff4444;
-    }
-
-    .info-box b {
-      color: #ff8888;
-    }
-
-    .operation-info-box {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 1rem;
-      max-width: 420px;
-      border-radius: 10px;
-      font-family: 'Cormorant Garamond', serif;
-      color: #ffdddd;
-      font-size: 1.2rem;
-      line-height: 1.5;
-      z-index: 10;
-      overflow-y: auto;
-      max-height: 70vh;
-      box-shadow: 0 0 10px #ff4444;
-    }
-
-    .operation-info-box b {
-      color: #ff8888;
-    }
-
-    h1, h2 {
-      text-align: center;
-      text-shadow: 0 0 12px #000;
-    }
-
-    h1 {
-      font-size: 6rem;
-      margin-top: 5rem;
-      animation: flicker 3s infinite alternate;
-    }
-
-    h2 {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
-
-    @keyframes flicker {
-      0% { opacity: 1; text-shadow: 0 0 10px #ff4444; }
-      100% { opacity: 0.85; text-shadow: 0 0 25px #ff8888; }
-    }
-
-    h3 {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-
-    h4 {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    li {
-      font-size: 1.8rem;
-    }
-
-    .section {
-      padding: 2rem;
-    }
-
-    .token-area {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      justify-content: center;
-      gap: 1.2rem;
-      margin-bottom: 4rem;
-      min-height: 120px;
-      max-width: 750px; /* 6 token * 100px + 5*1.5rem gap = 750px */
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .token {
-      width: 100px;
+    /* ── LAYOUT WRAPPER ─────────────────────────────────── */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      cursor: grab;
-      position: relative;
-      transition: transform 0.3s ease, filter 0.3s ease;
-      padding-bottom: 40px;
+      min-height: 100vh;
     }
 
-    .token:hover {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 10px #ff4444);
-    }
-
-    .token img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 3px solid white;
-      object-fit: cover;
-    }
-
-    .token-label {
-      margin-top: 0.3rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #ff4444;
-      text-shadow: 1px 1px 2px black;
-    }
-
-    .tag-panel {
+    /* ── TOP BAR ────────────────────────────────────────── */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 56px;
       display: flex;
-      justify-content: center;
-      gap: 10px;
-      background-color: rgba(26, 26, 26, 0.8);
-      padding: 15px;
-      border-radius: 15px;
-      margin: 0 auto;
-      max-width: fit-content;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      background: linear-gradient(180deg, rgba(5,3,2,0.98) 0%, rgba(5,3,2,0.85) 100%);
+      border-bottom: 1px solid rgba(192,57,43,0.25);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .back-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--blood-mid);
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid rgba(192,57,43,0.35);
+      border-radius: 3px;
+      transition: all 0.25s;
+    }
+    .back-btn:hover { background: rgba(192,57,43,0.12); border-color: var(--blood-mid); color: var(--blood-glow); }
+    .back-btn svg { width: 14px; height: 14px; }
+
+    .top-title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--blood-mid);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 18px rgba(192,57,43,0.55);
+    }
+
+    /* ── IMPROVED VOLUME CONTROL ────────────────────────── */
+    .volume-control {
+      display: flex; align-items: center; gap: 0.55rem;
+    }
+    .music-icon {
+      color: var(--blood-mid);
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    .music-track-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .volume-sep {
+      width: 1px; height: 14px;
+      background: rgba(201,168,76,0.2);
+      margin: 0 0.2rem;
+    }
+    .volume-control label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .volume-control input[type=range] {
+      -webkit-appearance: none;
+      width: 72px; height: 3px;
+      background: linear-gradient(to right, var(--blood) 50%, rgba(255,255,255,0.15) 50%);
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .volume-control input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px; height: 12px;
+      background: var(--blood);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    #volume-pct { font-size: 0.6rem; color: var(--blood-mid); font-family: 'Cinzel', serif; min-width: 26px; }
+
+    /* ── HERO TITLE ─────────────────────────────────────── */
+    .hero {
+      padding: 100px 2rem 20px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      color: var(--blood);
+      text-shadow:
+        0 0 10px rgba(192,57,43,0.6),
+        0 0 40px rgba(192,57,43,0.3),
+        0 2px 4px rgba(0,0,0,0.8);
+      line-height: 1;
+      animation: titlePulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes titlePulse {
+      from { text-shadow: 0 0 10px rgba(192,57,43,0.5), 0 0 30px rgba(192,57,43,0.2); }
+      to   { text-shadow: 0 0 20px rgba(255,80,60,0.8), 0 0 60px rgba(192,57,43,0.4); }
+    }
+    .hero-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      opacity: 0.8;
+    }
+    .hero-divider {
+      width: 300px;
+      max-width: 80vw;
+      margin: 1rem auto 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--blood-mid), transparent);
+    }
+
+    /* ── TWO-COLUMN INFO PANELS ─────────────────────────── */
+    .info-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.5rem;
+    }
+    @media (max-width: 768px) { .info-strip { grid-template-columns: 1fr; } }
+
+    .info-panel {
+      background: var(--dark-panel);
+      border: var(--border-ornate);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      position: relative;
+    }
+    .info-panel::before, .info-panel::after {
+      content: '◆';
+      position: absolute;
+      color: var(--gold);
+      font-size: 0.5rem;
+      opacity: 0.6;
+    }
+    .info-panel::before { top: 6px; left: 10px; }
+    .info-panel::after  { bottom: 6px; right: 10px; }
+
+    .info-panel h3 {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
+      color: var(--blood-mid);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(192,57,43,0.25);
+      text-shadow: 0 0 10px rgba(192,57,43,0.35);
+    }
+    .info-panel ul { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+    .info-panel li {
+      font-family: 'IM Fell English', serif;
+      font-size: 1rem;
+      line-height: 1.55;
+      color: var(--text-body);
+      padding-left: 1.1rem;
+      position: relative;
+    }
+    .info-panel li::before {
+      content: '•';
+      position: absolute; left: 0;
+      color: var(--blood);
+    }
+    .info-panel li strong {
+      color: var(--gold-light);
+      font-style: normal;
+    }
+
+    /* ── STATUS TAG PALETTE ─────────────────────────────── */
+    .tag-palette-section {
+      max-width: 1200px;
+      margin: 0 auto 1rem;
+      padding: 0 1.5rem;
+    }
+    .tag-palette-section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.55rem;
+    }
+    .tag-palette-section-title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      color: var(--blood-mid);
+    }
+    .tag-palette-section-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(192,57,43,0.45), transparent);
+    }
+    .tag-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      background: var(--dark-panel);
+      padding: 0.9rem 1.25rem;
+      border: var(--border-ornate);
+      border-radius: 4px;
+      align-items: center;
+    }
+    .tag-palette-hint {
+      margin-left: auto;
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      font-style: italic;
     }
 
     .tag {
-      padding: 5px 10px;
-      border-radius: 5px;
+      padding: 5px 14px;
+      border-radius: 3px;
       cursor: grab;
       user-select: none;
-      font-size: 14px;
-      font-weight: bold;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .tag:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .tag:active { cursor: grabbing; transform: scale(0.97); }
+    .tag[data-tag="Wounded"]          { background: #8B2020; color: #ffcccc; border: 1px solid #b03030; }
+    .tag[data-tag="Severely Wounded"] { background: #5A0A0A; color: #ffaaaa; border: 1px solid #7a1515; }
+    .tag[data-tag="Madness"]          { background: #5a5a00; color: #ffffaa; border: 1px solid #8a8a00; }
+    .tag[data-tag="Dead"]             { background: #2a2a2a; color: #cccccc; border: 1px solid #555; }
+    .tag[data-tag="Morale"]           { background: #1a4a1a; color: #aaffaa; border: 1px solid #2a7a2a; }
+
+    /* ── MAIN SECTIONS ──────────────────────────────────── */
+    .section-wrapper {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      cursor: default;
+    }
+    .section-header::before,
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      transition: opacity 0.35s ease;
+      opacity: 0.6;
+    }
+    .section-header::before {
+      background: linear-gradient(to right, transparent, rgba(192,57,43,0.5));
+    }
+    .section-header::after {
+      background: linear-gradient(to left, transparent, rgba(192,57,43,0.5));
+    }
+    .section-header:hover::before,
+    .section-header:hover::after { opacity: 1; }
+
+    .section-title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--blood);
+      white-space: nowrap;
+      text-shadow: 0 0 15px rgba(192,57,43,0.5);
+      transition: text-shadow 0.35s ease;
+    }
+    .section-header:hover .section-title {
+      text-shadow: 0 0 28px rgba(255,80,60,0.75);
     }
 
-    .tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
-    .tag[data-tag="Severely Wounded"] { background-color: #5A0000; color: white; }
-    .tag[data-tag="Madness"] { background-color: #999900; color: black; }
-    .tag[data-tag="Dead"] { background-color: #e0e0e0; color: black; }
-    .tag[data-tag="Morale"] {
-      background-color: #006600;
-      color: white;
+    /* ── TOKEN GRID ─────────────────────────────────────── */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1rem;
+    }
+
+    .token {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: grab;
+      position: relative;
+      transition: transform 0.25s ease;
+      user-select: none;
+      width: 110px;
+      flex-shrink: 0;
+    }
+    .token:hover { transform: translateY(-4px); }
+    .token:active { cursor: grabbing; }
+
+    .token-portrait-wrap {
+      position: relative;
+      width: 88px;
+      height: 88px;
+    }
+    .token-portrait-wrap::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold) 0deg, var(--blood-deep) 90deg, var(--gold) 180deg, var(--blood-deep) 270deg, var(--gold) 360deg);
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .token:hover .token-portrait-wrap::before { opacity: 1; }
+
+    .token img {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 2px solid rgba(201,168,76,0.4);
+      object-fit: cover;
+      position: relative;
+      z-index: 1;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .token:hover img {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(192,57,43,0.6), 0 0 30px rgba(192,57,43,0.2);
+    }
+
+    .token-label {
+      margin-top: 0.4rem;
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--blood-mid);
+      text-align: center;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 8px rgba(192,57,43,0.5), 0 1px 3px rgba(0,0,0,0.9);
+      line-height: 1.2;
     }
 
     .token-tags {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       align-items: center;
-      width: 100%;
+      width: 108px;
+      margin-top: 4px;
     }
-
     .token-tag {
-      font-size: 12px;
-      padding: 2px 5px;
-      border-radius: 3px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 2px;
       cursor: pointer;
       white-space: nowrap;
-      position: relative;
+      transition: opacity 0.2s;
     }
-
-    .token-tag[data-tag="Wounded"] { background-color: #8B0000; color: white; }
-    .token-tag[data-tag="Severely Wounded"] { background-color: #5A0000; color: white; }
-    .token-tag[data-tag="Madness"] { background-color: #999900; color: black; }
-    .token-tag[data-tag="Dead"] { background-color: #e0e0e0; color: black; }
-    .token-tag[data-tag="Morale"] { 
-      background-color: #006600; 
-      color: white;
+    .token-tag:hover { opacity: 0.75; }
+    .token-tag[data-tag="Wounded"]          { background: #8B2020; color: #ffcccc; }
+    .token-tag[data-tag="Severely Wounded"] { background: #5A0A0A; color: #ffaaaa; }
+    .token-tag[data-tag="Madness"]          { background: #5a5a00; color: #ffffaa; }
+    .token-tag[data-tag="Dead"]             { background: #2a2a2a; color: #ccc; }
+  
+    .token.is-dead {
+      pointer-events: none;
+      cursor: not-allowed;
+  }
+    .token.is-dead img {
+      filter: grayscale(100%) brightness(0.45);
+  } 
+    .token.is-dead .token-tag[data-tag="Dead"] {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    
+    .token-tag[data-tag="Morale"] {
+      background: #1a4a1a;
+      color: #aaffaa;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
-      padding: 5px;
-      width: 100%;
+      gap: 3px;
+      width: 100px;
       position: relative;
-    }
-
-    .morale-close {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      font-size: 10px;
-      cursor: pointer;
-      color: white;
-      background-color: rgba(0,0,0,0.3);
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
-
-    .morale-close:hover {
-      background-color: rgba(0,0,0,0.5);
     }
 
     .morale-bar {
-      width: 80px;
-      height: 10px;
-      background-color: #333;
-      border-radius: 5px;
+      width: 76px; height: 6px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 3px;
       overflow: hidden;
-      position: relative;
     }
-
     .morale-fill {
       height: 100%;
-      background-color: #4CAF50;
+      background: linear-gradient(to right, var(--morale-lo), var(--morale-hi));
       width: 50%;
-      transition: width 0.3s ease;
+      transition: width 0.4s ease;
     }
-
-    .morale-value {
-      font-size: 10px;
-      color: white;
-    }
-
-    h2 {
-      text-align: center;
-      margin: 20px;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      animation: fadeInModal 0.4s ease;
-      padding: 1rem;
-    }
-
-    @keyframes fadeInModal {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal-content {
-      background-color: #111;
-      padding: 2rem;
-      border-radius: 20px;
-      display: flex;
-      flex-direction: column; 
-      align-items: center; /* Resmi merkezlemek için */
-      gap: 2rem; /* Elemanlar arası boşluk */
-      max-width: 95vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      font-family: 'Cormorant Garamond', serif;
-      box-shadow: 0 0 15px #ff4444;
-      font-size: 1.8rem;
-      color: #ffdddd;
-      text-align: center;
-    }
-
-    .modal-content img {
-      max-width: 90vw; /* Ekran genişliğinin %90'ına kadar büyüyebilir */
-      max-height: 80vh; /* Ekran yüksekliğinin %80'ine kadar büyüyebilir */
-      width: auto;
-      height: auto;
-      border-radius: 12px;
-      border: 3px solid #ff4444;
-      flex-shrink: 0;
-      object-fit: contain;
-      object-position: center;
-      margin: 0 auto;
-    }
-    .modal-content > div {
-      flex: 1;
-      min-width: 280px;
-      max-width: 100%
-      text-align: center;
-    }
-
-    #modal-name,
-    #modal-positive + h4,
-    #modal-negative + h4,
-    #modal-affiliations + h4 {
-      text-align: center;
-      width: 100%;
-    }
-
-    /* Liste stillerini düzenle (liste noktalarını sola yaslar) */
-    #modal-positive,
-    #modal-negative,
-    #modal-affiliations {
-      text-align: left;
-      margin-left: auto;
-      margin-right: auto;
-      display: inline-block;
-    }
-
-    .modal-close {
-      position: fixed;
-      top: 1rem;
-      right: 3rem;
-      font-size: 3rem;
-      color: white;
+    .morale-value { font-size: 0.48rem; color: #aaffaa; letter-spacing: 0.05em; }
+    .morale-close {
+      position: absolute;
+      top: 7px;
+      right: -2px;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      line-height: 1;
       cursor: pointer;
-      z-index: 16;
+      color: rgba(255,255,255,0.65);
+      padding: 2px 3px;
+    }
+    .morale-close:hover { color: white; }
+
+
+    .leader-badge {
+      margin-top: 5px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #d4a8c4;
+      background: rgba(13,10,8,0.92);
+      border: 1px solid rgba(160,90,140,0.55);
+      border-radius: 2px;
+      padding: 2px 7px;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 5;
+      text-shadow: 0 0 8px rgba(180,100,160,0.5);
+      font-weight: 600;
     }
 
-    .operation-area {
-      padding: 2rem;
-      background-color: rgba(0,0,0,0.6);
-      border-radius: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    /* ── OPERATION AREA ─────────────────────────────────── */
+    .operation-section {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      padding: 0 1.5rem;
     }
-
-    .operation-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 100px);
-      gap: 1rem;
-      justify-content: center;
+    .operation-card {
+      background: var(--dark-card);
+      border: var(--border-ornate);
+      border-radius: 6px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-blood);
+    }
+    .operation-flavour {
+      font-family: 'IM Fell English', serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(201,168,76,0.12);
+    }
+    .operation-grid-label {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      color: rgba(192,57,43,0.65);
+      margin-bottom: 0.5rem;
       margin-top: 1rem;
     }
+    .operation-grid-label:first-of-type { margin-top: 0; }
 
+    .op-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── IMPROVED SLOT ──────────────────────────────────── */
     .slot {
-      width: 100px;
-      height: 100px;
-      border: 2px dashed white;
-      border-radius: 10px;
-      background-color: rgba(255,255,255,0.1);
-      transition: all 0.3s ease;
+      width: 88px;
+      height: 88px;
+      border: 1px dashed rgba(201,168,76,0.3);
+      border-radius: 50%;
+      background: rgba(201,168,76,0.02);
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+    /* boş slot: "Drag here" hint ortalı */
+    .slot .slot-hint {
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.28);
+      text-align: center;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    /* dolu slot: token taşar, border kaybolur */
+    .slot:has(.token) {
+      border-color: transparent;
+      background: transparent;
+      border-radius: 0;
+      align-items: flex-start;
+      height: auto;
+      min-height: 88px;
+    }
+    .slot:has(.token) .slot-hint { display: none; }
+    .slot:has(.token)::after { display: none; }
+    /* pulse ring for empty slots */
+    .slot:not(:has(.token))::after {
+      content: '';
+      position: absolute; inset: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.15);
+      animation: slotPulse 2.8s ease-in-out infinite;
+    }
+    @keyframes slotPulse {
+      0%, 100% { opacity: 0; transform: scale(1); }
+      50%       { opacity: 1; transform: scale(1.06); }
+    }
+    /* drop hint text */
+    .slot-hint {
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.28);
+      text-align: center;
+      line-height: 1.4;
+      padding: 0 6px;
+      pointer-events: none;
+    }
+    .slot:has(.token) .slot-hint { display: none; }
+    .slot:has(.token)::after { display: none; }
+
+    .slot:hover:not(:has(.token)) {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.07);
+      box-shadow: var(--shadow-gold);
+    }
+    .slot.drag-over {
+      border-color: var(--blood-glow);
+      background: rgba(192,57,43,0.12);
+      box-shadow: var(--shadow-blood);
     }
 
-    .slot:hover {
-      border-color: #ff4444;
-      background-color: rgba(255, 0, 0, 0.2);
-      box-shadow: 0 0 10px #ff4444;
-    }
-
-    .disabled-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 9;
+    /* ── CHARACTER MODAL ────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
       display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
     }
 
-    #volume-control-wrapper {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 0.3rem 0.7rem;
+    .modal-box {
+      background: linear-gradient(135deg, #100c08 0%, #160e0a 100%);
+      border: 1px solid rgba(192,57,43,0.4);
       border-radius: 8px;
-      z-index: 10;
-      width: 160px;
+      max-width: 860px; width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      box-shadow: 0 0 60px rgba(192,57,43,0.3), 0 0 120px rgba(0,0,0,0.8);
+      animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px) scale(0.97); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
     }
 
-    #volume-control { width: 100%; }
-
-    #volume-control-label {
-      font-size: 1.2rem;
-      color: #ff4444;
-      margin-bottom: 0.2rem;
-      text-align: center;
-    }
-
-    /* Morale Input Modal */
-    .morale-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 20;
-    }
-
-    .morale-modal-content {
-      background-color: #222;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(0, 100, 0, 0.5);
-      font-family: 'Cormorant Garamond', serif;
-    }
-
-    .morale-modal h3 {
-      margin-top: 0;
-      color: #4CAF50;
-    }
-
-    .morale-input {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      box-sizing: border-box;
-      border: 2px solid #4CAF50;
-      border-radius: 4px;
-      background-color: #111;
-      color: white;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .validate-btn {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
+    /* close btn — modal-box'a absolute, scroll'dan bağımsız */
+    .modal-close-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      width: 30px; height: 30px;
+      background: rgba(18,8,8,0.95);
+      border: 1px solid rgba(192,57,43,0.5);
+      border-radius: 50%;
+      color: var(--blood-glow);
+      font-size: 0.95rem;
       cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      z-index: 30;
+    }
+    .modal-close-btn:hover { background: rgba(192,57,43,0.6); color: white; }
+
+    /* ── LIGHTBOX ────────────────────────────────────────── */
+    .lightbox-overlay {
+      position: fixed; inset: 0;
+      z-index: 400;
+      background: rgba(0,0,0,0.92);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.open { opacity: 1; pointer-events: auto; }
+    .lightbox-img-wrap {
+      position: relative;
+      max-width: 90vw; max-height: 90vh;
+      animation: imgPopIn 0.35s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes imgPopIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .lightbox-img-wrap img {
+      max-width: 90vw; max-height: 88vh;
+      object-fit: contain; display: block;
+      border: 1px solid rgba(192,57,43,0.4);
+      box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 30px rgba(192,57,43,0.15);
+      border-radius: 4px;
+    }
+    .lightbox-close {
+      position: absolute; top: -16px; right: -16px;
+      background: rgba(13,10,8,0.98);
+      border: 1px solid rgba(192,57,43,0.5);
+      color: var(--blood-mid);
+      font-size: 1.1rem; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+      z-index: 10;
+    }
+    .lightbox-close:hover { background: rgba(192,57,43,0.3); color: white; }
+    .modal-portrait-col img { cursor: zoom-in; }
+
+    .modal-inner {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+      flex: 1;
+      overflow: hidden; /* her kolon kendi scroll'unu yönetir */
+    }
+    @media (max-width: 600px) {
+      .modal-inner { grid-template-columns: 1fr; }
     }
 
-    .validate-btn:hover {
-      background-color: #45a049;
+    .modal-portrait-col {
+      padding: 2rem 1.5rem;
+      border-right: 1px solid rgba(192,57,43,0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(0,0,0,0.3);
+      /* tam yüksekliği doldur — background boşluk bırakmaz */
+      overflow-y: auto;
+      align-self: stretch;
+    }
+    .modal-portrait-col img {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      object-fit: cover;
+      object-position: top center; 
+      box-shadow: 0 0 30px rgba(192,57,43,0.4);
+        cursor: zoom-in;
+
+    }
+    .modal-char-name {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--blood-mid);
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 12px rgba(192,57,43,0.45);
+    }
+    .affiliation-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+    }
+    .affil-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #d4c9a8;
     }
 
-    @media (max-width: 768px) {
-      .modal-content {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .modal-content img {
-        width: 90%;
-      }
+    /* ── IMPROVED MODAL INFO COLUMN ─────────────────────── */
+    .modal-info-col {
+      padding: 1.75rem 3rem 1.75rem 2rem;
+      overflow-y: auto;
     }
+
+    .quirk-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border-radius: 3px;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .quirk-section-title .qs-icon {
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .quirk-section-title.positive {
+      color: #c8f0c8;
+      background: rgba(46,125,50,0.18);
+      border-left: 3px solid #4caf50;
+    }
+    .quirk-section-title.negative {
+      color: #f5c0c0;
+      background: rgba(192,57,43,0.18);
+      border-left: 3px solid #e05050;
+      margin-top: 1.25rem;
+    }
+
+    .quirk-list {
+      list-style: none;
+      margin-bottom: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .quirk-item {
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      line-height: 1.65;
+    }
+    .quirk-item .quirk-name {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #f0e8d0;
+      margin-bottom: 0.35rem;
+    }
+    .quirk-item .quirk-desc {
+      font-family: 'IM Fell English', serif;
+      font-size: 0.92rem;
+      color: #c8bfad;
+      line-height: 1.65;
+    }
+
+    /* ── MORALE INPUT MODAL ─────────────────────────────── */
+    .morale-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+    .morale-modal-overlay.active { display: flex; }
+    .morale-modal-box {
+      background: linear-gradient(135deg, #0e0c08, #160e0a);
+      border: 1px solid rgba(46,125,50,0.4);
+      border-radius: 6px;
+      padding: 2rem;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(46,125,50,0.25);
+    }
+    .morale-modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #4caf50;
+      margin-bottom: 0.5rem;
+    }
+    .morale-modal-box p {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+    .morale-input {
+      width: 100%; padding: 0.6rem;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(46,125,50,0.5);
+      border-radius: 4px;
+      color: white;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .validate-btn {
+      background: rgba(46,125,50,0.8);
+      border: 1px solid rgba(76,175,80,0.6);
+      color: white;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.5rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .validate-btn:hover { background: rgba(46,125,50,1); }
+
+    /* ── SECTION DIVIDER ORNAMENT ───────────────────────── */
+    .ornament-divider {
+      text-align: center;
+      color: rgba(201,168,76,0.3);
+      font-size: 0.8rem;
+      letter-spacing: 1em;
+      margin: 0.5rem 0 1rem;
+    }
+
+    /* ── SCROLL BAR ─────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+    ::-webkit-scrollbar-thumb { background:  #3f0a07; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b33322; }
+
+    /* ── FADE IN ANIMATION ──────────────────────────────── */
+    @keyframes bodyFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .app-wrapper { animation: bodyFade 1.2s ease-out; }
+
+    /* ── REST AREA SPECIAL ──────────────────────────────── */
+    .rest-token-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .rest-drop-zone {
+      background: var(--dark-card);
+      border: var(--border-ornate);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    /* Drag visual feedback */
+    .token.dragging { opacity: 0.4; }
   </style>
 </head>
 <body>
-  <header id="header">
-    <a href="../index.html" class="back-button" id="back-button">← Geri Dön</a>
-  </header>
+<div class="app-wrapper">
 
+  <!-- TOP BAR -->
+  <nav class="top-bar" id="top-bar">
+    <a href="../index.html" class="back-btn" id="back-button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Geri Dön
+    </a>
+    <span class="top-title">The Hamlet</span>
+    <div class="volume-control" id="volume-control-wrapper">
+      <span class="music-icon">♪</span>
+      <span class="music-track-label">Inn Theme</span>
+      <div class="volume-sep"></div>
+      <label>Vol</label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+      <span id="volume-pct">50%</span>
+    </div>
+  </nav>
+
+  <!-- AUDIO -->
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Darkest Dungeon II OST - The Inn (2023) HQ Official.mp3" type="audio/mp3" />
   </audio>
+  <audio id="drop-sound">
+    <source src="Token Sound Effect.mp3" type="audio/mpeg" />
+  </audio>
 
-  <div id="volume-control-wrapper">
-    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
-    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>The Hamlet</h1>
+    <p class="hero-subtitle">Campaign VI &ensp;·&ensp; The Dark Path</p>
+    <div class="hero-divider"></div>
+  </section>
+
+  <!-- INFO PANELS -->
+  <div class="info-strip">
+    <div class="info-panel">
+      <h3>⚔ Campaign Terms</h3>
+      <ul>
+        <li><strong>Success Rate:</strong> Bir Operasyonun başarı şansıdır. Çeşitli değişkenlere göre artıp azalabilir. Success Rate en az %10 ve en fazla %90 olabilir.</li>
+        <li><strong>Morale:</strong> Operasyon öncesi ve sonrasında kişinin moralini ve ne kadar operasyona hazır olduğunu belirtir. Bu değer 0 ile 100 arasında değişir. Bir kişinin bir Operasyona katılabilmesi için en az 40 morale ihtiyacı vardır. Baz olarak (çarpanlar eklenmemişken) başarılı bir Operasyonda 20, başarısız bir Operasyonda ise 40 moral azalır.</li>
+        <li><strong>Wounded:</strong> Bir kişinin yaralandığını gösterir. Bu yara hem mental hem fiziksel hem de metafiziksel olabilir. Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Yaralı birinin yarası bir hafta içerisinde iyileşir.</li>
+        <li><strong>Severely Wounded:</strong> Bir kişinin ağır bir biçimde yaralandığını gösterir. Bu ağır yara hem mental hem fiziksel hem de metafiziksel olabilir. Ağır Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Ağır Yaralı birinin yarası üç hafta içerisinde iyileşir.</li>
+        <li><strong>Madness:</strong> Bir kişinin halihazırda bir Madness etkisinde olduğunu göstergesidir. Madness etkisindeki kişilerin Operasyonda sorun çıkarma olasılığı yüksektir.</li>
+        <li><strong>Dead:</strong> Ölmüş kişiler Operasyonlara gönderilemez. Geri getirmek için ritüel ve masraf gerekir.</li>
+      </ul>
+    </div>
+    <div class="info-panel">
+      <h3>🗡 Operation Types</h3>
+      <ul>
+        <li><strong>Boss Fight:</strong> Operasyonun sonunda sizi bir Boss savaşının beklediği görevlerdir. Görevin içeriği birçok şeyi kapsayabilir ama ana görev, hedef gösterilmiş zorlu düşmanı alt etmektir.</li>
+        <li><strong>Espionage:</strong> Casusluk ve Hırsızlık görevleridir. Bilgi sızdırma, sahtekarlık veya mücevher çalma vb. gibi görevlerdir.</li>
+        <li><strong>Hunt:</strong> Av ve savaş görevleridir. Tehlikeli yaratık avlama, kaçak suçlu yakalama veya gizli suikast gibi görevlerdir.</li>
+        <li><strong>Escort:</strong> Refakatçilik görevleridir. Birinin veya bir konvoyun korumalığını yaptığınız veya belirli bir objeyi koruduğunuz görevlerdir.</li>
+        <li><strong>Diplomacy:</strong> Politik görevlerdir. İyi ilişkiler kurmaya çalıştığınız, elçilik yaptığınız veya ultimatomlar verdiğiniz görevlerdir.</li>
+        <li><strong>Rescue:</strong> Kurtarma görevleridir. Bir rehineyi kurtarabileceğiniz veya çalınan bir malı temin edeceğiniz gibi görevlerdir</li>
+        <li><strong>Ritual:</strong> Bir ritüeli tamamlamanız gereken görevlerdir. Lanetler ve ruhlarla uğraştığınız veya eski Büyüleri aktive ettiğiniz görevlerdir.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="info-box">
-    <b>Campaign 6 - The Dark Path Terimleri:</b><br/>
-    • <b>Success Rate:</b> Bir Operasyonun başarı şansıdır. Çeşitli değişkenlere göre artıp azalabilir. Success Rate en az %10 ve en fazla %90 olabilir.<br/>
-    • <b>Morale:</b> Operasyon öncesi ve sonrasında kişinin moralini ve ne kadar operasyona hazır olduğunu belirtir. Bu değer 0 ile 100 arasında değişir. Bir kişinin bir Operasyona katılabilmesi için en az 40 morale ihtiyacı vardır. Baz olarak (çarpanlar eklenmemişken) başarılı bir Operasyonda 20, başarısız bir Operasyonda ise 40 moral azalır.<br/>
-    • <b>Wounded:</b> Bir kişinin yaralandığını gösterir. Bu yara hem mental hem fiziksel hem de metafiziksel olabilir. Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Yaralı birinin yarası bir hafta içerisinde iyileşir.<br/>
-    • <b>Severely Wounded:</b> Bir kişinin ağır bir biçimde yaralandığını gösterir. Bu ağır yara hem mental hem fiziksel hem de metafiziksel olabilir. Ağır Yaralı bir kişi, iyileşene kadar yeni bir Operasyona gönderilemez. Ağır Yaralı birinin yarası üç hafta içerisinde iyileşir.<br/>
-    • <b>Madness:</b> Bir kişinin halihazırda bir Madness etkisinde olduğunu gösterir. Madness'ı olan kişilerin Operasyon sırasında sorun çıkarmaları daha olasıdır.<br/>
-    • <b>Dead:</b> Bir kişinin öldüğünü gösterir. Ölmüş kişiler Operasyonlara gönderilemezler! Ölmüş kişiyi hayata geri getirmek için çeşitli ritüeller ve masraflar gerekir.
+  <!-- TAG PALETTE -->
+  <div class="tag-palette-section">
+    <div class="tag-palette-section-header">
+      <span class="tag-palette-section-title">⚑ Status Tags</span>
+      <div class="tag-palette-section-line"></div>
+    </div>
+    <div class="tag-palette">
+      <div class="tag" draggable="true" data-tag="Wounded">⚔ Wounded</div>
+      <div class="tag" draggable="true" data-tag="Severely Wounded">☠ Sev. Wounded</div>
+      <div class="tag" draggable="true" data-tag="Madness">🌀 Madness</div>
+      <div class="tag" draggable="true" data-tag="Dead">💀 Dead</div>
+      <div class="tag" draggable="true" data-tag="Morale">♥ Morale</div>
+      <span class="tag-palette-hint">↳ karakterlerin üzerine sürükle</span>
+    </div>
   </div>
 
-  <div class="operation-info-box">
-    <b>Operation Types:</b><br/>
-    • <b>Boss Fight:</b> Operasyonun sonunda sizi bir Boss savaşının beklediği görevlerdir. Görevin içeriği birçok şeyi kapsayabilir ama ana görev, hedef gösterilmiş zorlu düşmanı alt etmektir.<br/>
-    • <b>Espionage:</b> Casusluk ve Hırsızlık görevleridir. Bilgi sızdırma, sahtekarlık veya mücevher çalma vb. gibi görevler olabilir.<br/>
-    • <b>Hunt:</b> Av ve savaş görevleridir. Tehlikeli yaratık avlama, kaçak suçlu yakalama veya gizli suikast gibi görevler olabilir.<br/>
-    • <b>Escort:</b> Refakatçilik görevleridir. Birinin veya bir konvoyun korumalığını yaptığınız veya belirli bir objeyi koruduğunuz görevler olabilir.<br/>
-    • <b>Diplomacy:</b> Politik görevlerdir. İyi ilişkiler kurmaya çalıştığınız, elçilik yaptığınız veya ultimatomlar verdiğiniz görevler olabilir.<br/>
-    • <b>Rescue:</b> Kurtarma görevleridir. Bir rehineyi kurtarabileceğiniz veya çalınan bir malı temin edeceğiniz gibi görevler olabilir.<br/>
-    • <b>Ritual:</b> Bir ritüeli tamamlamanız gereken görevlerdir. Lanetler ve ruhlarla uğraştığınız veya eski Büyüleri aktive ettiğiniz görevler olabilir.
-  </div>
+  <!-- ON REST SECTION -->
+  <div class="section-wrapper" style="margin-top:1.5rem;">
+    <div class="section-header">
+      <span class="section-title">On Rest</span>
+    </div>
+    <div class="rest-drop-zone">
+      <div class="rest-token-grid" id="rest-area">
 
-  <h1>The Hamlet</h1>
-
-  <div class="tag-panel">
-    <div class="tag" draggable="true" data-tag="Wounded">Wounded</div>
-    <div class="tag" draggable="true" data-tag="Severely Wounded">Severely Wounded</div>
-    <div class="tag" draggable="true" data-tag="Madness">Madness</div>
-    <div class="tag" draggable="true" data-tag="Dead">Dead</div>
-    <div class="tag" draggable="true" data-tag="Morale">Morale</div>
-  </div>
-
-  <div class="section">
-    <h2>On-Rest</h2>
-    <div class="token-area" id="rest-area">
-      <div class="token" draggable="true"
+        <!-- LURIEN VEIL -->
+         <div class="token" draggable="true"
         data-name="Lurien Veil"
         data-img="the-hamlet-tokenler-resimler/Lurien Veil.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Arcanist Commonity</u></i></b>","desc":"Bu karakter büyücüler ve güçleri muallak olan kişilerle daha iyi çalışır. Kendisi dahil olmayacak şekilde, Operasyondaki Mage ve Otherworldly Affiliationlarına sahip olan kişilerin adedi başına, Operasyonlardaki kişiler %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Amoralist</u></i></b>","desc":"Bu karakter başkalarının yapmaktan kaçındığı, hatta iğrendiği işleri yapmayı sorun etmez. Bu karakterle aynı Operasyonlardaki kişiler %10 daha az moral kaybederler."},{"name":"<b><i><u>Trauma Immunity</u></i></b>","desc":"Bu karakter tramvatik olaylardan olumsuz etkilenmez, etkilense bile dışarıya yansıtmaz. Başarılı bir Operasyonun ardından üzerindeki istediği bir Madnessı silebilir."},{"name":"<b><i><u>Perfect Soldier</u></i></b>","desc":"Bu karakter verilen emirlere uyarken ahlaki moral dilemmaları yaşamaz. Bu karakterin lider olmadığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Eldritch Ritualist</u></i></b>","desc":"Bu karakterin dünya dışı ritüeller ile arası iyidir. Ritual Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Intelligence Checklerine, Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."}],"negative":[{"name":"<b><i><u>Heteronomy</u></i></b>","desc":"Bu karakterin iradesi çok zayıftır, dış güçler ve idealler tarafından kolayca manipüle edilebilir. Bu karakter Operasyon sırasında kazandığı Madness başına, Operasyonlardaki kişilerin %4 daha fazla moral kaybetmesine sebep olur (Maximum %40 Moral Kaybı artışı olabilir)."},{"name":"<b><i><u>Unpredictable</u></i></b>","desc":"Bu karakterin akıl sağlığı yerinde olmadığı için ne yapacağı öngörülemez. Bu karakter Operasyon sırasında kazandığı Madness başına, Operasyonun başarı şansının %4 düşmesine sebep olur (Maximum %40 başarı şansı düşüşü olabilir)."},{"name":"<b><i><u>Doomcaller</u></i></b>","desc":"Bu karakter kötü olayları çağırır ve felaket tellallığı yapar. Operasyon sırasında Operasyondaki kişilerden birisi ölürse, kalan herkesin bir Long-Term Madness kazanmasına vesile olur."},{"name":"<b><i><u>Disturbing Presence</u></i></b>","desc":"Bu karakter bir şeyler başarılamadığı zaman çok rahatsız edici bir kişiliğe bürünür. Kendi bulunduğu Operasyon başarısızlık ile sonuçlanırsa, o Operasyondaki herkesin toplamda iki kat moral kaybı yaşamasına sebep olur."},{"name":"<b><i><u>Deadly Curiosity</u></i></b>","desc":"Bu karakter sıradışı ve dünyadışı fenomenlere olmaması gerektiği kadar meraklıdır. Bu durum çoğu zaman onu zor duruma sokar."}]}'
@@ -568,7 +1052,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- EREVAN DUSKWIGHT -->
+        <div class="token" draggable="true"
         data-name="Erevan Duskwight"
         data-img="the-hamlet-tokenler-resimler/Erevan Duskwight.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Boss Aura</u></i></b>","desc":"Bu karakter doğuştan bir lider havası barındırır. Bu karakterin yönettiği Operasyonlardaki karakterlerin moral kaybı %10 daha azdır."},{"name":"<b><i><u>Strategist</u></i></b>","desc":"Bu karakter plan kurgulamakta iyidir. Bu karakterin kurguladığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Connections</u></i></b>","desc":"Bu karakterin bağlantıları ve bağlantılı olduğu kişiler güçlüdür. Bu karakterin Affiliationslarından en az ikisi Operasyonda mevcutsa, Operasyonun başarı şansı %5, en az üçü Operasyonda mevcutsa başarı şansı %10 artar."},{"name":"<b><i><u>Diplomatic Leader</u></i></b>","desc":"Bu karakterin hizmet ettiği kişiden ötürü politikada belirli bir saygınlığı vardır. Politika Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Charisma Checklerine, Proficiency Bonusu adedine kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Vampiric Adventages</u></i></b>","desc":"Bu karakter bir vampirdir ve Vampir olmanın avantajlarını barındırır."}],"negative":[{"name":"<b><i><u>Fear From Boss</u></i></b>","desc":"Bu karakter kendi patronunun gücünü çok iyi bilir bu yüzden ondan çok korkar. Başarısız bir Operasyonun yaşanması durumda, bu karakter Operasyonun bir parçası olsun veya olmasın, Bir Long Term Madness kazanır."},{"name":"<b><i><u>Egoistical</u></i></b>","desc":"Bu karakter karar alınırken bencilce davranabilir. Bu karakterin kurguladığı Operasyonlardaki kişiler %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Hubris Syndrome</u></i></b>","desc":"Bu karakter bir Narsist ve kendini sayılı kişiler hariç birçok kişiden üstün görür. Bu karakter ile aynı Operasyondaki kişiler %10 daha fazla moral kaybeder."},{"name":"<b><i><u>Addicted</u></i></b>","desc":"Bu karakter belirli bir şeye karşı bağımlıdır ve o şey olmadan uzun süre devam edemez (Kan)."},{"name":"<b><i><u>Vampiric Disadventages</u></i></b>","desc":"Bu karakter bir vampirdir ve Vampir olmanın dezavantajlarını barındırır."}]}'
@@ -578,7 +1063,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- GORO -->
+        <div class="token" draggable="true"
         data-name="Goro"
         data-img="the-hamlet-tokenler-resimler/Goro.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Freak Solidarity</u></i></b>","desc":"Bu karakter, kendisine ucube gözüyle bakmayanların ve kendisi gibi olanların yanında daha rahat eder. Freak Affiliationına sahip olan kişilerin adedi başına, Operasyonlardaki kişilerin %10 daha az moral kaybetmesine sebep olur."},{"name":"<b><i><u>Traditional</u></i></b>","desc":"Bu karakter geleneklerine bağlı ve dindar birisidir. Kendisi dahil olmayacak şekilde, Religious Affiliationına sahip olan kişilerin adedi başına, Operasyonun başarı şansı %5 artar."},{"name":"<b><i><u>Blood Bath</u></i></b>","desc":"Bu karakter düşmanlarının kanıyla banyo yapar ve düşmana korku dosta güven salar. Operasyon sırasında öldürülen kişi başına, Operasyonlardaki kişilerin %2 daha az moral kaybetmesine sebep olur (Maximum %20 Moral Kaybı azalışı olabilir)."},{"name":"<b><i><u>Yokai Healing</u></i></b>","desc":"Bu karakter insanüstü bir iyileşme becerisine sahiptir. Bu karakter Wounded konumuna düşemez ve eğer Severely Wounded konumuna düşerse, bu etki sanki Woundedmış gibi bir hafta sonrasında iyileşir."},{"name":"<b><i><u>War Drummer</u></i></b>","desc":"Bu karakter savaş tutkusu ile yanıp tutuşur ve arkadaşlarını savaşa teşvik eder. Hunt Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Attack Rollarına Strength Modifierı kadar bonus verebilir. Bu bonus karakterin Proficiency Bonusu kadar verilebilir."}],"negative":[{"name":"<b><i><u>Sacrificial Zeal</u></i></b>","desc":"Bu karakter dini inancı uğruna kendisini feda etmeye eğilimlidir. Operasyon sırasında birileri Wounded veya Severely Wounded konumuna düşerse, bu karakter o yaraları onlar için üzerine alır. Bu karakterin üzerinde 2 tane Wounded bulunması durumunda bu karakter Severely Wounded durumuna düşer. Eğer bu karakterin üzerinde 2 tane Severely Wounded olursa, bu karakter Operation esnasında ölür."},{"name":"<b><i><u>Sign of the Oni</u></i></b>","desc":"Bu karakterin bulunduğu ortamda kişiler ona odaklanır. Barışçıl yöntemler ile çözülmesi denenen Operation durumlarında, bu karakter pasif olarak Proficiency Bonusu kadar ceza uygular. Eğer o andaki barış denemesinde bir dezavantaj mevcutsa, bu karakterin uyguladığı pasif ceza bonusu ikiye katlanır."},{"name":"<b><i><u>Curse of the Red</u></i></b>","desc":"Bu karakter savaş için doğmuştur. Eğer bu karakter, 2 hafta boyunca bir Hunt Operationuna çıkmazsa, 3. hafta bir Long Term Madness kazanır ve bu süreç tekrarlanır."},{"name":"<b><i><u>Cannibalistic Urge</u></i></b>","desc":"Bu karakter, dini ve gelenekleri gereği savaş alanındaki rakiplerini yemek ister. Eğer bu karakter, Operation esnasında öldürdüğü bir kişiyi bile yerse açlığını bastırır ve kendisi hariç Operationdaki bütün kişiler fazladan 10 moral kaybeder. Eğer bu karakter kimseyi yemezse, öldürülmüş 5 kişi başına bir Short Term Madness kazanır."},{"name":"<b><i><u>Inquisition Hate</u></i></b>","desc":"Bu karakter engizisyonculardan nefret eder ve onlarla çalışmayı reddeder. Inquisitor Affiliationuna sahip bir karakter ile aynı Operationda olursa, Operationun başarı şansı %8 düşer."}]}'
@@ -588,7 +1074,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- CARXIUS -->
+        <div class="token" draggable="true"
         data-name="Carxius"
         data-img="the-hamlet-tokenler-resimler/Carxius (Blood Hunter).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mercenary Relief</u></i></b>","desc":"Bu karakter, geçmişinde çok fazla askeri operasyonların içerisinde bulunmuş tecrübeli bir isimdir. Bu karakterin bulunduğu Operasyonlardaki karakterlerin moral kaybı %10 daha azdır."},{"name":"<b><i><u>Inquisition Discipline</u></i></b>","desc":"Bu karakter çok disiplinli bir şekilde yetişmiş bir engizisyoncudur ve diğer engizisyoncuları disipline sokar. Kendisi dahil olmayacak şekilde, Inquisition Affiliationına sahip olan kişilerin adedi başına, Operasyonun başarı şansı %8 artar."},{"name":"<b><i><u>Fey Charm</u></i></b>","desc":"Bu karakter karizmatik ve babacan bir otoriteye sahiptir. Operationda birbirlerinden haz etmeyen iki kişi varsa, o ikiliyi hizaya sokup onların vereceği zararı nötrler. Bunu yalnızca bir ilişki için yapabilir."},{"name":"<b><i><u>Blood Tracker</u></i></b>","desc":"Bu karakter kan büyüleri kullanabilir ve kan laneti sonucuyla iz sürme becerileri gelişmiştir. Hunt Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Survival ve Nature checklerine, Proficiency Bonusu adedine kadar avantaj verebilir. Eğer halihazırda bir avantaj varsa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Desensitized Will</u></i></b>","desc":"Bu karakter yaşamı boyunca Eldritch fenomenler ile savaşmış ve çok şey yaşamış birisidir. Operation sırasında Madness kazanacağı bir esnada, alacağı o Madnessı isterse yok sayabilir."}],"negative":[{"name":"<b><i><u>Zealots Blindness</u></i></b>","desc":"Bu karakter dini inancı ve ahlaki dogmaları gereği yaklaşım ilkeleri farklıdır ve bu yaklaşımlar sorun çıkarabilir. Operationun Affiliationları içerisinde Religious bir hedef varsa, bu karakterin doktrinleri bu Operationu tehlikeye atar ve Operation başarı şansını %12 düşürür."},{"name":"<b><i><u>Feybound Oath</u></i></b>","desc":"Bu karakter bir Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."},{"name":"<b><i><u>Northern Superstitions</u></i></b>","desc":"Bu karakterin kuzeyli batıl inançları ve engizisyonun tasvip etmediği kısımları, modern taktikleri reddetmesine neden olur. Operationda Tech Affiliationlu birileri varsa, Operationdaki bütün kişiler %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Goliath Pride</u></i></b>","desc":"Bu karakterin devasa boyutu ve gururu gizlilik ve düzenbazlık görevlerini sabote eder. Eğer bu karakter bir Espionage Opeationuna gönderilirse, Operationun başarı şansını %12 azaltır."},{"name":"<b><i><u>Haunting Eldritch Nightmares</u></i></b>","desc":"Bu karakterin zamanında geçirip gördüğü dünya dışı şeyler, bu karaktere musallat oluyordur. Bu karakter, Madness için atılan Wisdom Saving Throwlara dayanıklıdır ve ekstradan Proficiency Bonusunu bu Saving Throwlara koyar. Ancak gene de eğer bir Madness kazanırsa, Madness için atılan d100 zarına +20 ekler."}]}'
@@ -598,7 +1085,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- CASTOR -->
+        <div class="token" draggable="true"
         data-name="Castor"
         data-img="the-hamlet-tokenler-resimler/Castor (Druid).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Wickerbone Behemoth</u></i></b>","desc":"Bu karakter Wild Shape ile devasa eldritch bir yaratığa dönüşebilir. Bu karakter eğer bir Operation sırasında bu şekilde bir dönüşüm gerçekleştirirse, Operationun başarı şansını %12 arttırır."},{"name":"<b><i><u>Corrupted Bloom</u></i></b>","desc":"Bu karakter doğanın öfkesiyle birleşmiş ve kendini yoz doğaya adamıştır. Nature Affiliationına sahip bir Operasyonun başarı şansı %10 arttırır."},{"name":"<b><i><u>Whispering Roots</u></i></b>","desc":"Bu karakter, yoz doğanın köklerine fısıldayabilir ve onlarla konuşabilir. Espionage Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Perception veya Insight Rollarına Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Skilled Doctor</u></i></b>","desc":"Bu karakter cerrahi beceriler ve iyileştirme konusunda iyidir. Operation sırasında bir doktorun yanlarında bulunmasından ötürü bu karakter ile aynı Operasyondaki kişiler %10 daha az moral kaybederler."},{"name":"<b><i><u>Wound Treatment</u></i></b>","desc":"Bu karakter doğanın lütuflarını kullanarak yara iyileştirmede iyidir. Operationa gönderilmediği bir hafta, Wisdom Modifierı kadar kişinin yaralarını belli bir ölçüde tedavi ederek Wound süresini, ekstradan 1 hafta azaltır."}],"negative":[{"name":"<b><i><u>Distressful Transformation</u></i></b>","desc":"Bu karakter Wild Shape ile devasa eldritch bir yaratık formunda kalması grubun akıl sağlığı için hayırlı değildir. Bu karakterin Wild Shape formunu kullanırsa Operasyonlardaki kişiler %5 daha fazla moral kaybeder ve bu formunda kaldığı round başına, %1 daha fazla moral kaybetmeye devam ederler."},{"name":"<b><i><u>Nightmarish Trauma</u></i></b>","desc":"Bu karakterin Wild Shape ile eldritch formuna dönüşmesi, gören kişilere tramvatik duygular yaşatabilir. Bu karakter her Wild Shape özelliğini kullandığı vakitte, Operationdaki diğer tüm kişiler bir DC 10 Madness Saving Throwu atar ve başaramayanlar bir Short Term Madness kazanır."},{"name":"<b><i><u>Hunter and Prey Confusion</u></i></b>","desc":"Bu karakter doğanın düşmanı bildiği kişilere karşı çok katıdır. Inquisition, Tech ve Imperium Affiliationlarına sahip birileri ile aynı Operationda bulunursa Operasyonun başarı şansı %15 azaltır."},{"name":"<b><i><u>Dark Pact</u></i></b>","desc":"Bu karakter din olgusunu bir yanılsama ve yalan olarak görür. Religious Affiliationuna sahip Operationa gönderilirse, Operasyondaki herkesin %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Feast of Decay</u></i></b>","desc":"Bu karakterin yaydığı yozlaşmış aura, etrafındakileri çürütür. Operation esnasında %35 ihtimalle yemekler çürür ve yemeklerin çürüdüğü günler iki kat rations tüketilmesi gerekilir."}]}'
@@ -608,7 +1096,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- ENIGMATA -->
+        <div class="token" draggable="true"
         data-name="Enigmata"
         data-img="the-hamlet-tokenler-resimler/Enigmata (Jeager).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Tech Friendship</u></i></b>","desc":"Bu karakter teknolojiye meraklıdır ve teknolojiyi kabullenerek çalışır. Operationda başka bir Tech Affilationuna sahip karakter varsa, Operasyondaki herkes %15 daha az moral kaybederler."},{"name":"<b><i><u>Monster Hunter</u></i></b>","desc":"Bu karakter bir avcı tarafından yaratık avlamak ve masumları kurtarmak için eğitilmiştir. Katıldığı Hunt ve Rescue Operationlarının başarı şansını %10 arttırır."},{"name":"<b><i><u>Ooze Adaptibility</u></i></b>","desc":"Bu karakter eksik tarafları kapatmakta ustalaşmıştır. Gönderildiği Operationların Affiliationlarında doldurulamamış bir Affiliation varsa, bu karakter sanki o Affiliationdanmış gibi o boşluğu doldurup Operaitonun başarı şansını ona göre yükseltir."},{"name":"<b><i><u>Submissive</u></i></b>","desc":"Bu karakter hayatı deneyimleyip öğrenmek için bir gözetmene ihtiyaç duyar. Gönderildiği Operationda yalnızca 1 Boss Affiliationuna sahip kişi varsa, Boss Affiliationundaki kişinin yapacağı eylemlere Bonus Action ile Proficiency Bonusu kadar Help verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Mascot Girl</u></i></b>","desc":"Bu karakter, kendisi gibi garip olanlar ile iyi anlaşır ve onların moralini yükseğe çeker. Operationda Freak Affiliationuna sahip kişilerin adedi başına, Operasyonlardaki kişilerin %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>Criminal Hater</u></i></b>","desc":"Bu karakter kaçakları ve suçluları avlayan birisidir ve onlarla çalışmaz. Eğer Operationda bir Criminal varsa, kendisi profesyonel kalır ama totalte iki kat Moral kaybeder."},{"name":"<b><i><u>Espionage Saboteur</u></i></b>","desc":"Bu karakter gizlilik ve kurnazlığı anlamsız bulur. Bu karakter Espionage Operationlarına gönderilirse, Operationlarının başarı şansını %20 azaltır."},{"name":"<b><i><u>Childish Aura</u></i></b>","desc":"Bu karakter yeterince akıllı olsa da hareketlerinin farkındalığından yoksundur ve çocukca davranabilir. Operationdaki lider için sorun çıkartabilir ve kendi doğru bulduğu emirleri uygulayabilir. Eğer Lider bu karaktere bir şeyi yapma derse, bu karakter DC 10 Wisdom Saving Throw atar. Başaramazsa gene de yapar veya yapmamayı seçerse strese girer ve bir Short Term Madness kazanır."},{"name":"<b><i><u>Heroic Delusion</u></i></b>","desc":"Bu karakter kahraman olma takıntısı yüzünden, tehlikeli durumlarda gereksiz risk alabilir. Operasyon esnasında %25 ihtimalle Operation Planını bozar ve alarm tetikleyerek savaşa daha fazla düşmanın katılmasına sebep olabilir."},{"name":"<b><i><u>Oozes Hunger</u></i></b>","desc":"Bu karakter Ooze doğasını kontrol altında tutamayabilir. Operasyon esnasında veya bitiminde %10 ihtimalle alınabilecek lootu yiyebilir. Böyle bir durumda lootun yarısını yer, veya yemeyi gene de reddererse kendi açlığına hakim olamadığı için bir Indefinite Madness kazanır."}]}'
@@ -618,7 +1107,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- INAZUMA -->
+        <div class="token" draggable="true"
         data-name="Inazuma"
         data-img="the-hamlet-tokenler-resimler/Inazuma (Fighter).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Ancient Spore Network</u></i></b>","desc":"Bu karakter sporlar ile olan bağlantısını avantaja çevirebilir. Espionage Operationları esnasında, bu karakter mantar ağını kullanarak ister kendi ister takım arkadaşlarının öğrenmeye çalıştığı mantıklı bir bilgi için atılan checklere avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Samurai Duty</u></i></b>","desc":"Bu karakter geleneklere bağlı bir samuraydır ve töresini korur. Bu karakter Escort Operationlarına gönderilirse, Operationun başarı şansını %10 arttırır."},{"name":"<b><i><u>Mycelial Resilience</u></i></b>","desc":"Bu karakterin anatomisi, bilinen zaafları içermez. Bu karakter hiçbir koşul gereğince Wounded veya Severely Wounded durumuna düşemez."},{"name":"<b><i><u>Freakish Camouflage</u></i></b>","desc":"Bu karakterin ucubemsi mantar dokusu, Underdark doğasıyla uyum sağlamasını sağlar. Freak veya Underdark Affiliationlarına sahip Operationlara gönderilirse, Operasyonun başarı şansını %10 arttırır."},{"name":"<b><i><u>Criminal Notoriety</u></i></b>","desc":"Bu karakter, suçu takdir eder ve suçun getirdiği korkuyu güçlü bir silah olarak görür. Gönderildiği Operationda kendisinden başka en az bir Criminal Affiliationlı kişi varsa, Operasyondaki herkesin morali %10 daha az azalır."}],"negative":[{"name":"<b><i><u>Spore Soldier</u></i></b>","desc":"Bu karakter sporlar aracılığı ile yayılmaya devam eder. Operation esnasında ölmüş dost veya düşman gördüğü vakit, cesede sporları yayar ve cesedi hizmet eden bir Mycelide çevirir. Mantardan ölü bir askere çevrilmiş birisini geri çevirmesi için ikna edilemez."},{"name":"<b><i><u>Beyond Comprehension Morality</u></i></b>","desc":"Bu karakterin moral ve ahlak tanımı, yaşayanlar ile ölçüşmez. Bu karakter Diplomacy Operationlarına gönderilirse, Operationun başarı şansını %10 azaltır."},{"name":"<b><i><u>Wanos Grudge</u></i></b>","desc":"Bu karakter, bağlı olduğu kökenlerin geleneklerini taşısa da, orayı hatırlatan şeylerden nefret eder. Gönderildiği Operationda kendisinden başka en az bir Wano Affiliationlı kişi olursa, Operasyondaki herkesin morali %10 daha fazla azalır."},{"name":"<b><i><u>Past Life Hatred</u></i></b>","desc":"Bu karakterin bedenindeki eski kişiliğin duyduğu nefretler, bu karaktere de aktarılır. Eski benliğin duyduğu nefretten ötürü Imperium Affiliationlu kişilerden nefret eder ve Imperiumdan olan kişilerle çalışmaz. Gönderildiği Operationda en az bir Imperium Affiliationlı kişi varsa, Operasyondaki herkesin morali %10 daha fazla azalır ve Operationun başarı şansı %10 azalır."},{"name":"<b><i><u>Temporal Perceptual Disparity</u></i></b>","desc":"Bu karakterin mycelid ölümsüz doğası, onun zaman algısını bozar. Bu karakter %20 ihtimalle Operationun süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter spor kolonisine bilgi toplar ve rapor verir, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."}]}'
@@ -628,7 +1118,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- KARIAS MAYHEM -->
+        <div class="token" draggable="true"
         data-name="Karias Mayhem"
         data-img="the-hamlet-tokenler-resimler/Karias Mayhem (Barbarian).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Underdark Cartel Boss</u></i></b>","desc":"Bu karakter Underdark suç ağının önemli bir parçasıdır ve suç bağlantıları çok güçlüdür. Eğer Criminal veya Underdark Affiliationlı bir Operationa Liderlik ediyorsa, Operationun başarı şansı %15 artar."},{"name":"<b><i><u>Infernal Connections</u></i></b>","desc":"Bu karakterin bağlantıları Underdark ile sınırlı değildir, dokuz cehenneme kadar uzanır. Gönderildiği Operationda Lider rolünü üstleniyorsa, o anki karakter levelına göre GM nin belirleyeceği bir Infernal destek ekibini; silah sağlama, bilgi alma, savaş desteği vb. gibi belirli spesifik bir iş için yalnızca bir kere olacak şekilde çağırabilir."},{"name":"<b><i><u>Warmongers Presence</u></i></b>","desc":"Bu karakter işleri fiziksel bir biçimde çözmeyi sever. Gönderildiği Operationda bir savaş olmuşsa, Operasyondaki herkesin morali %10 daha az azalır."},{"name":"<b><i><u>Boss Intimidation</u></i></b>","desc":"Bu karakterin varlığı, anlaşmalar sırasında karşı tarafı ürkütür. Gönderildiği Diplomacy Operationlarında başarı şansını %10 arttırır."},{"name":"<b><i><u>Debt Retriever</u></i></b>","desc":"Bu karakter geri alınması istenilen şeyleri geri alma konusunda iyidir. Gönderildiği Rescue Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının geri alınması istenilen şey ile alakalı attıkları Checklere, Proficiency Bonusu adedine kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."}],"negative":[{"name":"<b><i><u>Infernal Debt</u></i></b>","desc":"Bu karakterin kaynaklarını sürdürebilir biçimde devam ettirebilmesi için borçlarını ödemesi gerekiyordur. Bu karakterin bulunduğu veya bulunmadığı, totaldeki her 7. Operationda ve yedinin tekrarında, karakter bir iblis borcunu ödemek zorundadır. Bu borcu ödediği vakitte, 7. Operasyondaki DM nin seçtiği bazı eşyalar borcun karşılığı olarak şeytani anlaşmanın bir parçası olur. Bu anlaşmayı reddederse kişi sözünden dönmüş ve kontrattan caymış olur ve; Operationun başarı şansı %40 düşer, kişi o bağlantısını kaybeder ve hatta bazı durumlarda o bağlantı borcu almak için planlar yapıp köstek olmaya çalışabilir hatta belki de kendisi de borcu tahsil etmeye gelebilir."},{"name":"<b><i><u>Tyrannical Leadership</u></i></b>","desc":"Bu karakter mükemmeliyeti isteyen ve başarısızlığa katlanamayan bir liderdir. Bu karakterin yürüttüğü bir Operation başarısız olursa, o Operasyondaki herkesin toplamda iki kat moral kaybı yaşamasına sebep olur ve başarısızlığın sebebi olduğunu düşündüğü kişiye karşı düşmanlaşır."},{"name":"<b><i><u>Obsessive Control</u></i></b>","desc":"Bu karakter bir mikroyönetim ve kontrol manyağıdır. Eğer bu karakter Espionage Affiliationlu bir göreve gönderilirse, tespit edilme riskini arttırır ve Operationun başarı şansını %15 azaltır."},{"name":"<b><i><u>Ruthless Efficiency</u></i></b>","desc":"Bu karakter yaralı ve zayıfları işe yaramaz olarak görür. Eğer bu karakterin Liderlik ettiği Operationda bir kişi yaralanmışsa, yaralanmış kişiyi olası senaryolarda ölüme terk etmeye meyillidir. Bu karakterin Liderlik ettiği Operationda birisi yaralanmışsa Operationdaki herkes, yaralanmış kişi adedi başına %10 daha fazla moral kaybeder."},{"name":"<b><i><u>Tiefling Stigma</u></i></b>","desc":"Bu karakterin kutsal olmayan doğası, dindar kişiler için her zaman göze çarpan bir kusur olmuştur. Gönderildiği Operationda Religious Affiliationu olursa, Operationun başarı şansı %12 düşer."}]}'
@@ -638,7 +1129,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- LADY CLOVER -->
+        <div class="token" draggable="true"
         data-name="Lady Clover"
         data-img="the-hamlet-tokenler-resimler/Lady Clover (Monk).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mercy is a Blades Duty</u></i></b>","desc":"Bu karakter, ölümün nihai bir merhamet olduğuna inanır. Eğer gönderildiği Operationda Religious Affiliationdan birisi varsa ve bu Operationda birileri ölmüşse, bu karakter ölen kişi için, dinginliğini korur ve ona ölümün merhametiyle birlikte saygıyı sunar ve Operationdaki herkesin %15 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Mysterious Presence</u></i></b>","desc":"Bu karakterin konuşmaması, ona bir bilinmezlik faktörü kazandırır ve karşısındaki insanları endişelendirir. Diplomacy Operasyonlarında, bu kişinin sessiz varlığı, karşı tarafın daha fazla gerilmesine sebep olur ve Operationun başarı şansını %8 arttırır."},{"name":"<b><i><u>Gold Mask of the Faceless Judge</u></i></b>","desc":"Bu karakterin maskesi, Wanonun tanrıları tarafından susturulduğuna dair bir efsaneyi temsil eder. Underdark Affiliationlu bir Operationa gönderilirse, maskenin kutsal/korkutucu namından ötürü Operationun başarı şansını %12 arttırır."},{"name":"<b><i><u>Compassionate Companion</u></i></b>","desc":"Bu karakterin belli etmese de empati yeteneği çok yüksektir ve dostlarının yanında durur. Operation esnasında yapılan bir Short Rest esnasında, Operationdaki birinin üzerinden bir Long Term Madness kaldırabilir. Bunu yalnızca Operationda bir kere yapabilir."},{"name":"<b><i><u>Silent Prophet</u></i></b>","desc":"Bu karakteri Underdarktaki diğer katiller, bir tür azize olarak görür. Operationdaki Criminal Affiliationdan olan kişilerin sayısı başına, Operationdaki herkesin kişi başına %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>No One is Innocent</u></i></b>","desc":"Bu karakter en nihayetinde herkesin bir günahkar olduğuna inanır. Espionage Operasyonlarında, ana hedefin dışına çıkarak beklenmedik bir anda suçluları öldürerek alarm tetikler Operationun başarı şansını %15 azaltır."},{"name":"<b><i><u>Ritual Before Reason</u></i></b>","desc":"Bu karakter, katliamlarını dini bir törenle yapar. Öldüreceği kişiye bir lotus çiçeği bırakır, maskesini temizler. Bu karakter %20 ihtimalle Ritual ve Hunt Operationlarının süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter dini töreni için hazırlığa başlar veya uygular, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."},{"name":"<b><i><u>Whispers of the Unforgiven</u></i></b>","desc":"Bu karakter, geçmişinin izinde yaşar ve kendini sorgular. Operationda öldürdüğü her 3 kişi için, savaş sonunda DC 11 Wisdom Saving Throw atar ve başaramazsa Short Term Madness kazanır."},{"name":"<b><i><u>Judgmental Stare</u></i></b>","desc":"Bu kişinin maskenin boş bakışları, müttefiklerinin hatalarını kayıtsızca analiz eder. Operationdaki d20 Checklerde başarısız olan kişiler, başarısız oldukları her d20 için %2 daha fazla moral kaybeder."},{"name":"<b><i><u>Voices of Remorses</u></i></b>","desc":"Bu karakterin öldürmeye çalıştığı kişiler, son anlarında fısıltılar duyar. Eğer bir kişi, bu karakteri Operation sırasında Wounded durumuna düşürürse, bu kişi bir Short Term Madness kazanır. Eğer bir kişi, bu karakteri Operation sırasında Severely Wounded durumuna düşürürse, bu kişi bir Long Term Madness kazanır."}]}'
@@ -648,7 +1140,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- MERCER -->
+         <div class="token" draggable="true"
         data-name="Mercer"
         data-img="the-hamlet-tokenler-resimler/Mercer (Artificer).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mechanical Intuition</u></i></b>","desc":"Bu karakter, teknolojiye olan düşkünlüğü ve zekası neticesiyle mükemmeliyetçi bir zihniyettedir. Liderlik ettiği Tech Affiliationlu bir Operationun başarı şansını %15 arttırır."},{"name":"<b><i><u>Bosses Loyal Friend</u></i></b>","desc":"Bu karakterin köpeği, onun tek gerçek ailesidir. Bu karakterin bulunduğu Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Pain Driven Lesson</u></i></b>","desc":"Bu karakterin hayatındaki yaşadığı başarısızlıklar, bu karakter için bir ders niteliği taşır. Bu karakterin yönettiği bir Operation başarısız olursa, Operationun başarısız olmasının ardından tetiklenen bütün moral çarpanları sıfırlanır ve sanki Operation normal geçmiş gibi, ne artısız ne eksisiz bir moral kaybı yaşanır."},{"name":"<b><i><u>Scarred Authority</u></i></b>","desc":"Bu karakterin yaraları, onun güçlü bir otoriteye sahip olduğunu işaret eder. Diplomacy Operasyonlarında esnasında zayıf iradeli NPCler direnemeden itaat edip istenen şeyi söylemesini sağlayabilir. Bunu yapmak için kişi, DC 2 bir Wisdom Saving Throw atar ve başarırsa sorgulanan kişi istenen bilgiyi söyler. Operation esnasında yalnızca bir kere kullanılabilir."},{"name":"<b><i><u>Black Market Architect</u></i></b>","desc":"Bu karakterin, Underdarkın yeraltı teknoloji ağlarıyla bağlantıları vardır. Operationa gönderilmediği zamanlarda büyülü eşya craftına başlayabilir. Enchanting Checklerde (Daha detaylı bilgi için Helianas Guide to Monster Huntinge bakınız...) kendine avantaj verir."}],"negative":[{"name":"<b><i><u>Emotional Detachment</u></i></b>","desc":"Bu karakter başarısızlıklardan ne kadar ders alsa da tramvaları atlatamıyordur. Bu karakterin yönettiği Operationda bir dost ölürse (köpeği hariç), Operationun başarı şansı %20 azalır."},{"name":"<b><i><u>Legacy of Betrayal Paranoia</u></i></b>","desc":"Bu karakter bazı kişilere karşı açık bir güvensizlik besler. Bu karakterin yönettiği bir Operasyonda Imperium Affiliationundan birileri olursa, bu karakter bilerek onları riskli pozisyonlara iter ve Operationun başarı şansını %10 düşürür."},{"name":"<b><i><u>Mechanical Maintenance</u></i></b>","desc":"Bu karakterin ve köpeğinin mekanik olarak bakıma ihtiyacı vardır. Bu karakter ardı ardına veya aralıklı olması fark etmeyecek şekilde, 2 Operationa gönderildikten sonra vücudu bakım ister ve 2 hafta boyunca herhangi bir Operationa gönderilemez."},{"name":"<b><i><u>Proud Complex</u></i></b>","desc":"Bu karakter yaralanmayı kabul etmez ve kendini zayıf görmeyi redderer. Eğer bu karakter Wounded veya Severely Wounded konumuna düşerse bir Long Term Madness kazanır."},{"name":"<b><i><u>Soft Spot For Weaks</u></i></b>","desc":"Bu karakterin özellikle çocuklara olacak şekilde, masumlara duyduğu bir merhamet hissiyatı mevcuttur. Rescue Operationlarında, Operationun başarı şansını %10 azaltır."}]}'
@@ -658,7 +1151,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- ORILISTA -->
+        <div class="token" draggable="true"
         data-name="Orilista"
         data-img="the-hamlet-tokenler-resimler/Orilista (Warlock).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Honeyed Lies</u></i></b>","desc":"Bu karakterin yalanları o kadar inandırıcıdır ki görevlerde büyük bir avantaj sağlar. Espionage Operasyonlarında yalanlarıyla istihbarat toplayarak, Operationun başarı şansını %15 artar."},{"name":"<b><i><u>Whispering Patron</u></i></b>","desc":"Bu karakterin patronuyla arasındaki bağ çok sıkıdır ve patronu ona sırlar fısıldar. Eğer bu kişi DC 12 Wisdom Checki geçebilirse, her Operationda bir kez olacak şekilde bu karakterin patronu, bu karakterin Operasyon ile alakalı öğrenmek istediği bir sırrı veya bilgiyi açığa çıkarır."},{"name":"<b><i><u>Freak Magnetism</u></i></b>","desc":"Bu karakter gibi dışlanmış kişiler, bu karakteri kendilerinden birisi gibi görür. Gönderildiği Operationda Freak Affiliationuna sahibi karakterlerle çalışıyorsa, Operasyondaki Freak başına (kendisi dahil) Operasyonlardaki kişilerin %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Feytongue Deception</u></i></b>","desc":"Bu karakter, inka etme ve konuşma sanatını Feylerden öğrenmiştir ve bir manipülasyon ustası olarak konuşma işlerini kolaylaştırır. Gönderildiği Diplomacy Operasyonlarında, atılan bütün Charisma Checklerin DC zorluğunu, kendi Proficiency Bonusu kadar düşürür."},{"name":"<b><i><u>Happy Lies Cocoon</u></i></b>","desc":"Bu karakter distopik de olsa, yalanlarını satmakta ve algıyı değiştirmekte çok iyidir. Gönderildiği Operationdaki herkesin kazanacağı Madness etkilerini, DC 20 Deception Check ile silme ihtimali vardır. Bu check, madness kazanıldıktan sonra hemen atılır ve başarılı olunursa madness hiç kazanılmamış varsayılır. Bu checkin atılıp atılmayacağına, Madness etkisini gördükten sonra karar verilir."}],"negative":[{"name":"<b><i><u>Elven Grudge</u></i></b>","desc":"Bu karakter geçmişi gereği elf bağlarından nefret eder. Gönderildiği Operationda Alve Dorei Affiliationlu birisi veya Elf ırkından birisi varsa, Operationun başarı şansını %15 düşürür."},{"name":"<b><i><u>Patrons Whim</u></i></b>","desc":"Bu karakter kendi Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."},{"name":"<b><i><u>Cruel Games</u></i></b>","desc":"Bu karakterin öldürme çeşitleri dehşet vericidir. Operasyondaki öldürülen her üç kişi için, Operasyondaki müttefikler DC 10 Wisdom Save atar. Başaramayan müttefikler bir Short Term Madness kazanır. Bu şekilde kazanılan Madness, Happy Lies Cocoon etkisi ile silinemez."},{"name":"<b><i><u>Fear From Boss Fights</u></i></b>","desc":"Bu karakter, güçlü düşmanlardan korkar ve onlarla yüzleşmeyi sevmez. Boss Fight Operationlarında başarı şansını %15 düşürür."},{"name":"<b><i><u>Derealization</u></i></b>","desc":"Bu karakterin yaşadığı işkenceler neticesinde gerçeklik algısında sorunları mevcuttur. Operasyon esnasında kendisinin attığı bir Checki direkt olarak faillama şansı mevcuttur. Bu şans, DM nin perde arkasından attığı zarlar ile belirlenir."}]}'
@@ -668,7 +1162,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- PRUDENCE -->
+        <div class="token" draggable="true"
         data-name="Prudence"
         data-img="the-hamlet-tokenler-resimler/Prudence (Rogue).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Velvet Trap</u></i></b>","desc":"Bu karakterin baştan çıkarıcı tavırları hedefin gardını düşürür. Gönderildiği Diplomacy Operationlarında, hedeflerin atacakları checklerden, Proficiency Bonusu kere olacak şekilde kendi Charisma Modifierını düşürebilir."},{"name":"<b><i><u>Shadows Caress</u></i></b>","desc":"Bu karakterin cinayetleri genellikle \"bulaşıklı\" değildir, arkasında iz bırakmaz. Espionage Operasyonlarında operasyonun başarı şansı %15 artar."},{"name":"<b><i><u>Gilded Burglar</u></i></b>","desc":"Bu karakterin parlak şeylere olan iştahı, onu mükemmel bir hırsız yaoar. Rescue ve Espionage Operasyonlarında kademeli olarak zorluk DC 20/25/30 olacak şekilde bir Sleight of Hand Check atar. Bu check ile belirtilen kademeleri geçtiği vakitte, GM nin belirleyeceği bir şekilde, Operationdan daha fazla kazanç sağlayabilir."},{"name":"<b><i><u>Vampiric Recognition</u></i></b>","desc":"Bu karakterin ölümsüz doğası, kendisi gibi olanlar ile iyi ilişkiler kurmasını ve ona empati yapılabilmesini sağlar. Gönderildiği Operationda Immortal Nature Affiliationuna sahip birisi varsa, Operationdaki bütün herkesin moral kaybı %20 daha az olur."},{"name":"<b><i><u>Physical Relief</u></i></b>","desc":"Bu karakterin damarlarında akan özel vampir kanı ve bu karakterin yoldaşlığı, fiziksel temas ile birleştiği vakitte mucizeler yaratabilir. Operation esnasındaki bir Short veya Long Rest sırasında, bu Operationdaki bir kişi ile fiziksel olarak yakınlaşıp onunla birlikte zaman geçirebilir. Bunu yaptığı zaman, yakınlaştığı kişinin üzerinden istediği bir Madness efektini kaldırabilir (Fiziksel formu bozan Madness efektleri üzerinde çalışmaz). Ayrıca hem bu karakterin, hem de partnerinin Operationun sonunda moral kaybı %20 daha az olur."}],"negative":[{"name":"<b><i><u>Fatal Boredom</u></i></b>","desc":"Bu karakter işleri sıkıcı bulduğu zaman kendince ilginçleştirecek yöntemler arar. Eğer gönderildiği Operationun Success Ratesi %80 veya üzerindeyse, bu karakter işleri ilginçleştirmek adına bazı şeyleri çaktırmadan sabote eder ve Operationun başarı şansını %10 düşürür."},{"name":"<b><i><u>Vampiric Whims</u></i></b>","desc":"Bu karakterin vampirik doğası, onu kanasusamış yapar. Eğer Operation esnasında acıkırsa, müttefiklerini ısırarak onlardan kan çeker. Eğer müttefiklerinden birisini ısırırsa, ısırılan kişi ısırık başına %5 daha fazla moral kaybeder. Eğer açlığını bastırmayı seçer ve birisini ısırmazsa, DC 15 Constitution Saving Throwu başarması gerekir yoksa bir Short Term Madness kazanır."},{"name":"<b><i><u>Delaying Flirt</u></i></b>","desc":"Bu karakterin flört işlerini istediği şekilde idare ettirebilmesi için zamana ihtiyacı olabilir. Diplomacy Operationu esnasında bir hedefi baştan çıkarmak için zamana ihtiyacı olabileceğinden ötürü, bu karakter %25 ihtimalle Operationun süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter hedefi ile zaman geçirir ve gruptan geçici olarak ayrılır, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."},{"name":"<b><i><u>Mother Paranoia</u></i></b>","desc":"Bu karakterin geçmişinde annesi ile yaşadıkları ona zor zamanlar yaşatabilir. Gönderildiği Operation Immortal Nature Affiliationu içeriyorsa veya Vampirler ile ilgiliyse, bu karakter Operationa başladığı anda Wounded statüsüne geçer."},{"name":"<b><i><u>Blood Ties</u></i></b>","desc":"Bu karakter, kan bağı yüzünden bazı kişiler tarafından aşağılık bir gözle bakılır. Gönderildiği Operationda Religious Affiliationlu bir müttefik varsa,. Operationdaki herkesin moral kaybı %15 daha fazla olur."}]}'
@@ -678,7 +1173,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- SKOVAN -->
+        <div class="token" draggable="true"
         data-name="Skovan"
         data-img="the-hamlet-tokenler-resimler/Skovan (Bard).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Manipulative Apocalypse Whispers</u></i></b>","desc":"Bu karakter, yaklaşan kıyametin fısıltılarını duyduğunu ve bu kıyamet senfonisinin altında alınacak bir ders olduğunu söyler. Bu karakterin bulunduğu Operationlarda eğer birileri bir Madness kazanırsa, Madness Effectin belirlenmesi için atılan d10 luk zarı pasif olarak 2 düşürür."},{"name":"<b><i><u>Dark Veiled Path</u></i></b>","desc":"Bu karakter, karanlığı ve Underdarkı benimsemiş bir seri katildir ve yakalanması zordur. Gönderildiği Espionage Operationlarının başarı şansını %10 arttırır."},{"name":"<b><i><u>Eldritch Insight</u></i></b>","desc":"Bu karakter ritüelistik ve tarikatımsı hareketlere alışıktır ve bu bağnazlık ile iç içe büyümüştür. Gönderildiği Ritual Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Wisdom Saving Throwlarına, Proficiency Bonusu kere olacak şekilde avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Poet of Murder</u></i></b>","desc":"Bu karakterin ölüm sanatı, suçlular tarafından takdir edilir. Gönderildiği Operationdaki Criminal Affiliationdan olan kişilerin sayısı başına, Operationdaki herkesin kişi başına %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Shadows Embrace</u></i></b>","desc":"Bu karakter, karanlıkta yürürken müttefiklerinin moralini yüksek tutar. Gönderildiği Operationda Underdark Affiliationu varsa, bu Operaitondaki herkesin herkesin %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>Eldritch Moon Bound</u></i></b>","desc":"Bu karakter, mutasyonlu ayın tepede olduğu günler göreve gönderilmek ister. Eldritch Moonların tepede olduğu dönemlerde (4 haftalık Rotasyon şeklinde) görevlere gönderilmek zorundadır. Eğer bu karakter Ay tepedeyken göreve gönderilmezse, Hamletin içindeki herkese DC 17 Wisdom Saving Throw attırır ve başaramayan kişilere bir Long Term Madness kazandırır."},{"name":"<b><i><u>Voices of the Void</u></i></b>","desc":"Bu karakter bir şeyler ile uğraşmadığı zaman, kafasında sesler duymaya başlar ve bu duyduğu sesler insanları rahatsız etmesini söyler. Eğer 2 hafta üst üste Operationa gönderilmezse, Hamletin içindeki herkese DC 11 Wisdom Saving Throw attırır ve başaramayan kişilere bir Short Term Madness kazandırır."},{"name":"<b><i><u>Unholy Rancor</u></i></b>","desc":"Bu karakter, tanrıları bir küfür olarak görür ve dini görevleri pek de iyi kaldıramaz. Gönderildiği Operationda Religious Affiliationu mevcutsa, Operationun başarı şansını %12 düşürür."},{"name":"<b><i><u>Double Edged Diplomacy</u></i></b>","desc":"Bu karakterin diplomasi anlayışı sakıncalıdır. Gönderildiği Diplomacy Operationunda öngörülemeyecek şeyler yapabilir ve bunun sonucunda iki şeyden birisi olabilir. İlk ihtimal dahilinde, Operationdaki herkes %10 daha az moral kaybeder fakat Operationun Success Ratesi %20 azalır. İkinci ihtimalde ise Operationdaki herkes %20 daha fazla moral kaybeder fakat Operationun Success Ratesi %10 artar. Hangi ihtimalin tetikleneceği belirsizdir. Ihtimal GM nin atacağı oyuncuların görmediği bir d100 ile belirlenir."},{"name":"<b><i><u>Anti Hero Hater</u></i></b>","desc":"Bu karakter kahramanlık zırvasının her şeklinden tiksinir ve belirli kalıplara uydurulmasını absürd bulur. Gönderildiği Operationda Anti Hero Affiliationlu bir müttefik varsa, Operationdaki herkesin %10 daha fazla moral kaybetmesini sağlar."}]}'
@@ -688,7 +1184,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- TABULA -->
+         <div class="token" draggable="true"
         data-name="Tabula"
         data-img="the-hamlet-tokenler-resimler/Tabula (Sorcerer).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Blood Blossom Ritual Benefit</u></i></b>","desc":"Bu karakter, bir kan ritüeli ile dikenleri kullanarak ölen kişiyi Fey Leydisine adayabilir. Gönderildiği Operationda ölen kişiler için bir ritüel düzenleyerek onları feda eder ve ölen kişi adedi başına, Operationun Success Ratesini %5 arttırır (Maximum %25 Success Rate artışı olabilir)."},{"name":"<b><i><u>Fey Ritualistics</u></i></b>","desc":"Bu karakter Fey usülleri gereğince ritüel yapmasını iyi bilir. Gönderildiği Ritual Operationlarının Success Ratesini %10 arttırır."},{"name":"<b><i><u>Feywild Powers</u></i></b>","desc":"Bu karakter dünya dışı güçleri benimsemiş kişileri takdir eder. Gönderildiği Operationda Otherworldly Affiliationuna sahip bir müttefik varsa, Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Naturalist</u></i></b>","desc":"Bu karakter doğanın güçlerini manipüle etmesini iyi bilir. Gönderildiği Operationda Nature Affiliationu varsa, Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Thorned Rose</u></i></b>","desc":"Bu karakter bir acıyı, başka bir acıyla kapatabilir. Gönderildiği Operation esnasında birisi Wounded veya Severely Wounded konumuna düşerse, bu karakter Proficiency Bonusu kere olacak şekilde, müttefiklerin ve kendisinin olacak şekilde, Wound kazanılmasından ziyade kişinin bir Short Term Madness kazanmasını sağlayabilir."}],"negative":[{"name":"<b><i><u>Blood Blossom Ritual Detriment</u></i></b>","desc":"Bu karakter, bir kan ritüeli ile dikenleri kullanarak ölen kişiyi Fey Leydisine adayabilir. Gönderildiği Operationda ölen kişiler için bir ritüel düzenleyebilir ama bu kanlı ritüel, oradaki kişiler için moral bozucudur. Ölen kişi adedi başına, Operationun Moral kaybını %5 arttırır (Maximum %25 Moral Kaybı artışı olabilir)."},{"name":"<b><i><u>Bloodbloom Compulsion</u></i></b>","desc":"Bu karakter ritüelini yaptığı zaman, ekibe zaman kaybettirir. Bu karakter Blood Blossom Rituali kaç kez kullanırsa, Operaitonun süresi o kadar gün uzar."},{"name":"<b><i><u>Thorn Mages Curse</u></i></b>","desc":"Bu karakter, etraftaki tek büyücü olmayı ister. Gönderildiği Operationda kendisinden başka Mage Affiliationuna sahip birisi varsa, Operationun başarı şansını %10 azaltır."},{"name":"<b><i><u>Gilded Cage Trauma</u></i></b>","desc":"Bu karakterin geçmişindeki yetiştirilme biçimi, bazı tramvatik anıları yeniden canlandırır. Genderildiği Rescue Operationlarında, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Fey Patron Association</u></i></b>","desc":"Bu karakter bir Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."}]}'
@@ -698,7 +1195,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- TREVETHAN -->
+        <div class="token" draggable="true"
         data-name="Trevethan"
         data-img="the-hamlet-tokenler-resimler/Trevethan (Cleric).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Illuminating Guidance</u></i></b>","desc":"Bu karakter ışığın yolundan şaşmaz. Hunt veya Boss Operationlarında, grubun ışığı olur ve Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Sanctified Torture</u></i></b>","desc":"Bu karakter işkence konusunda çok iyidir. Diplomacy Operationlarında hedefe işkence ederek ondan bilgi öğrenebilir ve Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Human Determination</u></i></b>","desc":"Bu karakter, insanlara güven ve kararlılık aşılar. Gönderildiği Operationda kendisinden başka Human Affiliationuna sahip bir müttefik varsa, Operationdaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Inquisitions Echo</u></i></b>","desc":"Bu karakterin engizisyon ile olan geçmişi, onları tanımasına ve ne yapacaklarını bilerek hareket etmesine sebep olur. Gönderildiği Operationda Inquisition Affiliationu mevcutsa, bu karakter ister kendi ister takım arkadaşlarının Intelligence checklerine Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Unbreakable Faith</u></i></b>","desc":"Bu karakterin kendi inancı kırılamaz. Operation sırasında aldığı bir Madness etkisini gördükten sonra, üstünden silebilir."}],"negative":[{"name":"<b><i><u>Bipolar Zeal</u></i></b>","desc":"Bu karakter kendi içinde kişilik ayrımları yaşıyordur. Gönderildiği Operation başladığında 1d6 atılır. 1 ile 3 arasında bir değer gelirse bu karakter pasif kişiliğine bürünür, 4 ile 6 arasında bir değer gelirse bu karakter baskın olan kişiliğine bürünür. Pasif kişilik; uyumlu, ılımlı, başkalarına saygı gösteren, çevresindeki insanları düşünen bir rahip özellikleri gösterir. Baskın kişilik; aksi, kaba, korkusuz, zorba, kendinden ve tanrılardan başka hiçkimseye saygı göstermeyen, her şeyden önce en çok kendini önemseyen toksik bir fanatik özellikleri gösterir. Operation esnasında bu karakter, herhangi bir d20 testinde Natural 1 (d20 üzerinden 1) atarsa, Operationdaki kişilik, diğer kişilik ile yer değiştirir."},{"name":"<b><i><u>Bigoted Behavior</u></i></b>","desc":"Bu karakterin baskın kişiliği, işleri zorlaştırır ve anlaşılması çok güç bir figürdür. Bu karakterin baskın kişiliğinin olduğu bütün Operationların Success Ratesi %10 düşer ve Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Heretic Hater</u></i></b>","desc":"Bu karekter dini anlamda anlaşabileceği birilerine ihtiyaç duyar. Gönderildiği Operationdaki müttefiklerinin hiçbirinde Religious Affiliationu yoksa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Aversion to Criminals</u></i></b>","desc":"Bu karakter suçlular ile çalışmaya isteksizdir. Gönderildiği Operationdaki müttefiklerinin arasında Criminal Affiliationuna sahip birisi varsa, Operationun Success Ratesi %10 düşer"},{"name":"<b><i><u>Righteous Cleric</u></i></b>","desc":"Bu karakter suçluların yapacağı eylemlerden sakınır. Gönderildiği Espionage Operationlarının Success Ratesi %5 düşer ve Operationdaki herkesin moral kaybı %5 daha fazla olur."}]}'
@@ -708,7 +1206,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- YANAGI -->
+        <div class="token" draggable="true"
         data-name="Yanagi"
         data-img="the-hamlet-tokenler-resimler/Yanagi (Ranger).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Swift Sword</u></i></b>","desc":"Bu karakter öldürme işini çabuk halletme konusunda iyidir. Gönderildiği Espionage Operationlarının Success Ratesini %10 arttırır."},{"name":"<b><i><u>Killing Charm</u></i></b>","desc":"Bu karakter, karşı cinsi ile yaptığı konuşmalarda oldukça etkilidir. Gönderildiği Diplomacy Operationlarında, Operation sırasında bir kez olabilecek şekilde, karşı cinsi ile girdiği bir Persuasion Checki başarıyla auto successleyebilir. Bunu Operationda yalnızca bir kez kullanabilir."},{"name":"<b><i><u>Dead Mans Whisper</u></i></b>","desc":"Bu karakterin ölüm ile yaşam arasındaki bağ, olması gerekenden daha şeffaftır. Gönderildiği Operationda bu karakter, bir kere Speak With Dead büyüsünü istediği ceset üzerinde kullanabilir."},{"name":"<b><i><u>Ghost of Wano</u></i></b>","desc":"Bu karakterin Wanoda makyavelist bir sosyopat olarak kötü ama bilinir bir namı vardır, ama gene de Wano kültüründen insanlar ile iyi anlaşır. Gönderildiği Operaitonda kendisinden başka Wano Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Razan Resolve</u></i></b>","desc":"Bu karakter, Ozaki Razanın iradesini taşımayı buyruğu olarak bellemiştir. Gönderildiği Operationda Underdark Affiliationu varsa, Operationlarının Success Ratesini %10 arttırır."}],"negative":[{"name":"<b><i><u>Hateful Focus</u></i></b>","desc":"Bu karakter, Ozaki Razanın katili olduğunu düşündüğü Engizisyonculardan nefret eder. Gönderildiği Operaitonda Inquisition Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Obsession with Razan</u></i></b>","desc":"Bu karakter, Ozaki Razana saplantılıdır ve Wanonun ona ihanet ettiğini düşünür. Gönderildiği Operationda Wano Affiliationu varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Hollow Mask</u></i></b>","desc":"Bu karakter, öldürmeye saplantılı bir şekilde takıkdır ve öldürmeden yapamaz. Eğer bu karakter birini öldürmeden 3 gün geçirirse, bir Short Term Madness kazanır. Bu süreç 3 günde bir tekrarlanır."},{"name":"<b><i><u>You Are God of Yourself</u></i></b>","desc":"Bu karakter tanrıların olmadığı bir dönemde doğmuştur ve onlara inanmaz. Eğer gönderildiği Operationda Religious Affiliationuna sahip birisi varsa, Operationun Success Ratesi %10 düşer."},{"name":"<b><i><u>Boss Fight Addicted</u></i></b>","desc":"Bu karakter çok güçlü düşmanlar ile savaşmak ister ve onları öldüren kişi olmak ister. Eğer bu karakter, seçilmiş bir Boss Fight Operationuna gönderilmezse, bir Short Term Madness kazanır."}]}'
@@ -718,7 +1217,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- ZACHARIAS -->
+        <div class="token" draggable="true"
         data-name="Zacharias"
         data-img="the-hamlet-tokenler-resimler/Zacharias (Wizard).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Cold Calculus</u></i></b>","desc":"Bu karakter, moral dilemmalarına takılmayı rasyonel bir şekilde reddedebilir. 4 Haftada bir, gönderildiği Operationda Moral kaybetmemeyi seçebilir. Bu özelliği 4 haftada bir yeniden kullanabilir. Bu özelliği yalnızca gönderildiği Operation sona erdiğinde kullanabilir."},{"name":"<b><i><u>Arcane Spell Blueprint</u></i></b>","desc":"Bu karakter, herhangi bir operasyonda gitmeden önce iyi plan yapar ve büyülerini bu plana göre ayarlar. Gönderildiği Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Master Scheduler</u></i></b>","desc":"Bu karakter operasyon planları oluşturma konusunda oldukça başarılıdır. Bu karakterin kurguladığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Philosopher Diplomat</u></i></b>","desc":"Bu karakter diplomasi sırasında engin dil bilgisi ve davranış biçimi ile müttefiklerini rahatlatır. Gönderildiği Diplomacy Operationlarında herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Shared Knowledge</u></i></b>","desc":"Bu karakter bilgi öğrenmenin her yolunu mübah görür ve bilgiye giden müttefiklerine önem verir. Gönderildiği Operationda Otherworldly Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha az olur."}],"negative":[{"name":"<b><i><u>Morale Disregarder Organizer</u></i></b>","desc":"Bu karakter, kurgularında amacı ve başarıyı ön planda tutar ve başarı yolunda çekilecek çileleri göz ardı eder. Bu karakterin kurguladığı Operasyonlarda herkesin moral kaybı %20 daha fazla olur."},{"name":"<b><i><u>Walking Heresy</u></i></b>","desc":"Bu karakter din adamları tarafından hor görülür ve yürüyen bir sapkınlık abidesi olarak nitelendirilir. Gönderildiği Operationda Religious Affiliationundan birisi varsa, Operationun Success Ratesini %10 azaltır."},{"name":"<b><i><u>Emotionless Bargains</u></i></b>","desc":"Bu karakter anlaşmalar sırasında duyguların, başarıya köstek olduğunu düşünür. Bu karakterin gönderildiği Operationda, müttefik veya kendisi olacak şekilde atılan bütün Intimidation ve Insight Checkler, doğuştan dezavantajlı konumda olur. Bu checklerin passive halleri değişmez."},{"name":"<b><i><u>Overanalyzer</u></i></b>","desc":"Bu karakter, yapılan iş esnasında garibine giden herhangi bir şeyi önce analiz eder ve zaman kaybeder. Bu karakter savaş esnasındayken anlam veremediği bir hareket olursa, kendi turunda o şeye anlam vermek için bir Investigation Check atar ve kendi turunu bunu düşünmeye ve plan kurmaya harcar."},{"name":"<b><i><u>Hollow Epistemology</u></i></b>","desc":"Bu karakterin zihni bulanıklaştığı zaman, zihninin içindeki sesler uyanır ve ona musallat olup onu delirtir. Eğer bu karakter, herhangi bir Madness efekti kazanırsa, ekstra olarak fazladan bir Short Term Madness efekti daha kazanır."}]}'
@@ -728,7 +1228,8 @@
         <div class="token-tags"></div>
       </div>
 
-      <div class="token" draggable="true"
+        <!-- ZUHLAN RALAM -->
+        <div class="token" draggable="true"
         data-name="Zuhlan Ralam"
         data-img="the-hamlet-tokenler-resimler/Zuhlan Ralam (Paladin).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Ziervas Fervor</u></i></b>","desc":"Bu karakter Zierva adına katliamlar yapabilir. Gönderildiği Boss Fight Operationunda, yanında müttefik olarak en az bir Religious Affiliationuna sahip birisi varsa, Operationun Success Ratesini %15 arttırır."},{"name":"<b><i><u>Draconic Hunter</u></i></b>","desc":"Bu karakterin hayatı insan avlayarak geçmiştir. Gönderildiği Hunt Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Initiative Checklerine, Proficiency Bonusu kere olacak şekilde avantaj verebilir. Bu avantajı checkler atılmadan önce verip vermeyeceğine karar vermelidir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Warmonger Fanaticism</u></i></b>","desc":"Bu karakter, savaşın çözüm olduğunu düşünen kişiler ile daha iyi anlaşır. Gönderildiği Operationda kendisinden başka bir Warmonger varsa, Operationdaki herkesin moral kaybı %10 azalır."},{"name":"<b><i><u>Dragon Belongings</u></i></b>","desc":"Bu karakter temin etme konusunda korkunç seviyede iyidir. Gönderildiği Rescue Operationlarında, Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Evil Chaperone</u></i></b>","desc":"Bu karakter birilerine eşlik ediyorken, korkunun veya yaklaşan savaşın kokusunu alabilir. Gönderildiği Operation bir Rescue Operationu ise, Operation esnasında ihanetin ve savaşın kokusunu alarak, bu özelliği kullanarak otomatik bir şekilde yaklaşan bir savaşı önceden söyleyebilir yada ihanet edecek kişiyi önceden saptayabilir. Bu özelliği Operation boyunca yalnızca bir kez kullanabilir."}],"negative":[{"name":"<b><i><u>Steel Cannot Lie</u></i></b>","desc":"Bu karakterin kuşandığı çelik, düşmanların ilgisini çeker ve onları alarma geçirebilir. Gönderildiği Ritual Operationlarında, ekibindeki herkesin Stealth Checklerine dezavantaj verir. Ayrıca Operation boyunca en az bir kere düşmanları alarma sokar ve grubu savaşa sokar. Daha fazla savaş, daha fazla loot anlamına gelir, fakat savaşlar arasında dinlenmeye müsade yoktur."},{"name":"<b><i><u>Memory of the Oath</u></i></b>","desc":"Bu karakter din kavramının var olduğu bütün durumlarda bulunmak ister. Eğer Operation planlaması yapılıyorken, Religious Affiliationa sahip bir Operation seçilmişse ve bu Operationa bu karakter gönderilmezse, bir Long Term Madness kazanır."},{"name":"<b><i><u>Zeals Paranoia</u></i></b>","desc":"Bu karakter, istemediği durumları sabote etme özgürlüğünü kendisinde bulur. Eğer bu karakter bir Diplomacy Operationuna gönderilirse, Operationun Success Ratesi %10 düşer."},{"name":"<b><i><u>Challenger of Immortality</u></i></b>","desc":"Bu karakter, doğal bir yaşam döngüsü olmayan insanlarla çalışamaz. Gönderildiği Operationda Immortal Nature Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Mage Slayers Whimsicals</u></i></b>","desc":"Bu karakter büyücü öldürürken kendinden geçebilir. Gönderildiği Operationda Mage Affiliationu varsa ve bu karakter o Operationda bir Mage öldürürse, büyücüyü yer ve onun kanıyla banyo yapar. Bu manzaradan ötürü, Operationdaki bu karakter hariç herkes bir Short Term Madness kazanır."}]}'
@@ -736,271 +1237,368 @@
         <img src="the-hamlet-tokenler-resimler/Zuhlan Ralam Token.png" alt="Zuhlan Ralam">
         <div class="token-label">Zuhlan Ralam</div>
         <div class="token-tags"></div>
+        </div>
+
+      </div><!-- /rest-token-grid -->
+    </div><!-- /rest-drop-zone -->
+  </div>
+
+  <!-- OPERATION TEAMS SECTION -->
+  <div class="operation-section">
+    <div class="section-header">
+      <span class="section-title">Operation Teams</span>
+    </div>
+    <div class="operation-card">
+      <p class="operation-flavour">Bir sonraki göreve kimleri gönderiyorsunuz? Tokenleri sürükleyerek takımları oluşturun.</p>
+      <div class="operation-grid-label">Team Alpha</div>
+      <div class="op-row" id="team-row-1">
+        <div class="slot" data-leader="true"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+      </div>
+      <div class="operation-grid-label" style="margin-top:1.5rem;">Team Beta</div>
+      <div class="op-row" id="team-row-2">
+        <div class="slot" data-leader="true"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+        <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
       </div>
     </div>
   </div>
 
-  <div class="section operation-area">
-    <h2>Operation Teams</h2>
-    <div class="operation-grid" id="team-row-1">
-      <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
-    </div>
-    <div style="height:1.5rem;"></div>
-    <div class="operation-grid" id="team-row-2">
-      <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
-    </div>
-  </div>
+</div><!-- /app-wrapper -->
 
-  <div class="modal" id="modal">
-    <span class="modal-close" id="close-modal">&times;</span>
-    <div class="modal-content">
-      <img id="modal-image" src="" alt="Character">
-      <div>
-        <h3 id="modal-name"></h3>
-        <h4>Positive Quirks</h4>
-        <ul id="modal-positive"></ul>
-        <h4>Negative Quirks</h4>
-        <ul id="modal-negative"></ul>
-        <h4>Affiliations</h4>
-        <ul id="modal-affiliations"></ul>
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox(event)">
+  <div class="lightbox-img-wrap">
+    <button class="lightbox-close" onclick="closeLightboxDirect()">✕</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+</div>
+
+<!-- CHARACTER MODAL -->
+<div class="modal-overlay" id="char-modal">
+  <div class="modal-box">
+    <button class="modal-close-btn" id="modal-close">✕</button>
+    <div class="modal-inner">
+      <div class="modal-portrait-col">
+        <img id="modal-img" src="" alt="" onclick="openLightbox(this.src)">
+        <div class="modal-char-name" id="modal-name"></div>
+        <div class="affiliation-list" id="modal-affiliations"></div>
+      </div>
+      <div class="modal-info-col">
+        <div class="quirk-section-title positive"><span class="qs-icon">✦</span> Positive Quirks</div>
+        <ul class="quirk-list" id="modal-positive"></ul>
+        <div class="quirk-section-title negative"><span class="qs-icon">✦</span> Negative Quirks</div>
+        <ul class="quirk-list" id="modal-negative"></ul>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Morale Input Modal -->
-  <div class="morale-modal" id="morale-modal">
-    <div class="morale-modal-content">
-      <h3>Kişinin Moralini Giriniz</h3>
-      <p>Lütfen 0 ile 100 arasında bir değer girin:</p>
-      <input type="number" class="morale-input" id="morale-input" min="0" max="100" value="50">
-      <button class="validate-btn" id="validate-btn">Doğrula</button>
-    </div>
+<!-- MORALE MODAL -->
+<div class="morale-modal-overlay" id="morale-modal">
+  <div class="morale-modal-box">
+    <div class="morale-modal-title">♥ Set Morale</div>
+    <p>Enter a value between 0 and 100:</p>
+    <input type="number" class="morale-input" id="morale-input" min="0" max="100" value="50">
+    <br>
+    <button class="validate-btn" id="validate-btn">Confirm</button>
   </div>
+</div>
 
-  <div class="disabled-overlay" id="disabled-overlay"></div>
+<script>
+  // DOM refs
+  const charModal = document.getElementById('char-modal');
+  const modalClose = document.getElementById('modal-close');
+  const moraleModal = document.getElementById('morale-modal');
+  const moraleInput = document.getElementById('morale-input');
+  const validateBtn = document.getElementById('validate-btn');
+  const dropSound = document.getElementById('drop-sound');
 
-  <audio id="drop-sound">
-    <source src="Token Sound Effect.mp3" type="audio/mpeg" />
-  </audio>
+  let draggedToken = null;
+  let draggedTag = null;
+  function updateMadnessTag(el, count) {
+  el.dataset.count = count;
+  el.textContent = '';
+  el.appendChild(Object.assign(document.createElement('span'), { textContent: '🌀 Madness' }));
+  if (count > 1) {
+    const badge = document.createElement('span');
+    badge.style.cssText = 'margin-left:4px;background:rgba(0,0,0,0.35);border-radius:3px;padding:0 4px;font-size:0.9em;';
+    badge.textContent = `×${count}`;
+    el.appendChild(badge);
+  }
+}
+  let currentTokenForMorale = null;
 
-  <script>
-    const modal = document.getElementById("modal");
-    const closeModal = document.getElementById("close-modal");
-    const disabledOverlay = document.getElementById("disabled-overlay");
-    const backButton = document.getElementById("back-button");
-    const moraleModal = document.getElementById("morale-modal");
-    const moraleInput = document.getElementById("morale-input");
-    const validateBtn = document.getElementById("validate-btn");
-    let draggedToken = null;
-    let currentTokenForMorale = null;
+  // ── Volume Control ───────────────────────────────────────
+  const volCtrl = document.getElementById('volume-control');
+  const volPct = document.getElementById('volume-pct');
+  const bgMusic = document.getElementById('background-music');
+  volCtrl.addEventListener('input', () => {
+    const v = parseFloat(volCtrl.value);
+    bgMusic.volume = v;
+    volPct.textContent = `${Math.round(v * 100)}%`;
+    volCtrl.style.background = `linear-gradient(to right, var(--gold) ${v*100}%, rgba(255,255,255,0.15) ${v*100}%)`;
+  });
+  bgMusic.volume = 0.5;
 
-    // Token tıklama ve modal açma
-    document.querySelectorAll('.token').forEach(token => {
-      token.addEventListener("click", function(e) {
-        // Eğer tıklanan element bir token-tag ise işlemi durdur
-        if (e.target.classList.contains('token-tag') || 
-            e.target.classList.contains('morale-bar') || 
-            e.target.classList.contains('morale-fill') || 
-            e.target.classList.contains('morale-value') ||
-            e.target.classList.contains('morale-close')) {
-          return;
-        }
-        
-        try {
-          const img = this.dataset.img;
-          const name = this.dataset.name;
-          
-          // JSON.parse hatalarını yakalamak için try-catch blokları
-          let quirks, affiliations;
-          try {
-            quirks = JSON.parse(this.dataset.quirks);
-          } catch (e) {
-            console.error("Quirks verisi parse edilemedi:", this.dataset.quirks);
-            quirks = {positive: [], negative: []};
-          }
-          
-          try {
-            affiliations = JSON.parse(this.dataset.affiliations);
-          } catch (e) {
-            console.error("Affiliations verisi parse edilemedi:", this.dataset.affiliations);
-            affiliations = [];
-          }
+  // ── Token Click → Modal ──────────────────────────────────
+  function openCharModal(token) {
+    const name = token.dataset.name;
+    const img = token.dataset.img;
+    let quirks, affiliations;
+    try { quirks = JSON.parse(token.dataset.quirks); } catch { quirks = {positive:[], negative:[]}; }
+    try { affiliations = JSON.parse(token.dataset.affiliations); } catch { affiliations = []; }
 
-          document.getElementById("modal-image").src = img;
-          document.getElementById("modal-name").textContent = name;
+    document.getElementById('modal-img').src = img;
+    document.getElementById('modal-name').textContent = name;
 
-          const formatQuirks = (list) => {
-            return list.map(q => `<li><span class="quirk-name">${q.name}</span>: ${q.desc}</li>`).join("");
-          };
+    document.getElementById('modal-affiliations').innerHTML = affiliations.map(a =>
+      `<span class="affil-badge">${a}</span>`
+    ).join('');
 
-          document.getElementById("modal-positive").innerHTML = quirks.positive ? formatQuirks(quirks.positive) : "";
-          document.getElementById("modal-negative").innerHTML = quirks.negative ? formatQuirks(quirks.negative) : "";
-          document.getElementById("modal-affiliations").innerHTML = affiliations ? affiliations.map(a => `<li>${a}</li>`).join("") : "";
+    const fmt = list => list.map(q =>
+      `<li class="quirk-item"><span class="quirk-name">${q.name}</span>${q.desc}</li>`
+    ).join('');
 
-          modal.style.display = "flex";
-          disabledOverlay.style.display = "block";
-          document.getElementById("volume-control-wrapper").style.display = "none";
-          backButton.style.display = "none";
-        } catch (error) {
-          console.error("Token bilgileri yüklenirken hata oluştu:", error);
-          alert("Karakter bilgileri yüklenirken bir hata oluştu. Lütfen konsolu kontrol edin.");
-        }
-      });
+    document.getElementById('modal-positive').innerHTML = quirks.positive ? fmt(quirks.positive) : '';
+    document.getElementById('modal-negative').innerHTML = quirks.negative ? fmt(quirks.negative) : '';
 
-      token.addEventListener("dragstart", function(e) {
-        draggedToken = this;
-        e.dataTransfer.setData("text/plain", null);
-        document.getElementById("drop-sound").play();
-      });
+    charModal.classList.add('active');
+  }
+
+  modalClose.addEventListener('click', () => charModal.classList.remove('active'));
+  charModal.addEventListener('click', e => { if (e.target === charModal) charModal.classList.remove('active'); });
+
+  // ── Token Drag ───────────────────────────────────────────
+  document.querySelectorAll('.token').forEach(token => {
+    token.addEventListener('click', e => {
+      const skip = ['token-tag','morale-bar','morale-fill','morale-value','morale-close'];
+      if (skip.some(cls => e.target.classList.contains(cls))) return;
+      openCharModal(token);
     });
 
-    // Slot drag-drop işlemleri
-    document.querySelectorAll(".slot").forEach(slot => {
-      slot.addEventListener("dragover", e => e.preventDefault());
-      slot.addEventListener("drop", e => {
-        e.preventDefault();
-        if (draggedToken && !slot.querySelector(".token")) {
-          slot.appendChild(draggedToken);
-          document.getElementById("drop-sound").play();
-          draggedToken = null;
-        }
-      });
+    token.addEventListener('dragstart', e => {
+      draggedToken = token;
+      token.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      dropSound.currentTime = 0; dropSound.play().catch(() => {});
     });
+    token.addEventListener('dragend', () => {
+      token.classList.remove('dragging');
+      draggedToken = null;
+    });
+  });
 
-    // Rest alanı drag-drop işlemleri
-    const restArea = document.getElementById("rest-area");
-    restArea.addEventListener("dragover", e => e.preventDefault());
-    restArea.addEventListener("drop", e => {
+  // ── Slot Drag-Drop ───────────────────────────────────────
+  function setupDropZone(el) {
+    el.addEventListener('dragover', e => {
       e.preventDefault();
-      if (draggedToken) {
-        restArea.appendChild(draggedToken);
+      if (draggedToken && !el.querySelector('.token')) el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (draggedToken && !el.querySelector('.token')) {
+        // önceki leader badge'i temizle
+        const lb = draggedToken.querySelector('.leader-badge');
+        if (lb) lb.remove();
+        el.appendChild(draggedToken);
+        // yeni slot leader mı?
+        if (el.dataset.leader === 'true') {
+          const badge = document.createElement('div');
+          badge.classList.add('leader-badge');
+          badge.textContent = 'Leader';
+          draggedToken.appendChild(badge);
+        }
+        dropSound.currentTime = 0; dropSound.play().catch(() => {});
         draggedToken = null;
       }
     });
+  }
 
-    // Modal kapatma
-    closeModal.addEventListener("click", () => {
-      modal.style.display = "none";
-      disabledOverlay.style.display = "none";
-      document.getElementById("volume-control-wrapper").style.display = "flex";
-      backButton.style.display = "inline-block";
+  document.querySelectorAll('.slot').forEach(setupDropZone);
+
+  // Rest area
+  const restArea = document.getElementById('rest-area');
+  restArea.addEventListener('dragover', e => e.preventDefault());
+  restArea.addEventListener('drop', e => {
+    e.preventDefault();
+    if (draggedToken) {
+      // leader badge'i temizle
+      const lb = draggedToken.querySelector('.leader-badge');
+      if (lb) lb.remove();
+      restArea.appendChild(draggedToken);
+      dropSound.currentTime = 0; dropSound.play().catch(() => {});
+      draggedToken = null;
+    }
+  });
+
+  // ── Tag Drag ─────────────────────────────────────────────
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('dragstart', e => {
+      draggedTag = tag.cloneNode(true);
+      e.dataTransfer.setData('text/plain', tag.dataset.tag);
     });
+    tag.addEventListener('dragend', () => { draggedTag = null; });
+  });
 
-    // Ses kontrolü
-    document.getElementById("volume-control").addEventListener("input", function () {
-      const volume = parseFloat(this.value);
-      document.getElementById("background-music").volume = volume;
-      document.getElementById("volume-level").textContent = `${Math.round(volume * 100)}%`;
-    });
+  // ── Token Tag Drop ───────────────────────────────────────
+  document.querySelectorAll('.token').forEach(token => {
+  token.addEventListener('dragover', e => {
+    if (draggedTag) e.preventDefault();
+  });
+  token.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!draggedTag) return;
+    const tagType = draggedTag.dataset.tag;
+    const tagsContainer = token.querySelector('.token-tags');
 
-    // Tag drag-drop işlemleri
-    let draggedTag = null;
+    // ── Wounded / Severely Wounded: biri varsa diğeri eklenemez ──
+    if (tagType === 'Wounded' || tagType === 'Severely Wounded') {
+      const hasWound = [...tagsContainer.children].find(
+        t => t.dataset.tag === 'Wounded' || t.dataset.tag === 'Severely Wounded'
+      );
+      if (hasWound) { draggedTag = null; return; }
+    }
 
-    document.querySelectorAll('.tag').forEach(tag => {
-      tag.addEventListener('dragstart', (e) => {
-        draggedTag = e.target.cloneNode(true);
-        e.dataTransfer.setData("text/plain", draggedTag.dataset.tag);
-      });
-    });
+    // ── Dead: tekrar eklenemesin ──
+    if (tagType === 'Dead' && [...tagsContainer.children].find(t => t.dataset.tag === 'Dead')) {
+      draggedTag = null; return;
+    }
 
-    // Token'lere tag ekleme
-    document.querySelectorAll('.token').forEach(token => {
-      token.addEventListener('dragover', (e) => e.preventDefault());
+    // ── Morale: tekrar eklenemesin (modal günceller) ──
+    if (tagType === 'Morale') {
+      const existing = [...tagsContainer.children].find(t => t.dataset.tag === 'Morale');
+      if (existing) { draggedTag = null; return; }
+      currentTokenForMorale = token;
+      moraleInput.value = '50';
+      moraleModal.classList.add('active');
+      draggedTag = null; return;
+    }
 
-      token.addEventListener('drop', (e) => {
-        e.preventDefault();
-        if (!draggedTag) return;
-        
-        const tagType = draggedTag.dataset.tag;
-        const tagsContainer = token.querySelector('.token-tags');
-        
-        const existingTag = [...tagsContainer.children].find(t => t.dataset.tag === tagType);
-        if (existingTag) return;
-
-        if (tagType === 'Morale') {
-          currentTokenForMorale = token;
-          moraleInput.value = '50';
-          moraleModal.style.display = 'flex';
-          disabledOverlay.style.display = 'block';
-        } else {
-          const newTag = document.createElement('div');
-          newTag.classList.add('token-tag');
-          newTag.dataset.tag = tagType;
-          newTag.textContent = tagType;
-
-          newTag.addEventListener('click', (e) => {
-            e.stopPropagation();
-            newTag.remove();
-          });
-
-          tagsContainer.appendChild(newTag);
-        }
-        
-        draggedTag = null;
-      });
-    });
-
-    // Morale değerini doğrulama
-    validateBtn.addEventListener('click', () => {
-      const value = parseInt(moraleInput.value);
-      
-      if (isNaN(value) || value < 0 || value > 100) {
-        alert('Lütfen 0 ile 100 arasında bir değer girin!');
-        return;
+    // ── Madness: sayaç, tıklayınca -1 ──
+    if (tagType === 'Madness') {
+      const existing = [...tagsContainer.children].find(t => t.dataset.tag === 'Madness');
+      if (existing) {
+        const count = (parseInt(existing.dataset.count) || 1) + 1;
+        updateMadnessTag(existing, count);
+        draggedTag = null; return;
       }
+      const newTag = document.createElement('div');
+      newTag.classList.add('token-tag');
+      newTag.dataset.tag = 'Madness';
+      newTag.dataset.count = '1';
+      updateMadnessTag(newTag, 1);
+      newTag.addEventListener('click', e => {
+        e.stopPropagation();
+        const cur = parseInt(newTag.dataset.count) || 1;
+        if (cur <= 1) { newTag.remove(); return; }
+        updateMadnessTag(newTag, cur - 1);
+      });
+      tagsContainer.appendChild(newTag);
+      draggedTag = null; return;
+    }
 
-      if (currentTokenForMorale) {
-        const tagsContainer = currentTokenForMorale.querySelector('.token-tags');
-        const existingTag = [...tagsContainer.children].find(t => t.dataset.tag === 'Morale');
-        
-        if (existingTag) {
-          // Varolan morale tag'ını güncelle
-          existingTag.querySelector('.morale-fill').style.width = `${value}%`;
-          existingTag.querySelector('.morale-value').textContent = `${value}/100`;
-        } else {
-          // Yeni morale tag'ı oluştur
-          const newTag = document.createElement('div');
-          newTag.classList.add('token-tag');
-          newTag.dataset.tag = 'Morale';
-          
-          newTag.innerHTML = `
-            <div class="morale-bar">
-              <div class="morale-fill" style="width: ${value}%"></div>
-            </div>
-            <div class="morale-value">${value}/100</div>
-            <div class="morale-close">×</div>
-          `;
+    // ── Dead: grileştir + tıklamayı kilitle ──
+    if (tagType === 'Dead') {
+      const newTag = document.createElement('div');
+      newTag.classList.add('token-tag');
+      newTag.dataset.tag = 'Dead';
+      newTag.textContent = '💀 Dead';
+      newTag.addEventListener('click', e => {
+        e.stopPropagation();
+        newTag.remove();
+        token.classList.remove('is-dead');
+        token.setAttribute('draggable', 'true');
+      });
+      tagsContainer.appendChild(newTag);
+      token.classList.add('is-dead');
+      token.setAttribute('draggable', 'false');
+      draggedTag = null; return;
+    }
 
-          // Çarpı butonuna tıklama olayı ekle
-          const closeBtn = newTag.querySelector('.morale-close');
-          closeBtn.addEventListener('click', (e) => {
+    // ── Diğer taglar (Wounded, Severely Wounded) ──
+    const newTag = document.createElement('div');
+    newTag.classList.add('token-tag');
+    newTag.dataset.tag = tagType;
+    newTag.textContent = tagType;
+    newTag.addEventListener('click', e => { e.stopPropagation(); newTag.remove(); });
+    tagsContainer.appendChild(newTag);
+    draggedTag = null;
+  });
+});
+
+  // ── Morale Modal ─────────────────────────────────────────
+  validateBtn.addEventListener('click', () => {
+    const value = parseInt(moraleInput.value);
+    if (isNaN(value) || value < 0 || value > 100) {
+      alert('Please enter a value between 0 and 100!');
+      return;
+    }
+    if (currentTokenForMorale) {
+      const tagsContainer = currentTokenForMorale.querySelector('.token-tags');
+      const existing = [...tagsContainer.children].find(t => t.dataset.tag === 'Morale');
+
+      if (existing) {
+        existing.querySelector('.morale-fill').style.width = `${value}%`;
+        existing.querySelector('.morale-value').textContent = `${value}/100`;
+      } else {
+        const newTag = document.createElement('div');
+        newTag.classList.add('token-tag');
+        newTag.dataset.tag = 'Morale';
+        newTag.innerHTML = `
+          <div class="morale-bar"><div class="morale-fill" style="width:${value}%"></div></div>
+          <div class="morale-value">${value}/100</div>
+          <div class="morale-close">×</div>`;
+
+        newTag.querySelector('.morale-close').addEventListener('click', e => {
+          e.stopPropagation(); newTag.remove();
+        });
+        newTag.addEventListener('click', e => {
+          if (e.target === newTag || e.target.classList.contains('morale-bar') || e.target.classList.contains('morale-fill')) {
             e.stopPropagation();
-            newTag.remove();
-          });
-
-          newTag.addEventListener('click', (e) => {
-            if (e.target === newTag || e.target.classList.contains('morale-bar') || e.target.classList.contains('morale-fill')) {
-              e.stopPropagation();
-              currentTokenForMorale = newTag.closest('.token');
-              moraleInput.value = value;
-              moraleModal.style.display = 'flex';
-              disabledOverlay.style.display = 'block';
-            }
-          });
-
-          tagsContainer.appendChild(newTag);
-        }
+            currentTokenForMorale = newTag.closest('.token');
+            moraleInput.value = value;
+            moraleModal.classList.add('active');
+          }
+        });
+        tagsContainer.appendChild(newTag);
       }
+    }
+    moraleModal.classList.remove('active');
+    currentTokenForMorale = null;
+  });
 
-      moraleModal.style.display = 'none';
-      disabledOverlay.style.display = 'none';
-      currentTokenForMorale = null;
-    });
+  moraleModal.addEventListener('click', e => {
+    if (e.target === moraleModal) moraleModal.classList.remove('active');
+  });
 
-    // Sayfa yüklendiğinde müzik sesini ayarla
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById("background-music").volume = 0.5;
-    });
-  </script>
+  // ── Escape key ───────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      charModal.classList.remove('active');
+      closeLightboxDirect();
+    }
+  });
+
+  // ── Lightbox ─────────────────────────────────────────────
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxOverlay').classList.add('open');
+  }
+  function closeLightbox(e) {
+    const overlay = document.getElementById('lightboxOverlay');
+    if (e.target === overlay || e.target === document.getElementById('lightboxImg')) {
+      closeLightboxDirect();
+    }
+  }
+  function closeLightboxDirect() {
+    document.getElementById('lightboxOverlay').classList.remove('open');
+  }
+</script>
 </body>
 </html>
