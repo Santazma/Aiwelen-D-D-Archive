@@ -663,6 +663,7 @@
 
     .op-row {
       display: flex;
+      margin-top: 1.8rem;
       gap: 1.5rem;
       flex-wrap: wrap;
       margin-bottom: 0.5rem;
@@ -706,6 +707,77 @@
     .team-name-panel.has-special {
       border-color: rgba(192,57,43,0.55);
       box-shadow: 0 0 22px rgba(192,57,43,0.22);
+    }
+
+    /* ── BLOOD FLOWING BORDER ──────────────────────────────
+       ReactBits "Electric Border" component'inin mantığından (feTurbulence +
+       feDisplacementMap ile sürekli, organik kenar deformasyonu) ilhamla,
+       elektrik çatlaması yerine yavaş akan/damlayan kan hissi verir.
+       Tüm katmanlar varsayılan olarak gizli (opacity:0), sadece panel
+       .has-special class'ı aldığında (özel kombo bulunduğunda) belirir. */
+    .blood-border-svg {
+      position: absolute;
+      width: 0; height: 0;
+      pointer-events: none;
+    }
+    .blood-border-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .blood-border-backdrop {
+      position: absolute;
+      inset: -16px;
+      border-radius: 14px;
+      pointer-events: none;
+      opacity: 0;
+      filter: blur(22px);
+      background: radial-gradient(ellipse at 30% 50%, rgba(123,26,20,0.45), transparent 70%);
+      transition: opacity 0.8s ease;
+      z-index: -1;
+    }
+    /* base: filtreli, deplasmana tabi gerçek kenar çizgisi — koyu kandan parlak kırmızıya akan bir gradient */
+    .blood-border-base {
+      border: 2px solid transparent;
+      background:
+        linear-gradient(130deg, var(--blood-deep), var(--blood-glow), var(--blood-deep), var(--blood-mid)) border-box;
+      background-size: 300% 300%;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) padding-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: bloodBorderFlow 6s linear infinite;
+    }
+    /* glow1: ince, yakın halo — "ışık/sıvı kenardan taşıyor" hissi */
+    .blood-border-glow1 {
+      border: 3px solid var(--blood-glow);
+      filter: blur(3px) url(#blood-turbulent-1);
+    }
+    #team-name-panel-2 .blood-border-glow1 { filter: blur(3px) url(#blood-turbulent-2); }
+    /* glow2: geniş, yumuşak dış halo */
+    .blood-border-glow2 {
+      border: 4px solid var(--blood-mid);
+      filter: blur(10px) url(#blood-turbulent-1);
+    }
+    #team-name-panel-2 .blood-border-glow2 { filter: blur(10px) url(#blood-turbulent-2); }
+
+    @keyframes bloodBorderFlow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    .team-name-panel.has-special .blood-border-layer { opacity: 1; }
+    .team-name-panel.has-special .blood-border-glow1 { opacity: 0.75; }
+    .team-name-panel.has-special .blood-border-glow2 { opacity: 0.45; }
+    .team-name-panel.has-special .blood-border-backdrop { opacity: 1; }
+    /* has-special aktifken statik border-color/box-shadow'u kapatıyoruz, akan border onun yerini alır */
+    .team-name-panel.has-special {
+      border-color: transparent;
+      box-shadow: none;
     }
     .team-name-display {
       display: flex;
@@ -1437,6 +1509,9 @@
         animation: none !important;
       }
       .hero-embers { display: none; }
+      /* blood-border: SVG SMIL <animate> CSS animation-duration ile durmaz, filtreyi devre dışı bırakıp statik bir parlama bırakıyoruz */
+      .blood-border-glow1, .blood-border-glow2 { filter: blur(4px) !important; }
+      .blood-border-base { animation: none !important; background-position: 0% 50%; }
     }
   </style>
 </head>
@@ -1746,6 +1821,24 @@
           <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-1" data-default="Team Alpha">
+          <!-- Blood Flowing Border: ReactBits "Electric Border" mantığından (feTurbulence + feDisplacementMap)
+               ilhamla, elektrik çatlaması yerine akan/damlayan kan hissi veren bir SVG filtre.
+               Sadece .has-special class'ı eklendiğinde görünür hale gelir. -->
+          <svg class="blood-border-svg" aria-hidden="true">
+            <defs>
+              <filter id="blood-turbulent-1" colorInterpolationFilters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" result="noise1" seed="3">
+                  <animate attributeName="baseFrequency" dur="7s" values="0.008 0.014;0.016 0.024;0.008 0.014" repeatCount="indefinite" />
+                </feTurbulence>
+                <feColorMatrix in="noise1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0.3 0.3 0 0" result="noiseAlpha" />
+                <feDisplacementMap in="SourceGraphic" in2="noiseAlpha" scale="22" xChannelSelector="R" yChannelSelector="A" />
+              </filter>
+            </defs>
+          </svg>
+          <div class="blood-border-layer blood-border-base"></div>
+          <div class="blood-border-layer blood-border-glow1"></div>
+          <div class="blood-border-layer blood-border-glow2"></div>
+          <div class="blood-border-backdrop"></div>
           <div class="team-name-display" id="team-name-display-1">
             <span class="team-name-text" id="team-name-text-1">Team Alpha</span>
             <span class="team-info-icon" id="team-info-icon-1" tabindex="0" style="display:none;">i</span>
@@ -1767,6 +1860,21 @@
           <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-2" data-default="Team Beta">
+          <svg class="blood-border-svg" aria-hidden="true">
+            <defs>
+              <filter id="blood-turbulent-2" colorInterpolationFilters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" result="noise2" seed="9">
+                  <animate attributeName="baseFrequency" dur="7.5s" values="0.008 0.014;0.016 0.024;0.008 0.014" repeatCount="indefinite" />
+                </feTurbulence>
+                <feColorMatrix in="noise2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0.3 0.3 0 0" result="noiseAlpha2" />
+                <feDisplacementMap in="SourceGraphic" in2="noiseAlpha2" scale="22" xChannelSelector="R" yChannelSelector="A" />
+              </filter>
+            </defs>
+          </svg>
+          <div class="blood-border-layer blood-border-base"></div>
+          <div class="blood-border-layer blood-border-glow1"></div>
+          <div class="blood-border-layer blood-border-glow2"></div>
+          <div class="blood-border-backdrop"></div>
           <div class="team-name-display" id="team-name-display-2">
             <span class="team-name-text" id="team-name-text-2">Team Beta</span>
             <span class="team-info-icon" id="team-info-icon-2" tabindex="0" style="display:none;">i</span>
@@ -2116,6 +2224,19 @@
   // Hero başlığının arkasında yavaşça yükselen, sallanan ve sönen kül/kıvılcım parçacıkları.
   // prefers-reduced-motion aktifse bu sürekli animasyon hiç başlatılmaz (CSS de canvas'ı gizler).
   const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // SVG <animate> SMIL elementleri CSS animation-duration'dan etkilenmez;
+  // reduced-motion aktifse bu turbulence animasyonlarını JS ile durduruyoruz.
+  if (PREFERS_REDUCED_MOTION) {
+    document.querySelectorAll('.blood-border-svg animate').forEach(anim => {
+      anim.setAttribute('repeatCount', '1');
+      try { anim.endElement(); } catch {}
+    });
+  }
+
+  // ── Hero Ember Particles (ReactBits "Particles" mantığından ilham) ──
+  // Hero başlığının arkasında yavaşça yükselen, sallanan ve sönen kül/kıvılcım parçacıkları.
+  // prefers-reduced-motion aktifse bu sürekli animasyon hiç başlatılmaz (CSS de canvas'ı gizler).
   (function initHeroEmbers() {
     if (PREFERS_REDUCED_MOTION) return;
     const canvas = document.getElementById('hero-embers');
