@@ -709,76 +709,6 @@
       box-shadow: 0 0 22px rgba(192,57,43,0.22);
     }
 
-    /* ── BLOOD FLOWING BORDER ──────────────────────────────
-       ReactBits "Electric Border" component'inin mantığından (feTurbulence +
-       feDisplacementMap ile sürekli, organik kenar deformasyonu) ilhamla,
-       elektrik çatlaması yerine yavaş akan/damlayan kan hissi verir.
-       Tüm katmanlar varsayılan olarak gizli (opacity:0), sadece panel
-       .has-special class'ı aldığında (özel kombo bulunduğunda) belirir. */
-    .blood-border-svg {
-      position: absolute;
-      width: 0; height: 0;
-      pointer-events: none;
-    }
-    .blood-border-layer {
-      position: absolute;
-      inset: 0;
-      border-radius: 6px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-    .blood-border-backdrop {
-      position: absolute;
-      inset: -16px;
-      border-radius: 14px;
-      pointer-events: none;
-      opacity: 0;
-      filter: blur(22px);
-      background: radial-gradient(ellipse at 30% 50%, rgba(123,26,20,0.45), transparent 70%);
-      transition: opacity 0.8s ease;
-      z-index: -1;
-    }
-    /* base: filtreli, deplasmana tabi gerçek kenar çizgisi — koyu kandan parlak kırmızıya akan bir gradient */
-    .blood-border-base {
-      border: 2px solid transparent;
-      background:
-        linear-gradient(130deg, var(--blood-deep), var(--blood-glow), var(--blood-deep), var(--blood-mid)) border-box;
-      background-size: 300% 300%;
-      -webkit-mask:
-        linear-gradient(#fff 0 0) padding-box,
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: bloodBorderFlow 6s linear infinite;
-    }
-    /* glow1: ince, yakın halo — "ışık/sıvı kenardan taşıyor" hissi */
-    .blood-border-glow1 {
-      border: 3px solid var(--blood-glow);
-      filter: blur(3px) url(#blood-turbulent-1);
-    }
-    #team-name-panel-2 .blood-border-glow1 { filter: blur(3px) url(#blood-turbulent-2); }
-    /* glow2: geniş, yumuşak dış halo */
-    .blood-border-glow2 {
-      border: 4px solid var(--blood-mid);
-      filter: blur(10px) url(#blood-turbulent-1);
-    }
-    #team-name-panel-2 .blood-border-glow2 { filter: blur(10px) url(#blood-turbulent-2); }
-
-    @keyframes bloodBorderFlow {
-      0%   { background-position: 0% 50%; }
-      100% { background-position: 300% 50%; }
-    }
-
-    .team-name-panel.has-special .blood-border-layer { opacity: 1; }
-    .team-name-panel.has-special .blood-border-glow1 { opacity: 0.75; }
-    .team-name-panel.has-special .blood-border-glow2 { opacity: 0.45; }
-    .team-name-panel.has-special .blood-border-backdrop { opacity: 1; }
-    /* has-special aktifken statik border-color/box-shadow'u kapatıyoruz, akan border onun yerini alır */
-    .team-name-panel.has-special {
-      border-color: transparent;
-      box-shadow: none;
-    }
     .team-name-display {
       display: flex;
       align-items: center;
@@ -1430,6 +1360,57 @@
       margin: 0.5rem 0 1rem;
     }
 
+    /* ── BORDER GLOW ───────────────────────────────────────
+       ReactBits "Border Glow" mantığından ilham: imleç bir kartın kenarına
+       yaklaştığında, o yöne doğru renkli bir parlama belirir ve imleci takip
+       eder. JS bu elemanlara --glow-x/--glow-y (imlecin panel içindeki
+       konumu, %) ve --glow-opacity (kenara yakınlığa göre 0-1) değişkenlerini
+       yazar; CSS sadece bu değişkenlere göre radyal bir parlamayı çizer. */
+    .border-glow {
+      position: relative;
+      isolation: isolate;
+    }
+    .border-glow::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 5;
+      opacity: var(--glow-opacity, 0);
+      transition: opacity 0.35s ease;
+      border: 2px solid transparent;
+      background: radial-gradient(
+        circle at var(--glow-x, 50%) var(--glow-y, 50%),
+        rgba(255,85,64,0.7) 0%,
+        rgba(192,57,43,0.35) 30%,
+        transparent 62%
+      ) border-box;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) padding-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+    /* mask trick: padding-box ile border-box arasındaki fark (border: 2px solid transparent ile oluşan) sadece kenar şeridini gösterir, glow yalnızca o şeritte parlar */
+
+    /* ── SPLASH CURSOR ─────────────────────────────────────
+       ReactBits "Splash Cursor" mantığından ilham: gerçek WebGL akışkan
+       simülasyonu yerine (GPU shader pipeline gerektirir, vanilla'da çok
+       maliyetli), hafif bir 2D canvas tabanlı "kan sıçraması" yaklaşımı.
+       İmleç hareket ettikçe kırmızı/crimson tonlarında küçük damlalar
+       belirir, büyür, döner ve hızla solar. Sayfanın tamamını kaplar,
+       tıklamaları asla engellemez (pointer-events: none). */
+    #splash-cursor-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 90;
+      mix-blend-mode: screen;
+    }
+
     /* ── SCROLL BAR ─────────────────────────────────────── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
@@ -1509,13 +1490,11 @@
         animation: none !important;
       }
       .hero-embers { display: none; }
-      /* blood-border: SVG SMIL <animate> CSS animation-duration ile durmaz, filtreyi devre dışı bırakıp statik bir parlama bırakıyoruz */
-      .blood-border-glow1, .blood-border-glow2 { filter: blur(4px) !important; }
-      .blood-border-base { animation: none !important; background-position: 0% 50%; }
     }
   </style>
 </head>
 <body>
+<canvas id="splash-cursor-canvas" aria-hidden="true"></canvas>
 <div class="app-wrapper">
   <div class="blood-pulse-layer"></div>
 
@@ -1821,24 +1800,6 @@
           <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-1" data-default="Team Alpha">
-          <!-- Blood Flowing Border: ReactBits "Electric Border" mantığından (feTurbulence + feDisplacementMap)
-               ilhamla, elektrik çatlaması yerine akan/damlayan kan hissi veren bir SVG filtre.
-               Sadece .has-special class'ı eklendiğinde görünür hale gelir. -->
-          <svg class="blood-border-svg" aria-hidden="true">
-            <defs>
-              <filter id="blood-turbulent-1" colorInterpolationFilters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" result="noise1" seed="3">
-                  <animate attributeName="baseFrequency" dur="7s" values="0.008 0.014;0.016 0.024;0.008 0.014" repeatCount="indefinite" />
-                </feTurbulence>
-                <feColorMatrix in="noise1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0.3 0.3 0 0" result="noiseAlpha" />
-                <feDisplacementMap in="SourceGraphic" in2="noiseAlpha" scale="22" xChannelSelector="R" yChannelSelector="A" />
-              </filter>
-            </defs>
-          </svg>
-          <div class="blood-border-layer blood-border-base"></div>
-          <div class="blood-border-layer blood-border-glow1"></div>
-          <div class="blood-border-layer blood-border-glow2"></div>
-          <div class="blood-border-backdrop"></div>
           <div class="team-name-display" id="team-name-display-1">
             <span class="team-name-text" id="team-name-text-1">Team Alpha</span>
             <span class="team-info-icon" id="team-info-icon-1" tabindex="0" style="display:none;">i</span>
@@ -1860,21 +1821,6 @@
           <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-2" data-default="Team Beta">
-          <svg class="blood-border-svg" aria-hidden="true">
-            <defs>
-              <filter id="blood-turbulent-2" colorInterpolationFilters="sRGB" x="-30%" y="-30%" width="160%" height="160%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" result="noise2" seed="9">
-                  <animate attributeName="baseFrequency" dur="7.5s" values="0.008 0.014;0.016 0.024;0.008 0.014" repeatCount="indefinite" />
-                </feTurbulence>
-                <feColorMatrix in="noise2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0.3 0.3 0 0" result="noiseAlpha2" />
-                <feDisplacementMap in="SourceGraphic" in2="noiseAlpha2" scale="22" xChannelSelector="R" yChannelSelector="A" />
-              </filter>
-            </defs>
-          </svg>
-          <div class="blood-border-layer blood-border-base"></div>
-          <div class="blood-border-layer blood-border-glow1"></div>
-          <div class="blood-border-layer blood-border-glow2"></div>
-          <div class="blood-border-backdrop"></div>
           <div class="team-name-display" id="team-name-display-2">
             <span class="team-name-text" id="team-name-text-2">Team Beta</span>
             <span class="team-info-icon" id="team-info-icon-2" tabindex="0" style="display:none;">i</span>
@@ -2225,18 +2171,6 @@
   // prefers-reduced-motion aktifse bu sürekli animasyon hiç başlatılmaz (CSS de canvas'ı gizler).
   const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // SVG <animate> SMIL elementleri CSS animation-duration'dan etkilenmez;
-  // reduced-motion aktifse bu turbulence animasyonlarını JS ile durduruyoruz.
-  if (PREFERS_REDUCED_MOTION) {
-    document.querySelectorAll('.blood-border-svg animate').forEach(anim => {
-      anim.setAttribute('repeatCount', '1');
-      try { anim.endElement(); } catch {}
-    });
-  }
-
-  // ── Hero Ember Particles (ReactBits "Particles" mantığından ilham) ──
-  // Hero başlığının arkasında yavaşça yükselen, sallanan ve sönen kül/kıvılcım parçacıkları.
-  // prefers-reduced-motion aktifse bu sürekli animasyon hiç başlatılmaz (CSS de canvas'ı gizler).
   (function initHeroEmbers() {
     if (PREFERS_REDUCED_MOTION) return;
     const canvas = document.getElementById('hero-embers');
@@ -2313,6 +2247,140 @@
     window.addEventListener('resize', resize, { passive: true });
     requestAnimationFrame(step);
   })();
+
+  // ── Splash Cursor (ReactBits "Splash Cursor" mantığından ilham) ────
+  // Gerçek WebGL akışkan simülasyonu (Navier-Stokes, basınç çözücü) yerine
+  // hafif bir 2D canvas yaklaşımı: imleç hareket ettikçe kırmızı/crimson
+  // tonlarında küçük "kan damlası" parçacıkları belirir, hareket yönünde
+  // hafifçe uzar, büyür ve hızla solar. Tüm sayfayı kaplar, tıklamaları
+  // hiçbir zaman engellemez. Hareket hassasiyeti tercih edilmişse devre dışı.
+  (function initSplashCursor() {
+    if (PREFERS_REDUCED_MOTION) return;
+    const canvas = document.getElementById('splash-cursor-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr;
+    let splashes = [];
+    let lastX = null, lastY = null;
+    let lastMoveTime = 0;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    const PALETTE = ['255,85,64', '224,80,64', '154,20,16', '192,57,43'];
+    function spawnSplash(x, y, vx, vy) {
+      const speed = Math.min(Math.hypot(vx, vy), 40);
+      const count = speed > 6 ? 2 : 1; // hızlı hareket daha çok damla bırakır
+      for (let i = 0; i < count; i++) {
+        splashes.push({
+          x: x + (Math.random() * 10 - 5),
+          y: y + (Math.random() * 10 - 5),
+          vx: vx * 0.06 + (Math.random() * 1.2 - 0.6),
+          vy: vy * 0.06 + (Math.random() * 1.2 - 0.6),
+          r: 3 + Math.random() * 4 + Math.min(speed * 0.25, 6),
+          life: 0,
+          maxLife: 38 + Math.random() * 24,
+          hue: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+        });
+      }
+      // çok fazla parçacık birikmesin, performans için üst sınır
+      if (splashes.length > 160) splashes.splice(0, splashes.length - 160);
+    }
+
+    function handlePointerMove(clientX, clientY) {
+      const now = performance.now();
+      if (lastX !== null) {
+        const vx = clientX - lastX;
+        const vy = clientY - lastY;
+        spawnSplash(clientX, clientY, vx, vy);
+      }
+      lastX = clientX;
+      lastY = clientY;
+      lastMoveTime = now;
+    }
+
+    window.addEventListener('mousemove', e => handlePointerMove(e.clientX, e.clientY), { passive: true });
+    window.addEventListener('touchmove', e => {
+      if (e.touches && e.touches[0]) handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+      // imleç bir süre hareketsizse kalan damlaları da hızlıca eritelim (donmuş leke bırakmasın)
+      const idle = performance.now() - lastMoveTime > 120;
+      for (let i = splashes.length - 1; i >= 0; i--) {
+        const s = splashes[i];
+        s.life += idle ? 2.2 : 1;
+        const t = s.life / s.maxLife;
+        if (t >= 1) { splashes.splice(i, 1); continue; }
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vx *= 0.94;
+        s.vy *= 0.94;
+        const alpha = (1 - t) * 0.5;
+        const radius = s.r * (1 - t * 0.3);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${s.hue},${alpha})`;
+        ctx.shadowColor = `rgba(${s.hue},${alpha * 0.7})`;
+        ctx.shadowBlur = 6;
+        ctx.fill();
+      }
+      requestAnimationFrame(step);
+    }
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    requestAnimationFrame(step);
+  })();
+
+  // ── Border Glow (ReactBits "Border Glow" mantığından ilham) ────────
+  // İmleç bir panelin kenarına yaklaştığında, panel kenarında o yöne doğru
+  // renkli bir parlama belirir ve imleci takip eder. Sayfadaki tüm border'lı
+  // ana kartlara (info panelleri, operation card, takım panelleri, modal'lar,
+  // tag palette) otomatik olarak uygulanır.
+  const BORDER_GLOW_SELECTORS = [
+    '.info-panel',
+    '.tag-palette',
+    '.operation-card',
+    '.team-name-panel',
+    '.modal-box',
+    '.morale-modal-box',
+  ];
+  if (!PREFERS_REDUCED_MOTION) {
+    document.querySelectorAll(BORDER_GLOW_SELECTORS.join(',')).forEach(el => {
+      el.classList.add('border-glow');
+      let glowRaf = null;
+      el.addEventListener('mousemove', e => {
+        if (glowRaf) return;
+        glowRaf = requestAnimationFrame(() => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xPct = (x / rect.width) * 100;
+          const yPct = (y / rect.height) * 100;
+          // kenara yakınlık: en yakın kenara olan mesafeye göre opaklık hesaplanır
+          const distToEdge = Math.min(x, y, rect.width - x, rect.height - y);
+          const proximity = Math.max(0, 1 - distToEdge / 90); // 90px içindeyse parlama başlar
+          el.style.setProperty('--glow-x', `${xPct}%`);
+          el.style.setProperty('--glow-y', `${yPct}%`);
+          el.style.setProperty('--glow-opacity', proximity.toFixed(2));
+          glowRaf = null;
+        });
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.setProperty('--glow-opacity', '0');
+      });
+    });
+  }
 
   // ── Hafif Arka Plan Parallax ───────────────────────────────
   // Sayfa kaydırılırken arka plan görseli çok ince bir oranda kayar; baş döndürmemesi için küçük bir katsayı kullanılır.
