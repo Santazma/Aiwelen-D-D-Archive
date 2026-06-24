@@ -622,6 +622,8 @@
       max-width: 1200px;
       margin: 0 auto 3rem;
       padding: 0 1.5rem;
+      position: relative;
+      z-index: 2;
     }
     .operation-card {
       background: var(--dark-card);
@@ -693,6 +695,14 @@
       border: var(--border-ornate);
       border-radius: 6px;
       transition: border-color 0.4s, box-shadow 0.4s;
+      z-index: 1;
+    }
+    /* tooltip açıkken panelin kendisi sayfadaki diğer her şeyin (transform'lu
+       token'lar dahil) üstünde bir stacking context oluştursun — aksi halde
+       transform kullanan token'lar kendi stacking context'lerini yaratıp
+       tooltip'in büyük z-index'ini "yenebiliyor". */
+    .team-name-panel:has(.team-name-tooltip.visible) {
+      z-index: 70;
     }
     .team-name-panel::before, .team-name-panel::after {
       content: '◆';
@@ -801,11 +811,8 @@
     }
 
     .team-name-tooltip {
-      position: absolute;
-      bottom: calc(100% + 6px);
-      left: 0.9rem;
-      right: 0.9rem;
-      z-index: 60;
+      position: fixed;
+      z-index: 600;
       background: linear-gradient(160deg, rgba(13,8,6,0.98), rgba(24,10,8,0.98));
       border: 1px solid rgba(192,57,43,0.45);
       border-radius: 5px;
@@ -839,8 +846,6 @@
     }
     /* flip-down: dar/kısa ekranlarda üstte yeterli yer yoksa tooltip panelin ALTINA döner */
     .team-name-tooltip.flip-down {
-      bottom: auto;
-      top: calc(100% + 6px);
       transform: translateY(-4px);
     }
     .team-name-tooltip.flip-down.visible {
@@ -869,7 +874,7 @@
         max-height: 70vh;
         overflow-y: auto;
         transform: translate(-50%, -48%);
-        z-index: 260;
+        z-index: 600;
       }
       .team-name-tooltip.visible {
         transform: translate(-50%, -50%);
@@ -2193,31 +2198,46 @@
   });
 
   // ── Info İkonu Tooltip Olayları ────────────────────────────
-  // Tooltip varsayılan olarak panelin ÜSTÜNDE açılır (Team Beta'nın altında
-  // kalıp okunamaz olmasını önlemek için). Ama dar/kısa ekranlarda üstte
-  // yeterli boşluk yoksa (örn. mobilde, panel ekranın üst kısmına yakınsa),
-  // otomatik olarak panelin ALTINA döner — böylece her koşulda görünür kalır.
+  // Tooltip, panele "absolute" ile bağlı kalmak yerine her açılışta JS ile
+  // gerçek ekran koordinatlarına göre "fixed" konumlandırılır. Bu, panelin
+  // bulunduğu DOM dalındaki diğer elementlerin (örn. token'ların animasyonlu/
+  // transform'lu olması nedeniyle oluşan stacking context karmaşıklıklarının)
+  // tooltip'in üstüne çıkmasını kökten engeller — fixed + yüksek z-index her
+  // zaman tüm sayfanın en üstünde, güvenilir şekilde render edilir.
   ['1','2'].forEach(idx => {
     const icon = document.getElementById(`team-info-icon-${idx}`);
     const tooltip = document.getElementById(`team-name-tooltip-${idx}`);
+    const panel = tooltip.closest('.team-name-panel');
 
     function positionTooltip() {
-      // gerçek yüksekliği ölçmek için kısa süreliğine görünür ama saydam yapıp ölçüyoruz
+      const isMobile = window.innerWidth <= 640;
+      if (isMobile) {
+        // mobilde zaten CSS ile ekranı ortalıyoruz, JS konumlandırmasına gerek yok
+        tooltip.classList.remove('flip-down');
+        tooltip.style.top = '';
+        tooltip.style.left = '';
+        tooltip.style.width = '';
+        return;
+      }
+      const panelRect = panel.getBoundingClientRect();
+      const tooltipWidth = Math.max(panelRect.width, 260);
+      // önce üstte ölçmek için geçici olarak görünür-saydam yapıp yüksekliği alalım
       tooltip.style.visibility = 'hidden';
       tooltip.style.display = 'block';
+      tooltip.style.width = `${tooltipWidth}px`;
       const tooltipHeight = tooltip.offsetHeight;
       tooltip.style.display = '';
       tooltip.style.visibility = '';
 
-      const panelRect = tooltip.closest('.team-name-panel').getBoundingClientRect();
       const spaceAbove = panelRect.top;
       const spaceBelow = window.innerHeight - panelRect.bottom;
-      // üstte yeterli yer yoksa VE altta daha fazla yer varsa, tooltip'i alta çevir
-      if (spaceAbove < tooltipHeight + 20 && spaceBelow > spaceAbove) {
-        tooltip.classList.add('flip-down');
-      } else {
-        tooltip.classList.remove('flip-down');
-      }
+      const flipDown = spaceAbove < tooltipHeight + 20 && spaceBelow > spaceAbove;
+
+      tooltip.classList.toggle('flip-down', flipDown);
+      tooltip.style.left = `${panelRect.left}px`;
+      tooltip.style.top = flipDown
+        ? `${panelRect.bottom + 6}px`
+        : `${panelRect.top - tooltipHeight - 6}px`;
     }
 
     function toggleTooltip() { positionTooltip(); tooltip.classList.toggle('visible'); }
@@ -2233,6 +2253,13 @@
     document.addEventListener('click', e => {
       if (!icon.contains(e.target) && !tooltip.contains(e.target)) hideTooltip();
     });
+    // panel kayarsa (scroll/resize) açık tooltip'in konumu da güncellensin
+    window.addEventListener('scroll', () => {
+      if (tooltip.classList.contains('visible') && window.innerWidth > 640) positionTooltip();
+    }, { passive: true });
+    window.addEventListener('resize', () => {
+      if (tooltip.classList.contains('visible')) positionTooltip();
+    }, { passive: true });
   });
 
   // ── Hero Ember Particles (ReactBits "Particles" mantığından ilham) ──
