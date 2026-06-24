@@ -802,10 +802,10 @@
 
     .team-name-tooltip {
       position: absolute;
-      top: calc(100% + 6px);
+      bottom: calc(100% + 6px);
       left: 0.9rem;
       right: 0.9rem;
-      z-index: 20;
+      z-index: 60;
       background: linear-gradient(160deg, rgba(13,8,6,0.98), rgba(24,10,8,0.98));
       border: 1px solid rgba(192,57,43,0.45);
       border-radius: 5px;
@@ -817,7 +817,7 @@
       box-shadow: 0 8px 28px rgba(0,0,0,0.6), 0 0 18px rgba(192,57,43,0.25);
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-4px);
+      transform: translateY(4px);
       transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
       pointer-events: none;
     }
@@ -830,12 +830,58 @@
     .team-name-tooltip::before {
       content: '';
       position: absolute;
-      top: -6px; left: 14px;
+      bottom: -6px; left: 14px;
       width: 12px; height: 12px;
-      background: rgba(13,8,6,0.98);
+      background: rgba(24,10,8,0.98);
+      border-right: 1px solid rgba(192,57,43,0.45);
+      border-bottom: 1px solid rgba(192,57,43,0.45);
+      transform: rotate(45deg);
+    }
+    /* flip-down: dar/kısa ekranlarda üstte yeterli yer yoksa tooltip panelin ALTINA döner */
+    .team-name-tooltip.flip-down {
+      bottom: auto;
+      top: calc(100% + 6px);
+      transform: translateY(-4px);
+    }
+    .team-name-tooltip.flip-down.visible {
+      transform: translateY(0);
+    }
+    .team-name-tooltip.flip-down::before {
+      bottom: auto;
+      top: -6px;
+      border-right: none;
+      border-bottom: none;
       border-left: 1px solid rgba(192,57,43,0.45);
       border-top: 1px solid rgba(192,57,43,0.45);
-      transform: rotate(45deg);
+    }
+
+    /* mobilde (dar ekran): panel-bitişik konumlandırma yerine, tooltip ekranı
+       ortalayan sabit bir kart olur. Bu, token grid'i ile çakışma riskini ve
+       diğer panellerin altında kalma riskini tamamen ortadan kaldırır. */
+    @media (max-width: 640px) {
+      .team-name-tooltip {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: min(86vw, 360px);
+        max-height: 70vh;
+        overflow-y: auto;
+        transform: translate(-50%, -48%);
+        z-index: 260;
+      }
+      .team-name-tooltip.visible {
+        transform: translate(-50%, -50%);
+      }
+      .team-name-tooltip.flip-down,
+      .team-name-tooltip.flip-down.visible {
+        transform: translate(-50%, -50%);
+      }
+      .team-name-tooltip::before,
+      .team-name-tooltip.flip-down::before {
+        display: none;
+      }
     }
 
     /* ── CUSTOM NAME CONTROL ─────────────────────────────── */
@@ -2147,12 +2193,35 @@
   });
 
   // ── Info İkonu Tooltip Olayları ────────────────────────────
+  // Tooltip varsayılan olarak panelin ÜSTÜNDE açılır (Team Beta'nın altında
+  // kalıp okunamaz olmasını önlemek için). Ama dar/kısa ekranlarda üstte
+  // yeterli boşluk yoksa (örn. mobilde, panel ekranın üst kısmına yakınsa),
+  // otomatik olarak panelin ALTINA döner — böylece her koşulda görünür kalır.
   ['1','2'].forEach(idx => {
     const icon = document.getElementById(`team-info-icon-${idx}`);
     const tooltip = document.getElementById(`team-name-tooltip-${idx}`);
 
-    function toggleTooltip() { tooltip.classList.toggle('visible'); }
-    function showTooltip() { tooltip.classList.add('visible'); }
+    function positionTooltip() {
+      // gerçek yüksekliği ölçmek için kısa süreliğine görünür ama saydam yapıp ölçüyoruz
+      tooltip.style.visibility = 'hidden';
+      tooltip.style.display = 'block';
+      const tooltipHeight = tooltip.offsetHeight;
+      tooltip.style.display = '';
+      tooltip.style.visibility = '';
+
+      const panelRect = tooltip.closest('.team-name-panel').getBoundingClientRect();
+      const spaceAbove = panelRect.top;
+      const spaceBelow = window.innerHeight - panelRect.bottom;
+      // üstte yeterli yer yoksa VE altta daha fazla yer varsa, tooltip'i alta çevir
+      if (spaceAbove < tooltipHeight + 20 && spaceBelow > spaceAbove) {
+        tooltip.classList.add('flip-down');
+      } else {
+        tooltip.classList.remove('flip-down');
+      }
+    }
+
+    function toggleTooltip() { positionTooltip(); tooltip.classList.toggle('visible'); }
+    function showTooltip() { positionTooltip(); tooltip.classList.add('visible'); }
     function hideTooltip() { tooltip.classList.remove('visible'); }
 
     icon.addEventListener('mouseenter', showTooltip);
