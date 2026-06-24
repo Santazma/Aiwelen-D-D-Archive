@@ -66,6 +66,28 @@
       transform: translateY(var(--parallax-offset, 0px)) scale(1.08);
       transition: transform 0.1s linear;
       will-change: transform;
+      animation: bloodPulseScale 14s ease-in-out infinite;
+    }
+    /* ── BLOOD PULSE (ReactBits "Aurora" mantığından ilham) ──────────
+       Aurora'daki "yumuşak renk geçişli dalgalar" hissini, kanın nabız gibi
+       atması metaforuna çevirir — çok ince, dikkat çekmeyen bir ambiyans katmanı. */
+    .blood-pulse-layer {
+      position: fixed; inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 30% 15%, rgba(192,57,43,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 75% 85%, rgba(123,26,20,0.12) 0%, transparent 65%);
+      animation: bloodPulseDrift 11s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes bloodPulseScale {
+      0%, 100% { filter: brightness(1) saturate(1); }
+      50%      { filter: brightness(1.06) saturate(1.12); }
+    }
+    @keyframes bloodPulseDrift {
+      0%, 100% { opacity: 0.55; transform: translate(0, 0) scale(1); }
+      50%      { opacity: 1;    transform: translate(1.5%, -1%) scale(1.04); }
     }
     body::after {
       content: '';
@@ -177,8 +199,19 @@
     .hero {
       padding: 100px 2rem 20px;
       text-align: center;
+      position: relative;
+    }
+    .hero-embers {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
     }
     .hero h1 {
+      position: relative;
+      z-index: 1;
       font-family: 'UnifrakturCook', cursive;
       font-size: clamp(3.5rem, 10vw, 8rem);
       color: var(--blood);
@@ -194,6 +227,8 @@
       to   { text-shadow: 0 0 20px rgba(255,80,60,0.8), 0 0 60px rgba(192,57,43,0.4); }
     }
     .hero-subtitle {
+      position: relative;
+      z-index: 1;
       font-family: 'Cinzel', serif;
       font-size: 0.7rem;
       letter-spacing: 0.5em;
@@ -203,6 +238,8 @@
       opacity: 0.8;
     }
     .hero-divider {
+      position: relative;
+      z-index: 1;
       width: 300px;
       max-width: 80vw;
       margin: 1rem auto 0;
@@ -400,6 +437,7 @@
       position: relative;
       width: 88px;
       height: 88px;
+      perspective: 300px;
     }
     .token-portrait-wrap::before {
       content: '';
@@ -422,10 +460,12 @@
       object-fit: cover;
       position: relative;
       z-index: 1;
-      transition: border-color 0.5s ease, box-shadow 1.4s ease, filter 0.8s ease;
+      transition: border-color 0.5s ease, box-shadow 1.4s ease, filter 0.8s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1);
       box-shadow: 0 0 9px color-mix(in srgb, var(--token-affinity, #c9a84c) 55%, transparent);
       animation: tokenFlicker 5.5s ease-in-out infinite;
       animation-delay: var(--flicker-delay, 0s);
+      transform: translate(var(--magnet-x, 0px), var(--magnet-y, 0px)) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+      transform-style: preserve-3d;
     }
     @keyframes tokenFlicker {
       0%, 100% { box-shadow: 0 0 8px color-mix(in srgb, var(--token-affinity, #c9a84c) 45%, transparent); }
@@ -437,6 +477,7 @@
       border-color: var(--gold);
       box-shadow: 0 0 16px rgba(192,57,43,0.6), 0 0 30px rgba(192,57,43,0.2);
       animation-play-state: paused;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.08s linear;
     }
 
     .token-label {
@@ -1225,22 +1266,36 @@
       font-family: 'Pirata One', cursive;
       font-size: clamp(2.4rem, 7vw, 5rem);
       color: var(--blood-glow);
-      letter-spacing: 0.5em;
-      opacity: 0;
-      filter: blur(10px);
-      text-shadow: 0 0 0 rgba(192,57,43,0);
-      transition: opacity 1s ease, letter-spacing 1s cubic-bezier(0.22,1,0.36,1), filter 1s ease, text-shadow 1s ease;
+      display: flex;
+      gap: 0.45em;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .team-formed-overlay.show-text .team-formed-text {
+    /* her kelime kendi span'i içinde, BlurText mantığı: blur+opacity+translateY ile teker teker belirir */
+    .team-formed-word {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(14px);
+      transform: translateY(14px);
+      text-shadow: 0 0 0 rgba(192,57,43,0);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1), text-shadow 0.7s ease;
+    }
+    .team-formed-overlay.show-text .team-formed-word {
       opacity: 1;
-      letter-spacing: 0.06em;
       filter: blur(0);
+      transform: translateY(0);
       text-shadow: 0 0 22px rgba(255,85,64,0.85), 0 0 48px rgba(192,57,43,0.55);
     }
-    .team-formed-overlay.fade-out .team-formed-text {
+    /* ikinci kelime ilkinden biraz geç gelsin (stagger) */
+    .team-formed-overlay.show-text .team-formed-word:nth-child(2) {
+      transition-delay: 0.18s;
+    }
+    .team-formed-overlay.fade-out .team-formed-word {
       opacity: 0;
       filter: blur(4px);
-      transition: opacity 1s ease, filter 1s ease;
+      transform: translateY(0);
+      transition: opacity 0.9s ease, filter 0.9s ease;
+      transition-delay: 0s !important;
     }
 
     /* ── IMPACT FLASH (team-block kısa kırmızı parlama) ──── */
@@ -1305,6 +1360,7 @@
 </head>
 <body>
 <div class="app-wrapper">
+  <div class="blood-pulse-layer"></div>
 
   <!-- TOP BAR -->
   <nav class="top-bar" id="top-bar">
@@ -1333,6 +1389,7 @@
 
   <!-- HERO -->
   <section class="hero">
+    <canvas class="hero-embers" id="hero-embers"></canvas>
     <h1>The Hamlet</h1>
     <p class="hero-subtitle">Campaign VI &ensp;·&ensp; The Dark Path</p>
     <div class="hero-divider"></div>
@@ -1686,7 +1743,10 @@
 
 <!-- TEAM FORMED FULLSCREEN SEQUENCE -->
 <div class="team-formed-overlay" id="team-formed-overlay">
-  <span class="team-formed-text" id="team-formed-text">Takım Oluşturuldu</span>
+  <div class="team-formed-text" id="team-formed-text">
+    <span class="team-formed-word">Takım</span>
+    <span class="team-formed-word">Oluşturuldu</span>
+  </div>
 </div>
 
 <script>
@@ -1970,6 +2030,84 @@
     });
   });
 
+  // ── Hero Ember Particles (ReactBits "Particles" mantığından ilham) ──
+  // Hero başlığının arkasında yavaşça yükselen, sallanan ve sönen kül/kıvılcım parçacıkları.
+  (function initHeroEmbers() {
+    const canvas = document.getElementById('hero-embers');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let w, h, dpr;
+
+    function resize() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = rect.width;
+      h = rect.height;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function makeParticle() {
+      return {
+        x: Math.random() * w,
+        y: h + Math.random() * 40,
+        r: 0.8 + Math.random() * 1.8,
+        speed: 0.25 + Math.random() * 0.55,
+        sway: Math.random() * 1.4,
+        swaySpeed: 0.4 + Math.random() * 0.6,
+        phase: Math.random() * Math.PI * 2,
+        life: 0,
+        maxLife: 220 + Math.random() * 220,
+        hue: Math.random() < 0.5 ? '255,85,64' : '224,80,64',
+      };
+    }
+
+    const PARTICLE_COUNT = 34;
+    function init() {
+      resize();
+      particles = Array.from({ length: PARTICLE_COUNT }, () => {
+        const p = makeParticle();
+        p.life = Math.random() * p.maxLife; // farklı aşamalarda başlasınlar, hepsi aynı anda doğmasın
+        p.y = h - (p.life / p.maxLife) * h;
+        return p;
+      });
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.life += 1;
+        const t = p.life / p.maxLife;
+        if (t >= 1) {
+          Object.assign(p, makeParticle());
+          continue;
+        }
+        p.y -= p.speed;
+        const sway = Math.sin(p.life * 0.02 * p.swaySpeed + p.phase) * p.sway;
+        const x = p.x + sway;
+        // opacity: doğarken ve sönerken yumuşak, ortada en parlak (ease in/out)
+        const fadeIn = Math.min(t / 0.15, 1);
+        const fadeOut = Math.min((1 - t) / 0.25, 1);
+        const alpha = Math.min(fadeIn, fadeOut) * 0.65;
+        ctx.beginPath();
+        ctx.arc(x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.hue},${alpha})`;
+        ctx.shadowColor = `rgba(${p.hue},${alpha * 0.8})`;
+        ctx.shadowBlur = 4;
+        ctx.fill();
+      }
+      requestAnimationFrame(step);
+    }
+
+    init();
+    window.addEventListener('resize', resize, { passive: true });
+    requestAnimationFrame(step);
+  })();
+
   // ── Hafif Arka Plan Parallax ───────────────────────────────
   // Sayfa kaydırılırken arka plan görseli çok ince bir oranda kayar; baş döndürmemesi için küçük bir katsayı kullanılır.
   let parallaxTicking = false;
@@ -2006,6 +2144,37 @@
     token.style.setProperty('--token-affinity', match ? match[1] : 'var(--accent-gold)');
     // her tokene 0 ile 5s arasında rastgele bir flicker gecikmesi: senkron olmayan organik titreşim
     token.style.setProperty('--flicker-delay', `${(Math.random() * 5).toFixed(2)}s`);
+  });
+
+  // ── Magnet + Tilt (ReactBits "Magnet"/"TiltedCard" mantığından ilham) ──
+  // İmleç bir token portresine yaklaştığında, portre hafifçe imleç yönüne kayar
+  // ve 3D olarak eğilir. İmleç ayrılınca CSS transition ile yumuşakça merkeze döner.
+  document.querySelectorAll('.token').forEach(token => {
+    const img = token.querySelector('img');
+    if (!img) return;
+    const MAGNET_STRENGTH = 0.18; // ne kadarı imlece "çekilsin"
+    const TILT_MAX = 10; // derece
+
+    token.addEventListener('mousemove', e => {
+      const rect = img.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      img.style.setProperty('--magnet-x', `${(dx * MAGNET_STRENGTH).toFixed(1)}px`);
+      img.style.setProperty('--magnet-y', `${(dy * MAGNET_STRENGTH).toFixed(1)}px`);
+      // tilt: yatay hareket Y eksenli dönüş, dikey hareket X eksenli dönüş üretir (ters işaretli, doğal "ona bakıyor" hissi)
+      const tiltY = Math.max(-TILT_MAX, Math.min(TILT_MAX, (dx / rect.width) * TILT_MAX * 2));
+      const tiltX = Math.max(-TILT_MAX, Math.min(TILT_MAX, -(dy / rect.height) * TILT_MAX * 2));
+      img.style.setProperty('--tilt-x', `${tiltX.toFixed(1)}deg`);
+      img.style.setProperty('--tilt-y', `${tiltY.toFixed(1)}deg`);
+    });
+    token.addEventListener('mouseleave', () => {
+      img.style.setProperty('--magnet-x', '0px');
+      img.style.setProperty('--magnet-y', '0px');
+      img.style.setProperty('--tilt-x', '0deg');
+      img.style.setProperty('--tilt-y', '0deg');
+    });
   });
 
   // DOM refs
@@ -2071,11 +2240,41 @@
   modalClose.addEventListener('click', () => charModal.classList.remove('active'));
   charModal.addEventListener('click', e => { if (e.target === charModal) charModal.classList.remove('active'); });
 
+  // ── ClickSpark (ReactBits "ClickSpark" mantığından ilham) ──────
+  // Tıklanan noktadan dağılan kısa kıvılcım çizgileri; modal açılmadan hemen önce tetiklenir.
+  function triggerClickSpark(x, y) {
+    const sparkCount = 8;
+    const container = document.createElement('div');
+    container.style.cssText = `position:fixed; left:${x}px; top:${y}px; width:0; height:0; pointer-events:none; z-index:250;`;
+    document.body.appendChild(container);
+    for (let i = 0; i < sparkCount; i++) {
+      const angle = (Math.PI * 2 * i) / sparkCount + (Math.random() * 0.3 - 0.15);
+      const distance = 18 + Math.random() * 14;
+      const spark = document.createElement('span');
+      spark.style.cssText = `
+        position:absolute; left:0; top:0; width:2px; height:9px;
+        background:linear-gradient(to bottom, var(--blood-glow), transparent);
+        border-radius:1px;
+        transform-origin:center top;
+        transform:rotate(${(angle * 180) / Math.PI}deg) translateY(0);
+        opacity:1;
+        transition:transform 0.42s cubic-bezier(0.1,0.8,0.3,1), opacity 0.42s ease;
+      `;
+      container.appendChild(spark);
+      requestAnimationFrame(() => {
+        spark.style.transform = `rotate(${(angle * 180) / Math.PI}deg) translateY(-${distance}px)`;
+        spark.style.opacity = '0';
+      });
+    }
+    setTimeout(() => container.remove(), 500);
+  }
+
   // ── Token Drag ───────────────────────────────────────────
   document.querySelectorAll('.token').forEach(token => {
     token.addEventListener('click', e => {
       const skip = ['token-tag','morale-bar','morale-fill','morale-value','morale-close'];
       if (skip.some(cls => e.target.classList.contains(cls))) return;
+      triggerClickSpark(e.clientX, e.clientY);
       openCharModal(token);
     });
 
