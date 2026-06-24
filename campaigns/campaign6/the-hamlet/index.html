@@ -21,7 +21,7 @@
       --dark-card:    rgba(18,8,8,0.93);
       --muted:        #7a5a5a;
       --text-body:    #d4b8b0;
-      --text-dim:     #8a6a65;
+      --text-dim:     #af8e86;
       --success:      #2e7d32;
       --morale-hi:    #2e7d32;
       --morale-mid:   #e67e22;
@@ -120,6 +120,7 @@
       border-bottom: 1px solid rgba(192,57,43,0.25);
       z-index: 100;
       backdrop-filter: blur(8px);
+      gap: 0.5rem;
     }
 
     .back-btn {
@@ -134,6 +135,8 @@
       border: 1px solid rgba(192,57,43,0.35);
       border-radius: 3px;
       transition: all 0.25s;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     .back-btn:hover { background: rgba(192,57,43,0.12); border-color: var(--blood-mid); color: var(--blood-glow); }
     .back-btn svg { width: 14px; height: 14px; }
@@ -145,8 +148,13 @@
       color: var(--blood-mid);
       letter-spacing: 0.05em;
       text-shadow: 0 0 18px rgba(192,57,43,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
+    /* mobilde: dar ekranda volume kontrolünü gizle, başlığı küçült, geri butonunu sıkıştır */
     /* ── IMPROVED VOLUME CONTROL ────────────────────────── */
     .volume-control {
       display: flex; align-items: center; gap: 0.55rem;
@@ -431,7 +439,24 @@
       flex-shrink: 0;
     }
     .token:hover { transform: translateY(-4px); }
+    .token:focus-visible {
+      outline: 2px solid var(--blood-glow);
+      outline-offset: 4px;
+      border-radius: 8px;
+      transform: translateY(-4px);
+    }
+    .slot:focus-visible {
+      outline: 2px solid var(--blood-glow);
+      outline-offset: 3px;
+    }
     .token:active { cursor: grabbing; }
+
+    /* mobilde: slot küçüldüğü için içine giren token da küçülsün, taşma olmasın */
+    @media (max-width: 640px) {
+      .slot .token { width: 70px; }
+      .slot .token img { width: 64px; height: 64px; }
+      .slot .token-label { font-size: 0.7rem; }
+    }
 
     .token-portrait-wrap {
       position: relative;
@@ -867,13 +892,20 @@
       overflow: visible;
       flex-shrink: 0;
     }
+    /* mobilde: 4 slot + leader taçları daha küçük ekrana sığsın, taşma olmasın */
+    @media (max-width: 640px) {
+      .slot { width: 64px; height: 64px; }
+      .op-row { gap: 0.75rem; }
+      .team-block .op-row { flex: 1 1 auto; min-width: 0; }
+      .team-block { gap: 1rem; }
+    }
     /* boş slot: "Drag here" hint ortalı */
     .slot .slot-hint {
       font-family: 'Cinzel', serif;
       font-size: 0.48rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(201,168,76,0.28);
+      color: rgba(201,168,76,0.55);
       text-align: center;
       line-height: 1.4;
       pointer-events: none;
@@ -907,7 +939,7 @@
       font-size: 0.48rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(201,168,76,0.28);
+      color: rgba(201,168,76,0.55);
       text-align: center;
       line-height: 1.4;
       padding: 0 6px;
@@ -1356,6 +1388,56 @@
 
     /* Drag visual feedback */
     .token.dragging { opacity: 0.4; }
+
+    /* ── MOBİL TIKLA-SEÇ: seçili token görsel halka ile işaretlenir ───── */
+    .token.token-selected img {
+      border-color: var(--blood-glow) !important;
+      box-shadow: 0 0 0 3px rgba(255,85,64,0.35), 0 0 20px rgba(255,85,64,0.6) !important;
+      animation: tokenSelectedPulse 1.1s ease-in-out infinite !important;
+    }
+    @keyframes tokenSelectedPulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.04); }
+    }
+    /* boş slotlara, seçili bir token varken dokunulabilir olduğunu ima eden ince bir vurgu */
+    body:has(.token-selected) .slot:not(:has(.token)) {
+      border-color: rgba(255,85,64,0.5);
+      background: rgba(192,57,43,0.06);
+    }
+
+    /* ── TOP BAR MOBİL ─────────────────────────────────────
+       Bu blok, .volume-control ve ilgili kuralların tanımından sonra durmalı,
+       aksi halde aynı specificity'deki sonraki kural display:none'ı override eder. */
+    @media (max-width: 560px) {
+      .top-bar { padding: 0 0.75rem; gap: 0.4rem; }
+      .back-btn { padding: 0.35rem 0.55rem; font-size: 0.62rem; }
+      .back-btn span.back-btn-label { display: none; }
+      .top-title { font-size: 0.85rem; }
+      .volume-control { display: none; }
+    }
+
+    /* ── PREFERS-REDUCED-MOTION ───────────────────────────
+       Hareket hassasiyeti olan kullanıcılar için tüm sürekli/dekoratif
+       animasyonları durdurur. Modal açılma gibi tek seferlik, anlamlı
+       geçişler çok kısa bir süreye indirilir ama tamamen kaldırılmaz
+       (ani görünüm değişimi yön kaybına sebep olabileceği için). */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      body::before,
+      .hero h1,
+      .token img,
+      .slot:not(:has(.token))::after,
+      .slot:has(.token)::after,
+      .token.token-selected img {
+        animation: none !important;
+      }
+      .hero-embers { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1366,7 +1448,7 @@
   <nav class="top-bar" id="top-bar">
     <a href="../index.html" class="back-btn" id="back-button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      Geri Dön
+      <span class="back-btn-label">Geri Dön</span>
     </a>
     <span class="top-title">The Hamlet</span>
     <div class="volume-control" id="volume-control-wrapper">
@@ -1447,7 +1529,7 @@
       <div class="rest-token-grid" id="rest-area">
 
         <!-- LURIEN VEIL -->
-         <div class="token" draggable="true"
+         <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Lurien Veil"
         data-img="the-hamlet-tokenler-resimler/Lurien Veil.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Arcanist Commonity</u></i></b>","desc":"Bu karakter büyücüler ve güçleri muallak olan kişilerle daha iyi çalışır. Kendisi dahil olmayacak şekilde, Operasyondaki Mage ve Otherworldly Affiliationlarına sahip olan kişilerin adedi başına, Operasyonlardaki kişiler %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Amoralist</u></i></b>","desc":"Bu karakter başkalarının yapmaktan kaçındığı, hatta iğrendiği işleri yapmayı sorun etmez. Bu karakterle aynı Operasyonlardaki kişiler %10 daha az moral kaybederler."},{"name":"<b><i><u>Trauma Immunity</u></i></b>","desc":"Bu karakter tramvatik olaylardan olumsuz etkilenmez, etkilense bile dışarıya yansıtmaz. Başarılı bir Operasyonun ardından üzerindeki istediği bir Madnessı silebilir."},{"name":"<b><i><u>Perfect Soldier</u></i></b>","desc":"Bu karakter verilen emirlere uyarken ahlaki moral dilemmaları yaşamaz. Bu karakterin lider olmadığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Eldritch Ritualist</u></i></b>","desc":"Bu karakterin dünya dışı ritüeller ile arası iyidir. Ritual Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Intelligence Checklerine, Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."}],"negative":[{"name":"<b><i><u>Heteronomy</u></i></b>","desc":"Bu karakterin iradesi çok zayıftır, dış güçler ve idealler tarafından kolayca manipüle edilebilir. Bu karakter Operasyon sırasında kazandığı Madness başına, Operasyonlardaki kişilerin %4 daha fazla moral kaybetmesine sebep olur (Maximum %40 Moral Kaybı artışı olabilir)."},{"name":"<b><i><u>Unpredictable</u></i></b>","desc":"Bu karakterin akıl sağlığı yerinde olmadığı için ne yapacağı öngörülemez. Bu karakter Operasyon sırasında kazandığı Madness başına, Operasyonun başarı şansının %4 düşmesine sebep olur (Maximum %40 başarı şansı düşüşü olabilir)."},{"name":"<b><i><u>Doomcaller</u></i></b>","desc":"Bu karakter kötü olayları çağırır ve felaket tellallığı yapar. Operasyon sırasında Operasyondaki kişilerden birisi ölürse, kalan herkesin bir Long-Term Madness kazanmasına vesile olur."},{"name":"<b><i><u>Disturbing Presence</u></i></b>","desc":"Bu karakter bir şeyler başarılamadığı zaman çok rahatsız edici bir kişiliğe bürünür. Kendi bulunduğu Operasyon başarısızlık ile sonuçlanırsa, o Operasyondaki herkesin toplamda iki kat moral kaybı yaşamasına sebep olur."},{"name":"<b><i><u>Deadly Curiosity</u></i></b>","desc":"Bu karakter sıradışı ve dünyadışı fenomenlere olmaması gerektiği kadar meraklıdır. Bu durum çoğu zaman onu zor duruma sokar."}]}'
@@ -1458,7 +1540,7 @@
       </div>
 
         <!-- EREVAN DUSKWIGHT -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Erevan Duskwight"
         data-img="the-hamlet-tokenler-resimler/Erevan Duskwight.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Boss Aura</u></i></b>","desc":"Bu karakter doğuştan bir lider havası barındırır. Bu karakterin yönettiği Operasyonlardaki karakterlerin moral kaybı %10 daha azdır."},{"name":"<b><i><u>Strategist</u></i></b>","desc":"Bu karakter plan kurgulamakta iyidir. Bu karakterin kurguladığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Connections</u></i></b>","desc":"Bu karakterin bağlantıları ve bağlantılı olduğu kişiler güçlüdür. Bu karakterin Affiliationslarından en az ikisi Operasyonda mevcutsa, Operasyonun başarı şansı %5, en az üçü Operasyonda mevcutsa başarı şansı %10 artar."},{"name":"<b><i><u>Diplomatic Leader</u></i></b>","desc":"Bu karakterin hizmet ettiği kişiden ötürü politikada belirli bir saygınlığı vardır. Politika Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Charisma Checklerine, Proficiency Bonusu adedine kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Vampiric Adventages</u></i></b>","desc":"Bu karakter bir vampirdir ve Vampir olmanın avantajlarını barındırır."}],"negative":[{"name":"<b><i><u>Fear From Boss</u></i></b>","desc":"Bu karakter kendi patronunun gücünü çok iyi bilir bu yüzden ondan çok korkar. Başarısız bir Operasyonun yaşanması durumda, bu karakter Operasyonun bir parçası olsun veya olmasın, Bir Long Term Madness kazanır."},{"name":"<b><i><u>Egoistical</u></i></b>","desc":"Bu karakter karar alınırken bencilce davranabilir. Bu karakterin kurguladığı Operasyonlardaki kişiler %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Hubris Syndrome</u></i></b>","desc":"Bu karakter bir Narsist ve kendini sayılı kişiler hariç birçok kişiden üstün görür. Bu karakter ile aynı Operasyondaki kişiler %10 daha fazla moral kaybeder."},{"name":"<b><i><u>Addicted</u></i></b>","desc":"Bu karakter belirli bir şeye karşı bağımlıdır ve o şey olmadan uzun süre devam edemez (Kan)."},{"name":"<b><i><u>Vampiric Disadventages</u></i></b>","desc":"Bu karakter bir vampirdir ve Vampir olmanın dezavantajlarını barındırır."}]}'
@@ -1469,7 +1551,7 @@
       </div>
 
         <!-- GORO -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Goro"
         data-img="the-hamlet-tokenler-resimler/Goro.jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Freak Solidarity</u></i></b>","desc":"Bu karakter, kendisine ucube gözüyle bakmayanların ve kendisi gibi olanların yanında daha rahat eder. Freak Affiliationına sahip olan kişilerin adedi başına, Operasyonlardaki kişilerin %10 daha az moral kaybetmesine sebep olur."},{"name":"<b><i><u>Traditional</u></i></b>","desc":"Bu karakter geleneklerine bağlı ve dindar birisidir. Kendisi dahil olmayacak şekilde, Religious Affiliationına sahip olan kişilerin adedi başına, Operasyonun başarı şansı %5 artar."},{"name":"<b><i><u>Blood Bath</u></i></b>","desc":"Bu karakter düşmanlarının kanıyla banyo yapar ve düşmana korku dosta güven salar. Operasyon sırasında öldürülen kişi başına, Operasyonlardaki kişilerin %2 daha az moral kaybetmesine sebep olur (Maximum %20 Moral Kaybı azalışı olabilir)."},{"name":"<b><i><u>Yokai Healing</u></i></b>","desc":"Bu karakter insanüstü bir iyileşme becerisine sahiptir. Bu karakter Wounded konumuna düşemez ve eğer Severely Wounded konumuna düşerse, bu etki sanki Woundedmış gibi bir hafta sonrasında iyileşir."},{"name":"<b><i><u>War Drummer</u></i></b>","desc":"Bu karakter savaş tutkusu ile yanıp tutuşur ve arkadaşlarını savaşa teşvik eder. Hunt Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Attack Rollarına Strength Modifierı kadar bonus verebilir. Bu bonus karakterin Proficiency Bonusu kadar verilebilir."}],"negative":[{"name":"<b><i><u>Sacrificial Zeal</u></i></b>","desc":"Bu karakter dini inancı uğruna kendisini feda etmeye eğilimlidir. Operasyon sırasında birileri Wounded veya Severely Wounded konumuna düşerse, bu karakter o yaraları onlar için üzerine alır. Bu karakterin üzerinde 2 tane Wounded bulunması durumunda bu karakter Severely Wounded durumuna düşer. Eğer bu karakterin üzerinde 2 tane Severely Wounded olursa, bu karakter Operation esnasında ölür."},{"name":"<b><i><u>Sign of the Oni</u></i></b>","desc":"Bu karakterin bulunduğu ortamda kişiler ona odaklanır. Barışçıl yöntemler ile çözülmesi denenen Operation durumlarında, bu karakter pasif olarak Proficiency Bonusu kadar ceza uygular. Eğer o andaki barış denemesinde bir dezavantaj mevcutsa, bu karakterin uyguladığı pasif ceza bonusu ikiye katlanır."},{"name":"<b><i><u>Curse of the Red</u></i></b>","desc":"Bu karakter savaş için doğmuştur. Eğer bu karakter, 2 hafta boyunca bir Hunt Operationuna çıkmazsa, 3. hafta bir Long Term Madness kazanır ve bu süreç tekrarlanır."},{"name":"<b><i><u>Cannibalistic Urge</u></i></b>","desc":"Bu karakter, dini ve gelenekleri gereği savaş alanındaki rakiplerini yemek ister. Eğer bu karakter, Operation esnasında öldürdüğü bir kişiyi bile yerse açlığını bastırır ve kendisi hariç Operationdaki bütün kişiler fazladan 10 moral kaybeder. Eğer bu karakter kimseyi yemezse, öldürülmüş 5 kişi başına bir Short Term Madness kazanır."},{"name":"<b><i><u>Inquisition Hate</u></i></b>","desc":"Bu karakter engizisyonculardan nefret eder ve onlarla çalışmayı reddeder. Inquisitor Affiliationuna sahip bir karakter ile aynı Operationda olursa, Operationun başarı şansı %8 düşer."}]}'
@@ -1480,7 +1562,7 @@
       </div>
 
         <!-- CARXIUS -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Carxius"
         data-img="the-hamlet-tokenler-resimler/Carxius (Blood Hunter).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mercenary Relief</u></i></b>","desc":"Bu karakter, geçmişinde çok fazla askeri operasyonların içerisinde bulunmuş tecrübeli bir isimdir. Bu karakterin bulunduğu Operasyonlardaki karakterlerin moral kaybı %10 daha azdır."},{"name":"<b><i><u>Inquisition Discipline</u></i></b>","desc":"Bu karakter çok disiplinli bir şekilde yetişmiş bir engizisyoncudur ve diğer engizisyoncuları disipline sokar. Kendisi dahil olmayacak şekilde, Inquisition Affiliationına sahip olan kişilerin adedi başına, Operasyonun başarı şansı %8 artar."},{"name":"<b><i><u>Fey Charm</u></i></b>","desc":"Bu karakter karizmatik ve babacan bir otoriteye sahiptir. Operationda birbirlerinden haz etmeyen iki kişi varsa, o ikiliyi hizaya sokup onların vereceği zararı nötrler. Bunu yalnızca bir ilişki için yapabilir."},{"name":"<b><i><u>Blood Tracker</u></i></b>","desc":"Bu karakter kan büyüleri kullanabilir ve kan laneti sonucuyla iz sürme becerileri gelişmiştir. Hunt Operasyonları esnasında bu karakter ister kendi ister takım arkadaşlarının Survival ve Nature checklerine, Proficiency Bonusu adedine kadar avantaj verebilir. Eğer halihazırda bir avantaj varsa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Desensitized Will</u></i></b>","desc":"Bu karakter yaşamı boyunca Eldritch fenomenler ile savaşmış ve çok şey yaşamış birisidir. Operation sırasında Madness kazanacağı bir esnada, alacağı o Madnessı isterse yok sayabilir."}],"negative":[{"name":"<b><i><u>Zealots Blindness</u></i></b>","desc":"Bu karakter dini inancı ve ahlaki dogmaları gereği yaklaşım ilkeleri farklıdır ve bu yaklaşımlar sorun çıkarabilir. Operationun Affiliationları içerisinde Religious bir hedef varsa, bu karakterin doktrinleri bu Operationu tehlikeye atar ve Operation başarı şansını %12 düşürür."},{"name":"<b><i><u>Feybound Oath</u></i></b>","desc":"Bu karakter bir Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."},{"name":"<b><i><u>Northern Superstitions</u></i></b>","desc":"Bu karakterin kuzeyli batıl inançları ve engizisyonun tasvip etmediği kısımları, modern taktikleri reddetmesine neden olur. Operationda Tech Affiliationlu birileri varsa, Operationdaki bütün kişiler %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Goliath Pride</u></i></b>","desc":"Bu karakterin devasa boyutu ve gururu gizlilik ve düzenbazlık görevlerini sabote eder. Eğer bu karakter bir Espionage Opeationuna gönderilirse, Operationun başarı şansını %12 azaltır."},{"name":"<b><i><u>Haunting Eldritch Nightmares</u></i></b>","desc":"Bu karakterin zamanında geçirip gördüğü dünya dışı şeyler, bu karaktere musallat oluyordur. Bu karakter, Madness için atılan Wisdom Saving Throwlara dayanıklıdır ve ekstradan Proficiency Bonusunu bu Saving Throwlara koyar. Ancak gene de eğer bir Madness kazanırsa, Madness için atılan d100 zarına +20 ekler."}]}'
@@ -1491,7 +1573,7 @@
       </div>
 
         <!-- CASTOR -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Castor"
         data-img="the-hamlet-tokenler-resimler/Castor (Druid).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Wickerbone Behemoth</u></i></b>","desc":"Bu karakter Wild Shape ile devasa eldritch bir yaratığa dönüşebilir. Bu karakter eğer bir Operation sırasında bu şekilde bir dönüşüm gerçekleştirirse, Operationun başarı şansını %12 arttırır."},{"name":"<b><i><u>Corrupted Bloom</u></i></b>","desc":"Bu karakter doğanın öfkesiyle birleşmiş ve kendini yoz doğaya adamıştır. Nature Affiliationına sahip bir Operasyonun başarı şansı %10 arttırır."},{"name":"<b><i><u>Whispering Roots</u></i></b>","desc":"Bu karakter, yoz doğanın köklerine fısıldayabilir ve onlarla konuşabilir. Espionage Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Perception veya Insight Rollarına Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Skilled Doctor</u></i></b>","desc":"Bu karakter cerrahi beceriler ve iyileştirme konusunda iyidir. Operation sırasında bir doktorun yanlarında bulunmasından ötürü bu karakter ile aynı Operasyondaki kişiler %10 daha az moral kaybederler."},{"name":"<b><i><u>Wound Treatment</u></i></b>","desc":"Bu karakter doğanın lütuflarını kullanarak yara iyileştirmede iyidir. Operationa gönderilmediği bir hafta, Wisdom Modifierı kadar kişinin yaralarını belli bir ölçüde tedavi ederek Wound süresini, ekstradan 1 hafta azaltır."}],"negative":[{"name":"<b><i><u>Distressful Transformation</u></i></b>","desc":"Bu karakter Wild Shape ile devasa eldritch bir yaratık formunda kalması grubun akıl sağlığı için hayırlı değildir. Bu karakterin Wild Shape formunu kullanırsa Operasyonlardaki kişiler %5 daha fazla moral kaybeder ve bu formunda kaldığı round başına, %1 daha fazla moral kaybetmeye devam ederler."},{"name":"<b><i><u>Nightmarish Trauma</u></i></b>","desc":"Bu karakterin Wild Shape ile eldritch formuna dönüşmesi, gören kişilere tramvatik duygular yaşatabilir. Bu karakter her Wild Shape özelliğini kullandığı vakitte, Operationdaki diğer tüm kişiler bir DC 10 Madness Saving Throwu atar ve başaramayanlar bir Short Term Madness kazanır."},{"name":"<b><i><u>Hunter and Prey Confusion</u></i></b>","desc":"Bu karakter doğanın düşmanı bildiği kişilere karşı çok katıdır. Inquisition, Tech ve Imperium Affiliationlarına sahip birileri ile aynı Operationda bulunursa Operasyonun başarı şansı %15 azaltır."},{"name":"<b><i><u>Dark Pact</u></i></b>","desc":"Bu karakter din olgusunu bir yanılsama ve yalan olarak görür. Religious Affiliationuna sahip Operationa gönderilirse, Operasyondaki herkesin %10 daha fazla moral kaybederler."},{"name":"<b><i><u>Feast of Decay</u></i></b>","desc":"Bu karakterin yaydığı yozlaşmış aura, etrafındakileri çürütür. Operation esnasında %35 ihtimalle yemekler çürür ve yemeklerin çürüdüğü günler iki kat rations tüketilmesi gerekilir."}]}'
@@ -1502,7 +1584,7 @@
       </div>
 
         <!-- ENIGMATA -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Enigmata"
         data-img="the-hamlet-tokenler-resimler/Enigmata (Jeager).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Tech Friendship</u></i></b>","desc":"Bu karakter teknolojiye meraklıdır ve teknolojiyi kabullenerek çalışır. Operationda başka bir Tech Affilationuna sahip karakter varsa, Operasyondaki herkes %15 daha az moral kaybederler."},{"name":"<b><i><u>Monster Hunter</u></i></b>","desc":"Bu karakter bir avcı tarafından yaratık avlamak ve masumları kurtarmak için eğitilmiştir. Katıldığı Hunt ve Rescue Operationlarının başarı şansını %10 arttırır."},{"name":"<b><i><u>Ooze Adaptibility</u></i></b>","desc":"Bu karakter eksik tarafları kapatmakta ustalaşmıştır. Gönderildiği Operationların Affiliationlarında doldurulamamış bir Affiliation varsa, bu karakter sanki o Affiliationdanmış gibi o boşluğu doldurup Operaitonun başarı şansını ona göre yükseltir."},{"name":"<b><i><u>Submissive</u></i></b>","desc":"Bu karakter hayatı deneyimleyip öğrenmek için bir gözetmene ihtiyaç duyar. Gönderildiği Operationda yalnızca 1 Boss Affiliationuna sahip kişi varsa, Boss Affiliationundaki kişinin yapacağı eylemlere Bonus Action ile Proficiency Bonusu kadar Help verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Mascot Girl</u></i></b>","desc":"Bu karakter, kendisi gibi garip olanlar ile iyi anlaşır ve onların moralini yükseğe çeker. Operationda Freak Affiliationuna sahip kişilerin adedi başına, Operasyonlardaki kişilerin %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>Criminal Hater</u></i></b>","desc":"Bu karakter kaçakları ve suçluları avlayan birisidir ve onlarla çalışmaz. Eğer Operationda bir Criminal varsa, kendisi profesyonel kalır ama totalte iki kat Moral kaybeder."},{"name":"<b><i><u>Espionage Saboteur</u></i></b>","desc":"Bu karakter gizlilik ve kurnazlığı anlamsız bulur. Bu karakter Espionage Operationlarına gönderilirse, Operationlarının başarı şansını %20 azaltır."},{"name":"<b><i><u>Childish Aura</u></i></b>","desc":"Bu karakter yeterince akıllı olsa da hareketlerinin farkındalığından yoksundur ve çocukca davranabilir. Operationdaki lider için sorun çıkartabilir ve kendi doğru bulduğu emirleri uygulayabilir. Eğer Lider bu karaktere bir şeyi yapma derse, bu karakter DC 10 Wisdom Saving Throw atar. Başaramazsa gene de yapar veya yapmamayı seçerse strese girer ve bir Short Term Madness kazanır."},{"name":"<b><i><u>Heroic Delusion</u></i></b>","desc":"Bu karakter kahraman olma takıntısı yüzünden, tehlikeli durumlarda gereksiz risk alabilir. Operasyon esnasında %25 ihtimalle Operation Planını bozar ve alarm tetikleyerek savaşa daha fazla düşmanın katılmasına sebep olabilir."},{"name":"<b><i><u>Oozes Hunger</u></i></b>","desc":"Bu karakter Ooze doğasını kontrol altında tutamayabilir. Operasyon esnasında veya bitiminde %10 ihtimalle alınabilecek lootu yiyebilir. Böyle bir durumda lootun yarısını yer, veya yemeyi gene de reddererse kendi açlığına hakim olamadığı için bir Indefinite Madness kazanır."}]}'
@@ -1513,7 +1595,7 @@
       </div>
 
         <!-- INAZUMA -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Inazuma"
         data-img="the-hamlet-tokenler-resimler/Inazuma (Fighter).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Ancient Spore Network</u></i></b>","desc":"Bu karakter sporlar ile olan bağlantısını avantaja çevirebilir. Espionage Operationları esnasında, bu karakter mantar ağını kullanarak ister kendi ister takım arkadaşlarının öğrenmeye çalıştığı mantıklı bir bilgi için atılan checklere avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Samurai Duty</u></i></b>","desc":"Bu karakter geleneklere bağlı bir samuraydır ve töresini korur. Bu karakter Escort Operationlarına gönderilirse, Operationun başarı şansını %10 arttırır."},{"name":"<b><i><u>Mycelial Resilience</u></i></b>","desc":"Bu karakterin anatomisi, bilinen zaafları içermez. Bu karakter hiçbir koşul gereğince Wounded veya Severely Wounded durumuna düşemez."},{"name":"<b><i><u>Freakish Camouflage</u></i></b>","desc":"Bu karakterin ucubemsi mantar dokusu, Underdark doğasıyla uyum sağlamasını sağlar. Freak veya Underdark Affiliationlarına sahip Operationlara gönderilirse, Operasyonun başarı şansını %10 arttırır."},{"name":"<b><i><u>Criminal Notoriety</u></i></b>","desc":"Bu karakter, suçu takdir eder ve suçun getirdiği korkuyu güçlü bir silah olarak görür. Gönderildiği Operationda kendisinden başka en az bir Criminal Affiliationlı kişi varsa, Operasyondaki herkesin morali %10 daha az azalır."}],"negative":[{"name":"<b><i><u>Spore Soldier</u></i></b>","desc":"Bu karakter sporlar aracılığı ile yayılmaya devam eder. Operation esnasında ölmüş dost veya düşman gördüğü vakit, cesede sporları yayar ve cesedi hizmet eden bir Mycelide çevirir. Mantardan ölü bir askere çevrilmiş birisini geri çevirmesi için ikna edilemez."},{"name":"<b><i><u>Beyond Comprehension Morality</u></i></b>","desc":"Bu karakterin moral ve ahlak tanımı, yaşayanlar ile ölçüşmez. Bu karakter Diplomacy Operationlarına gönderilirse, Operationun başarı şansını %10 azaltır."},{"name":"<b><i><u>Wanos Grudge</u></i></b>","desc":"Bu karakter, bağlı olduğu kökenlerin geleneklerini taşısa da, orayı hatırlatan şeylerden nefret eder. Gönderildiği Operationda kendisinden başka en az bir Wano Affiliationlı kişi olursa, Operasyondaki herkesin morali %10 daha fazla azalır."},{"name":"<b><i><u>Past Life Hatred</u></i></b>","desc":"Bu karakterin bedenindeki eski kişiliğin duyduğu nefretler, bu karaktere de aktarılır. Eski benliğin duyduğu nefretten ötürü Imperium Affiliationlu kişilerden nefret eder ve Imperiumdan olan kişilerle çalışmaz. Gönderildiği Operationda en az bir Imperium Affiliationlı kişi varsa, Operasyondaki herkesin morali %10 daha fazla azalır ve Operationun başarı şansı %10 azalır."},{"name":"<b><i><u>Temporal Perceptual Disparity</u></i></b>","desc":"Bu karakterin mycelid ölümsüz doğası, onun zaman algısını bozar. Bu karakter %20 ihtimalle Operationun süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter spor kolonisine bilgi toplar ve rapor verir, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."}]}'
@@ -1524,7 +1606,7 @@
       </div>
 
         <!-- KARIAS MAYHEM -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Karias Mayhem"
         data-img="the-hamlet-tokenler-resimler/Karias Mayhem (Barbarian).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Underdark Cartel Boss</u></i></b>","desc":"Bu karakter Underdark suç ağının önemli bir parçasıdır ve suç bağlantıları çok güçlüdür. Eğer Criminal veya Underdark Affiliationlı bir Operationa Liderlik ediyorsa, Operationun başarı şansı %15 artar."},{"name":"<b><i><u>Infernal Connections</u></i></b>","desc":"Bu karakterin bağlantıları Underdark ile sınırlı değildir, dokuz cehenneme kadar uzanır. Gönderildiği Operationda Lider rolünü üstleniyorsa, o anki karakter levelına göre GM nin belirleyeceği bir Infernal destek ekibini; silah sağlama, bilgi alma, savaş desteği vb. gibi belirli spesifik bir iş için yalnızca bir kere olacak şekilde çağırabilir."},{"name":"<b><i><u>Warmongers Presence</u></i></b>","desc":"Bu karakter işleri fiziksel bir biçimde çözmeyi sever. Gönderildiği Operationda bir savaş olmuşsa, Operasyondaki herkesin morali %10 daha az azalır."},{"name":"<b><i><u>Boss Intimidation</u></i></b>","desc":"Bu karakterin varlığı, anlaşmalar sırasında karşı tarafı ürkütür. Gönderildiği Diplomacy Operationlarında başarı şansını %10 arttırır."},{"name":"<b><i><u>Debt Retriever</u></i></b>","desc":"Bu karakter geri alınması istenilen şeyleri geri alma konusunda iyidir. Gönderildiği Rescue Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının geri alınması istenilen şey ile alakalı attıkları Checklere, Proficiency Bonusu adedine kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."}],"negative":[{"name":"<b><i><u>Infernal Debt</u></i></b>","desc":"Bu karakterin kaynaklarını sürdürebilir biçimde devam ettirebilmesi için borçlarını ödemesi gerekiyordur. Bu karakterin bulunduğu veya bulunmadığı, totaldeki her 7. Operationda ve yedinin tekrarında, karakter bir iblis borcunu ödemek zorundadır. Bu borcu ödediği vakitte, 7. Operasyondaki DM nin seçtiği bazı eşyalar borcun karşılığı olarak şeytani anlaşmanın bir parçası olur. Bu anlaşmayı reddederse kişi sözünden dönmüş ve kontrattan caymış olur ve; Operationun başarı şansı %40 düşer, kişi o bağlantısını kaybeder ve hatta bazı durumlarda o bağlantı borcu almak için planlar yapıp köstek olmaya çalışabilir hatta belki de kendisi de borcu tahsil etmeye gelebilir."},{"name":"<b><i><u>Tyrannical Leadership</u></i></b>","desc":"Bu karakter mükemmeliyeti isteyen ve başarısızlığa katlanamayan bir liderdir. Bu karakterin yürüttüğü bir Operation başarısız olursa, o Operasyondaki herkesin toplamda iki kat moral kaybı yaşamasına sebep olur ve başarısızlığın sebebi olduğunu düşündüğü kişiye karşı düşmanlaşır."},{"name":"<b><i><u>Obsessive Control</u></i></b>","desc":"Bu karakter bir mikroyönetim ve kontrol manyağıdır. Eğer bu karakter Espionage Affiliationlu bir göreve gönderilirse, tespit edilme riskini arttırır ve Operationun başarı şansını %15 azaltır."},{"name":"<b><i><u>Ruthless Efficiency</u></i></b>","desc":"Bu karakter yaralı ve zayıfları işe yaramaz olarak görür. Eğer bu karakterin Liderlik ettiği Operationda bir kişi yaralanmışsa, yaralanmış kişiyi olası senaryolarda ölüme terk etmeye meyillidir. Bu karakterin Liderlik ettiği Operationda birisi yaralanmışsa Operationdaki herkes, yaralanmış kişi adedi başına %10 daha fazla moral kaybeder."},{"name":"<b><i><u>Tiefling Stigma</u></i></b>","desc":"Bu karakterin kutsal olmayan doğası, dindar kişiler için her zaman göze çarpan bir kusur olmuştur. Gönderildiği Operationda Religious Affiliationu olursa, Operationun başarı şansı %12 düşer."}]}'
@@ -1535,7 +1617,7 @@
       </div>
 
         <!-- LADY CLOVER -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Lady Clover"
         data-img="the-hamlet-tokenler-resimler/Lady Clover (Monk).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mercy is a Blades Duty</u></i></b>","desc":"Bu karakter, ölümün nihai bir merhamet olduğuna inanır. Eğer gönderildiği Operationda Religious Affiliationdan birisi varsa ve bu Operationda birileri ölmüşse, bu karakter ölen kişi için, dinginliğini korur ve ona ölümün merhametiyle birlikte saygıyı sunar ve Operationdaki herkesin %15 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Mysterious Presence</u></i></b>","desc":"Bu karakterin konuşmaması, ona bir bilinmezlik faktörü kazandırır ve karşısındaki insanları endişelendirir. Diplomacy Operasyonlarında, bu kişinin sessiz varlığı, karşı tarafın daha fazla gerilmesine sebep olur ve Operationun başarı şansını %8 arttırır."},{"name":"<b><i><u>Gold Mask of the Faceless Judge</u></i></b>","desc":"Bu karakterin maskesi, Wanonun tanrıları tarafından susturulduğuna dair bir efsaneyi temsil eder. Underdark Affiliationlu bir Operationa gönderilirse, maskenin kutsal/korkutucu namından ötürü Operationun başarı şansını %12 arttırır."},{"name":"<b><i><u>Compassionate Companion</u></i></b>","desc":"Bu karakterin belli etmese de empati yeteneği çok yüksektir ve dostlarının yanında durur. Operation esnasında yapılan bir Short Rest esnasında, Operationdaki birinin üzerinden bir Long Term Madness kaldırabilir. Bunu yalnızca Operationda bir kere yapabilir."},{"name":"<b><i><u>Silent Prophet</u></i></b>","desc":"Bu karakteri Underdarktaki diğer katiller, bir tür azize olarak görür. Operationdaki Criminal Affiliationdan olan kişilerin sayısı başına, Operationdaki herkesin kişi başına %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>No One is Innocent</u></i></b>","desc":"Bu karakter en nihayetinde herkesin bir günahkar olduğuna inanır. Espionage Operasyonlarında, ana hedefin dışına çıkarak beklenmedik bir anda suçluları öldürerek alarm tetikler Operationun başarı şansını %15 azaltır."},{"name":"<b><i><u>Ritual Before Reason</u></i></b>","desc":"Bu karakter, katliamlarını dini bir törenle yapar. Öldüreceği kişiye bir lotus çiçeği bırakır, maskesini temizler. Bu karakter %20 ihtimalle Ritual ve Hunt Operationlarının süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter dini töreni için hazırlığa başlar veya uygular, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."},{"name":"<b><i><u>Whispers of the Unforgiven</u></i></b>","desc":"Bu karakter, geçmişinin izinde yaşar ve kendini sorgular. Operationda öldürdüğü her 3 kişi için, savaş sonunda DC 11 Wisdom Saving Throw atar ve başaramazsa Short Term Madness kazanır."},{"name":"<b><i><u>Judgmental Stare</u></i></b>","desc":"Bu kişinin maskenin boş bakışları, müttefiklerinin hatalarını kayıtsızca analiz eder. Operationdaki d20 Checklerde başarısız olan kişiler, başarısız oldukları her d20 için %2 daha fazla moral kaybeder."},{"name":"<b><i><u>Voices of Remorses</u></i></b>","desc":"Bu karakterin öldürmeye çalıştığı kişiler, son anlarında fısıltılar duyar. Eğer bir kişi, bu karakteri Operation sırasında Wounded durumuna düşürürse, bu kişi bir Short Term Madness kazanır. Eğer bir kişi, bu karakteri Operation sırasında Severely Wounded durumuna düşürürse, bu kişi bir Long Term Madness kazanır."}]}'
@@ -1546,7 +1628,7 @@
       </div>
 
         <!-- MERCER -->
-         <div class="token" draggable="true"
+         <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Mercer"
         data-img="the-hamlet-tokenler-resimler/Mercer (Artificer).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Mechanical Intuition</u></i></b>","desc":"Bu karakter, teknolojiye olan düşkünlüğü ve zekası neticesiyle mükemmeliyetçi bir zihniyettedir. Liderlik ettiği Tech Affiliationlu bir Operationun başarı şansını %15 arttırır."},{"name":"<b><i><u>Bosses Loyal Friend</u></i></b>","desc":"Bu karakterin köpeği, onun tek gerçek ailesidir. Bu karakterin bulunduğu Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Pain Driven Lesson</u></i></b>","desc":"Bu karakterin hayatındaki yaşadığı başarısızlıklar, bu karakter için bir ders niteliği taşır. Bu karakterin yönettiği bir Operation başarısız olursa, Operationun başarısız olmasının ardından tetiklenen bütün moral çarpanları sıfırlanır ve sanki Operation normal geçmiş gibi, ne artısız ne eksisiz bir moral kaybı yaşanır."},{"name":"<b><i><u>Scarred Authority</u></i></b>","desc":"Bu karakterin yaraları, onun güçlü bir otoriteye sahip olduğunu işaret eder. Diplomacy Operasyonlarında esnasında zayıf iradeli NPCler direnemeden itaat edip istenen şeyi söylemesini sağlayabilir. Bunu yapmak için kişi, DC 2 bir Wisdom Saving Throw atar ve başarırsa sorgulanan kişi istenen bilgiyi söyler. Operation esnasında yalnızca bir kere kullanılabilir."},{"name":"<b><i><u>Black Market Architect</u></i></b>","desc":"Bu karakterin, Underdarkın yeraltı teknoloji ağlarıyla bağlantıları vardır. Operationa gönderilmediği zamanlarda büyülü eşya craftına başlayabilir. Enchanting Checklerde (Daha detaylı bilgi için Helianas Guide to Monster Huntinge bakınız...) kendine avantaj verir."}],"negative":[{"name":"<b><i><u>Emotional Detachment</u></i></b>","desc":"Bu karakter başarısızlıklardan ne kadar ders alsa da tramvaları atlatamıyordur. Bu karakterin yönettiği Operationda bir dost ölürse (köpeği hariç), Operationun başarı şansı %20 azalır."},{"name":"<b><i><u>Legacy of Betrayal Paranoia</u></i></b>","desc":"Bu karakter bazı kişilere karşı açık bir güvensizlik besler. Bu karakterin yönettiği bir Operasyonda Imperium Affiliationundan birileri olursa, bu karakter bilerek onları riskli pozisyonlara iter ve Operationun başarı şansını %10 düşürür."},{"name":"<b><i><u>Mechanical Maintenance</u></i></b>","desc":"Bu karakterin ve köpeğinin mekanik olarak bakıma ihtiyacı vardır. Bu karakter ardı ardına veya aralıklı olması fark etmeyecek şekilde, 2 Operationa gönderildikten sonra vücudu bakım ister ve 2 hafta boyunca herhangi bir Operationa gönderilemez."},{"name":"<b><i><u>Proud Complex</u></i></b>","desc":"Bu karakter yaralanmayı kabul etmez ve kendini zayıf görmeyi redderer. Eğer bu karakter Wounded veya Severely Wounded konumuna düşerse bir Long Term Madness kazanır."},{"name":"<b><i><u>Soft Spot For Weaks</u></i></b>","desc":"Bu karakterin özellikle çocuklara olacak şekilde, masumlara duyduğu bir merhamet hissiyatı mevcuttur. Rescue Operationlarında, Operationun başarı şansını %10 azaltır."}]}'
@@ -1557,7 +1639,7 @@
       </div>
 
         <!-- ORILISTA -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Orilista"
         data-img="the-hamlet-tokenler-resimler/Orilista (Warlock).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Honeyed Lies</u></i></b>","desc":"Bu karakterin yalanları o kadar inandırıcıdır ki görevlerde büyük bir avantaj sağlar. Espionage Operasyonlarında yalanlarıyla istihbarat toplayarak, Operationun başarı şansını %15 artar."},{"name":"<b><i><u>Whispering Patron</u></i></b>","desc":"Bu karakterin patronuyla arasındaki bağ çok sıkıdır ve patronu ona sırlar fısıldar. Eğer bu kişi DC 12 Wisdom Checki geçebilirse, her Operationda bir kez olacak şekilde bu karakterin patronu, bu karakterin Operasyon ile alakalı öğrenmek istediği bir sırrı veya bilgiyi açığa çıkarır."},{"name":"<b><i><u>Freak Magnetism</u></i></b>","desc":"Bu karakter gibi dışlanmış kişiler, bu karakteri kendilerinden birisi gibi görür. Gönderildiği Operationda Freak Affiliationuna sahibi karakterlerle çalışıyorsa, Operasyondaki Freak başına (kendisi dahil) Operasyonlardaki kişilerin %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Feytongue Deception</u></i></b>","desc":"Bu karakter, inka etme ve konuşma sanatını Feylerden öğrenmiştir ve bir manipülasyon ustası olarak konuşma işlerini kolaylaştırır. Gönderildiği Diplomacy Operasyonlarında, atılan bütün Charisma Checklerin DC zorluğunu, kendi Proficiency Bonusu kadar düşürür."},{"name":"<b><i><u>Happy Lies Cocoon</u></i></b>","desc":"Bu karakter distopik de olsa, yalanlarını satmakta ve algıyı değiştirmekte çok iyidir. Gönderildiği Operationdaki herkesin kazanacağı Madness etkilerini, DC 20 Deception Check ile silme ihtimali vardır. Bu check, madness kazanıldıktan sonra hemen atılır ve başarılı olunursa madness hiç kazanılmamış varsayılır. Bu checkin atılıp atılmayacağına, Madness etkisini gördükten sonra karar verilir."}],"negative":[{"name":"<b><i><u>Elven Grudge</u></i></b>","desc":"Bu karakter geçmişi gereği elf bağlarından nefret eder. Gönderildiği Operationda Alve Dorei Affiliationlu birisi veya Elf ırkından birisi varsa, Operationun başarı şansını %15 düşürür."},{"name":"<b><i><u>Patrons Whim</u></i></b>","desc":"Bu karakter kendi Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."},{"name":"<b><i><u>Cruel Games</u></i></b>","desc":"Bu karakterin öldürme çeşitleri dehşet vericidir. Operasyondaki öldürülen her üç kişi için, Operasyondaki müttefikler DC 10 Wisdom Save atar. Başaramayan müttefikler bir Short Term Madness kazanır. Bu şekilde kazanılan Madness, Happy Lies Cocoon etkisi ile silinemez."},{"name":"<b><i><u>Fear From Boss Fights</u></i></b>","desc":"Bu karakter, güçlü düşmanlardan korkar ve onlarla yüzleşmeyi sevmez. Boss Fight Operationlarında başarı şansını %15 düşürür."},{"name":"<b><i><u>Derealization</u></i></b>","desc":"Bu karakterin yaşadığı işkenceler neticesinde gerçeklik algısında sorunları mevcuttur. Operasyon esnasında kendisinin attığı bir Checki direkt olarak faillama şansı mevcuttur. Bu şans, DM nin perde arkasından attığı zarlar ile belirlenir."}]}'
@@ -1568,7 +1650,7 @@
       </div>
 
         <!-- PRUDENCE -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Prudence"
         data-img="the-hamlet-tokenler-resimler/Prudence (Rogue).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Velvet Trap</u></i></b>","desc":"Bu karakterin baştan çıkarıcı tavırları hedefin gardını düşürür. Gönderildiği Diplomacy Operationlarında, hedeflerin atacakları checklerden, Proficiency Bonusu kere olacak şekilde kendi Charisma Modifierını düşürebilir."},{"name":"<b><i><u>Shadows Caress</u></i></b>","desc":"Bu karakterin cinayetleri genellikle \"bulaşıklı\" değildir, arkasında iz bırakmaz. Espionage Operasyonlarında operasyonun başarı şansı %15 artar."},{"name":"<b><i><u>Gilded Burglar</u></i></b>","desc":"Bu karakterin parlak şeylere olan iştahı, onu mükemmel bir hırsız yaoar. Rescue ve Espionage Operasyonlarında kademeli olarak zorluk DC 20/25/30 olacak şekilde bir Sleight of Hand Check atar. Bu check ile belirtilen kademeleri geçtiği vakitte, GM nin belirleyeceği bir şekilde, Operationdan daha fazla kazanç sağlayabilir."},{"name":"<b><i><u>Vampiric Recognition</u></i></b>","desc":"Bu karakterin ölümsüz doğası, kendisi gibi olanlar ile iyi ilişkiler kurmasını ve ona empati yapılabilmesini sağlar. Gönderildiği Operationda Immortal Nature Affiliationuna sahip birisi varsa, Operationdaki bütün herkesin moral kaybı %20 daha az olur."},{"name":"<b><i><u>Physical Relief</u></i></b>","desc":"Bu karakterin damarlarında akan özel vampir kanı ve bu karakterin yoldaşlığı, fiziksel temas ile birleştiği vakitte mucizeler yaratabilir. Operation esnasındaki bir Short veya Long Rest sırasında, bu Operationdaki bir kişi ile fiziksel olarak yakınlaşıp onunla birlikte zaman geçirebilir. Bunu yaptığı zaman, yakınlaştığı kişinin üzerinden istediği bir Madness efektini kaldırabilir (Fiziksel formu bozan Madness efektleri üzerinde çalışmaz). Ayrıca hem bu karakterin, hem de partnerinin Operationun sonunda moral kaybı %20 daha az olur."}],"negative":[{"name":"<b><i><u>Fatal Boredom</u></i></b>","desc":"Bu karakter işleri sıkıcı bulduğu zaman kendince ilginçleştirecek yöntemler arar. Eğer gönderildiği Operationun Success Ratesi %80 veya üzerindeyse, bu karakter işleri ilginçleştirmek adına bazı şeyleri çaktırmadan sabote eder ve Operationun başarı şansını %10 düşürür."},{"name":"<b><i><u>Vampiric Whims</u></i></b>","desc":"Bu karakterin vampirik doğası, onu kanasusamış yapar. Eğer Operation esnasında acıkırsa, müttefiklerini ısırarak onlardan kan çeker. Eğer müttefiklerinden birisini ısırırsa, ısırılan kişi ısırık başına %5 daha fazla moral kaybeder. Eğer açlığını bastırmayı seçer ve birisini ısırmazsa, DC 15 Constitution Saving Throwu başarması gerekir yoksa bir Short Term Madness kazanır."},{"name":"<b><i><u>Delaying Flirt</u></i></b>","desc":"Bu karakterin flört işlerini istediği şekilde idare ettirebilmesi için zamana ihtiyacı olabilir. Diplomacy Operationu esnasında bir hedefi baştan çıkarmak için zamana ihtiyacı olabileceğinden ötürü, bu karakter %25 ihtimalle Operationun süresini uzatır ve bu ihtimal her gün için ayrı tetiklenme olasığına sahiptir. Bu olasılık tetiklendiği zaman bu karakter hedefi ile zaman geçirir ve gruptan geçici olarak ayrılır, bu yüzden bir günlük sürmesi gereken bir işi iki katına çıkarır ve gruba zaman yönetimi açısından zarar verir. Bu ihtimal tetiklenirse ve grup onu hızlı olmak ve zaman kaybetmemek için arkasında sürüklerse bu karakter bir Long Term Madness kazanır."},{"name":"<b><i><u>Mother Paranoia</u></i></b>","desc":"Bu karakterin geçmişinde annesi ile yaşadıkları ona zor zamanlar yaşatabilir. Gönderildiği Operation Immortal Nature Affiliationu içeriyorsa veya Vampirler ile ilgiliyse, bu karakter Operationa başladığı anda Wounded statüsüne geçer."},{"name":"<b><i><u>Blood Ties</u></i></b>","desc":"Bu karakter, kan bağı yüzünden bazı kişiler tarafından aşağılık bir gözle bakılır. Gönderildiği Operationda Religious Affiliationlu bir müttefik varsa,. Operationdaki herkesin moral kaybı %15 daha fazla olur."}]}'
@@ -1579,7 +1661,7 @@
       </div>
 
         <!-- SKOVAN -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Skovan"
         data-img="the-hamlet-tokenler-resimler/Skovan (Bard).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Manipulative Apocalypse Whispers</u></i></b>","desc":"Bu karakter, yaklaşan kıyametin fısıltılarını duyduğunu ve bu kıyamet senfonisinin altında alınacak bir ders olduğunu söyler. Bu karakterin bulunduğu Operationlarda eğer birileri bir Madness kazanırsa, Madness Effectin belirlenmesi için atılan d10 luk zarı pasif olarak 2 düşürür."},{"name":"<b><i><u>Dark Veiled Path</u></i></b>","desc":"Bu karakter, karanlığı ve Underdarkı benimsemiş bir seri katildir ve yakalanması zordur. Gönderildiği Espionage Operationlarının başarı şansını %10 arttırır."},{"name":"<b><i><u>Eldritch Insight</u></i></b>","desc":"Bu karakter ritüelistik ve tarikatımsı hareketlere alışıktır ve bu bağnazlık ile iç içe büyümüştür. Gönderildiği Ritual Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Wisdom Saving Throwlarına, Proficiency Bonusu kere olacak şekilde avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Poet of Murder</u></i></b>","desc":"Bu karakterin ölüm sanatı, suçlular tarafından takdir edilir. Gönderildiği Operationdaki Criminal Affiliationdan olan kişilerin sayısı başına, Operationdaki herkesin kişi başına %5 daha az moral kaybetmesini sağlar."},{"name":"<b><i><u>Shadows Embrace</u></i></b>","desc":"Bu karakter, karanlıkta yürürken müttefiklerinin moralini yüksek tutar. Gönderildiği Operationda Underdark Affiliationu varsa, bu Operaitondaki herkesin herkesin %10 daha az moral kaybetmesini sağlar."}],"negative":[{"name":"<b><i><u>Eldritch Moon Bound</u></i></b>","desc":"Bu karakter, mutasyonlu ayın tepede olduğu günler göreve gönderilmek ister. Eldritch Moonların tepede olduğu dönemlerde (4 haftalık Rotasyon şeklinde) görevlere gönderilmek zorundadır. Eğer bu karakter Ay tepedeyken göreve gönderilmezse, Hamletin içindeki herkese DC 17 Wisdom Saving Throw attırır ve başaramayan kişilere bir Long Term Madness kazandırır."},{"name":"<b><i><u>Voices of the Void</u></i></b>","desc":"Bu karakter bir şeyler ile uğraşmadığı zaman, kafasında sesler duymaya başlar ve bu duyduğu sesler insanları rahatsız etmesini söyler. Eğer 2 hafta üst üste Operationa gönderilmezse, Hamletin içindeki herkese DC 11 Wisdom Saving Throw attırır ve başaramayan kişilere bir Short Term Madness kazandırır."},{"name":"<b><i><u>Unholy Rancor</u></i></b>","desc":"Bu karakter, tanrıları bir küfür olarak görür ve dini görevleri pek de iyi kaldıramaz. Gönderildiği Operationda Religious Affiliationu mevcutsa, Operationun başarı şansını %12 düşürür."},{"name":"<b><i><u>Double Edged Diplomacy</u></i></b>","desc":"Bu karakterin diplomasi anlayışı sakıncalıdır. Gönderildiği Diplomacy Operationunda öngörülemeyecek şeyler yapabilir ve bunun sonucunda iki şeyden birisi olabilir. İlk ihtimal dahilinde, Operationdaki herkes %10 daha az moral kaybeder fakat Operationun Success Ratesi %20 azalır. İkinci ihtimalde ise Operationdaki herkes %20 daha fazla moral kaybeder fakat Operationun Success Ratesi %10 artar. Hangi ihtimalin tetikleneceği belirsizdir. Ihtimal GM nin atacağı oyuncuların görmediği bir d100 ile belirlenir."},{"name":"<b><i><u>Anti Hero Hater</u></i></b>","desc":"Bu karakter kahramanlık zırvasının her şeklinden tiksinir ve belirli kalıplara uydurulmasını absürd bulur. Gönderildiği Operationda Anti Hero Affiliationlu bir müttefik varsa, Operationdaki herkesin %10 daha fazla moral kaybetmesini sağlar."}]}'
@@ -1590,7 +1672,7 @@
       </div>
 
         <!-- TABULA -->
-         <div class="token" draggable="true"
+         <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Tabula"
         data-img="the-hamlet-tokenler-resimler/Tabula (Sorcerer).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Blood Blossom Ritual Benefit</u></i></b>","desc":"Bu karakter, bir kan ritüeli ile dikenleri kullanarak ölen kişiyi Fey Leydisine adayabilir. Gönderildiği Operationda ölen kişiler için bir ritüel düzenleyerek onları feda eder ve ölen kişi adedi başına, Operationun Success Ratesini %5 arttırır (Maximum %25 Success Rate artışı olabilir)."},{"name":"<b><i><u>Fey Ritualistics</u></i></b>","desc":"Bu karakter Fey usülleri gereğince ritüel yapmasını iyi bilir. Gönderildiği Ritual Operationlarının Success Ratesini %10 arttırır."},{"name":"<b><i><u>Feywild Powers</u></i></b>","desc":"Bu karakter dünya dışı güçleri benimsemiş kişileri takdir eder. Gönderildiği Operationda Otherworldly Affiliationuna sahip bir müttefik varsa, Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Naturalist</u></i></b>","desc":"Bu karakter doğanın güçlerini manipüle etmesini iyi bilir. Gönderildiği Operationda Nature Affiliationu varsa, Operationlardaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Thorned Rose</u></i></b>","desc":"Bu karakter bir acıyı, başka bir acıyla kapatabilir. Gönderildiği Operation esnasında birisi Wounded veya Severely Wounded konumuna düşerse, bu karakter Proficiency Bonusu kere olacak şekilde, müttefiklerin ve kendisinin olacak şekilde, Wound kazanılmasından ziyade kişinin bir Short Term Madness kazanmasını sağlayabilir."}],"negative":[{"name":"<b><i><u>Blood Blossom Ritual Detriment</u></i></b>","desc":"Bu karakter, bir kan ritüeli ile dikenleri kullanarak ölen kişiyi Fey Leydisine adayabilir. Gönderildiği Operationda ölen kişiler için bir ritüel düzenleyebilir ama bu kanlı ritüel, oradaki kişiler için moral bozucudur. Ölen kişi adedi başına, Operationun Moral kaybını %5 arttırır (Maximum %25 Moral Kaybı artışı olabilir)."},{"name":"<b><i><u>Bloodbloom Compulsion</u></i></b>","desc":"Bu karakter ritüelini yaptığı zaman, ekibe zaman kaybettirir. Bu karakter Blood Blossom Rituali kaç kez kullanırsa, Operaitonun süresi o kadar gün uzar."},{"name":"<b><i><u>Thorn Mages Curse</u></i></b>","desc":"Bu karakter, etraftaki tek büyücü olmayı ister. Gönderildiği Operationda kendisinden başka Mage Affiliationuna sahip birisi varsa, Operationun başarı şansını %10 azaltır."},{"name":"<b><i><u>Gilded Cage Trauma</u></i></b>","desc":"Bu karakterin geçmişindeki yetiştirilme biçimi, bazı tramvatik anıları yeniden canlandırır. Genderildiği Rescue Operationlarında, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Fey Patron Association</u></i></b>","desc":"Bu karakter bir Fey patronu ile bağlantılıdır ve patronunun anlamsız kaprisleri onu zor duruma sokabilir ve reddederse patronu onu delirtebilir. Operation sırasında Patron anlamsız bir istekte bulunursa bu karakter bir Wisdom Saving Throw atar. DC 13 olan bu Saving Throwu başaramazsa karakter patronun isteğini yapmak zorunda kalır. Eğer hem başaramaz hem bu isteği yapmayı reddederse, karakter bir Short Term Madness kazanır."}]}'
@@ -1601,7 +1683,7 @@
       </div>
 
         <!-- TREVETHAN -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Trevethan"
         data-img="the-hamlet-tokenler-resimler/Trevethan (Cleric).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Illuminating Guidance</u></i></b>","desc":"Bu karakter ışığın yolundan şaşmaz. Hunt veya Boss Operationlarında, grubun ışığı olur ve Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Sanctified Torture</u></i></b>","desc":"Bu karakter işkence konusunda çok iyidir. Diplomacy Operationlarında hedefe işkence ederek ondan bilgi öğrenebilir ve Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Human Determination</u></i></b>","desc":"Bu karakter, insanlara güven ve kararlılık aşılar. Gönderildiği Operationda kendisinden başka Human Affiliationuna sahip bir müttefik varsa, Operationdaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Inquisitions Echo</u></i></b>","desc":"Bu karakterin engizisyon ile olan geçmişi, onları tanımasına ve ne yapacaklarını bilerek hareket etmesine sebep olur. Gönderildiği Operationda Inquisition Affiliationu mevcutsa, bu karakter ister kendi ister takım arkadaşlarının Intelligence checklerine Proficiency Bonusu kadar avantaj verebilir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Unbreakable Faith</u></i></b>","desc":"Bu karakterin kendi inancı kırılamaz. Operation sırasında aldığı bir Madness etkisini gördükten sonra, üstünden silebilir."}],"negative":[{"name":"<b><i><u>Bipolar Zeal</u></i></b>","desc":"Bu karakter kendi içinde kişilik ayrımları yaşıyordur. Gönderildiği Operation başladığında 1d6 atılır. 1 ile 3 arasında bir değer gelirse bu karakter pasif kişiliğine bürünür, 4 ile 6 arasında bir değer gelirse bu karakter baskın olan kişiliğine bürünür. Pasif kişilik; uyumlu, ılımlı, başkalarına saygı gösteren, çevresindeki insanları düşünen bir rahip özellikleri gösterir. Baskın kişilik; aksi, kaba, korkusuz, zorba, kendinden ve tanrılardan başka hiçkimseye saygı göstermeyen, her şeyden önce en çok kendini önemseyen toksik bir fanatik özellikleri gösterir. Operation esnasında bu karakter, herhangi bir d20 testinde Natural 1 (d20 üzerinden 1) atarsa, Operationdaki kişilik, diğer kişilik ile yer değiştirir."},{"name":"<b><i><u>Bigoted Behavior</u></i></b>","desc":"Bu karakterin baskın kişiliği, işleri zorlaştırır ve anlaşılması çok güç bir figürdür. Bu karakterin baskın kişiliğinin olduğu bütün Operationların Success Ratesi %10 düşer ve Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Heretic Hater</u></i></b>","desc":"Bu karekter dini anlamda anlaşabileceği birilerine ihtiyaç duyar. Gönderildiği Operationdaki müttefiklerinin hiçbirinde Religious Affiliationu yoksa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Aversion to Criminals</u></i></b>","desc":"Bu karakter suçlular ile çalışmaya isteksizdir. Gönderildiği Operationdaki müttefiklerinin arasında Criminal Affiliationuna sahip birisi varsa, Operationun Success Ratesi %10 düşer"},{"name":"<b><i><u>Righteous Cleric</u></i></b>","desc":"Bu karakter suçluların yapacağı eylemlerden sakınır. Gönderildiği Espionage Operationlarının Success Ratesi %5 düşer ve Operationdaki herkesin moral kaybı %5 daha fazla olur."}]}'
@@ -1612,7 +1694,7 @@
       </div>
 
         <!-- YANAGI -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Yanagi"
         data-img="the-hamlet-tokenler-resimler/Yanagi (Ranger).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Swift Sword</u></i></b>","desc":"Bu karakter öldürme işini çabuk halletme konusunda iyidir. Gönderildiği Espionage Operationlarının Success Ratesini %10 arttırır."},{"name":"<b><i><u>Killing Charm</u></i></b>","desc":"Bu karakter, karşı cinsi ile yaptığı konuşmalarda oldukça etkilidir. Gönderildiği Diplomacy Operationlarında, Operation sırasında bir kez olabilecek şekilde, karşı cinsi ile girdiği bir Persuasion Checki başarıyla auto successleyebilir. Bunu Operationda yalnızca bir kez kullanabilir."},{"name":"<b><i><u>Dead Mans Whisper</u></i></b>","desc":"Bu karakterin ölüm ile yaşam arasındaki bağ, olması gerekenden daha şeffaftır. Gönderildiği Operationda bu karakter, bir kere Speak With Dead büyüsünü istediği ceset üzerinde kullanabilir."},{"name":"<b><i><u>Ghost of Wano</u></i></b>","desc":"Bu karakterin Wanoda makyavelist bir sosyopat olarak kötü ama bilinir bir namı vardır, ama gene de Wano kültüründen insanlar ile iyi anlaşır. Gönderildiği Operaitonda kendisinden başka Wano Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Razan Resolve</u></i></b>","desc":"Bu karakter, Ozaki Razanın iradesini taşımayı buyruğu olarak bellemiştir. Gönderildiği Operationda Underdark Affiliationu varsa, Operationlarının Success Ratesini %10 arttırır."}],"negative":[{"name":"<b><i><u>Hateful Focus</u></i></b>","desc":"Bu karakter, Ozaki Razanın katili olduğunu düşündüğü Engizisyonculardan nefret eder. Gönderildiği Operaitonda Inquisition Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Obsession with Razan</u></i></b>","desc":"Bu karakter, Ozaki Razana saplantılıdır ve Wanonun ona ihanet ettiğini düşünür. Gönderildiği Operationda Wano Affiliationu varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Hollow Mask</u></i></b>","desc":"Bu karakter, öldürmeye saplantılı bir şekilde takıkdır ve öldürmeden yapamaz. Eğer bu karakter birini öldürmeden 3 gün geçirirse, bir Short Term Madness kazanır. Bu süreç 3 günde bir tekrarlanır."},{"name":"<b><i><u>You Are God of Yourself</u></i></b>","desc":"Bu karakter tanrıların olmadığı bir dönemde doğmuştur ve onlara inanmaz. Eğer gönderildiği Operationda Religious Affiliationuna sahip birisi varsa, Operationun Success Ratesi %10 düşer."},{"name":"<b><i><u>Boss Fight Addicted</u></i></b>","desc":"Bu karakter çok güçlü düşmanlar ile savaşmak ister ve onları öldüren kişi olmak ister. Eğer bu karakter, seçilmiş bir Boss Fight Operationuna gönderilmezse, bir Short Term Madness kazanır."}]}'
@@ -1623,7 +1705,7 @@
       </div>
 
         <!-- ZACHARIAS -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Zacharias"
         data-img="the-hamlet-tokenler-resimler/Zacharias (Wizard).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Cold Calculus</u></i></b>","desc":"Bu karakter, moral dilemmalarına takılmayı rasyonel bir şekilde reddedebilir. 4 Haftada bir, gönderildiği Operationda Moral kaybetmemeyi seçebilir. Bu özelliği 4 haftada bir yeniden kullanabilir. Bu özelliği yalnızca gönderildiği Operation sona erdiğinde kullanabilir."},{"name":"<b><i><u>Arcane Spell Blueprint</u></i></b>","desc":"Bu karakter, herhangi bir operasyonda gitmeden önce iyi plan yapar ve büyülerini bu plana göre ayarlar. Gönderildiği Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Master Scheduler</u></i></b>","desc":"Bu karakter operasyon planları oluşturma konusunda oldukça başarılıdır. Bu karakterin kurguladığı Operasyonların başarı şansı %10 daha yüksektir."},{"name":"<b><i><u>Philosopher Diplomat</u></i></b>","desc":"Bu karakter diplomasi sırasında engin dil bilgisi ve davranış biçimi ile müttefiklerini rahatlatır. Gönderildiği Diplomacy Operationlarında herkesin moral kaybı %10 daha az olur."},{"name":"<b><i><u>Shared Knowledge</u></i></b>","desc":"Bu karakter bilgi öğrenmenin her yolunu mübah görür ve bilgiye giden müttefiklerine önem verir. Gönderildiği Operationda Otherworldly Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha az olur."}],"negative":[{"name":"<b><i><u>Morale Disregarder Organizer</u></i></b>","desc":"Bu karakter, kurgularında amacı ve başarıyı ön planda tutar ve başarı yolunda çekilecek çileleri göz ardı eder. Bu karakterin kurguladığı Operasyonlarda herkesin moral kaybı %20 daha fazla olur."},{"name":"<b><i><u>Walking Heresy</u></i></b>","desc":"Bu karakter din adamları tarafından hor görülür ve yürüyen bir sapkınlık abidesi olarak nitelendirilir. Gönderildiği Operationda Religious Affiliationundan birisi varsa, Operationun Success Ratesini %10 azaltır."},{"name":"<b><i><u>Emotionless Bargains</u></i></b>","desc":"Bu karakter anlaşmalar sırasında duyguların, başarıya köstek olduğunu düşünür. Bu karakterin gönderildiği Operationda, müttefik veya kendisi olacak şekilde atılan bütün Intimidation ve Insight Checkler, doğuştan dezavantajlı konumda olur. Bu checklerin passive halleri değişmez."},{"name":"<b><i><u>Overanalyzer</u></i></b>","desc":"Bu karakter, yapılan iş esnasında garibine giden herhangi bir şeyi önce analiz eder ve zaman kaybeder. Bu karakter savaş esnasındayken anlam veremediği bir hareket olursa, kendi turunda o şeye anlam vermek için bir Investigation Check atar ve kendi turunu bunu düşünmeye ve plan kurmaya harcar."},{"name":"<b><i><u>Hollow Epistemology</u></i></b>","desc":"Bu karakterin zihni bulanıklaştığı zaman, zihninin içindeki sesler uyanır ve ona musallat olup onu delirtir. Eğer bu karakter, herhangi bir Madness efekti kazanırsa, ekstra olarak fazladan bir Short Term Madness efekti daha kazanır."}]}'
@@ -1634,7 +1716,7 @@
       </div>
 
         <!-- ZUHLAN RALAM -->
-        <div class="token" draggable="true"
+        <div class="token" draggable="true" tabindex="0" role="button"
         data-name="Zuhlan Ralam"
         data-img="the-hamlet-tokenler-resimler/Zuhlan Ralam (Paladin).jpg"
         data-quirks='{"positive":[{"name":"<b><i><u>Ziervas Fervor</u></i></b>","desc":"Bu karakter Zierva adına katliamlar yapabilir. Gönderildiği Boss Fight Operationunda, yanında müttefik olarak en az bir Religious Affiliationuna sahip birisi varsa, Operationun Success Ratesini %15 arttırır."},{"name":"<b><i><u>Draconic Hunter</u></i></b>","desc":"Bu karakterin hayatı insan avlayarak geçmiştir. Gönderildiği Hunt Operationları esnasında bu karakter ister kendi ister takım arkadaşlarının Initiative Checklerine, Proficiency Bonusu kere olacak şekilde avantaj verebilir. Bu avantajı checkler atılmadan önce verip vermeyeceğine karar vermelidir. Halihazırda bir avantaj söz konusuysa, buradan gelen avantaj +5 bonusa dönüşür."},{"name":"<b><i><u>Warmonger Fanaticism</u></i></b>","desc":"Bu karakter, savaşın çözüm olduğunu düşünen kişiler ile daha iyi anlaşır. Gönderildiği Operationda kendisinden başka bir Warmonger varsa, Operationdaki herkesin moral kaybı %10 azalır."},{"name":"<b><i><u>Dragon Belongings</u></i></b>","desc":"Bu karakter temin etme konusunda korkunç seviyede iyidir. Gönderildiği Rescue Operationlarında, Operationun Success Ratesini %10 arttırır."},{"name":"<b><i><u>Evil Chaperone</u></i></b>","desc":"Bu karakter birilerine eşlik ediyorken, korkunun veya yaklaşan savaşın kokusunu alabilir. Gönderildiği Operation bir Rescue Operationu ise, Operation esnasında ihanetin ve savaşın kokusunu alarak, bu özelliği kullanarak otomatik bir şekilde yaklaşan bir savaşı önceden söyleyebilir yada ihanet edecek kişiyi önceden saptayabilir. Bu özelliği Operation boyunca yalnızca bir kez kullanabilir."}],"negative":[{"name":"<b><i><u>Steel Cannot Lie</u></i></b>","desc":"Bu karakterin kuşandığı çelik, düşmanların ilgisini çeker ve onları alarma geçirebilir. Gönderildiği Ritual Operationlarında, ekibindeki herkesin Stealth Checklerine dezavantaj verir. Ayrıca Operation boyunca en az bir kere düşmanları alarma sokar ve grubu savaşa sokar. Daha fazla savaş, daha fazla loot anlamına gelir, fakat savaşlar arasında dinlenmeye müsade yoktur."},{"name":"<b><i><u>Memory of the Oath</u></i></b>","desc":"Bu karakter din kavramının var olduğu bütün durumlarda bulunmak ister. Eğer Operation planlaması yapılıyorken, Religious Affiliationa sahip bir Operation seçilmişse ve bu Operationa bu karakter gönderilmezse, bir Long Term Madness kazanır."},{"name":"<b><i><u>Zeals Paranoia</u></i></b>","desc":"Bu karakter, istemediği durumları sabote etme özgürlüğünü kendisinde bulur. Eğer bu karakter bir Diplomacy Operationuna gönderilirse, Operationun Success Ratesi %10 düşer."},{"name":"<b><i><u>Challenger of Immortality</u></i></b>","desc":"Bu karakter, doğal bir yaşam döngüsü olmayan insanlarla çalışamaz. Gönderildiği Operationda Immortal Nature Affiliationuna sahip birisi varsa, Operationdaki herkesin moral kaybı %10 daha fazla olur."},{"name":"<b><i><u>Mage Slayers Whimsicals</u></i></b>","desc":"Bu karakter büyücü öldürürken kendinden geçebilir. Gönderildiği Operationda Mage Affiliationu varsa ve bu karakter o Operationda bir Mage öldürürse, büyücüyü yer ve onun kanıyla banyo yapar. Bu manzaradan ötürü, Operationdaki bu karakter hariç herkes bir Short Term Madness kazanır."}]}'
@@ -1658,10 +1740,10 @@
       <div class="operation-grid-label">Team Alpha</div>
       <div class="team-block">
         <div class="op-row" id="team-row-1">
-          <div class="slot" data-leader="true"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" data-leader="true" tabindex="0" role="button" aria-label="Lider slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-1" data-default="Team Alpha">
           <div class="team-name-display" id="team-name-display-1">
@@ -1679,10 +1761,10 @@
       <div class="operation-grid-label" style="margin-top:1.5rem;">Team Beta</div>
       <div class="team-block">
         <div class="op-row" id="team-row-2">
-          <div class="slot" data-leader="true"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
-          <div class="slot"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" data-leader="true" tabindex="0" role="button" aria-label="Lider slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
+          <div class="slot" tabindex="0" role="button" aria-label="Takım slotu, boş"><span class="slot-hint">Drag<br>here</span></div>
         </div>
         <div class="team-name-panel" id="team-name-panel-2" data-default="Team Beta">
           <div class="team-name-display" id="team-name-display-2">
@@ -2032,7 +2114,10 @@
 
   // ── Hero Ember Particles (ReactBits "Particles" mantığından ilham) ──
   // Hero başlığının arkasında yavaşça yükselen, sallanan ve sönen kül/kıvılcım parçacıkları.
+  // prefers-reduced-motion aktifse bu sürekli animasyon hiç başlatılmaz (CSS de canvas'ı gizler).
+  const PREFERS_REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   (function initHeroEmbers() {
+    if (PREFERS_REDUCED_MOTION) return;
     const canvas = document.getElementById('hero-embers');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -2110,18 +2195,21 @@
 
   // ── Hafif Arka Plan Parallax ───────────────────────────────
   // Sayfa kaydırılırken arka plan görseli çok ince bir oranda kayar; baş döndürmemesi için küçük bir katsayı kullanılır.
-  let parallaxTicking = false;
-  function updateParallax() {
-    const offset = Math.min(window.scrollY * 0.04, 40);
-    document.documentElement.style.setProperty('--parallax-offset', `${offset}px`);
-    parallaxTicking = false;
-  }
-  window.addEventListener('scroll', () => {
-    if (!parallaxTicking) {
-      window.requestAnimationFrame(updateParallax);
-      parallaxTicking = true;
+  // Hareket hassasiyeti tercih edilmişse bu efekt hiç bağlanmaz.
+  if (!PREFERS_REDUCED_MOTION) {
+    let parallaxTicking = false;
+    function updateParallax() {
+      const offset = Math.min(window.scrollY * 0.04, 40);
+      document.documentElement.style.setProperty('--parallax-offset', `${offset}px`);
+      parallaxTicking = false;
     }
-  }, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!parallaxTicking) {
+        window.requestAnimationFrame(updateParallax);
+        parallaxTicking = true;
+      }
+    }, { passive: true });
+  }
 
   // ── Token Affinity & Flicker Ataması ──────────────────────
   // Her tokenin affiliation listesine bakıp en öncelikli kategoriyi seçer ve
@@ -2270,10 +2358,56 @@
   }
 
   // ── Token Drag ───────────────────────────────────────────
+  // moveTokenTo: token'ı verilen hedefe taşır (slot veya rest-area), leader badge'i
+  // ve takım isim güncellemesini yönetir. Hem mouse drag-drop hem mobil tıkla-seç
+  // akışı bu fonksiyonu kullanır, böylece davranış her iki giriş yöntemi için aynıdır.
+  function moveTokenTo(token, destination) {
+    if (!token || !destination) return;
+    if (destination !== restArea && destination.querySelector('.token')) return; // dolu slot
+    const previousRow = getTeamRowOf(token.parentElement);
+    const lb = token.querySelector('.leader-badge');
+    if (lb) lb.remove();
+    destination.appendChild(token);
+    if (destination.dataset && destination.dataset.leader === 'true') {
+      const badge = document.createElement('div');
+      badge.classList.add('leader-badge');
+      badge.textContent = 'Leader';
+      token.appendChild(badge);
+    }
+    dropSound.currentTime = 0; dropSound.play().catch(() => {});
+    if (previousRow) refreshTeamName(previousRow);
+    const newRow = getTeamRowOf(destination);
+    if (newRow) refreshTeamName(newRow);
+  }
+
+  // Mobil/dokunmatik "tıkla-seç" akışı: bir token'a dokunulursa seçili hale gelir
+  // (görsel halka ile işaretlenir), ardından bir slota dokunulursa oraya yerleşir.
+  // Bu, HTML5 Drag-and-Drop API'sinin dokunmatik ekranlarda çalışmamasının fallback'idir.
+  let selectedTokenForTouch = null;
+  function setTokenSelected(token) {
+    if (selectedTokenForTouch) selectedTokenForTouch.classList.remove('token-selected');
+    selectedTokenForTouch = token;
+    if (token) token.classList.add('token-selected');
+  }
+
   document.querySelectorAll('.token').forEach(token => {
     token.addEventListener('click', e => {
       const skip = ['token-tag','morale-bar','morale-fill','morale-value','morale-close'];
       if (skip.some(cls => e.target.classList.contains(cls))) return;
+      // Dokunmatik ekran VEYA klavye (Enter/Space, e.detail===0) kaynaklı tıklamada:
+      // 1. seçim → token'ı işaretler (taşımak için bir slota geçilebilir)
+      // 2. seçim (aynı token'a tekrar) → detaylarını gösteren modalı açar
+      // Sadece gerçek mouse tıklaması (detail >= 1) doğrudan modalı açar.
+      const isTouchOrKeyboard = window.matchMedia('(hover: none) and (pointer: coarse)').matches || e.detail === 0;
+      if (isTouchOrKeyboard) {
+        if (selectedTokenForTouch === token) {
+          setTokenSelected(null);
+          openCharModal(token);
+        } else {
+          setTokenSelected(token);
+        }
+        return;
+      }
       triggerClickSpark(e.clientX, e.clientY);
       openCharModal(token);
     });
@@ -2304,28 +2438,38 @@
       e.preventDefault();
       el.classList.remove('drag-over');
       if (draggedToken && !el.querySelector('.token')) {
-        const previousRow = getTeamRowOf(draggedToken.parentElement);
-        // önceki leader badge'i temizle
-        const lb = draggedToken.querySelector('.leader-badge');
-        if (lb) lb.remove();
-        el.appendChild(draggedToken);
-        // yeni slot leader mı?
-        if (el.dataset.leader === 'true') {
-          const badge = document.createElement('div');
-          badge.classList.add('leader-badge');
-          badge.textContent = 'Leader';
-          draggedToken.appendChild(badge);
-        }
-        dropSound.currentTime = 0; dropSound.play().catch(() => {});
+        moveTokenTo(draggedToken, el);
         draggedToken = null;
-        // hem token'ın geldiği eski takımı, hem gittiği yeni takımı güncelle
-        if (previousRow) refreshTeamName(previousRow);
-        refreshTeamName(getTeamRowOf(el));
+      }
+    });
+    // mobil tıkla-seç: seçili bir token varken slota dokunulursa onu buraya taşı
+    el.addEventListener('click', () => {
+      if (selectedTokenForTouch && !el.querySelector('.token')) {
+        moveTokenTo(selectedTokenForTouch, el);
+        setTokenSelected(null);
+      }
+    });
+    // klavye: tabindex="0" + role="button" olan div'lerde Enter/Space native click tetiklemez,
+    // bu yüzden manuel olarak click()'e yönlendiriyoruz (token seçme akışıyla aynı yolu kullanır)
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
       }
     });
   }
 
   document.querySelectorAll('.slot').forEach(setupDropZone);
+
+  // Token'lar için de aynı klavye desteği: Enter/Space ile seç/aç
+  document.querySelectorAll('.token').forEach(token => {
+    token.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        token.click();
+      }
+    });
+  });
 
   // Rest area
   const restArea = document.getElementById('rest-area');
@@ -2333,14 +2477,15 @@
   restArea.addEventListener('drop', e => {
     e.preventDefault();
     if (draggedToken) {
-      const previousRow = getTeamRowOf(draggedToken.parentElement);
-      // leader badge'i temizle
-      const lb = draggedToken.querySelector('.leader-badge');
-      if (lb) lb.remove();
-      restArea.appendChild(draggedToken);
-      dropSound.currentTime = 0; dropSound.play().catch(() => {});
+      moveTokenTo(draggedToken, restArea);
       draggedToken = null;
-      if (previousRow) refreshTeamName(previousRow);
+    }
+  });
+  // mobil tıkla-seç: rest area boş alanına dokunulursa seçili token'ı dinlenmeye gönder
+  restArea.addEventListener('click', e => {
+    if (selectedTokenForTouch && e.target === restArea) {
+      moveTokenTo(selectedTokenForTouch, restArea);
+      setTokenSelected(null);
     }
   });
 
