@@ -3,413 +3,289 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ruven / Rave</title>
+  <title>Ruven / Rave — Carpe Diem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('https://cdnb.artstation.com/p/assets/images/images/017/710/147/large/sy-37-.jpg?1557065105') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
-      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
-    }
-
-    /* Overlay transparency ekleme */
-    .container {
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      z-index: 1;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
-      z-index: -1;
-    }
-
-    /* Başlık stilini iyileştirme */
-    h1 {
-      font-size: 4rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-      margin-bottom: 20px;
-    }
-
-    .character-image {
-      width: 200px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      margin-bottom: 10px;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-      cursor: pointer;
-    }
-
-    .character-image:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .image-title, .image-title-alt {
-      text-align: center;
-      margin-bottom: 20px;
-      font-style: italic;
-      font-size: 1rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      padding: 5px;
-    }
-
-    .bio {
-      font-size: 1.1rem;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-      line-height: 1.6;
-      text-align: justify;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .alternative-images {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .alternative-images div {
-      text-align: center;
-      max-width: 150px;
-      flex: 0 1 150px;
-    }
-
-    .alternative-images img {
-      width: 150px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      border: 3px solid #fff;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .alternative-images img:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .info-box {
-      position: absolute;
-      top: 100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 15px;
-      border-radius: 10px;
-      width: 240px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .info-box h2 {
-      font-size: 1.2rem;
-      color: #ffdf6e;
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .info-box strong {
-      color: #ffd700;
-    }
-
-    .left-box {
-      left: 20px;
-    }
-
-    .right-box {
-      right: 20px;
-    }
-
-    .character-link {
-      color: #ffffff;
-      text-decoration: underline;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-
-    .back-link {
-      display: inline-block;
-      color: #87cefa;
-      font-size: 1.2rem;
-      text-decoration: none;
-      margin-top: 20px;
-      border: 1px solid #87cefa;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-
-    .back-link:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    /* Modal Animasyonu */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.7);
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
-    }
-
-    .modal-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      border-radius: 15px;
-    }
-
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: #f44336;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    #volume-control-wrapper {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 10px 15px;
-      border-radius: 10px;
-    }
-
-    #volume-control-label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      color: #fff;
-    }
-
-    #volume-level {
-      color: #ffd700;
-      font-size: 0.9rem;
-      margin-left: 5px;
-    }
-
-    .fixed-back-button {
-      position: fixed;
-      top: 45px;
-      right: 185px; /* Müzik kontrol kutusunun soluna konumlandırmak için */
-      z-index: 999;
-      color: #87cefa;
-      font-size: 1.1rem;
-      text-decoration: none;
-      border: 1px solid #87cefa;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      background-color: rgba(0, 0, 0, 0.6);
-      transition: background-color 0.3s;
-    }
-
-    .fixed-back-button:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    .hidden {
-      display: none;
-    }
-    
+    :root { --gold: #c9a84c; --gold-bright: #f5d080; --gold-dim: #ffdf6e; --gold-glow: rgba(201,168,76,0.55); --dark-glass: rgba(0,0,0,0.62); }
+    @keyframes pageFadeIn { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes titleDrop { from { opacity:0; transform:translateY(-30px) scale(0.95); letter-spacing:12px; } to { opacity:1; transform:translateY(0) scale(1); letter-spacing:3px; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes glowPulse { 0%,100% { box-shadow:0 0 8px rgba(201,168,76,.35),0 0 20px rgba(201,168,76,.15); } 50% { box-shadow:0 0 16px rgba(201,168,76,.7),0 0 40px rgba(201,168,76,.3); } }
+    *, *::before, *::after { box-sizing:border-box; }
+    body { font-family:'Lora',Georgia,serif; margin:0; padding:0; background:url('https://cdnb.artstation.com/p/assets/images/images/017/710/147/large/sy-37-.jpg?1557065105') no-repeat center center fixed; background-size:cover; color:#fff; }
+    .fixed-back-button { position:fixed; top:20px; left:20px; z-index:999; padding:.45rem 1rem; font-family:'Cinzel',serif; font-size:.9rem; font-weight:700; letter-spacing:.5px; text-decoration:none; color:#fff; border-radius:8px; border:1px solid rgba(201,168,76,.45); background:linear-gradient(135deg,rgba(60,40,10,.82),rgba(30,18,5,.9)); box-shadow:0 0 8px rgba(201,168,76,.2); transition:transform .18s,box-shadow .25s,background .25s; animation:glowPulse 3s ease-in-out infinite; }
+    .fixed-back-button:hover { background:linear-gradient(135deg,rgba(100,70,20,.88),rgba(55,35,10,.94)); box-shadow:0 0 20px rgba(201,168,76,.6); transform:translateY(-2px); }
+    #music-widget { position:fixed; top:20px; right:20px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+    #music-toggle-btn { display:flex; align-items:center; gap:7px; padding:7px 14px; font-family:'Cinzel',serif; font-size:.8rem; font-weight:700; letter-spacing:.5px; color:#fff; border:1px solid rgba(201,168,76,.45); border-radius:8px; background:linear-gradient(135deg,rgba(60,40,10,.88),rgba(30,18,5,.95)); cursor:pointer; white-space:nowrap; transition:background .2s,box-shadow .2s,transform .15s; box-shadow:0 0 8px rgba(201,168,76,.2); animation:glowPulse 3s ease-in-out infinite; flex-shrink:0; }
+    #music-toggle-btn:hover { background:linear-gradient(135deg,rgba(100,70,20,.92),rgba(55,35,10,.98)); box-shadow:0 0 18px rgba(201,168,76,.55); transform:translateY(-1px); }
+    #volume-control-wrapper { background:linear-gradient(135deg,rgba(30,20,5,.92),rgba(15,10,3,.97)); border:1px solid rgba(201,168,76,.25); padding:12px 15px; border-radius:12px; box-shadow:0 0 16px rgba(201,168,76,.15); width:210px; overflow:hidden; max-height:0; opacity:0; padding-top:0; padding-bottom:0; transition:max-height .35s ease,opacity .3s ease,padding .3s ease; }
+    #volume-control-wrapper.open { max-height:160px; opacity:1; padding-top:12px; padding-bottom:12px; }
+    #volume-control-label { display:block; margin-bottom:6px; font-family:'Cinzel',serif; font-size:.78rem; letter-spacing:.5px; color:rgba(255,255,255,.75); }
+    #volume-level { color:var(--gold-bright); font-size:.85rem; margin-left:4px; }
+    #play-pause-btn { display:block; width:100%; margin-bottom:10px; padding:5px 0; font-family:'Cinzel',serif; font-size:.82rem; font-weight:700; letter-spacing:.5px; color:#fff; border:1px solid rgba(201,168,76,.4); border-radius:7px; background:linear-gradient(135deg,rgba(80,55,15,.8),rgba(35,22,5,.9)); cursor:pointer; transition:background .2s,box-shadow .2s,transform .15s; box-shadow:0 0 8px rgba(201,168,76,.2); }
+    #play-pause-btn:hover { background:linear-gradient(135deg,rgba(130,90,25,.88),rgba(60,40,10,.95)); box-shadow:0 0 18px rgba(201,168,76,.5); transform:translateY(-1px); }
+    #volume-control { width:100%; accent-color:var(--gold); cursor:pointer; }
+    .info-box { position:fixed; top:100px; z-index:10; background-color:var(--dark-glass); padding:15px; border-radius:10px; width:210px; font-size:.9rem; line-height:1.5; border:1px solid rgba(201,168,76,.18); animation:pageFadeIn 1s ease .6s both; transition:top .1s linear; }
+    .info-box h2 { font-family:'Cinzel',serif; font-size:1.05rem; color:var(--gold-dim); margin-top:0; margin-bottom:10px; }
+    .info-box strong { color:var(--gold); }
+    .left-box { left:20px; } .right-box { right:20px; }
+    .info-boxes-inline { display:none; flex-direction:column; gap:16px; max-width:800px; margin:0 auto 28px auto; padding:0 16px; }
+    .info-box-inline { background-color:var(--dark-glass); padding:15px; border-radius:10px; font-size:.9rem; line-height:1.5; border:1px solid rgba(201,168,76,.18); }
+    .info-box-inline h2 { font-family:'Cinzel',serif; font-size:1.05rem; color:var(--gold-dim); margin-top:0; margin-bottom:10px; }
+    .badges { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 10px 0; }
+    .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.3px; font-weight:700; color:var(--gold-dim); border:1px solid rgba(201,168,76,.45); background:rgba(201,168,76,.08); white-space:nowrap; }
+    .info-card { display:grid; gap:5px; margin-top:6px; }
+    .info-row { display:flex; gap:8px; align-items:baseline; border-bottom:1px solid rgba(201,168,76,.1); padding-bottom:5px; font-size:.85rem; }
+    .info-row:last-child { border-bottom:none; padding-bottom:0; }
+    .info-label { font-family:'Cinzel',serif; font-size:0.68rem; font-weight:700; letter-spacing:0.3px; color:var(--gold); white-space:nowrap; flex-shrink:0; }
+    .info-value { color:rgba(255,255,255,.85); line-height:1.4; }
+    .container { position:relative; max-width:1200px; margin:0 auto; padding:20px 260px; text-align:center; z-index:1; animation:pageFadeIn 1s ease .2s both; }
+    .container::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.42); z-index:-1; }
+    h1 { font-family:'Cinzel',serif; font-size:clamp(2rem,5vw,4rem); font-weight:900; text-transform:uppercase; letter-spacing:3px; text-shadow:0 0 30px rgba(201,168,76,.6),3px 3px 12px rgba(0,0,0,.9); margin-bottom:20px; animation:titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both; }
+    .character-image { width:200px; height:300px; object-fit:cover; border-radius:15px; box-shadow:0 4px 6px rgba(0,0,0,.5); margin-bottom:10px; transition:transform .5s ease,opacity .5s ease; cursor:pointer; animation:pageFadeIn 1s ease .5s both; }
+    .character-image:hover { transform:scale(1.5); opacity:.8; }
+    .image-title { text-align:center; margin-bottom:20px; font-family:'Lora',Georgia,serif; font-style:italic; font-size:1.25rem; font-weight:700; text-shadow:0 0 10px rgba(0,0,0,.8); padding:5px; }
+    .bio { font-size:1.1rem; max-width:800px; margin:0 auto 30px auto; line-height:1.75; text-align:justify; background:var(--dark-glass); padding:24px 28px; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,.6); border:1px solid rgba(201,168,76,.12); animation:pageFadeIn 1s ease .7s both; }
+    .character-link { display:inline-block; margin-top:8px; padding:6px 14px; font-size:.88rem; font-weight:600; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,.45); border-radius:6px; background:rgba(201,168,76,.07); transition:background .25s,box-shadow .25s,transform .15s; }
+    .character-link:hover { background:rgba(201,168,76,.18); box-shadow:0 0 14px rgba(201,168,76,.5); transform:translateY(-1px); }
+    .back-link { display:inline-block; margin-top:20px; padding:.6rem 1.4rem; font-family:'Cinzel',serif; font-size:1rem; font-weight:700; letter-spacing:1px; text-decoration:none; color:#fff; border-radius:8px; border:1px solid rgba(201,168,76,.5); background:linear-gradient(135deg,rgba(80,55,15,.75),rgba(35,22,5,.85)); box-shadow:0 0 10px rgba(201,168,76,.25),inset 0 1px 0 rgba(255,255,255,.08); transition:transform .18s,box-shadow .25s,background .25s; animation:glowPulse 3s ease-in-out infinite; }
+    .back-link:hover { background:linear-gradient(135deg,rgba(130,90,25,.85),rgba(60,40,10,.9)); box-shadow:0 0 22px rgba(201,168,76,.65); transform:translateY(-2px); }
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:hidden; background-color:rgba(0,0,0,.88); opacity:0; animation:fadeIn .4s forwards; align-items:center; justify-content:center; cursor:pointer; }
+    .modal.open { display:flex; }
+    .modal-inner { display:flex; align-items:center; justify-content:center; gap:12px; max-width:96vw; max-height:96vh; padding:12px; box-sizing:border-box; cursor:default; }
+    .modal-stage { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; }
+    @keyframes modalSlideInRight { from { opacity:0; transform:translateX(60px) scale(0.93); filter:blur(5px); } to { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } }
+    @keyframes modalSlideInLeft  { from { opacity:0; transform:translateX(-60px) scale(0.93); filter:blur(5px); } to { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } }
+    @keyframes modalSlideOutLeft  { from { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } to { opacity:0; transform:translateX(-60px) scale(0.93); filter:blur(5px); } }
+    @keyframes modalSlideOutRight { from { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } to { opacity:0; transform:translateX(60px) scale(0.93); filter:blur(5px); } }
+    .modal-content { display:block; max-width:78vw; max-height:76vh; width:auto; height:auto; border-radius:15px 15px 0 0; box-shadow:0 0 50px rgba(201,168,76,.35); object-fit:contain; }
+    .modal-content.slide-in-right { animation:modalSlideInRight 0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left  { animation:modalSlideInLeft  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation:modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation:modalSlideOutRight 0.32s ease forwards; }
+    .modal-caption { width:100%; max-width:78vw; padding:10px 16px 12px; box-sizing:border-box; background:rgba(20,12,3,0.88); border-radius:0 0 15px 15px; border-top:1px solid rgba(201,168,76,0.2); font-family:'Lora',Georgia,serif; font-size:1.05rem; font-weight:700; color:#fff3d4; text-align:center; line-height:1.45; }
+    .modal-counter { position:fixed; top:18px; left:50%; transform:translateX(-50%); font-family:'Cinzel',serif; font-size:0.85rem; font-weight:700; color:rgba(234,204,110,0.9); letter-spacing:1.5px; pointer-events:none; z-index:1002; background:rgba(20,12,3,0.6); padding:4px 12px; border-radius:20px; border:1px solid rgba(201,168,76,0.2); }
+    .modal-arrow { flex-shrink:0; width:48px; height:48px; font-size:1.4rem; color:#fff; background:linear-gradient(135deg,rgba(80,55,15,0.75),rgba(35,22,5,0.85)); border:1px solid rgba(201,168,76,0.45); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:box-shadow 0.2s,transform 0.15s; animation:glowPulse 3s ease-in-out infinite; z-index:1002; }
+    .modal-arrow:hover { box-shadow:0 0 22px rgba(201,168,76,0.65); transform:scale(1.12); }
+    .close { position:fixed; top:15px; right:25px; color:#fff; font-size:40px; font-weight:bold; cursor:pointer; transition:color .2s; z-index:1003; line-height:1; }
+    .close:hover { color:#f44336; }
+    @keyframes cardIn { from { opacity:0; transform:scale(0.88) translateY(20px); filter:blur(6px); } to { opacity:1; transform:scale(1) translateY(0); filter:blur(0); } }
+    @keyframes cardOut { from { opacity:1; transform:scale(1) translateY(0); filter:blur(0); } to { opacity:0; transform:scale(0.88) translateY(-20px); filter:blur(6px); } }
+    .carousel-section { max-width:600px; margin:0 auto 48px auto; animation:pageFadeIn 1s ease 0.9s both; }
+    .carousel-tabs { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:22px; }
+    .carousel-tab { padding:9px 18px; font-family:'Lora',Georgia,serif; font-size:0.92rem; font-weight:700; color:rgba(255,255,255,0.55); border:1px solid rgba(201,168,76,0.22); border-radius:8px; background:rgba(30,20,5,0.55); cursor:pointer; transition:all 0.25s; }
+    .carousel-tab:hover { color:#fff; border-color:rgba(201,168,76,0.55); background:rgba(70,50,15,0.65); }
+    .carousel-tab.active { color:#fff; border-color:rgba(201,168,76,0.85); background:linear-gradient(135deg,rgba(80,55,15,0.88),rgba(35,22,5,0.96)); box-shadow:0 0 16px rgba(201,168,76,0.4); }
+    .carousel-panel { display:none; flex-direction:column; align-items:center; }
+    .carousel-panel.active { display:flex; }
+    .carousel-row { display:flex; align-items:center; justify-content:center; gap:18px; width:100%; }
+    .carousel-arrow { flex-shrink:0; width:46px; height:46px; font-size:1.4rem; color:#fff; background:linear-gradient(135deg,rgba(80,55,15,0.82),rgba(35,22,5,0.92)); border:1px solid rgba(201,168,76,0.4); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:box-shadow 0.2s,transform 0.15s; animation:glowPulse 3s ease-in-out infinite; }
+    .carousel-arrow:hover { box-shadow:0 0 18px rgba(201,168,76,0.55); transform:scale(1.12); }
+    .carousel-stage { position:relative; width:320px; height:400px; border-radius:16px; }
+    .carousel-card { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; }
+    .carousel-card.visible { opacity:1; pointer-events:auto; animation:cardIn 0.85s cubic-bezier(.22,1,.36,1) forwards; }
+    .carousel-card.leaving { animation:cardOut 0.55s ease forwards; }
+    .carousel-card img { width:300px; height:390px; object-fit:contain; border-radius:14px; border:2px solid var(--gold); outline:1px solid rgba(201,168,76,0.28); outline-offset:3px; box-shadow:0 0 0 4px rgba(20,12,3,0.7),0 0 0 6px rgba(201,168,76,0.25),0 10px 28px rgba(0,0,0,0.7); cursor:pointer; background:rgba(15,9,3,0.6); transition:box-shadow 0.3s,filter 0.3s; filter:brightness(0.96); }
+    .carousel-card img:hover { box-shadow:0 0 0 4px rgba(20,12,3,0.8),0 0 0 7px rgba(201,168,76,0.6),0 0 36px rgba(201,168,76,0.45); filter:brightness(1.06); }
+    .carousel-placeholder { width:300px; height:390px; display:flex; align-items:center; justify-content:center; border-radius:14px; border:2px dashed rgba(201,168,76,0.25); background:rgba(0,0,0,0.2); font-family:'Lora',Georgia,serif; font-style:italic; color:rgba(255,255,255,0.35); font-size:0.95rem; text-align:center; padding:20px; }
+    .carousel-caption { margin-top:14px; min-height:48px; max-width:340px; text-align:center; font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:700; color:#fff3d4; text-shadow:0 1px 6px rgba(0,0,0,1); line-height:1.45; padding:0 8px; }
+    .carousel-dots { display:flex; justify-content:center; gap:9px; margin-top:14px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:rgba(201,168,76,0.28); border:1px solid rgba(201,168,76,0.4); cursor:pointer; transition:background 0.25s,transform 0.2s,box-shadow 0.2s; }
+    .dot.active { background:rgba(201,168,76,0.92); transform:scale(1.35); box-shadow:0 0 8px rgba(201,168,76,0.8); }
+    .hidden { display:none; }
+    @media (max-width:1024px) { .container { padding:20px 230px; } .info-box { width:190px; font-size:.82rem; } .left-box { left:12px; } .right-box { right:12px; } }
+    @media (max-width:860px) { .info-box { display:none; } .info-boxes-inline { display:flex; } .container { padding:20px 16px; } h1 { font-size:clamp(1.8rem,6vw,3rem); } .bio { padding:18px 16px; font-size:1rem; } .carousel-stage { width:280px; height:360px; } .carousel-card img { width:260px; height:350px; } .carousel-arrow { width:38px; height:38px; font-size:1.1rem; } }
+    @media (max-width:540px) { .fixed-back-button { font-size:.75rem; padding:.35rem .7rem; } #music-toggle-btn { font-size:.7rem; padding:5px 10px; } h1 { font-size:clamp(1.4rem,7vw,2.2rem); padding-top:60px; } .character-image { width:160px; height:240px; } .carousel-stage { width:240px; height:310px; } .carousel-card img { width:220px; height:300px; } .carousel-tab { padding:7px 12px; font-size:.82rem; } .modal-content { max-width:90vw; max-height:70vh; } .back-link { padding:.5rem 1rem; font-size:.88rem; } }
   </style>
 </head>
 <body>
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Damaged.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
   </audio>
-
-  <div id="volume-control-wrapper">
-    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
-    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+  <div id="music-widget">
+    <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
+    <div id="volume-control-wrapper">
+      <button id="play-pause-btn" onclick="toggleMusic()">⏸ Müziği Duraklat</button>
+      <label id="volume-control-label">Ses: <span id="volume-level">50%</span></label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+    </div>
   </div>
 
   <div class="container">
     <h1>Ruven / Rave</h1>
     <img src="Ruven.jpg" alt="Ruven" class="character-image" onclick="openModal(this)">
-    <div class="image-title">Ruven</div>
-
+    <div class="image-title">Ruven — Kuzgunların Leydisi'nin Şampiyonu</div>
     <div class="bio">
-      <h3 class="bio-title">Ruven - Campaign 1 Carpe Diem</h3>
-      <p><strong>Görkem FİLİZÖZ</strong> tarafından canlandırılmış ve oynanmıştır. Görkem'in ilk karakteridir. <strong>Ruven</strong> Verdun’un üst kısımlarında bulunan küçük bir köyde doğmuştur. Annesi ve babası sıradan insanlardı. Arnet adında bir kardeşi vardır. 14 yaşına kadar köyünde ailesi ile birlikte büyümüş bir çocuktur, fakat 14 yaşında beklenmedik bir haydut baskını gerçekleşir ve köydeki insanlar, haydutların planlı saldırısı tarafınca katledilmeye başlar. Ailesinin gözleri önünde katledildiğini gören Ruven, daha olayları kavramaya çalışırken eşi benzeri görülmemiş başka bir durum ile karşılaşır. <strong>"Olağandışı Bir Fenomen"</strong> gerçekleşir ve ufukta beliren ufak bir karanlık örtü gittikçe güneşi örtecek kadar büyüyerek bütün köyü kaplar ve içindeki herkesi özümser. Herkes gibi Ruven de saklanacak bir delik, kaçacak bir yer arar. Bu karanlık örtü Ruven’in gözünün önünde, yaşayan haydutları ve birçok köylüyü canlı canlı kurutur bir vaziyette yutar, hatta ailesinin cesedini bile emer ve o karanlıktan bir sima oluşup Ruven’e doğru bakar bakar. Bu silüet, Ruven ile konuşup ona: <i><strong>“Hizmetin benim için kaçınılmaz Ruven, ama işimi garantiye almak için kaderin olan bu kızı senden alıyorum ve kaderini mühürlüyorum. Hizmetinden emin olduktan sonra mühür bozulacak ve kaderine tekrar kavuşacaksın.”</strong></i> şeklinde bir açıklama yapar. Bu silüet, Ruven'e belirli koşullarda güç vaat eder ve <strong>Ruven'in Kaderi</strong> olduğunu söylediği mavi saçlı yaşıtı olan köylü kızına el koyar. Bu koşulları kabul ettiği sürece bu güç, Ruven'in <strong>Hanımı</strong> olacağını ve ona sahip çıkacağını söyler. Ruven ile Hanımı, bu noktada bir anlaşma yapar ve Ruven bu güçleri kabul ederek bir bağlılık sunar. Ruven'in yemini ve Hanımı'nın karanlığı benimsemesi doğrultusundaki direktifleri, bu olaylar esnasında Ruven'in hatırladığı son şeyler olur. Ruven ilgi duyduğu mavi saçlı ve yaşıtı olan köylü kızının da karanlık tarafından yutulduğunu gördükten sonra kendinden geçer.</p>
-      <p>Belirsiz bir süre sonra Ruven, gözlerini tekrardan köyün ortasında yerde yatar bir şekilde açar. Gördüğü şeylerin bir rüya olmadığını anlar ve ortalığın bir katliam alanına döndüğünü görür. Fakat burada iki kişi eksiktir; Kardeşi Arnet ve o mavi saçlı kız... Bu olaylardan sonra Ruven değişmişti, eski neşeli ve mutlu tavırlarını koruyamasa da olanlardan sonra en azından bir amaç edindiğinden ötürü pozitif kalmaya devam etmeye çalışıyordu. Fakat gene de Ruven’in bazı koşullarda bu olaylar ve katliamlar ile alakalı sanrıları tutabiliyordu. Bu olaylardan sonra, 20 yaşına gelene kadar kendini silah ve kalkan kullanma konusunda eğitti, ve Hanımı'nın ona bahşettiği güçleri öğrenebildiği kadar öğrendi. Yıllar boyunca rüya olarak "Hanımını" görse de gerçek anlamda onunla bu süreçte hiç iletişim kuramamıştır. İletişim kuramasa bile bazı durumlarda ondan kendi kişisel gelişimi konusunda bazı talimatlar almıştır. Bu direktifleri uygulayarak belli bir noktaya kadar kendini hazırlayan Ruven'in, Hanımına hizmet etmesi için kendini kanıtlaması gerekmektedir. Bu yüzden Hanımı Ruven'i Zonthar adındaki kasabaya göndermiştir. Hanımının verdiği lütufları kullanma konusunda hala acemi olsa da, bu kasaba Ruven'in gelişebilmesi ve kendini kanıtlayabilmesi açısından ve dünyanın ne kadar gaddar bir yer olduğunu tanıyabilmesi açısından altın niteliğindeydi.</p>
-      <p>Zonthar'a vardığında, ileride <strong>Carpe Diem</strong> adını taşıyacak grubun kurucu üyeliğini yaptı. Daha sonrasında ise, Zonthar'ın iç meselelerini çözmek adına, orada tanıştıkları Uther, Daynore ve John adındaki kişiler ile birlikte, oradaki azılı suçlulardan en nihaisi olan <strong>Damian</strong> ile tanıştı. Bu noktada Ruven, Damian'a olması gereğinden daha fazla ilgi gösterdi ve onunla sıkı bir arkadaşlık yürüttü, onu göründüğü gibi yargılamadı. Damian ile olan dostluğu sayesinde de <strong>Menzher</strong> adındaki Tiefling ile sıkı bağlar geliştirdi. Menzher ile ve Damian ile dost olması, Zonthar Yönetimindeki Vali olan <strong>Corado Vanelli'nin</strong> hiç hoşuna gitmedi. Menzher, Zonthar'daki kitlelerin bazıları tarafından sevilse de Vali tarafından, aynı Damian gibi bir suçlu olarak görülüyordu. Ruven'in kurduğu bu dostane ilişkliler, grubun bir diğer üyesi olan <strong>Uther Işıkgetiren</strong> adındaki Paladin ile olan dinamiğine de zarar veriyordu. Özellikle Ruven'in bir Warlock olduğunu öğrendikten sonra Uther, Ruven'e karşı daha katı ve sert tutumlar almaya başladı. Birbirlerine karşı olan çekememezlikleri ve düşmancıl tavırları sonununca Uther ve Ruven'in arası açıldı. Uther, bir Paladin olarak Ruven'in üzerinde baskıcı bir otorite kurmaya çalıştı ve Ruven'in yaptıklarını aşağıladı, yaptığı her hareketin altında bir hinlik aradı ve Ruven'in suçlu olduğunu meşrulaştıraca her türlü yöntemi denedi. Fakat bardağı taşıran son damla olarak Uther, Ruven'e arkadaşları arasında halka açık bir şekilde otoritesini ve rahiplik güçlerini kullanarak işkence etti. Ruven için bu artık kabul edilemez ve durması gereken bir noktaya gelmişti ve Ruven, yapılabilecek en "Alçakça" hareketlerden birini yapmaya karar vermişti.</p>
-      <p>Zonthar'da aldıkları bir görev sonrasında, kasabanın kuzeybatı yakasındaki ormanlara girerek, kasabadan kaçırılan kişileri ve çocukları serbest bırakabilmek için bir goblin saklanma inine doğru yola çıkmışlardı. Bu görevi başarıyla bitirmelerine ve insanları özgür bırakmalarına rağmen, çok zor savaşlardan çıkmışlardı ve bitap düşmüş bir şekilde canları için kendileri de kaçar konumdalardı. Gruptaki her birey ağır yaralıydı ve buna Uther de dahildi. <strong>Hanımı'nın</strong> manipülasyonuna kulak vererek zihnini çelmesine izin veren Ruven, Hanımı'nın vereceği bir ödül için Uther'i sırtından bir <strong>Eldritch Blast Işını</strong> ile vurarak ve ona ihanet ederek öldürdü. Grup arkadaşları, hatta Damian bile bunun karşısında şoka girmişti, ama bu ihanetin karşısında duygusal davranarak Ruven'e saldırdılar. Ruven'i öldürmek için hepsi bir vuruş gerçekleştireceği esnada, bir çeşit teleport aracılığı ile Hanımı, Ruven'i o noktadan güvenli bir bölgeye ışınlayarak kurtardı ve ödül olarak kendi kutsamasını bahşetti. Lakin bu hamlesinden sonra Ruven, gruba karşı bir ihanet gerçekleştirmişti ve grubun ona olan güvenini kaybetmişti. Suçlu bir aktivite olarak yaptığı suikast, grubu tarafından Vali'ye rapor edilmiş ve Zonthar'da aranan bir katil haline gelmişti. Bu sebepten ötürü Zonthar'a giremiyordu, fakat hala Zonthar'ın iyiliğini istediği için ve Menzher'i desteklediği için kasabanın ormanlık bölgesinde, vahşi doğanın içerisinde tek başına kalıyordu. Belli bir süre sonra grubu ile buluşma fırsatını yakalasa da, grubundaki kalan kişiler tarafından dışlanmıştır, ve o noktadan sonra grubun lideri olan <strong>Daynore</strong> tarafından tekme tokat dövülerek beter bir hale gelmiştir. Bu esnada Ruven kendini tutmuştur ve Daynore'ye bir yumruk bile atmamıştır, fakat eğer kendini tutamasaydı <strong>John</strong>, olası bir senaryoda onu öldürme niyetiyle saklanmış bir biçimde suikaste hazır olarak bekliyordu. Gene de Ruven dayak yediği esnada, yok olduğunu bildiği Tiefling Köyü ile alakalı bilgileri Daynore'ye anlatıyor, ve kendisini anlaması ve ona inanması için ona bu köye birlikte gitmeleri gerektiğini söylüyordu, fakat Daynore ve diğer tüm grup üyeleri için güven duygusu kaybolduğundan dolayı Daynore, Ruven'in sözüne aldırış etmedi ve onun fikrini dinlemeyerek onu orada yalnızlığına terk etti.</p>
-      <p>Yaptıklarından pişman olmayan, ama yaptıklarının cefasını yalnız bir biçimde çeken Ruven, gene de gölgeler aracılığı ile grubunu gizlice takip etmiştir. Fakat bir noktada ormanda tekbaşına hayatta kalma mücadelesi verdiği sırada, köye baskın için hazırlanan worglar ve goblinler tarafınca etrafı çevrilmiş ve ölümün eşiğine gelmiştir. Orada ise yardımına <strong>Orlon</strong> adındaki gezgin bir Druid'in ona yardım etmesi neticesiyle hayatta kalmıştır. Onunla belli bir zaman geçirerek, Orlon'dan doğada nasıl hayatta kalabileceği ile alakalı bilgiler öğrenmiştir ve daha sonrasında yollarını minnettarlık ile ayırmıştır. Fakat bu ormanda tek başına hayatta kalma macerası sırasında bilmediği bir şey vardır ki o da Uther'in yeniden hayata döndüğüdür. Menzher'in kendisini bulması ve gizlice tavernasına alması aracılığı ile bu bilgiyi öğrenmiştir. Tavernada saklandığı o gizli süre boyunca grup arkadaşları ile konuşup, asıl tehlikenin Uther olduğunu söyleyerek onlar ile yeniden bir bağ kurmuştur. Uther'i baş düşman etme konusundaki manipülasyonları başarısız olsa da, zamanla Ruven ve grup arasındaki ilişki belli bir noktaya kadar düzelmiştir. Bu grup ile arasındaki buzları yeniden eritme denemeleri esnasında, gruba yeni katılan <strong>Toji</strong> adındaki bir Gnome bilimadamı ile arkadaş olmuş ve onun yarattığı hareket eden metal golem olan <strong>Tehlike</strong> ile zaman geçirmeye başlamıştır. Fakat Uther tamamen cinnet geçirmiş ve belki de fıttırmış bir vaziyete bürünmüştü dirilişinin ardından. Kefaret yolunda gözünü kan bürümüş, intikam arzusu ile dolup taşar bir vaziyetteydi. Uther'in gözünün dönmüşlüğü, onun Vali ile birleşerek Ruven'e karşı bir komplo hazırlaması ile sonuçlandı ve bu komplo neticesinde Ruven'i tutuklatarak zindana atmayı başardılar. Grup üyeleri bu anlamsız intikam saçmalığını sonlandırmak adına politik bir şekilde Vali ve Uther ile bu sorunu çözümlemeyi deneseler de, bu süreç başarısız olmuş ve en nihayetinde <strong>Ruven'in İdamı</strong> kaçınılamaz bir karar olmuştur.</p>
-      <p>Ruven zamanı geldiğinde darağacına çıkarılmış ve infazı için bütün halk toplanmış halka açık bir yargı ile infaz edilmesi planlanılmıştır. Bu süreçte grup arada kalmış, ve ne Ruven'in ne de Uther'in yanında olmuş, aynı halk gibi izleyici kalmış ve bu durumu izlemiştir. Ruven'in yargının önüne çıkmış ve kanıtlanmış şekilde suçlu olduğu ispatlanmıştır, ve kendi savunması yetersiz görülerek <strong>İdama Mahkum Edilmiştir!</strong> Lakin infaz gerçekleşmeden hemen önce <strong>Menzher</strong> halkın arasında kendini göstermiş ve Ruven için <strong>Tanrıların Huzurunda Dövüş İle Yargılanma</strong> olduğunu söylemiştir. Ruven bu hakkını kullanmak istediğini söylediğine ise Menzher onun Şampiyonu olmayı kabul etmiştir. Bunun sonucunda Vali ve tarafında işler kötü gitmeye ve etekler tutuşmaya başlamıştır. Vali bu dövüş ile yargılanma mevzusunu reddedemezdi çünkü bu hak, yıllardır süregelen dini bir gelenekti ve doğuştan gelen bir haktı. Eğer bu kuralı reddererse Vali, <strong>Kafir</strong> statüsüne düşecek ve Zonthar üzerindeki itibarını kaybedecekti. Fakat Vali'nin kendisinin dövüşmesinin pek imkanı olmadığı için Vali'nin de bir şampiyon çıkarması gerekiyordu. Vali'nin kendi sol kolu olan <strong>Brad'a</strong> bu teklifi götürdüğünde Brad Menzher'i tanıdığı için ona karşı şansının olmayacağını söyleyerek bu olası düelloyu Menzher'in kazanacağını söyledi. Vali daha sonrasında bu teklifi <strong>Uther'e</strong> götürdüğünde ise Uther bu duellodan korkarak yeniden ölmek istemediği için o da bu teklifi reddetti. Valinin şampiyonu olarak çıkaracak kimsesi olmadığından dolayı, ya kendisi dövüşecekti ya da Ruven'in suçu düşecekti. Fakat Vali nasıl bir karar vermesi gerektiğini çaresiz bir şekilde düşünürken halkın arasında gizemli bir figür beliriverdi ve bu figür Vali'nin Şampiyonu olmayı teklif etti. Bu gizemli kişi, <strong>Kreber Yağmurmızrağı'ydı.</strong> Kreber, Menzher'in eskiden beri kan davası olduğu bir rakibiydi ve aynı Menzher gibi Kreber de aynı <strong>Matron'a</strong> hizmet etmişti. Yani zamanında aynı Ruven gibi hem Menzher hem de Kreber <strong>Bıçakların Hanımı'na</strong> hizmet etmiş iki Warlock'tu, fakat bu hizmet esnasında yaşanan bir olaydan dolayı birbirlerine düşman olmuş iki hasım olmuşlardır. Vali bu fırsatın ayağına gelmesiyle mest olmuş ve kendi şampiyonu olarak Kreber'i öne sürmüştür. Uther rahiplik öğretilerine intikam hissi ağır bastığı için ihanet ederek, Tanrıların huzurunda yapılan bir dövüş ile yargılanma savaşına iki tane Warlock'un çıkmasına izin vermiştir.</p>
-      <p>Dövüş gerçekleşmiş ve bu dövüşü Menzher kaybetmiştir. Menzher önce dövüş esnasında kolunu kaybetmiştir, sonrasında da canını kaybetmiştir ve dövüşten canlı ayrılan taraf Kreber olmuştur. Böylece Ruven suçlu ilan edilmiştir ve idamının hükmü verilmiştir. Fakat bu idam gerçekleşmeden önce, halkın belirli bir kısmı ayaklanmış ve bir rahibin itiraz etmesi gereken duruma halk itiraz etmiştir. "Tanrıların huzurunda kafirler savaştı..." "Hepimiz lanetleneceğiz..." gibi söylemler ile bu duruma isyan ederek bir arbede başlatmışlardır. Bu arbede esnasında grup Menzher'in cesedini alarak bir arka sokağa çekmeyi başarımıştır ve Ruven de kendine bir kaçış fırsatı yakalamıştır. Bu fırsatı değerlendiren Ruven, direkt olarak kasabanın en dışındaki sık olan ormanlık alana kaçmıştır fakat Kreber Ruven'in kaçtığını görerek onu kovalamış ve belirli bir noktada sıkıştırmıştır. O esnada grup Ruven'in yardımına yetişmiştir ve onlarla birlikte Uther de gelmiştir. Uther o noktada Kreber'e ve Vali'ye ihanet etmiştir ve orada birlikte Kreber'i öldürmüşlerdir fakat Ruven çok ağır yaralanmıştır. Ruven'i Menzher'in tavernasına getirdiklerinde ise Ruven, Menzher'in dirildiğini görmüş ve orada hep birlikte duygusal bir an yaşamışlardır. Ardından gergin bir ortam oluşarak, bu gergin ortamın içerisinde Uther ile farklılıklarını bir kenara koyarak ateşkes imzalamışlardır.</p>
-      <p>Vali, Uther'e karşı olan bütün saygı ve sevgisini yitirse de, halkın suçlu olarak görmediği Ruven'i öldürmediği için, veya Menzher'i öldüren başka bir Warlock olan Kreber'i öldürdüğü için Uther'i suçlu tutamazdı. Vali hala yönetimdeydi fakat en güvendiği adamı <strong>Uther'i</strong> kaybetmiş, Sol kolu <strong>Brad</strong>, arbede sırasında bilinmeyen bir nedenden dolayı yaralanmış, ve Vali'nin kendi büyücüsü olan <strong>Zest</strong>, bu olanlardan sonra Vali'yi terk ederek Beyaz Şehir'e dönmüştü. Vali'nin gücü her geçen gün daha da zayıflıyor ve Vali kendi konumunu korumak için her gün daha da paranoyaklaşıyordu. Bu yüzden Vali, biriktirdiği devasa miktardaki paranın büyük bir kısmını kullanarak, o zamanlar diyardaki bilinen en büyük gezgin paralı asker grubu olan <strong>"Demir El"</strong> ile iletişime geçmiş ve onlardan 13 Elit adamı, kendi kişisel çalışanı ve koruması olarak kiralamıştır. Bu 13 adamın Lideri olan <strong>Sornatt</strong> adındaki şövalye, Demir El'deki kendi arkadaşları ile bir anlaşmazlık yaşamış ve pazarlığı beğenmediği için Zonthar'a geldikten kısa bir süre sonra Zonthar'ı terk etmiş ve Demir El'e geri dönmüştür. Daha sonrasında ise kalan Demir El üyeleri, Vali'nin direktifleri ve istekleri neticesinde 4'er kişilik 3 bölüğe ayrılmış ve her bölüğün başına birini atamışlardır. Bölüklerin başında <strong>Storgim</strong>, <strong>Felvod</strong> ve <strong>Whitlock</strong> adındaki elit adamlar bulunuyordu. Vali ise spesifik olarak özel koruması olma neticesinde, Felvod'un birliğinden <strong>Bob</strong> adındaki, adamların arasında en iri gözüken Yarı Orc'u seçti. Bu olaylar olurken, köye doğru yaklaşan bir goblin istilası tehlikesi mevcuttu. Vali'nin verdiği direktif ile grup, bir goblin silah ve yemek tedarik zinciri noktasına baskın düzenledi ve goblinleri ileri vadede zayıflatmayı amaçladı. Bu noktada aynı zamanda Zonthar halkına ihanet etmiş ve goblinlerin safına katılmış olan <strong>Doktor Helmus</strong> ve onun yarattığı Et Golemleri ile savaştılar, ayrıca mağarayı koruyan goblinoidleri de alt etmeyi başardılar. Fakat doktoru öldürdükten sonra mağaradan çıkarken, bu tedarik zincirinin patlamasının ardından bu zincirin patronu konumundaki <strong>Darmull</strong> adındaki Uzun bir Glaive kullanan Albino bir bugbear ve onun Ogre askerleri tarafından pusuya düşürüldüler. Uther bu savaşta yiğitce savaşmasına karşın şehit düşmüştü. Grup Uther'in cesedini köye getirmeyi başardı fakat Ruven gene de kendini olabildiğince köyden uzak tutuyor ve ormanda yalnız başına kamp yapmaya devam ediyordu. Lakin Ruven'in bu tutumu ve cesedin geri getirilmesi, Vali'nin ekmeğine yağ sürmüştü. Vali Ruven'e, Uther'i tekrar öldürdüğü şeklinde bir iftira atarak komplo kurmuştu. Bu sefer bu komplo tamamen yalandı, çünkü bu sefer Uther'i Ruven öldürmemişti ve az bile olsa arkasından çok kısa süreliğine yas bile tutmuştu, ancak gerçek Vali için önemli değildi, önemli olan Ruven'in ölmesiydi.</p>
-      <p>Vali Ruven'i, Uther'i öldürme suçuyla yargılanması adına kendi malikanesine çağırmıştı, ve escort olarak Ruven'i getirmesi adına <strong>Bob'u görevlendirmişti.</strong> Daynore bu safsataya karşı çıksa da, Ruven kendisinin bir planı olduğunu söyledi ve Daynore'den ona güvenmesini istemişti. Daynore da Ruven'e güvenmeyi seçti ve sanki Ruven'i yakalamışlar şeklinde bir izlenim vermişti. Daynore da Bob'u bu şekilde yarı ikna ederek yarı kandırarak, Ruven'i sadece elleri bağlı bir vaziyette Vali'nin Konağı'na getirdiler. Vali'nin konağındaki yargı odasında sadece birkaç kişi vardı; Corado Vanelli, Valinin Sol Kolu Brad, Bob, Daynore ve eli bağlı vaziyette olan Ruven. Ruven'in planı, gümüş dili ve büyüleri ile valiyi kandırmaktı ama bu planın bir garantisi olmadığı için plan başarısız oldu ve ters tepti. Daynore, Vali'ye yalan söyleyerek kandıdı ve <strong>Goodberry</strong> spellini kullanıp bir meyve yaratarak, bu meyvenin Ruven'i zehirleyeceğini ve konuşmak zorunda kalacağını söyleyerek ikna etti. Fakat Ruven bir şans daha bulsa da, yaptığı aptalca plan yüzünden bu şansı da geri tepti ve Vali Bob'a, Ruven'in ağzını bağlamasını ve infazını gerçekleştirmesini emretti. Bob o anda infazı gerçekleştirmek için ahlaki olarak biraz çekingen ve anlık olarak tereddüt etti. Daynore da yayını çekerek Vali'yi öldürmeyi düşündü ve Ruven'i alıp kaçmak istedi fakat o da tereddüt etti. Lakin Brad orada tehdit etmedi ve Ruven'i uzun kılıcıyla birlikte gözünden şişleyerek öldürdü. Bu sefer <strong>Hanımı</strong> Ruven'i kurtarmamıştı. Ruven ölümünü kabullenemedi, ve kendini boşlukta hissetti. Yaptığı anlaşma gereği ruhunu Hanımı'na teslim etmişti Ruven. Ölümünden sonra Ruven'in ruhu <strong>Ruhlar Kuyusu'nda</strong> sonsuz bir düşüşe geçti.</p>
-      <p>Ruven ismi, İmparatorluk tarafınca gerçek bir <strong>"Carpe Diem"</strong> üyesi olarak tanınmamıştır, çünkü grup ile birlikte Zincirdarlar ile tanışmamış ve Underdark'a grup ile birlikte inmemiştir. Gene de bu grubun belli noktada bir parçası olduğu için ismi <strong>Tanrı Anıtları'nda</strong> kısa da olsa ismi geçiyordur. Anıtlardan ziyade Ruven ismi, Zonthar'da çok hürmet görmüştür ve <strong>Zonthar'ın Kurtarıcısı</strong> olarak günümüzde bile hala anılıyordur. Genç yaşıyla ve parlak bir çocuk olmasıyla insanlara hitab edebilmiş ve Zonthar'da adı kahraman olarak anılacak şekilde tarihe geçmiştir. Eylemleri olmasaydı Zonthar hiçbir zaman bu kadar iyi durumda olmazdı. Fakat tarihin yansıtamadığı biçimde, bu çocuk ile alakalı garip bir şeyler vardı ve insanlar bundan şüphe duyuyordu. Belki de bu gariplik, gün yüzüne çıkmadan şehit düşmesi, Ruven adındaki kimsesiz için en iyisi oldu... </p>
+      <p><strong>Ekin BAŞEĞMEZ</strong> tarafından canlandırılmış ve oynanmıştır. <strong>Ruven</strong>, 14 yaşındayken karanlık bir varlığın köyüne saldırmasına ve çocukluk aşkı <strong>Melanie'yi</strong> esir almasına tanıklık etti. Bu varlık olan <strong>Bıçakların Hanımı</strong> ona bir teklif sundu: gücünü kullanarak hizmetine girmesi karşılığında Melanie'yi kurtarma umudu. Ruven kabul etti ve kaderiyle bağını böylece kurdu. Köyünde bir ev, bıçaklar ve bir an'da yetişen bir elma ağacı kalıydı — herkesin gittiği yerde tek şahit.</p>
+      <p>Altı yıl boyunca kendini tek başına yetiştirdi: Hanım'ın verdiği güçleri kontrol etmeyi, bıçak ve büyüyü harmanlamayı öğrendi. Sonunda <strong>Zonthar</strong>'a ulaştı; orada tanıştığı hancı yaşlı <strong>Menzher</strong> ona hem mentorluk yaptı hem de manevi bir baba gibi davrandı. Zonthar'da oluşan <strong>Carpe Diem</strong> grubuna katılıp maceralara atıldı. Ancak paladin <strong>Uther</strong> ile yaşadığı çatışma her şeyi değiştirecekti.</p>
+      <p><strong>Uther</strong>, Ruven'i Warlock olduğu için hedef alarak hem zorbalık etti hem de ona işkence yaptırdı. Bir baskın sırasında Ruven dayanamayıp Uther'ı Eldritch Blast ile öldürdü. Suçlanmadan önce Hanım onu başka bir yere ışınladı. Bunun üzerine Zonthar'da gıyabi yargılanma başlatıldı; <strong>Menzher</strong> Ruven'in savunuculuğunu yapmak için çıktı ama düelloda <strong>Kreber</strong>'e yenildi. Yargılanma sırasında bir arbede çıkınca kaçmayı başardı, ancak yıllar sonra <strong>Vali'nin</strong> önündeki davada <strong>Brad</strong> adlı bir şahit onu tuzağa düşürdü ve gözünden bıçakladı. Bu kez Hanım gelip onu kurtarmadı — Ruven 20 yaşında, yargısız infaz biçiminde can verdi.</p>
+      <p>Ölümünün ardından ruhu uzun süre kayıt altına alınmayan bir limbo'da kaldı. <strong>Kuzgunların Leydisi</strong>, Ruven'in ruhunu kabul edip görevini tamamladığını ilan etti. Aradan yıllar geçti; <strong>Maraz Işık</strong> adlı bir şifa evinin kurucusu <strong>Ozaki Razan</strong>, Leydis'in kaydındaki Ruven'in ruhunu bularak onu yeniden diriltti. <strong>Rave</strong> adını alan Ruven, yaşı biyolojik olarak 23'e sıfırlanmış halde uyandı. Ozaki'nin kurumu <strong>Maraz Işık'ta</strong> şifacılık ve öğretmenlik yapmaya başladı.</p>
+      <p>Ruven, <strong>Carpe Diem'in</strong> resmi üyesi sayılmasa da Zonthar'da halk arasında hep özel bir yeri oldu. Ölüm yıldönümünde anma törenleri düzenlendi. Rave olarak yeniden doğuşu ise ona <strong>Şeb-i Ervah</strong> felsefesini öğretti: "Geçmişin bedeli ödenir; gelecek öğrenilir." Hem Warlock hem de Cleric gücü bünyesinde barındıran ender ruhlardan biri olan Ruven/Rave, hayatta kalanların hatıralarını korumak amacıyla yolculuğuna devam etmektedir.</p>
     </div>
 
-    <div class="alternative-images">
-      <div>
-        <img src="Bıçakların Hanımı.jpg" alt="Bıçakların Hanımı ve Kuzgun Kraliçe" onclick="openModal(this)">
-        <div class="image-title-alt">Bıçakların Hanımı ve Kuzgun Kraliçe</div>
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong>
+        <div class="badges">
+          <span class="badge">Kuzgun Çocuk</span>
+          <span class="badge">Harabe Köyün Sağ Kalanı</span>
+          <span class="badge">Menzher'in Oğlu</span>
+          <span class="badge">Zonthar'ın Kurtarıcısı</span>
+          <span class="badge">Maraz Işık'tan Rave</span>
+          <span class="badge">Vidar'ın Neferi</span>
+          <span class="badge">Kuzgunların Leydisi'nin Şampiyonu</span>
+        </div>
+        <strong>Lore Etkisi:</strong><br>
+        Uther'ı öldüren ilk Carpe Diem üyesi. Kendi yargılamasında hayatını kaybetti. Rave olarak dirilişiyle Maraz Işık'ı kurdu ve Şeb-i Ervah felsefesini yaydı.<br><br>
+        <a href="ruven.pdf" target="_blank" class="character-link">☠️ Char Sheet</a>
       </div>
-      <div>
-        <img src="Hancı Yaşlı Menzher.jpg" alt="Ruven'in Mentoru ve Manevi Babası Menzher" onclick="openModal(this)">
-        <div class="image-title-alt">Ruven'in Mentoru ve Manevi Babası Menzher</div>
-      </div>
-      <div>
-        <img src="Melanie.jpg" alt="Ruven'in Çocukluğunda Kaçırılmış Esir Tutulan ve Büyümüş Melanie Adındaki Kız" onclick="openModal(this)">
-        <div class="image-title-alt">Ruven'in Çocukluğunda Kaçırılmış Esir Tutulan ve Büyümüş Melanie Adındaki Kız</div>
-      </div>
-      <div>
-        <img src="Ruven Reborn.jpg" alt="Rave Adıyla Yeniden Dirilmiş Ruven" onclick="openModal(this)">
-        <div class="image-title-alt">Rave Adıyla Yeniden Dirilmiş Ruven</div>
-      </div>
-      <div>
-        <img src="Genç Ozaki.jpg" alt="Rave'yi Maraz Işığa Alan Ozaki Razan" onclick="openModal(this)">
-        <div class="image-title-alt">Rave'yi Maraz Işığa Alan Ozaki Razan</div>
-      </div>
-      <div>
-        <img src="Zalathormyx Nightshade (Death).jpg" alt="Lolth'un Seçilmişi Ve Ölümün Avatarı Zalathormyx" onclick="openModal(this)">
-        <div class="image-title-alt">Lolth'un Seçilmişi Ve Ölümün Avatarı Zalathormyx</div>
-      </div>
-      <div>
-        <img src="Rakshasa.jpg" alt="Rave'ye Kabuslar Gördürmüş Ve İşkence Etmiş Rakshasa" onclick="openModal(this)">
-        <div class="image-title-alt">Rave'ye Kabuslar Gördürmüş Ve İşkence Etmiş Rakshasa</div>
-      </div>
-      <div>
-        <img src="Archmage Derwood.jpg" alt="Faunzul'un Hizmet Ettiği ve Bıçakların Hanımının Sağ Kolu Olan Derwood" onclick="openModal(this)">
-        <div class="image-title-alt">Faunzul'un Hizmet Ettiği ve Bıçakların Hanımının Sağ Kolu Olan Derwood</div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Hexblade Warlock / Soul Gatherer Domain Cleric</span></div>
+          <div class="info-row"><span class="info-label">Level:</span><span class="info-value">1. Ölüm: 5 Lv / 2. Ölüm: 10 Lv</span></div>
+          <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">1. Ölüm: 20 / 2. Ölüm: 39 (biyolojik: 23)</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+        </div>
       </div>
     </div>
 
-    <a class="back-link" href="../index.html">← Geri Dön</a>
+    <div class="carousel-section">
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0"><img src="Hancı Yaşlı Menzher.jpg" alt="Menzher" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="0" data-idx="1"><img src="Melanie.jpg" alt="Melanie" onclick="openModal(this)"></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Ruven'in Mentoru ve Manevi Babası Menzher</div>
+          <div class="carousel-dots" id="dots-0"><span class="dot active"></span><span class="dot"></span></div>
+        </div>
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0"><img src="Rakshasa.jpg" alt="Rakshasa" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="1" data-idx="1"><img src="Zalathormyx Nightshade (Death).jpg" alt="Zalathormyx" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="1" data-idx="2"><img src="Archmage Derwood.jpg" alt="Archmage Derwood" onclick="openModal(this)"></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Rave'ye Kabuslar Gördürmüş Rakshasa</div>
+          <div class="carousel-dots" id="dots-1"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+        </div>
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0"><img src="Ruven Reborn.jpg" alt="Ruven Reborn" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="2" data-idx="1"><img src="Genç Ozaki.jpg" alt="Ozaki Razan" onclick="openModal(this)"></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Rave Adıyla Yeniden Dirilmiş Ruven</div>
+          <div class="carousel-dots" id="dots-2"><span class="dot active"></span><span class="dot"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      <a class="back-link" href="../index.html">← Geri Dön</a>
+      <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
+    </div>
   </div>
 
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
-    <strong>Unvanlar:</strong><br>
-    Kuzgun Çocuk, Harabe Köyün Sağ Kalanı, Menzher'in Oğlu, Zonthar'ın Kurtarıcısı, Maraz Işık'tan Rave, Vidar'ın Neferi, Kuzgunların Leydisi'nin Şampiyonu<br><br>
-    <strong>Lore Etkisi:</strong><br>
-    "Carpe Diem"in kurucu üyelerindendir. Zontharı kurtarmış ve Bıçakların Hanımı'na hizmet etmiş birisidir. Savaş Tanrısı Keledrin'in yeryüzündeki iradesini öldürmüştür. Maraz Işığa katılarak Engizisyona olan başkaldırışın bir parçası olmuştur. "Şeb-i Ervah" ideolojisini yaratmıştır ve ondan sonra gelenler, Maraz Işığın Mirasını duydukça bu fikri benimsemiştir. Evreni yok oluşa sürükleme potansiyeline sahip bir mihenk taşıdır. Bu yüzden Tanrı Daynore, kendi zaman çizelgesindeki Ruven'in yarattığı felaketi önleyemediği için, bu zaman çizgisindeki felaketi önlemek adına bu zaman çizgisine gelmiştir.<br><br>
-    <a href="ruven.pdf" target="_blank" class="character-link">☠️ Ruven ve Rave Olarak En Son Char Sheeti</a>
+    <div class="badges">
+      <span class="badge">Kuzgun Çocuk</span>
+      <span class="badge">Harabe Köyün Sağ Kalanı</span>
+      <span class="badge">Menzher'in Oğlu</span>
+      <span class="badge">Zonthar'ın Kurtarıcısı</span>
+      <span class="badge">Maraz Işık'tan Rave</span>
+      <span class="badge">Vidar'ın Neferi</span>
+      <span class="badge">Kuzgunların Leydisi'nin Şampiyonu</span>
+    </div>
+    Uther'ı öldüren ilk Carpe Diem üyesi. Rave olarak dirilişiyle Maraz Işık'ı kurdu.<br><br>
+    <a href="ruven.pdf" target="_blank" class="character-link">☠️ Char Sheet</a>
   </div>
-
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
-    <strong>Class ve Subclass:</strong> Hexblade Warlock / Soul Gatherer Domain Cleric<br>
-    <strong>Level:</strong> İlk Ölüm: 5 Level, İkinci Ölüm: 10 Level<br>
-    <strong>Irk:</strong> Human<br>
-    <strong>Yaş:</strong> İlk Ölüm: 20 Yaşında, İkinci Ölüm: 39 Yaşında (İkinci Ölümü Esnasında Biyolojik Olarak 23 Yaşındaydı. Ölümünden Sonra Ruhu ve Bedeninin saklandığı düzlemde belli bir olaydan sonra yaşlanmadı.)<br>
-    <strong>Cinsiyet:</strong> Erkek
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Hexblade Warlock / Soul Gatherer Cleric</span></div>
+      <div class="info-row"><span class="info-label">Level:</span><span class="info-value">1. Ölüm: 5 / 2. Ölüm: 10</span></div>
+      <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">20 / 39 (biyolojik: 23)</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+    </div>
   </div>
 
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="img01" />
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
   </div>
 
   <script>
-    function openModal(img) {
-      document.getElementById("myModal").style.display = "block";
-      document.getElementById("img01").src = img.src;
-      document.getElementById("volume-control-wrapper").style.display = "none";
-    }
-
-    function closeModal() {
-      document.getElementById("myModal").style.display = "none";
-      document.getElementById("volume-control-wrapper").style.display = "block";
-    }
-
-    document.getElementById('volume-control').addEventListener('input', function () {
-      var volume = parseFloat(this.value);
-      document.getElementById('background-music').volume = volume;
-      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
-    });
-
-    window.onbeforeunload = function () {
-      document.getElementById('background-music').pause();
-    };
-
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.id = "imageModal";
-
-    const modalImg = document.createElement("img");
-    modalImg.className = "modal-content";
-    modalImg.id = "modalImage";
-
-    const span = document.createElement("span");
-    span.className = "close";
-    span.innerHTML = "&times;";
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-    };
-
-    modal.appendChild(span);
-    modal.appendChild(modalImg);
-    document.body.appendChild(modal);
-
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
-    };
-
-    function openModal(element) {
-      modal.style.display = "block";
-      modalImg.src = element.src;
-      document.getElementById("back-button").classList.add("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
-    }
-    
+    const music=document.getElementById('background-music'),btn=document.getElementById('play-pause-btn');
+    let isPlaying=true,panelOpen=false;
+    music.volume=0.5; music.play().catch(()=>{isPlaying=false;btn.textContent='▶ Müziği Başlat';});
+    function toggleMusic(){if(isPlaying){music.pause();btn.textContent='▶ Müziği Başlat';}else{music.play();btn.textContent='⏸ Müziği Duraklat';}isPlaying=!isPlaying;}
+    function togglePanel(){const p=document.getElementById('volume-control-wrapper'),t=document.getElementById('music-toggle-btn');panelOpen=!panelOpen;p.classList.toggle('open',panelOpen);t.textContent=panelOpen?'🎵 Müzik ▾':'🎵 Müzik ▸';}
+    document.getElementById('volume-control').addEventListener('input',function(){music.volume=parseFloat(this.value);document.getElementById('volume-level').innerText=Math.round(this.value*100)+'%';});
+    window.onbeforeunload=()=>music.pause();
+    const leftBox=document.querySelector('.left-box'),rightBox=document.querySelector('.right-box');
+    function updateInfoBoxes(){const top=Math.max(70,100-window.scrollY);if(leftBox)leftBox.style.top=top+'px';if(rightBox)rightBox.style.top=top+'px';}
+    window.addEventListener('scroll',updateInfoBoxes,{passive:true});updateInfoBoxes();
+    const CAROUSEL_AUTO_MS=5000;
+    const captions=[
+      ['Ruven\'in Mentoru ve Manevi Babası Menzher','Hanım\'ın Esiri Olan Ruven\'in Çocukluk Aşkı Melanie'],
+      ['Rave\'ye Kabuslar Gördürmüş Rakshasa','Lolth\'un Seçilmişi ve Ölümün Avatarı Zalathormyx','Bıçakların Hanımı\'nın Sağ Kolu Archmage Derwood'],
+      ['Rave Adıyla Yeniden Dirilmiş Ruven','Rave\'yi Maraz Işık\'a Alan Ozaki Razan'],
+    ];
+    const state=[{idx:0},{idx:0},{idx:0}];
+    let activeTab=0,autoTimer=null,isPaused=false;
+    function getCards(p){return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${p}"]`));}
+    function showCard(p,newIdx){const cards=getCards(p),oldIdx=state[p].idx;if(oldIdx===newIdx)return;const old=cards[oldIdx];old.classList.remove('visible');old.classList.add('leaving');old.addEventListener('animationend',()=>old.classList.remove('leaving'),{once:true});cards[newIdx].classList.add('visible');state[p].idx=newIdx;document.getElementById(`caption-${p}`).textContent=captions[p][newIdx];document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===newIdx));}
+    function carouselShift(p,dir){const total=getCards(p).length;showCard(p,(state[p].idx+dir+total)%total);resetAutoTimer();}
+    function switchTab(idx){document.getElementById(`panel-${activeTab}`).classList.remove('active');document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active');activeTab=idx;document.getElementById(`panel-${activeTab}`).classList.add('active');document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active');resetAutoTimer();}
+    function autoAdvance(){if(isPaused)return;const total=getCards(activeTab).length;showCard(activeTab,(state[activeTab].idx+1)%total);}
+    function startAutoTimer(){clearInterval(autoTimer);autoTimer=setInterval(autoAdvance,CAROUSEL_AUTO_MS);}
+    function resetAutoTimer(){startAutoTimer();}
+    function pauseCarousel(){isPaused=true;}function resumeCarousel(){isPaused=false;resetAutoTimer();}
+    document.querySelector('.carousel-section').addEventListener('mouseenter',pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave',resumeCarousel);
+    startAutoTimer();
+    [0,1,2].forEach(p=>{document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((dot,idx)=>{dot.addEventListener('click',()=>{showCard(p,idx);resetAutoTimer();});});});
+    const modal=document.getElementById('myModal'),modalImg=document.getElementById('img01'),modalCap=document.getElementById('modal-caption'),modalCount=document.getElementById('modal-counter');
+    let modalImages=[],modalIdx=0,modalAnimating=false;
+    function buildModalImages(p){modalImages=[];getCards(p).forEach((card,i)=>{const img=card.querySelector('img');if(img)modalImages.push({src:img.src,caption:captions[p][i]||''});});}
+    function setModalImage(idx,dir){if(modalAnimating)return;modalAnimating=true;const outClass=dir>0?'slide-out-left':'slide-out-right',inClass=dir>0?'slide-in-right':'slide-in-left';modalImg.classList.add(outClass);modalImg.addEventListener('animationend',()=>{modalImg.classList.remove(outClass);modalIdx=(idx+modalImages.length)%modalImages.length;modalImg.src=modalImages[modalIdx].src;modalCap.textContent=modalImages[modalIdx].caption;modalCount.textContent=`${modalIdx+1} / ${modalImages.length}`;modalImg.classList.add(inClass);modalImg.addEventListener('animationend',()=>{modalImg.classList.remove(inClass);modalAnimating=false;},{once:true});},{once:true});}
+    function openModal(el){const card=el.closest('.carousel-card');if(card){const p=parseInt(card.dataset.panel);buildModalImages(p);modalIdx=modalImages.findIndex(m=>m.src===el.src);if(modalIdx<0)modalIdx=0;}else{modalImages=[{src:el.src,caption:el.alt||''}];modalIdx=0;}modalImg.src=modalImages[modalIdx].src;modalCap.textContent=modalImages[modalIdx].caption;modalCount.textContent=`${modalIdx+1} / ${modalImages.length}`;modalAnimating=false;modal.classList.add('open');document.getElementById('back-button').classList.add('hidden');document.getElementById('music-widget').style.display='none';document.body.style.overflow='hidden';pauseCarousel();}
+    function closeModal(){modal.classList.remove('open');document.getElementById('back-button').classList.remove('hidden');document.getElementById('music-widget').style.display='flex';document.body.style.overflow='';resumeCarousel();}
+    function modalNav(dir){setModalImage(modalIdx+dir,dir);}
+    modal.addEventListener('click',e=>{const allowed=[document.getElementById('img01'),document.getElementById('modal-caption'),document.getElementById('modal-prev'),document.getElementById('modal-next')];if(!allowed.some(el=>el&&(el===e.target||el.contains(e.target))))closeModal();});
+    document.addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;if(e.key==='ArrowRight')modalNav(1);if(e.key==='ArrowLeft')modalNav(-1);if(e.key==='Escape')closeModal();});
   </script>
-  
-  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
-  
 </body>
 </html>

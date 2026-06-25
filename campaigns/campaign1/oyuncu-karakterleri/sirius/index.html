@@ -3,402 +3,287 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sirius</title>
+  <title>Sirius — Carpe Diem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('https://cdnb.artstation.com/p/assets/images/images/047/040/467/large/frank-sun-.jpg?1646622018') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
-      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
-    }
-
-    /* Overlay transparency ekleme */
-    .container {
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      z-index: 1;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
-      z-index: -1;
-    }
-
-    /* Başlık stilini iyileştirme */
-    h1 {
-      font-size: 4rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-      margin-bottom: 20px;
-    }
-
-    .character-image {
-      width: 200px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      margin-bottom: 10px;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-      cursor: pointer;
-    }
-
-    .character-image:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .image-title, .image-title-alt {
-      text-align: center;
-      margin-bottom: 20px;
-      font-style: italic;
-      font-size: 1rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      padding: 5px;
-    }
-
-    .bio {
-      font-size: 1.1rem;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-      line-height: 1.6;
-      text-align: justify;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .alternative-images {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .alternative-images div {
-      text-align: center;
-      max-width: 150px;
-      flex: 0 1 150px;
-    }
-
-    .alternative-images img {
-      width: 150px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      border: 3px solid #fff;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .alternative-images img:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .info-box {
-      position: absolute;
-      top: 100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 15px;
-      border-radius: 10px;
-      width: 240px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .info-box h2 {
-      font-size: 1.2rem;
-      color: #ffdf6e;
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .info-box strong {
-      color: #ffd700;
-    }
-
-    .left-box {
-      left: 20px;
-    }
-
-    .right-box {
-      right: 20px;
-    }
-
-    .character-link {
-      color: #ffffff;
-      text-decoration: underline;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-
-    .back-link {
-      display: inline-block;
-      color: #87cefa;
-      font-size: 1.2rem;
-      text-decoration: none;
-      margin-top: 20px;
-      border: 1px solid #87cefa;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-
-    .back-link:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    /* Modal Animasyonu */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.7);
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
-    }
-
-    .modal-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      border-radius: 15px;
-    }
-
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: #f44336;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    #volume-control-wrapper {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 10px 15px;
-      border-radius: 10px;
-    }
-
-    #volume-control-label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      color: #fff;
-    }
-
-    #volume-level {
-      color: #ffd700;
-      font-size: 0.9rem;
-      margin-left: 5px;
-    }
-
-    .fixed-back-button {
-      position: fixed;
-      top: 45px;
-      right: 185px; /* Müzik kontrol kutusunun soluna konumlandırmak için */
-      z-index: 999;
-      color: #87cefa;
-      font-size: 1.1rem;
-      text-decoration: none;
-      border: 1px solid #87cefa;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      background-color: rgba(0, 0, 0, 0.6);
-      transition: background-color 0.3s;
-    }
-
-    .fixed-back-button:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    .hidden {
-      display: none;
-    }
-    
+    :root { --gold: #c9a84c; --gold-bright: #f5d080; --gold-dim: #ffdf6e; --gold-glow: rgba(201,168,76,0.55); --dark-glass: rgba(0,0,0,0.62); }
+    @keyframes pageFadeIn { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes titleDrop { from { opacity:0; transform:translateY(-30px) scale(0.95); letter-spacing:12px; } to { opacity:1; transform:translateY(0) scale(1); letter-spacing:3px; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes glowPulse { 0%,100% { box-shadow:0 0 8px rgba(201,168,76,.35),0 0 20px rgba(201,168,76,.15); } 50% { box-shadow:0 0 16px rgba(201,168,76,.7),0 0 40px rgba(201,168,76,.3); } }
+    *, *::before, *::after { box-sizing:border-box; }
+    body { font-family:'Lora',Georgia,serif; margin:0; padding:0; background:url('https://cdnb.artstation.com/p/assets/images/images/047/040/467/large/frank-sun-.jpg?1646622018') no-repeat center center fixed; background-size:cover; color:#fff; }
+    .fixed-back-button { position:fixed; top:20px; left:20px; z-index:999; padding:.45rem 1rem; font-family:'Cinzel',serif; font-size:.9rem; font-weight:700; letter-spacing:.5px; text-decoration:none; color:#fff; border-radius:8px; border:1px solid rgba(201,168,76,.45); background:linear-gradient(135deg,rgba(60,40,10,.82),rgba(30,18,5,.9)); box-shadow:0 0 8px rgba(201,168,76,.2); transition:transform .18s,box-shadow .25s,background .25s; animation:glowPulse 3s ease-in-out infinite; }
+    .fixed-back-button:hover { background:linear-gradient(135deg,rgba(100,70,20,.88),rgba(55,35,10,.94)); box-shadow:0 0 20px rgba(201,168,76,.6); transform:translateY(-2px); }
+    #music-widget { position:fixed; top:20px; right:20px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+    #music-toggle-btn { display:flex; align-items:center; gap:7px; padding:7px 14px; font-family:'Cinzel',serif; font-size:.8rem; font-weight:700; letter-spacing:.5px; color:#fff; border:1px solid rgba(201,168,76,.45); border-radius:8px; background:linear-gradient(135deg,rgba(60,40,10,.88),rgba(30,18,5,.95)); cursor:pointer; white-space:nowrap; transition:background .2s,box-shadow .2s,transform .15s; box-shadow:0 0 8px rgba(201,168,76,.2); animation:glowPulse 3s ease-in-out infinite; flex-shrink:0; }
+    #music-toggle-btn:hover { background:linear-gradient(135deg,rgba(100,70,20,.92),rgba(55,35,10,.98)); box-shadow:0 0 18px rgba(201,168,76,.55); transform:translateY(-1px); }
+    #volume-control-wrapper { background:linear-gradient(135deg,rgba(30,20,5,.92),rgba(15,10,3,.97)); border:1px solid rgba(201,168,76,.25); padding:12px 15px; border-radius:12px; box-shadow:0 0 16px rgba(201,168,76,.15); width:210px; overflow:hidden; max-height:0; opacity:0; padding-top:0; padding-bottom:0; transition:max-height .35s ease,opacity .3s ease,padding .3s ease; }
+    #volume-control-wrapper.open { max-height:160px; opacity:1; padding-top:12px; padding-bottom:12px; }
+    #volume-control-label { display:block; margin-bottom:6px; font-family:'Cinzel',serif; font-size:.78rem; letter-spacing:.5px; color:rgba(255,255,255,.75); }
+    #volume-level { color:var(--gold-bright); font-size:.85rem; margin-left:4px; }
+    #play-pause-btn { display:block; width:100%; margin-bottom:10px; padding:5px 0; font-family:'Cinzel',serif; font-size:.82rem; font-weight:700; letter-spacing:.5px; color:#fff; border:1px solid rgba(201,168,76,.4); border-radius:7px; background:linear-gradient(135deg,rgba(80,55,15,.8),rgba(35,22,5,.9)); cursor:pointer; transition:background .2s,box-shadow .2s,transform .15s; box-shadow:0 0 8px rgba(201,168,76,.2); }
+    #play-pause-btn:hover { background:linear-gradient(135deg,rgba(130,90,25,.88),rgba(60,40,10,.95)); box-shadow:0 0 18px rgba(201,168,76,.5); transform:translateY(-1px); }
+    #volume-control { width:100%; accent-color:var(--gold); cursor:pointer; }
+    .info-box { position:fixed; top:100px; z-index:10; background-color:var(--dark-glass); padding:15px; border-radius:10px; width:210px; font-size:.9rem; line-height:1.5; border:1px solid rgba(201,168,76,.18); animation:pageFadeIn 1s ease .6s both; transition:top .1s linear; }
+    .info-box h2 { font-family:'Cinzel',serif; font-size:1.05rem; color:var(--gold-dim); margin-top:0; margin-bottom:10px; }
+    .info-box strong { color:var(--gold); }
+    .left-box { left:20px; } .right-box { right:20px; }
+    .info-boxes-inline { display:none; flex-direction:column; gap:16px; max-width:800px; margin:0 auto 28px auto; padding:0 16px; }
+    .info-box-inline { background-color:var(--dark-glass); padding:15px; border-radius:10px; font-size:.9rem; line-height:1.5; border:1px solid rgba(201,168,76,.18); }
+    .info-box-inline h2 { font-family:'Cinzel',serif; font-size:1.05rem; color:var(--gold-dim); margin-top:0; margin-bottom:10px; }
+    .badges { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 10px 0; }
+    .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.3px; font-weight:700; color:var(--gold-dim); border:1px solid rgba(201,168,76,.45); background:rgba(201,168,76,.08); white-space:nowrap; }
+    .info-card { display:grid; gap:5px; margin-top:6px; }
+    .info-row { display:flex; gap:8px; align-items:baseline; border-bottom:1px solid rgba(201,168,76,.1); padding-bottom:5px; font-size:.85rem; }
+    .info-row:last-child { border-bottom:none; padding-bottom:0; }
+    .info-label { font-family:'Cinzel',serif; font-size:0.68rem; font-weight:700; letter-spacing:0.3px; color:var(--gold); white-space:nowrap; flex-shrink:0; }
+    .info-value { color:rgba(255,255,255,.85); line-height:1.4; }
+    .container { position:relative; max-width:1200px; margin:0 auto; padding:20px 260px; text-align:center; z-index:1; animation:pageFadeIn 1s ease .2s both; }
+    .container::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.42); z-index:-1; }
+    h1 { font-family:'Cinzel',serif; font-size:clamp(2rem,5vw,4rem); font-weight:900; text-transform:uppercase; letter-spacing:3px; text-shadow:0 0 30px rgba(201,168,76,.6),3px 3px 12px rgba(0,0,0,.9); margin-bottom:20px; animation:titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both; }
+    .character-image { width:200px; height:300px; object-fit:cover; border-radius:15px; box-shadow:0 4px 6px rgba(0,0,0,.5); margin-bottom:10px; transition:transform .5s ease,opacity .5s ease; cursor:pointer; animation:pageFadeIn 1s ease .5s both; }
+    .character-image:hover { transform:scale(1.5); opacity:.8; }
+    .image-title { text-align:center; margin-bottom:20px; font-family:'Lora',Georgia,serif; font-style:italic; font-size:1.25rem; font-weight:700; text-shadow:0 0 10px rgba(0,0,0,.8); padding:5px; }
+    .bio { font-size:1.1rem; max-width:800px; margin:0 auto 30px auto; line-height:1.75; text-align:justify; background:var(--dark-glass); padding:24px 28px; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,.6); border:1px solid rgba(201,168,76,.12); animation:pageFadeIn 1s ease .7s both; }
+    .character-link { display:inline-block; margin-top:8px; padding:6px 14px; font-size:.88rem; font-weight:600; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,.45); border-radius:6px; background:rgba(201,168,76,.07); transition:background .25s,box-shadow .25s,transform .15s; }
+    .character-link:hover { background:rgba(201,168,76,.18); box-shadow:0 0 14px rgba(201,168,76,.5); transform:translateY(-1px); }
+    .back-link { display:inline-block; margin-top:20px; padding:.6rem 1.4rem; font-family:'Cinzel',serif; font-size:1rem; font-weight:700; letter-spacing:1px; text-decoration:none; color:#fff; border-radius:8px; border:1px solid rgba(201,168,76,.5); background:linear-gradient(135deg,rgba(80,55,15,.75),rgba(35,22,5,.85)); box-shadow:0 0 10px rgba(201,168,76,.25),inset 0 1px 0 rgba(255,255,255,.08); transition:transform .18s,box-shadow .25s,background .25s; animation:glowPulse 3s ease-in-out infinite; }
+    .back-link:hover { background:linear-gradient(135deg,rgba(130,90,25,.85),rgba(60,40,10,.9)); box-shadow:0 0 22px rgba(201,168,76,.65); transform:translateY(-2px); }
+    .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:hidden; background-color:rgba(0,0,0,.88); opacity:0; animation:fadeIn .4s forwards; align-items:center; justify-content:center; cursor:pointer; }
+    .modal.open { display:flex; }
+    .modal-inner { display:flex; align-items:center; justify-content:center; gap:12px; max-width:96vw; max-height:96vh; padding:12px; box-sizing:border-box; cursor:default; }
+    .modal-stage { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; }
+    @keyframes modalSlideInRight { from { opacity:0; transform:translateX(60px) scale(0.93); filter:blur(5px); } to { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } }
+    @keyframes modalSlideInLeft  { from { opacity:0; transform:translateX(-60px) scale(0.93); filter:blur(5px); } to { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } }
+    @keyframes modalSlideOutLeft  { from { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } to { opacity:0; transform:translateX(-60px) scale(0.93); filter:blur(5px); } }
+    @keyframes modalSlideOutRight { from { opacity:1; transform:translateX(0) scale(1); filter:blur(0); } to { opacity:0; transform:translateX(60px) scale(0.93); filter:blur(5px); } }
+    .modal-content { display:block; max-width:78vw; max-height:76vh; width:auto; height:auto; border-radius:15px 15px 0 0; box-shadow:0 0 50px rgba(201,168,76,.35); object-fit:contain; }
+    .modal-content.slide-in-right { animation:modalSlideInRight 0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left  { animation:modalSlideInLeft  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation:modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation:modalSlideOutRight 0.32s ease forwards; }
+    .modal-caption { width:100%; max-width:78vw; padding:10px 16px 12px; box-sizing:border-box; background:rgba(20,12,3,0.88); border-radius:0 0 15px 15px; border-top:1px solid rgba(201,168,76,0.2); font-family:'Lora',Georgia,serif; font-size:1.05rem; font-weight:700; color:#fff3d4; text-align:center; line-height:1.45; }
+    .modal-counter { position:fixed; top:18px; left:50%; transform:translateX(-50%); font-family:'Cinzel',serif; font-size:0.85rem; font-weight:700; color:rgba(234,204,110,0.9); letter-spacing:1.5px; pointer-events:none; z-index:1002; background:rgba(20,12,3,0.6); padding:4px 12px; border-radius:20px; border:1px solid rgba(201,168,76,0.2); }
+    .modal-arrow { flex-shrink:0; width:48px; height:48px; font-size:1.4rem; color:#fff; background:linear-gradient(135deg,rgba(80,55,15,0.75),rgba(35,22,5,0.85)); border:1px solid rgba(201,168,76,0.45); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:box-shadow 0.2s,transform 0.15s; animation:glowPulse 3s ease-in-out infinite; z-index:1002; }
+    .modal-arrow:hover { box-shadow:0 0 22px rgba(201,168,76,0.65); transform:scale(1.12); }
+    .close { position:fixed; top:15px; right:25px; color:#fff; font-size:40px; font-weight:bold; cursor:pointer; transition:color .2s; z-index:1003; line-height:1; }
+    .close:hover { color:#f44336; }
+    @keyframes cardIn { from { opacity:0; transform:scale(0.88) translateY(20px); filter:blur(6px); } to { opacity:1; transform:scale(1) translateY(0); filter:blur(0); } }
+    @keyframes cardOut { from { opacity:1; transform:scale(1) translateY(0); filter:blur(0); } to { opacity:0; transform:scale(0.88) translateY(-20px); filter:blur(6px); } }
+    .carousel-section { max-width:600px; margin:0 auto 48px auto; animation:pageFadeIn 1s ease 0.9s both; }
+    .carousel-tabs { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:22px; }
+    .carousel-tab { padding:9px 18px; font-family:'Lora',Georgia,serif; font-size:0.92rem; font-weight:700; color:rgba(255,255,255,0.55); border:1px solid rgba(201,168,76,0.22); border-radius:8px; background:rgba(30,20,5,0.55); cursor:pointer; transition:all 0.25s; }
+    .carousel-tab:hover { color:#fff; border-color:rgba(201,168,76,0.55); background:rgba(70,50,15,0.65); }
+    .carousel-tab.active { color:#fff; border-color:rgba(201,168,76,0.85); background:linear-gradient(135deg,rgba(80,55,15,0.88),rgba(35,22,5,0.96)); box-shadow:0 0 16px rgba(201,168,76,0.4); }
+    .carousel-panel { display:none; flex-direction:column; align-items:center; }
+    .carousel-panel.active { display:flex; }
+    .carousel-row { display:flex; align-items:center; justify-content:center; gap:18px; width:100%; }
+    .carousel-arrow { flex-shrink:0; width:46px; height:46px; font-size:1.4rem; color:#fff; background:linear-gradient(135deg,rgba(80,55,15,0.82),rgba(35,22,5,0.92)); border:1px solid rgba(201,168,76,0.4); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:box-shadow 0.2s,transform 0.15s; animation:glowPulse 3s ease-in-out infinite; }
+    .carousel-arrow:hover { box-shadow:0 0 18px rgba(201,168,76,0.55); transform:scale(1.12); }
+    .carousel-stage { position:relative; width:320px; height:400px; border-radius:16px; }
+    .carousel-card { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; }
+    .carousel-card.visible { opacity:1; pointer-events:auto; animation:cardIn 0.85s cubic-bezier(.22,1,.36,1) forwards; }
+    .carousel-card.leaving { animation:cardOut 0.55s ease forwards; }
+    .carousel-card img { width:300px; height:390px; object-fit:contain; border-radius:14px; border:2px solid var(--gold); outline:1px solid rgba(201,168,76,0.28); outline-offset:3px; box-shadow:0 0 0 4px rgba(20,12,3,0.7),0 0 0 6px rgba(201,168,76,0.25),0 10px 28px rgba(0,0,0,0.7); cursor:pointer; background:rgba(15,9,3,0.6); transition:box-shadow 0.3s,filter 0.3s; filter:brightness(0.96); }
+    .carousel-card img:hover { box-shadow:0 0 0 4px rgba(20,12,3,0.8),0 0 0 7px rgba(201,168,76,0.6),0 0 36px rgba(201,168,76,0.45); filter:brightness(1.06); }
+    .carousel-placeholder { width:300px; height:390px; display:flex; align-items:center; justify-content:center; border-radius:14px; border:2px dashed rgba(201,168,76,0.25); background:rgba(0,0,0,0.2); font-family:'Lora',Georgia,serif; font-style:italic; color:rgba(255,255,255,0.35); font-size:0.95rem; text-align:center; padding:20px; }
+    .carousel-caption { margin-top:14px; min-height:48px; max-width:340px; text-align:center; font-family:'Lora',Georgia,serif; font-size:1rem; font-weight:700; color:#fff3d4; text-shadow:0 1px 6px rgba(0,0,0,1); line-height:1.45; padding:0 8px; }
+    .carousel-dots { display:flex; justify-content:center; gap:9px; margin-top:14px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:rgba(201,168,76,0.28); border:1px solid rgba(201,168,76,0.4); cursor:pointer; transition:background 0.25s,transform 0.2s,box-shadow 0.2s; }
+    .dot.active { background:rgba(201,168,76,0.92); transform:scale(1.35); box-shadow:0 0 8px rgba(201,168,76,0.8); }
+    .hidden { display:none; }
+    @media (max-width:1024px) { .container { padding:20px 230px; } .info-box { width:190px; font-size:.82rem; } .left-box { left:12px; } .right-box { right:12px; } }
+    @media (max-width:860px) { .info-box { display:none; } .info-boxes-inline { display:flex; } .container { padding:20px 16px; } h1 { font-size:clamp(1.8rem,6vw,3rem); } .bio { padding:18px 16px; font-size:1rem; } .carousel-stage { width:280px; height:360px; } .carousel-card img { width:260px; height:350px; } .carousel-arrow { width:38px; height:38px; font-size:1.1rem; } }
+    @media (max-width:540px) { .fixed-back-button { font-size:.75rem; padding:.35rem .7rem; } #music-toggle-btn { font-size:.7rem; padding:5px 10px; } h1 { font-size:clamp(1.4rem,7vw,2.2rem); padding-top:60px; } .character-image { width:160px; height:240px; } .carousel-stage { width:240px; height:310px; } .carousel-card img { width:220px; height:300px; } .carousel-tab { padding:7px 12px; font-size:.82rem; } .modal-content { max-width:90vw; max-height:70vh; } .back-link { padding:.5rem 1rem; font-size:.88rem; } }
   </style>
 </head>
 <body>
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Realm's Gate - Sorastro.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
   </audio>
-
-  <div id="volume-control-wrapper">
-    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
-    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+  <div id="music-widget">
+    <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
+    <div id="volume-control-wrapper">
+      <button id="play-pause-btn" onclick="toggleMusic()">⏸ Müziği Duraklat</button>
+      <label id="volume-control-label">Ses: <span id="volume-level">50%</span></label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+    </div>
   </div>
 
   <div class="container">
     <h1>Sirius</h1>
     <img src="Sirius.jpg" alt="Sirius" class="character-image" onclick="openModal(this)">
-    <div class="image-title">Sirius</div>
-
+    <div class="image-title">Sirius — Archangel Mirabelle'nin Hizmetkarı</div>
     <div class="bio">
-      <p><strong>Arda Gökay MISIROGLU</strong> tarafından canlandırılmış ve oynanmıştır. Arda'nın ikinci karakteridir. <strong>Sirius</strong> Eğriçiçeği mülkünün yakınlarında, Eğriçiçeği tebaasına bağlı bir köyde doğmuştur. Annesi bir insan babası ise bir elf olan bir yarı elftir fakat genç yaşta ailesini kaybetmiş ve öksüz kalmıştır. Asil olmayışından ve İmparatorluk Toprakları'nda doğmuş olmasından ötürü bir soyadı yoktur, Elf Babasının soyadını kullanmaktadır. Babasının soyadı "Môrn" yani siyah demektir. Hasta olarak doğmuş Sirius unutkanlık hastalığından muzdariptir. Çocukluğu, dün ne yaptığını bilmeyecek şekilde geçmiştir. Doğduğu köye kimsesizler ile ilgilenen ve çocuklara bakan bir kadın, Sirius'a okuma yazmayı öğretmiştir. Bu kadının ismi <strong>Bervi'dir.</strong> Bervi en başta Sirius'un bunu bile unutacağını düşünmüştür, fakat motor fonskiyon gibi çalışan eylemleri unutmadığını fark etmiştir. Örnek olarak Sirius; nefes almayı, yürümeyi, okuma yazmayı, hesaplama yapma gibi şeyleri unutmuyordu, sadece yaşantısını ve anılarını kaybediyordu. Bu Bervi denen kadın sıradan birisi değildi, dış dünyalardan güçler kullanabilen bir büyücüydü. Bu kadın zamanla Sirius'a bunları anlatarak Sirius'un lanetlenmiş olabileceğini söylemeyi denese de, Sirius bu konuşulanları ertesi güne unutuyordu. Bervi ise bu sorunun çözüm önerisi olarak Sirius'a <strong>bir anı defteri tutmasını söyledi.</strong> Sirius o günden sonra yaşadığı bütün anıları ve olayları, uykuya dalmadan önce defterine kaydetmeye başladı. Ertesi güne herşeyi unutarak uyandığında ise, defterin üzerindeki "beni oku" kısmını görerek bu defteri okuyor ve daha öncesinde ne olduğuna dair bilgiler öğreniyor ve böylece süreci tekrarlıyordu. Fakat bu Sirius için sürdürülebilir bir çözüm değildi. Sirius belirli bir yaşa geldikten sonra bir ergen olarak bu hastalığını çözebilmek adına bir büyü arayışına girmiştir. Bu büyü arayışı neticesinde Bervi aslında ona kim olduğunu açıklamış ve dış dünya ile nasıl bağlantı kurabileceğini öğretmiştir. Bervi'nin hizmet ettiği "Ulvi" bir kişi vardı, ve Sirius bu Ulvi kişinin bu sorunu çözebileceğine inandığı için onunla konuşmak istediğini Bervi'ye söyler. Bervi, patronunun bu sorunu çözebileceğini ama bir hizmet karşılığında bunu yapacağını söyler. Sirius bu bedelin farkındalığına vardıktan sonra kabul eder ve Bervi aracılığı ile bu Ulvi yaratık ile etkileşime geçer. <strong>Erebos</strong> adındaki bu yaratık, Sirius'un ona ne verebileceğini sorar ve umutsuzluk içerisinde yakardığı ilk güce nasıl bir sadakat ile hizmet edebileceğini sorar. Sirius bu Ulvi yaratığın sorduğu sorular karşısında kifayetsiz kalır ve ona verebilecek bir cevap bulamaz. Cevapsızlığından ve kendine duyduğu güven eksikliğinden ötürü Erebos, Sirius'un sunduğu sadakati değerli bulmaz ve onu reddeder. Ne yapacağını bilemeyen endişeli ve umutsuz Sirius, büyük bir karanlığa gömülür. Erebos'un sorusunun cevabını bilmediğini Bervi'ye söyler. Bervi ise Sirius'a bir tavsiye vererek, belki de cevabı başka yerlerde arayabileceğini söyler. Bu tavsiye üzerine umudunu tekrar yeşerten Sirius, Erebos'a verebileceği şekilde aradığı cevabı bulmak adına önce <strong>Beyaz Şehir'e,</strong> daha sonrasında ise <strong>Bulut Manastırı'na</strong> doğru bir yolculuğa çıkar. Yıllar süren bu yolculuk neticesinde Sirius büyümüştür ve görüp geçirdiği her şeyi anı defterine kaydetmeye devam etmiştir. Hem Beyaz Şehir'de hem de Bulut Manastırı'nda aradığı cevaba ulaşamasa da yönlendirmeler bulabilmiştir ve bu yönlendirmeler, aradığı cevaba <strong>Beyaz Şehir'deki Yeryüzü Tapınağı'nda</strong> ulaşabileceğini söylüyordur.</p>
-      <p>Yeryüzü Tapınağı'nda bulacağı cevap onu <strong>Archangel Mirabelle'ye götürmüştür.</strong> Tapınakta kurduğu bir meditasyon ile transa geçmeyi başarmış ve Mirabelle'nin huzuruna çıkmayı başarmış Sirius, Mirabelle ile ruhu karşılığında bir anlaşmaya varmıştır. Sirius bedenini eğitip güçlenirse, Mirabelle'nin kutsamalarına layık olacak ve böylece bundan sonra unutmayacaktı. Mirabelle'nin ise Sirius'tan istediği önemli bir görev vardı. Sirius'un Mirabelle'den aldığı görev, <strong>Uther</strong> adındaki ölmüş bir rahibi diriltmekti. Mirabelle'ye hizmet edebilmek ve onun verdiği görevi tamamlayabilmek adına <strong>Daynore Dinenlas</strong> adındaki elfi bulmalı ve onunla işbirliği yapmalıydı. Mirabelle bu elfin Zonthar'da olduğunu ve Sirius'un tez vakte bu elf ile buluşmasını söyledi. Bu sebepten dolayı Sirius, hazırlıklarını tamamlayıp yaşadığı her şeyi not aldıktan sonra Daynore'yi aramak adına Zonthar'a doğru yola koyulmuştur.</p>
-      <p>Zonthar'a vardığında Sirius, bu kasabanın bir baskın sonucu yıkıldığını ve restorasyona girdiğini görmüş, ölen kişilerin cenazesinin yapıldığını öğrenmiştir. Cenaze için gittiği Zonthar Şapel'inde, daha sonrasında <strong>Carpe Diem</strong> olarak anılacakları grup arkadaşları ile ilk defa tanışmıştır. <strong>John</strong> adındaki arkadaşlarının cenazesini yapan kişilerin Daynore ve diğerleri olduğunu öğrenmiş ve onlarla iletişime geçmiştir. Daynore'ye Mirabelle'den bahsetmiş ve neden buraya geldiğini anlatmıştır. Grubu ikna etmeyi başardıktan sonra Sirius, Daynore tarafınca gruba davet edilmiş ve onlar ile yolculuk yapabileceği söylenmiştir. <strong>Daynore, Bob ve Damian</strong> ile birlikte Sirius, grubun amaçları doğrultusunda Verdun'a doğru yola koyulmuştur. Grubun Verdun'a gitmeyi istemesinin altında yatan birkaç sebep vardı; <strong>S.A.R.S.</strong> adındaki anlamını bilmedikleri gizemli şeyi araştırma ve çalınan <strong>Yeşim Özütü</strong> hakkında seyahat ettikleri druid <strong>Orlon</strong> ile birlikte bu özütün nerede olduğunu öğrenmek adına yolculuğa koyulmuşlardır. Bu yolculuğa çıkmadan önce Sirius, Uther'in cesedinin Zonthar Mezarlığı'nda olduğunu öğrenmiştir. Bu doğrultuda dünya dışı bilgiler ile öğrendiği büyü bilgisi neticesinde Uther'i diriltebilmenin bir yolunu bulmuştur, fakat bu yolu yapmak kudretli bir büyü yapmayı gerektirdiği için kendi fani sınırlarını aşmak adına güçlenmesi gerektiğinin de farkına varmıştır. Bu sebepten ötürü unutkanlığını çözebilmek adına tehlikeli yolculuklara kucak açmış bir biçimde Verdun'a doğru grup ile birlikte yola koyulmayı kabul etmiştir. Yolculuk esnasında başına gelen, yaşadığı ve düşündüğü her şeyi anı defterine kaydetmiştir ve muzdarip olduğu hastalığı gruba açıklamıştır. Gruptaki arkadaşları, özellikle Daynore olacak şekilde Sirius'un bu sorununa çözüm bulabilmek için onun yanında olacaklarını ve ona yardım edeceklerini söylemişlerdir. Böylece yolculuk boyunca gerçek bir grup olmuşlardır ve birbirleri ile olan bağları güçlendirmişlerdir.</p>
-      <p>Verdun'a gidilen süreçte ve orada geçirdikleri zaman çerçevesinde, Seid adındaki irade sorunları yaşayan, Bulut'un Kayıp Sekiz Formu'ndan birini arayan bir keşiş ile tanışmışlar ve onu da gruplarına dahil etmişlerdir. Onunla ve Orlon'la birlikte Verdun'da büyük badireler atlattılar; Orlon ile birlikte iki tane Yeşil Ejderha ile savaştılar, sonrasında ise Ejder karkaslarını Verdun'a hediye ettiler, daha sonra Orlon ile ayrıldılar ve Verdun'un iç meselelerinin çözülmesinde yardımcı oldular, grubun ve Damian'ın aradığı S.A.R.S. hakkında araştırmalar yürüttüler, Daynore'nin düşmanı olan mutasyonlu bir Owlbear'ı avladılar ve kendini dış dünyadan gizlemiş bir <strong>Zincirdar olan Evony</strong> ile tanıştılar. Bu eski zincirdar Evony sayesinde <strong>S.A.R.S.</strong> denen şey hakkında ve Damian'ın aldığı bir bıçak hakkında bilgiler öğrendiler. Lakin bu konunun derinliği onların hiç beklemediği bir vaziyetteydi. Verdun'a geri döndüklerinde Verdun'un Mevkibeyi olan Latrell Karasancak tarafından onun konağında Zincirdarlar ile birikte karşılanma şerefine nail oldular. Zincirdarlar, onlar ile bazı bilgiler paylaştılar ve İmparator'un sözünü gruba getirerek, onlara Kal'El denen grubun sığınağını bulma görevi verdiler. Grup bu görevi şerefle kabul ettikten sonra, Carpe Diem ismiyle anılmaya ve tüm diyarda tanınmaya başladı. Sirius bu macera sırasınca bütün yaşadıklarını not olarak kaydediyor ve bu olanları idrak ederek adapte olmaya çalışıyordu. Kendini grubun bir parçası olarak hissetse de, anılarını unutması sebebiyle çoğu durumda çok kopuk kalıyordu. Gene de <strong>Kal'El'in</strong> sığınağına gitmeye istekliydi, bu yolculuk sayesinde başından çok şey geçiyordu. Mirabelle ona güçlenmesini söylemişti ve o da güçleniyordu, lakin bu Sirius'un beklediğinden çok hızlı gerçekleşiyordu, bu yüzden Kal'El'in sığınağına gitmeden önce bu unutkanlık hastalığının çaresini bulması gerektiğini düşünüyordu. Grubun, Kal'El'in sığınağın Underdark'ta olduğunu öğrenmesi ile birlikte grup korktu ve bu fikirden vazgeçti, Underdark'a inmeden önce güçlenmeleri gerektiklerine topluca karar verdiler. Bu yüzden güçlenmeleri için rotalarını <strong>Beyaz Şehir</strong> olarak belirlediler ve Verdun'dan ayrılarak yolculuklarına devam ettiler. Beyaz Şehir'e doğru giderken yolculukta birçok şey yaşadılar; normal girdikleri arbede ve çatışmalar dışında <strong>Batı Kalkanı'nda</strong> belirli bir süre geçirdiler, yolda <strong>Gündüz Yürüyenler</strong> grubu ile karşılaştırlar ve onların yardımcı kaptanı olan <strong>Jean Jacque</strong> ile bir bilgi alışverişi yaptılar ve Kal'El ile alakalı bilgiler öğrendiler, bir soylu olan <strong>Alisteir Mithralius'un</strong> cesedini buldular, karanlık ormanda gölge yaratıklar ile savaştılar ve Bob'u en çok etkileyen olay olarak, Dış Düzlemlerden gelmiş bir yaratık olan <strong>Şeytan Vaxila</strong> ile savaşıp hayatta kalmayı başardılar. Lakin Vaxila ile olan savaşları esnasında Bob, dış dünyanın onu delirtmesine izin verdi ve <strong>Feeblemind</strong> büyüsüne mağruz kaldı. Bu büyünün etkisi olarak aklını yitirdi ve bir çocuk gibi davranmaya başladı. Yaklaşık bir ay boyunca Daynore'yi annesi gibi gördü ve onun yanından ayrılmadı; yemeği Daynore ona yediriyor, tuvalete onunla gidiyor ve Daynore'nin dibinde savaşıyordu. Vaxile ile olan savaştan Sirius da psikolojik olarak kötü etkilenmişti ama bir şeytanın bir büyü aracılığı ile birilerine kendi bütünlüğünü unutturabiliyor olması Sirius'un ilgisini çekmişti. Belki de buna benzer bir güç onun anılarını geri getirebilir ve birdaha unutmamasını sağlayabilirdi. Lakin Sirius bu vebalı düşünceler sonucu ruhunu bir şeytana adayacak kadar dengesiz ve akılsız değildi, o yüzden Mirabelle'ye güvenmeyi seçti.</p>
-      <p>Bu süreçte çokca da zararlar gördüler; Sirius ölümden döndü, Damian gölge yaratıklar tarafından yutulmanın eşiğine geldi, Seid az kalsın bir uzuvunu kaybediyordu... Fakat bu olanların hiçbirisi, Bob'un başına gelen şey kadar Capre Diem'e zarar vermedi. Sirius'un ölümden döndüğü bir savaşın ardındaki gece Sirius ile Mirabelle tekrardan iletişime geçtiler. Mirabelle, Sirius'un yeterince badire atlatarak ona verebileceği kutsamayı kaldırabileceği noktaya geldiğini söyledi. Fakat bu kutsama, Sirius'un kaynağını bile bilmediği bu hastalığı sihirli bir biçimde çözmeyecekti. Bu çözüm Sirius'un beklediği bir şey değildi. Mirabelle çözüm olarak Sirius'un uyumamasını öne sürdü ve Sirius'a onu uyutmayacak bir güç verebileceğini söyledi. Sirius için uyumak güzel bir konfor olsa da, hayatını zehir eden bu hastalık o uyuduğu zaman ona musallat oluyor, ertesi güne hiçbir şey hatırlamamaya devam ediyordu. Bu yüzden Sirius bu kutsamayı kabul etti. Uyumadığı ilk gün Sirius için çok endişeli geçiyordu, ya şafak vakti bir şekilde gene hatırladığı şeyleri unutursa ne olacaktı. Sirius korkuyordu, bu çözümün bir işe yaramama olasılığından korkuyordu. Fakat arkadaşları uyandığı vakit Sirius, gece boyunca duyduğu tüm korkuları hatırlıyor ve anılarını hatırlıyordu. Bu anı duygusal bir biçimde arkadaşları ile kutlamıştı Sirius. Artık Sirius yeni bir adamdı, olması gereken adamdı... Misyonunu hatırlıyor ve kitaptaki okuduğu anıların hepsini hatırlıyordu. Gene de diğer arkadaşlarının da güçlenmesi gerektiğini bilen Sirius, onlara da süre tanımak adına onlar ile Beyaz Şehir'e gitmeye devam etti. Beyaz Şehir'e vardıklarında Bob'un yaptığı çok büyük bir ahmaklık yüzünden orada biraz zaman geçirmek zorunda kaldılar. Damian da az kalsın kendini öldürüyordu. Bu süreçte grubun şaklabanlıkları ile uğraşırken bir yandan da Sirius, <strong>Yeryüzü Tapınağı'na</strong> gidiyor ve orada dua ediyordu. Bob'un geri gelmesi ve işlerin halledilmesi ile <strong>Carpe Diem</strong> gidecekleri yeni güzergahlarına karar verme aşamasındayken, Damian bir mektup almıştır. Bu mektup, Damian'I Zonthar'a geri dönmesi niteliğinde yapılan bir çağrıydı. Kendisini mektupta bir <strong>S.A.R.S.</strong> olarak tanıtan birisi, Damian'ı provake etmek için <strong>Rahibe Andora'nın</strong> elinde olduğunu ve Damian'ın belirli bir tarihe kadar Zonthar'a dönmezse o kadını öldüreceğini söylüyordu. Sirius ve diğerleri, Damian'ı durması için uyardı, bunun bir tuzak olabileceğini söyledi fakat Damian'ı ikna etmeyi başamamışlardı ve onu yalnız bırakmamak için onunla birlikte Zonthar'a dönmeye karar verdiler.</p>
-      <p>Yolda pek fazla sorun teşkil edecek durum ile karşılaşmasalar da, şansları sayesinde birkaç işlerine yarayabilecek eşya ve hazine buldular. Ayrıca beklemedikleri iki tipte kişiyle Zonthar sınırlarına yakınken karşılaştırlar. Bu dünyadan olmadıkları her halinden belli olan iki adam ile karşılaştırlar; birisi <strong>Herbie</strong> adındaki Leonin bir Paladin, diğeri ise <strong>Replica</strong> adında dış dünyaların gücünü kullanabilen Kenku bir Warlock'tu. Bu ikili ile ilk ve son defa burada tanılıp görüştü grup. İkilinin söylediklerine göre amaçları, dünyalar arası düzeni bozan tehlikelere karşı önlem almaktı, bu yüzden Kal'El adındaki örgütü arıyorlardı, aynı bizim grup gibi. İkilinin aldığı bilgiye göre, Kal'El ile alakalı 2 ayrı yerde gelişmeler yaşanıyordu ama onlar için ayrılmak iyi bir fikir değildi. Hem Zonthar'da hem de Verdun'da bir gelişme olduğundan haberdar olduktarını söylediler. Grup ile bu ikili birlikte plan yaptı, ve en nihayetinde bu ikisi Verdun'a, grup ise Zonthar'a gitmeye karar verdi ve her iki taraf da öyle yaptı. Fakat bizim grubun bilmediği önemli bir detay vardı ki, bu detayı gittiklerinde öğrendiler. Zonthar'daki en büyük çınar ağacının uzanan dallarında, çırılçıplak veya giysili olacak şekilde; çoluk, çocuk, genç, yaşlı, kadın, erkek fark etmeksizin Zonthar halkı katledilmiş, işkence görerek ağaca asılmıştı. Ağacın yaptakları yerine insan cesetleri ağacı süslemiş, ağaçtan reçine yerine kan akıyordu. Bu olay, tarihe adını <strong>"Kanlı Çınar"</strong> olarak kazıyacaktı. Bu olayın sorumlusu olan, Quiw adındaki adam ağacın orada Damian'ı bekliyordu. Kendisi yalnız değildi ve düşük rütbeli kültistler ile buraya gelmişti. Daynore ve diğer grup üyeleri Damian'a engel olmaya çalışsalar da, bu noktadan itibaren iki tarafın savaşı kaçınılmazdı. Damian, onu buraya çağıran <strong>Quiw</strong> denen adam ile birebir bir dövüşe tutuşmuşken, Bob ve Seid ön saflara daldılar ve kültistleri birer birer elimine etmeye başladılar. Daynore ve Sirius'un arkadan onları desteklemesi üzerine işler kolay gibi görünüyordu, lakin kültist Drow suikastçiler arka tarafı hedef aldılar ve hem Sirius'u hem de Daynore'yi saf dışı bırakmayı başardılar. Sirius ölümden dönmüş, Daynore ise Drow zehri ile bayıltılmış bir biçimde bilinçsizce yatıyordu. Gene de Seid ve Bob, sayıca çok fazla olan kültistlerin üstesinden gelmeyi başardılar. Kendi takiplerini alt ettikten sonra direkt Damian'a yardıma koştular, çünkü hayatlarında ilk defa Damian'ın bir savaşı kaybettiğine şahit oluyorlardı. Kendisine <strong>S.A.R.S.</strong> diyen <strong>Quiw</strong> adındaki adam ile bire üç bir dövüşe girdiler, lakin adam üçünün gücüne eşdeğer bir biçimde savaşıyordu. Bu savaşın en nihayetinde Bob ölümcül yaralarına rağmen ayakta kalabilen ve son vuruşu yapan kişi olmuştu fakat hem Seid hem de Damian, bu savaşta hayatlarını kaybetmişti. Savaşın bitiminde ise bütün bir savaş boyunca onları izleyen dilenci gibi gözüken yaşlı bir adam, muharebe alanınde belirmiş ve Bob ile kafa bulup onunla dalga geçmiştir. Fakat ölümün eşiğine gelmiş ve savaşmaya gücü kalmamış Bob, bu dilenci gibi görünen adamın altında farklı bir güç yattığını anlayıp pankilemişti. Lakin adamın Bob'a veya diğerlerine zarar verme gibi bir niyeti yoktu, aksine Bob ile hem konuşarak hem de bir şişe vererek ona yardımcı oluyordu. Yaşlı adam Bob'a , öldürdükleri adamın kim olduğunu anlatmıştı. Herkes o adamın <strong>S.A.R.S.</strong> denen şey olduğunu zannediyordu, ama orada yaşlı adam sayesinde öğrendiler ki, <strong>S.A.R.S.</strong> aslında <strong>Kal'El'in</strong> içindeki seçilmişlerden oluşan özel elit insanlardı. Bu adamın Damian'ı kıskandığından bahsetti ve en nihayetinde adam amacına Damian'ı öldürerek ulaşmıştı, ama daha <strong>S.A.R.S.</strong> olarak çok kişi vardı. Ayrıca adam Bob'a bir şişe verdi ve bunun bir canlandırma iksiri olduğunu, fakat arkadaşları arasında bir seçim yapması gerektiğini söyledi. Bob bu adam ile konuşması bittikten ve adam gittikten sonra, Daynore ve Sirius'u uyandırarak onlara olanları anlattı ve bu şişeyi kimin üzerinde kullanmaları gerektiğini konuşmalarını söyledi. Carpe Diem bu noktada çok zor bir seçim yapmak durumundaydı, iki grup üyeleri ölmüştü ve ellerinde tek bir iksir vardı. Daynore üzgündü, dediğine göre Beyaz Şehir'den tanıdığı bir büyücü arkadaşının söylediği fakat ne olacağını tam bilmediği kötü alamet gerçekleşmişti ve şimdiyse grup lideri olarak bir seçim yapmak zorundaydı. Bu seçim Daynore için çok zor olsa da, uzun süren duygusal düşünceler ve tartışılan fikirler doğrultusunda, Daynore herkesin rızası ile bu şişeyi Damian üzerinde kullanmaya karar verdi ve dirilme iksirini Damian'a içirdi. Fakat bilmedikleri şey şuydu ki, bu iksir sadece renkli bir sudan ibaretti, ortada bir dirilme iksiri yoktu. Yaşlı adam, Carpe Diem ile alay etmişti ve onların moralini sorgulatmıştı. En başından beri azılı bir suçlu olan delirmiş bir katili diriltmeyi, bu savaşı kazanmalarını sağlayan ve hayatını Zen öğretilerine adamış ahlaklı bir keşişe tercih etmişlerdi...</p>
-      <p>Grup birlikte bir karar vermeye çalışırken, <strong>Zonthar Muharebesi'nde</strong> onlara çok büyük yardımlar eden yaşlı büyücü <strong>Armani'nin</strong> onlara yaklaştığını fark ettiler. Bu yaşlı bunak büyücü, Zonthar halkının büyük bir kesimini gelen tehlikeyi ön görerer Menzher ile anlaşarak saklamıştı. Saklananlar arasında Rahibe Andora'da bulunuyordu, Çam ağacında asılı olan kadın, onun gibi giydirilmiş başka bir kadındı. <strong>Menzher</strong> ve <strong>Armani</strong> ile konuşup onlara olanları anlattıktan ve onların fikirlerini dinledikten sonra <strong>Carpe Diem</strong>, elf diyarı olan <strong>Alve Dorei'ye</strong> gitmeye karar vermişti. <strong>Menzher'in</strong> dediğine göre orada belirli aralıklarla bir Eladrin Şehri'nin belirdiğini ve o şehirde <strong>Naixana Rüyatepe</strong> adında bir Druid'in olduğunu ve <strong>Reincarnate</strong> büyüsünü yapabilecek kudrette birisi olduğunu öğrendiler. Bu yolculukta Armani de onlara eşlik edeceğini söyledi. Eski üstad Armani'nin de kendilerine katılmasıyla birlikte grup, Damian'ı diriltmek için Alve Dorei'ye uzun bir yolculuğa çıktı. Alve Dorei'ye gitmeden önce, buradaki arbede sesine gelmiş ve ayak izlerini takip etmiş bir dövüşçü ile karşılaştılar. Bu dövüşçü, Daynore'nin <strong>Beyaz Şehir'deki</strong> en iyi dostlarından biri olan, <strong>Beyaz Şehir Büyük Arenası'nda</strong> gladyatör dövüşlerinde ün salmış arena şampiyonu <strong>Julius'tan</strong> başkası değildi. <strong>Julius</strong> uzun zaman boyunca arenada savaşmış ve kazandığı savaşklar ile özgürlüğünü kazanmış bir gladyatördü. <strong>Beyaz Şehir'de Vivien</strong> ile konuştuktan sonra Daynore'nin yardıma ihtiyacı olabileceğini düşündüğü için arkadaşına yardıma gelmişti. Daynore ile hasret giderdikten sonra Julius, <strong>Carpe Diem'e</strong> katıldı. Alve Dorei'ye Armani'nin evinde yaptığı bir ışınlanma büyüsü sayesinde gitmeyi başardılar. Bu Eladrin şehri her vakit kendini gösteren bir şehir olmadığı için, sıradaki vakti beklememek adına ellerini hızlı tutup bu şehir halihazırda yakın vakitlerde kendini göstereceği için çabuk olmaları lazımdı. Alve Dorei topraklarında zorlu yüzleşmeler ile karşılaşsalar da, gizli Eladrin Şehri'ni bulabilmeyi başardılar ve orada aradıkları Druid olan <strong>Naixana'yı</strong> buldular. <strong>Naixana'nın</strong> istediği ücreti karşıladıktan sonra Damian'ı reenkarne etmeyi başardılar. Damian yeniden bir insan olarak doğmuştu fakat tamamen değişmişti. Yüzü aynı değildi ve eskisi gibi görünmmüyordu, saç rengi değişmişti ve en önemlisi kişiliği değişmişti. Bu noktada grup; Damian'ın da dirilmesiyle, Armani ile Julius'un onlara katılmasıyla ve atlattıkları badirelerden edindikleri güç ve tecrübeyle <strong>Underdark'a</strong> inebileceklerine karar verdi. Alve Dorei yakınlarında, sınır bölgesi olarak kabul edilen bir mağara girişinde Underdark'a uzanan bir <strong>Drow Tüneli</strong> olduğunu öğrendiler. Elf hükümetinin koruduğu bu tünelden <strong>Underdark'a</strong> inmeye karar verdiler. Bu geçite doğru yola koyulduklarında, şanssız bir karşılaşma ile bir <strong>Gümüş Ejderha</strong> ile yolları kesişti ve anlaşmazlık neticesinde Grup ile ejderha birbirine girdi. Ejder savaşı çok zorlu geçmişti; Armani neredeyse kendini kızartarak ölüyordu, Damian'ın bütün kemikleri kırıldı, Daynore'nin ekipmanı zarar gördü. Fakat en önemlisi Julius, maalesef neredeyse 120 feet yukarıdan düşerek hayatını kaybetti. Bu yüzden grup Julius'u da <strong>Reenkarne</strong> etmek zorunda kaldı. Ejder'den hasat ettikleri parçaları satarak parayı çıkardılar ve Julius'u da dirilttiler fakat normalde; sevecen, güleryüzlü, ılımlı ve komik olan Julius, tamamen zıt bir kişilikte bir Yarı-Elf olarak yeniden dirildi ve sanki Damian ile roller değişmiş gibi, gruba sorun çıkarmaya başlamıştı. Alve Dorei'de son alışverişlerini yaptıktan sonra grup Underdark'a inişini gerçekleştirmiştir.</p>
-      <p>Underdark'a indikleri vakitten itibaren, güneş girmeyen ve daima karanlık olan bir yerde yürümenin deformasyonu olarak zaman algılarını kaybetmeye başladılar. Bu yolculukta onların ışığı Sirius oldu. Sirius Mirabelle'nin gücüyle yolu aydınlatıyor, yolculuğu en azından daha çekilebilir kılıyor ve suni de olsa güneş benzeri bir ışık yaratabiliyordu, böylece grubun önemli ölçüde akıl sağlığını korumasını sağlıyordu. <strong>Kal'El'in</strong> inini bulmak adına, yerini öğrendikleri bir drow kalesine doğru gitmeye karar verdiler. Oraya giderken, <strong>Hook Horrorlar</strong> gibi çeşitli garabetler ile savaştılar ve <strong>Gelecekten Gelmiş 2. bir Daynore</strong> ile tanıştılar. <strong>Gelecekteki Daynore,</strong> onlara potansiyel zorlukları ve olabilecek katastrofik senaryoları anlattı ve günümüzdeki Daynore'ye bir hediye verdi zamanı gelince kullanması adına. Yolda geçirdikleri belirsiz bir vaktin ardından <strong>Vincent</strong> adındaki bir Necromancer ve onun Nagaları ile savaştılar ve bu savaştan muzaffer ayrıldılar. Lakin Necromancer'ın inine girdiklerinde oradaki tuzaklar tetiklendi ve ikincil bir savaş esnasında <strong>Julius</strong> maalesef öldü. Onu nerede bile olduklarını hatırlayamayacakları bir noktaya hiçbir belirteç olmadan gömmek zorunda kaldılar. Julius'un yasını tutmalarının ardından grup Drow kalesine doğru yola çıkmıştı. Kaleye varmadan önce buldukları bir mağara oyuğunda dinlenmeye karar verdiklerinde bir kadın ile karşılaştılar. Mağarada garip giyinimli, uzaylı görünümlü, upuzun bir mızrak kullanan bir <strong>Githyanki</strong> oturuyordu. Damian bu kadına fazla ilgi duyuyordu, fakat kadın konuşmasını bile bilmiyordu, Daynore onunla başka bir dilde konuşarak anlaşıyordu. Daynore sayesinde, bu kadın ile ortak bir amaç bulmalarının ardından, <strong>Fen'le</strong> adındaki bu <strong>Githyanki'yi</strong> gruplarına dahil ettiler. Grupta bir fikir ayrılığı söz konusuydu, sanki Julius'un yerini dolduruluyormuş gibi hissettiren bir durum mevcuttu. Bob ve Armani bu kadının katılmasının yanlış birşey olduğunu düşünüyordu, öte yandan Damian, Daynore ve Sirius ise bu kadının gelmesini destekliyordu. En nihayetinde ise bu kadını da yanlarına aldılar ve Drow kalesine ilerlemeye devam ettiler. Drow kalesine gittikleri vakit grup iyi karşılanmadı ve kendilerini bir ölüm tuzağının içerisinde buldular. Onların yardımına <strong>Gelecekten Gelen Daynore</strong> yetişmiş ve onları kurtarmış olsa da, <strong>Gelecekteki Daynore</strong> büyük bir grup ile uğraşıyorken, nispeten daha küçük fakat elit bir grup ters taraftan grubu sıkıştırmıştı ve bir çatışma kaçınılmaz gözüküyordu. Fen'le düşündüklerinden çok daha iyi savaşıyordu, ve zor bir savaşın, kümulatif katkılar ile altından kalkmayı becermişlerdi lakin bu savaşta <strong>Armani,</strong> bir büyücünün çağırdığı küçük bir <strong>Quasit</strong> yüzünden hayatını kaybetmişti. Armani, Underdark'ta hem bilgisi hem de gerekli büyüleri ile grubun çok işine yarıyordu, bu yüzden Armani gibi usta bir büyücünün cesedini drowlara veremezlerdi, ayrıca Armani'nin yakın dostu olan <strong>Charlie'ye</strong> de söz vermişlerdi onu sağ sağlim geri getirme konusunda. Bu yüzden <strong>Armani'nin</strong> cesedini alıp, Underdark'ın başkenti olan <strong>Saphentitte</strong> adındaki şehire gitmeye karar verdiler. </p>
-      <p>Sirius, <strong>Saphentitte'ye</strong> giden yolda hayatının aşkı ile tanıştı. Underdark'ın bilinmeyen atmosferi ve habitatı içerisinde zorlu savaşlar yapmaya devam ediyorlardı, Daynore onlara yemeleri için büyü ile her gün <strong>Goodberry</strong> oluştursa da, gene de çok yorulmuşlar ve dinlenmeye ihtiyaçları vardı. Şanslarına karşılaştıkları bir durum ile yolları <strong>Harpyler</strong> ile kesişmişti. Harpyler Sirius'u görerek onu başkası ile karıştırdıkları için onu karşılamaya gelmişlerdi. Underdark boyunca <strong>Fen'le</strong> ve <strong>Gelecekten Gelen Daynore</strong> dışında gerçek anlamda karşılaştıkları düşmancıl olmayan ilk gruptu bu. Daynore ve Sirius, Harypleri ikna ederek belli bir süre dinlenecek yere ihtiyaçları olduklarını söylediler ve Harpyler <strong>Carpe Diem'i</strong> kendi yuvalarına, <strong>Underdark Harpy Kayalıkları'na</strong> götürdüler. Grub olarak kraliçe Harpy olan <strong>Harpy Kraliçesi Niemlia'nın</strong> karşısına çıkarıldılar. Ortada bir kader bağlılığı söz konusu gibi gözüküyordu. Kraliçe Sirius'u görünce duygulandı, çünkü Sirius Kraliçe'nin <strong>uzun zamandır yuvadan uzak olan eşine</strong> çok benziyordu. Orada grup öğrendi ki Kraliçe'nin eşi; aynı Sirius gibi siyah düz ve uzun saçlı ve uzun yüz hatlarına sahip bir yarı elfmiş ve bu kişi eski bir <strong>Zincirdar'mış.</strong> Kraliçe bu yabancıların yuvaya herhangi bir tehdit oluşturmadığını anladığı vakit bir yandan da duygusal bir karar vererek, onların ihtiyaçlarını karşılayabileceklerini kadar burada kalabileceklerini söyledi ve onları misafirperver bir biçimde yuvasında konuk etmeyi kabul etti. Fakat Kraliçe'nin ön göremediği bir durum vardı ki, yuvasını tehdit etmese de yuvanın bekasını tehdit ediyordu bu konu. Bu kader bağının bir uzantısı olarak, Kraliçe'nin ve eşinin bir kızı vardı. Bu kızın ismi <strong>Harpy Prensesi Zaerephys'ti.</strong> Sirius ile bu kız birbirlerini gördükleri ilk vakitte, birbirlerine karşı bir merak ve merakın getireceği biçimde farklı duygular hissetmeye başladılar. Zaerephys, babasından hasret duyduğu bir sıcaklık ve bir ışık hissediyordu Sirius'un içinde, Sirius ise kalbinde her daim bir boşluk ve eksiklik duygusu olacak vaziyette, Zaerephys'in yanındayken hayatı boyunca hissettiği ve anlam veremediği <strong>"Yalnızlık"</strong> duygusunu hissetmiyordu. Birbirlerinin yanında farklı ve çocuksu bir biçimde mutluydular. Burada kaldıkları süreçte Sirius, <strong>Carpe Diem'deki</strong> dostlarından daha çok <strong>Zaerephys</strong> ile zaman geçiriyordu ve bunu herkes görüyordu. Kraliçe bu manzaranın karşısında endişeleniyor ve kalbi kırılıyordu, fakat bir yandan da kızını bu denli hayat dolusu görünce de mutlu oluyordu. Kalbinin kırılmasındaki sebep olarak, bu ikisini gördüğünde eski hayatında eşi ile geçirdiği zamanı hatırlıyor ve o mutlu günlerini mum ile arıyordu. Endişelenmesindeki temel sebep ise; Zaerephys, Kraliçe'nin <strong>tek varisiydi.</strong> Kraliçe kızını tanıyor ve kendisiyle benzer bir kararı vermenin eşiğinde olduğunu biliyordu. Zaerephys'in yuvadan gitmesi durumunda, Kayalıklar varissiz kalacaktı ve Kraliçe'nin yönetimi bittiğinde <strong>kaçınılmaz ve kanlı bir savaş çıkacaktı.</strong> Gene de kendi ulaştığı bu mutluluktan kızını mahrum bırakmak da istemiyordu. Kraliçe'nin endişe ettiği gibi, bu sıradan bir birliktelikten hayat boyu kalacak bir aşka dönüşmüştü ve Sirius ile Zaerephys, cürretkar bir biçimde Kraliçe'nin karşısına çıkmıştı. Zaerephys, Sirius ve Carpe Diem ile Kayalıklar'dan ayrılmak istiyor ve hayatını Sirius ile devam ettirmek istiyordu. Varisin olmadığı durumda geleneklerden ötürü çıkacak kanlı savaşın hem Zaerephys hem de Kraliçe farkındaydı fakat Zaerephys, bu gelenekten Sirius'a bahsetmemişti, <strong>Sirius bunu bilmiyordu.</strong> Kraliçe, bu geleneğin sözünü açmadı çünkü Sirius'un bu geleneği bilmesinin, Sirius'un kararına olumsuz yönde etki edeceğini ve kızını üzeceğini düşündü. Bir Kraliçe olarak Niemlia, elegans duruşunu ve otoritesini bozmadı fakat bir Kraliçe olarak değil, bir Anne olarak karar verdi ve Sirius ile Zaerephys'in birlikteliğini onayladı. Hem Harpyler hem de Carpe Diem, sevinç ile dolmuştu ve geleneklere göre Zaerephys'in yuvadan ayrılmadan önce evlenerek gitmesi gerekiyordu. Birkaç gün sonrasına hemen bir evlilik hazırlandı ve bu evlilik için gereken süreçte hazırlıklar hızla tamamlandı. Harpy töresi ve geleneklerine göre, ilginç ve aşırı misafirperver bir düğün yapıldı, Carpe Diem'den isteyenler fiziksel olarak, konuklara sunulmuş olan Harpyler ile samimileştiler. Bob ile Daynore bu samimi temas ile yakınlaşmayı kabul ederek geleneklere bir saygısızlık yapmadılar, Damian ise bir eşinin olduğunu söyleyerek Fen'le ile samimileşti. Herkes için çok mutlu bir gece oluyordu, ama bu gecenin en mutlu olan ikilisi Sirius ve Zaerephys'ti. Artık Sirius, eşi ile bir ömür boyunca bağlanmıştı. Minik kuş yuvadan uçmadan önce Kraliçe'nin yapacağı son bir şey kalmıştı. Düğünün ardından Kraliçe, hem kızını hem de damadını çağırdı ve Sirius'a, Zincirdar eşinin Kraliçe'ye bıraktığı eski Büyü Asası'nı verdi. Sirius böyle bir şeyi kabul etmek istemedi, bu asanın değeri Kraliçe için paha biçilemezdi, fakat kızının da yuvadan gitmesiyle birlikte, Kraliçe'nin bu asayı kendi yanında tutmasının bir anlamı kalmamıştı. Sirius, Kraliçe'yi dinledikten sonra ikna olmuş ve yolculuğunda Zaerephys'e babasından bir parça hatırlatıcı olabilmesi adına bu asayı taşımayı kabul etmiş ve bunu layığı ile taşıyacağına söz vermiştir. Her şeyin ardından ise Carpe Diem ve Zaerephys, Harpy Kayalıkları'ndan ayrılmış ve Saphentitte'ye yolculuklarına devam etmiştir. Kraliçe, üzgün olsa da kızının bahtını kapamamış ve kızının kaderini reddetmemişti. Artık yıllar sonra savaş kaçınılmaz olacaktı. Fakat Carpe Diem'in bilmediği bir şey vardı. Harpy Kraliçesi Niemlia, tahtına Veraset sonucunda oturmamıştı... Harpyler arasında Kraliçe'nin lakabı "Kanlı Niemlia" olarak bilinirdi... </p>
-      <p><strong>Saphentitte'ye</strong> geldiklerinde hem <strong>Armani'yi</strong> dirilttiler, hem de <strong>Kal'El'in</strong> sığınağı ile alakalı bilgiler topladılar. Bu süreçte <strong>Ölüler Meclisi</strong> adındaki kuruluş, aldıkları paranın misliyle hakkını ödeyerek <strong>Carpe Diem'e</strong> çok yardımcı oldu. Bu süreçte Ölüler Meclisi'nden <strong>Sylas ve Skull,</strong> grup ile bizzat ilgilendi. <strong>Armani'yi</strong> onlar diriltti ve <strong>Kal'El'e</strong> giden yolun <strong>Syfelin</strong> adındaki Drow şehrinden geçtiğini araştırarak öğrendi. Yapacakları plan ve para konusunda anlaştıktan sonra Carpe Diem, Sylas ve Skull birlikte Syfelin'e doğru yolculuğa çıktı. <strong>Ölüler Meclisi</strong> çok profesyonel bir şekilde çalışarak, hiçbir sorun yaşanmadan onları <strong>Syfelin'e</strong> getirmeyi başardı. Bu noktadan sonra ise <strong>Ölüler Meclisi</strong> ile grup yollarını ayırdı. <strong>Syfelin'de</strong> yeni bir rehbere ihtiyaçları vardı, bu yüzden bir drow tavernasına girerek kendilerinin işine yarayacağını düşündükleri bir drow ile anlaştılar ve o drowdan, onları <strong>Drow Tünelleri'nden</strong> geçirerek istedikleri lokasyona onları ulaştırmasını istediler. Bu drowun ismi <strong>Minofein'di</strong> ve birçok yarası olan erkek izci bir drowdu. Bu drow, grubun başına birçok bela açtı, istenmeyen düşmanlar ile savaşmalarına sebep oldu ve grubun drow tünellerinde kaybolmasına sebep oldu. Kaybolduktan sonra yolunu bulabilmesi çok uzun zaman aldı grubun ve Minofein'in, fakat bir şekilde grubu istediği noktaya getirmeyi başardı bu iştutmaz drow. Bu tünellerde <strong>Sirius ve Armani</strong> sayesinde, hem Saphentitte'de hem de <strong>Syfelin'de</strong> duydukları bir efsane hakkında ekstra bilgiler öğrendiler. Kal'El, cennetten kovulmuş ve yozlaşmış <strong>"Düşmüş Melek Fatih Harthog"</strong> adındaki ölümsüz olan bir melek ile anlaşma yapmıştı ve <strong>Kal'El'in</strong> üssüne giden bu yolda onları bu melek bekliyordu. Grup kendi içerisinde fraksiyonlara ayrılmıştı; bazı kişiler ölümsüz bir meleğin adı üstünde ölümsüz olacağını düşündüğü için bu savaşa girmemeleri gerektiğini düşünüyordu, fakat Kal'El'in sığınağına gitmenin başka alternatif bir yolu yoktu. Bu yüzden grup üyeleri arasında oraya gidip gitmemeleri gerektiğini konu alan bir tartışma çıkmıştı ve bu tartışma iyice alevlendi. Armani özellikle bu meleğin kadri ve kudretinden korkuyordu, bu yüzden Sirius'un gücünün kaynağı olan Archangel Mirabelle ile iletişime geçti. Sirius ilk başta bu fikire sıcak bakmasa da Mirabella, Sirius ile iletişime geçerek buna izin verdi. <strong>Mirabelle, Armani ve Sirius</strong> zihin olarak aynı anda birbirlerine bağlanmışlardı ve birbirlerini duyuyorlardı. Armani Mirabelle ile iletişimde olduğu süre esnasında, bir Archangel'a nasıl bir meleği öldürebileceğini sordu. Mirabelle, Armani'nin niyetindeki gerçek hinliği yakalamıştı ve ona nasıl yapılacağını söylemedi, fakat bir meleği öldürmenin mümkün olduğunu belirtti ve kendi <strong>Warlock'u olan Sirius'a</strong> bu meleğin ölümsüz doğasını delmek için gereken gücü bahşetti. <strong>Armani</strong> istediğini alamamanın siniri ve bir melek ile yüzleşmenin korkusu neticesinde, Mirabelle'nin sözlerinde bir yalan aradı ve duyduğu şeyleri reddederek yalanladı. Bunun üzerinde Sirius ve Armani arasında bir tartışma çıktı ve bu tartışmaya diğer grup üyeleri de dahil oldu. Bu tartışmanın ardındaysa grup parçalanmaya ve bölünmeye başladı. Bu bölünmeyi fiziken başlatan kişi ise <strong>Damian</strong> oldu. <strong>Damian,</strong> drow tünellerinden çıktıktan sonraki ilk dinlenme esnasında hiçbir şey söylemeden ve nereye gittiği belli olmayacak şekilde grubu terk etti. Bu hem Sirius'u hem de herkesi şaşırtmıştı. Bu gerçek karşısında motivasyonunu ve akıl sağlığını kaybeden <strong>Fen'le,</strong> Damian'ın ardından grubu terk eden ikinci isim oldu. Bu yola 2 kişi eksik devam etmeleri gerekiyordu, ve yollarının üzerinde bir engel olarak <strong>Ölümsüz bir Melek</strong> onları bekliyordu. Bu meleğe karşı olan savaşın zor, hatta neredeyse imkansız olacağını düşünen <strong>Armani,</strong> bu savaşa katılmayı reddetti ve gruba engel olmaya çalıştı. Bu noktada gruba engel olmayı başaramayan yaşlı büyücü, <strong>Carpe Diem'e</strong> küserek onlardan uzaklaştı. Underdark'ın karanlık atmosferinde önünü göremeyen Armani, uçan süpürgesine binerek bir meşale yaktı ve bir aptal gibi kendisini açık hedef haline getirdi. Kalan grup üyeleri, Bob ve Daynore'nin özgüven konuşmasının ardından, ölümlerinin muhtemel olduğunu bilerek bu melek ile savaşmaya gittiler. O sırada Kal'El'in sığınağının yakınlarında devriye gezen bir suikastçi, Armani'yi gördü ve ona bir suikast düzenleyerek öldürdü.</p>,
-      <p>Harthog ile girdikleri savaş zorlayıcıydı ve neredeyse imkansızdı. Ayrıca savaş esnasında birçok zorluklar yaşadılar; savaşa 3 kişi eksik girdiler ve Bob ön saflarda yalnız başına dövüşmek zorunda kaldı, Minofein savaş boyu bir işe yaramadı ve kendi silahlarına zarar verdi ve Zaerephys'in kontrol büyülerinin hiçbiri etkili olmadı. Fakat <strong>Gelecekten Gelen Daynore'nin</strong> verdiği ok sayesinde Daynore inanılmaz güçlü bir saldırı yapmayı başardı ve Sirius ölümsüz meleğin kırılmaz defansını penetre ettiği için <strong>Düşmüş Melek Harthog'u</strong> yenmeyi başardı. Çok uzun süren bu epik savaşın neticesinde, Harthog kaybetti fakat kendisiyle birlikte bütün herkesi <strong>Disintegre</strong> etmeye çalıştı. Carpe Diem'deki herkesin ölümün eşiğine geldiği bu savaşta grup, Düşmüş meleği öldürdü ve disintegre saldırısından da son anda kurtulmayı başardı. Bu çok önemli zaferin kutlamasını bile yapmadılar, geri dönüp Armani'yi kontrol etmek istediklerinde ise, yaşlı büyücünün cesedi ile karşılaştılar ve kitabının çalındığını fark ettiler. Bu zaferin ardından yeterince dinlenmelerinin ardından ise, dünya dışı bolluk ve bereket barındıran hazineleri alarak, Kal'El'in sığınağına devam etmek istediler. Grubun bu büyük zaferin ardından, bütün mentali kırılmıştı ve hayat enerjileri kalmamıştı. Bu maceraya bir son verebilir, kaçabilir veya daha fazla bekleyip bir yardımın gelmesini umabilirlerdi... Fakat Daynore, grubu bir ölüm yürüyüşüne gönderdi ve hep birlikte Kal'El'in sığınağına doğru yola koyuldular. Sığınağı bulduklarında ise, oranın girişinde nöbet tutan, aynı Damian gibi Flagellantlar ile karşılaştılar. Fakat çok zayıflamış bu grup, Flagellantlar ile girdiği mücadeleden sağ çıkmayı başaramadı. Sirius arkadaşlarını bu mapus kaderden kurtarmaya çalıştı ve elinden geleni denedi fakat gene de sonuç başarısızdı. Önce Minofein öldü, daha sonrasında ise Sirius sevgilisinin kollarında hayata gözlerini yumdu. Carpe Diem, Kal'El'in sığınağının önünde son savaşını verdi...</p>
-      <p>Sirius ismi, İmparatorluk tarafından tanınmıştır. Imparatorluk tarafından kendisine "Kahraman" ünvanı verilmiştir. Irkının getirdiği zorluklara takılmayıp, onurlu bir biçimde İmparatorluk ve tüm kıta uğruna savaşarak ölmüştür. Cesedi bulunamamıştır. Bazı sagularda sevdiceği ile el ele tutuşmuş bir biçimde şehit düştüğü söylenir. <strong>Carpe Diem'in</strong> kudretli, genç, potansiyelli lakin aklı başında büyücüsü en önemli kahramanlardan biri olarak hatırlanacaktır. Sevdiği kadın ile birlikte ölmesinden ötürü ikisinin de ruhu <strong>Tanrıça Kredite'ye</strong> sunulmuş ve mucizevi bir şekilde de olsa kabul görmüştür. İkisinin anı mezarındaki mezar taşlarında <strong>Tanrıça'nın Kutsaması'nı</strong> işaret eden <strong>"Kazan"</strong> sembolleri, kazınmamasına rağmen oluşmuştur. İsimleri <strong>Tanrı Anıtları'na</strong> aynı plakada olacak şekilde kazınmıştır. Sevdiği çok olan ve diyardaki bütün sevgililerin ilham alacağı şekilde hatırlanacaktır...</p>
+      <p><strong>Ege BOZKURT</strong> tarafından canlandırılmış ve oynanmıştır. <strong>Sirius</strong>, doğuştan gelen gizemli bir hastalıkla dünyaya geldi: belleği sürekli bulanıklaşıyor, yaşananları tutamıyordu. Half-Elf olan Sirius, büyücülüğünü ve sırlarını hoca <strong>Bervi</strong>'den öğrendi. Bervi'nin efendisi karanlık tanrı <strong>Erebos</strong>'a hizmet etmekteydi ve Sirius da onu takip etmeye zorlandı. Erebos onu kabul etmedi — "Işıklı bir ruh" dedi ve geri çevirdi. Bunun üzerine Bervi onu cennete gönderdi; orada <strong>Archangel Mirabelle</strong> ile bir anlaşma yaptı: eğer görevini tamamlarsa hastalığını iyileştirecekti. Görev: <strong>Uther Işıkgetiren'i</strong> diriltmek ve <strong>Daynore Dínenlas'ı</strong> bulmaktı.</p>
+      <p>Zonthar'a varıp John'un cenazesine denk gelen Sirius, <strong>Carpe Diem</strong> grubuna katıldı. Başlarda hafızasını tutamıyor, isimler ve yüzler kayıyordu. Buna rağmen grubun en güçlü büyücüsü olarak öne çıktı. Verdun maceralarında <strong>S.A.R.S.</strong> ile mücadele etti, ejderhalarla karşılaştı ve <strong>Zincirdar</strong> isimli savaşan karakterle derin bir bağ kurdu. Archangel Mirabelle nihayetinde ona hastalığını yenmesinin tek yolunu öğretti: uyumamak. Sirius bunu hayatı boyunca sürdürdü.</p>
+      <p><strong>Underdark</strong> maceralarında karanlık topraklarda grubun ışığı oldu. Drow kalesinde yeni dostluklar kurdu, <strong>Fen'le</strong> ile kısa ama derin bir bağ yaşandı. En büyük sürprizi Harpy Kraliçesi <strong>Niemlia</strong>'nın sarayında yaşandı: Sirius, Harpy Prensesi <strong>Zaerephys</strong>'e aşık oldu. Zaerephys de ona karşılık verdi. Zincirdar Kayınpederden gelen miras olarak <strong>Rod of the Pact Keeper +3</strong> elde etti ve gücünün doruğuna ulaştı.</p>
+      <p>Son günlerde <strong>Düşmüş Melek Harthog</strong> ile yapılan savaşta grubun zaferi büyük ölçüde Sirius'un büyülerine dayandı. Ardından <strong>Armani'nin</strong> ölümü grubu sarstı. Kal'El kalesine izinsiz giren Carpe Diem, orada sayıca üstün düşmanlara yakalandı. Sirius grubun kaçması için arka kapıyı açık tuttu. Yorgun, yaralı ve yalnız kaldığında Zaerephys'in kolları arasında son nefesini verdi — 63 yaşında, sevdiği kişinin yanında.</p>
+      <p>Sirius'un ölümü kalıcı olmadı. <strong>Oblex Kral'ın</strong> yenilgisiyle birlikte tüm esir ruhlar serbest kaldı; Sirius da dirilerek <strong>Wings of Vengeance'a</strong> katıldı. Artık 91 yaşında ve hafızası tamamen güçlü bir şekilde yerli yerinde olan Sirius, geçmişte yaptığı her seçimi netlikle hatırlıyor. Zaerephys ile birlikte yeni bir hayata adım atan Sirius, Carpe Diem'in ışığını taşımaya devam ediyor.</p>
     </div>
 
-    <div class="alternative-images">
-      <div>
-        <img src="Mirabelle.jpg" alt="Sirius'a Güçlerini Veren Archangel Mirabelle" onclick="openModal(this)">
-        <div class="image-title-alt">Sirius'a Güçlerini Veren Archangel Mirabelle</div>
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong>
+        <div class="badges">
+          <span class="badge">Unutkan Büyücü</span>
+          <span class="badge">Masum ve Mazlum</span>
+          <span class="badge">Carpe Diem'in Işığı</span>
+          <span class="badge">Gücü Sınırsız Büyücü</span>
+          <span class="badge">Işık Şifacısı</span>
+          <span class="badge">Archangel Mirabelle'nin Hizmetkarı</span>
+          <span class="badge">Unutkanlığı Yenen Sehhar</span>
+        </div>
+        <strong>Lore Etkisi:</strong><br>
+        Carpe Diem'in en güçlü büyücüsü. Hafıza hastalığını uyumayarak yendi. Harthog savaşını kazandırdı. Ölüm sonrası dirildi ve Wings of Vengeance'a katıldı.<br><br>
+        <a href="sirius.pdf" target="_blank" class="character-link">✨ Char Sheet</a>
       </div>
-      <div>
-        <img src="Daynore Dínenlas.jpg" alt="Mirabelle'nin Sirius'a Bulması Gerektiğini Söylediği Elf Daynore" onclick="openModal(this)">
-        <div class="image-title-alt">Mirabelle'nin Sirius'a Bulması Gerektiğini Söylediği Elf Daynore</div>
-      </div>
-      <div>
-        <img src="Harpy Kraliçesi Niemlia.jpg" alt="Harpylerin Kraliçesi ve Sirius'un Validesi Niemlia" onclick="openModal(this)">
-        <div class="image-title-alt">Harpylerin Kraliçesi ve Sirius'un Validesi Niemlia</div>
-      </div>
-      <div>
-        <img src="Harpy Prensesi Zaerephys.jpg" alt="Sirius'un Aşık Olduğu Harpy Prensesi Zaerephys" onclick="openModal(this)">
-        <div class="image-title-alt">Sirius'un Aşık Olduğu Harpy Prensesi Zaerephys</div>
-      </div>
-      <div>
-        <img src="Rod of the Pact Keeper +3.jpg" alt="Kraliçe'nin Sirius'a Hediye Ettiği Zincirdar Kayınpederinin Eski Asası" onclick="openModal(this)">
-        <div class="image-title-alt">Kraliçe'nin Sirius'a Hediye Ettiği Zincirdar Kayınpederinin Eski Asası</div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Celestial Warlock / Divine Soul Sorcerer</span></div>
+          <div class="info-row"><span class="info-label">Level:</span><span class="info-value">10 Lv'da Öldü / Güncel: 12 Lv</span></div>
+          <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Half Elf — Half Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">63'te Öldü / Güncel: 91</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+        </div>
       </div>
     </div>
 
-    <a class="back-link" href="../index.html">← Geri Dön</a>
+    <div class="carousel-section">
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0"><img src="Mirabelle.jpg" alt="Mirabelle" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="0" data-idx="1"><img src="Harpy Kraliçesi Niemlia.jpg" alt="Harpy Kraliçesi Niemlia" onclick="openModal(this)"></div>
+              <div class="carousel-card" data-panel="0" data-idx="2"><img src="Harpy Prensesi Zaerephys.jpg" alt="Harpy Prensesi Zaerephys" onclick="openModal(this)"></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Sirius'a Güçlerini Veren Archangel Mirabelle</div>
+          <div class="carousel-dots" id="dots-0"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+        </div>
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0"><div class="carousel-placeholder">Kayıtlı düşman görseli bulunmamaktadır.</div></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Henüz kayıtlı düşman görseli bulunmamaktadır.</div>
+          <div class="carousel-dots" id="dots-1"><span class="dot active"></span></div>
+        </div>
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0"><img src="Rod of the Pact Keeper +3.jpg" alt="Rod of the Pact Keeper" onclick="openModal(this)"></div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Zincirdar Kayınpederinden Miras Kalan Rod of the Pact Keeper +3</div>
+          <div class="carousel-dots" id="dots-2"><span class="dot active"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      <a class="back-link" href="../index.html">← Geri Dön</a>
+      <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
+    </div>
   </div>
 
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
-    <strong>Unvanlar:</strong><br>
-    Unutkan Büyücü, Masum ve Mazlum, Carpe Diem'in Işığı, Gücü Sınırsız Büyücü, Işık Şifacısı, Archangel Mirabelle'nin Hizmetkarı, Unutkanlığı Yenen Sehhar<br><br>
-    <strong>Lore Etkisi:</strong><br>
-    "Carpe Diem"in bünyesinde barınmış bir büyücüdür. Unutkanlık hastalığından muzdariptir ve her geçen gün anılarını kaybediyordur, bu yüzden bir anı defteri oluşturmuştur. Archangel Mirabelle'ye hizmet etmiş ve Uther'i diriltmenin yollarını aramıştır. Kal'El'in sığınağındaki ölümünden yıllar sonra, anılarını yiyen Oblex Kralı'nın öldürülmesi neticesinde anıları aracılığı ile yeniden doğmuştur. Yeniden doğmasının ardından, onu serbest bırakan "Wings of Vengeance" grubunun bir üyesi olmuştur ve grubun bünyesinde dünyayı etkileyen sorunlara karşı çözüm üretmek için çabalamaya devam ediyordur.<br><br>
-    <a href="sirius.pdf" target="_blank" class="character-link">✨ Sirius Olarak En Son Char Sheeti</a>
+    <div class="badges">
+      <span class="badge">Unutkan Büyücü</span>
+      <span class="badge">Masum ve Mazlum</span>
+      <span class="badge">Carpe Diem'in Işığı</span>
+      <span class="badge">Gücü Sınırsız Büyücü</span>
+      <span class="badge">Işık Şifacısı</span>
+      <span class="badge">Archangel Mirabelle'nin Hizmetkarı</span>
+      <span class="badge">Unutkanlığı Yenen Sehhar</span>
+    </div>
+    Carpe Diem'in en güçlü büyücüsü. Hafıza hastalığını uyumayarak yendi. Ölüm sonrası dirildi ve Wings of Vengeance'a katıldı.<br><br>
+    <a href="sirius.pdf" target="_blank" class="character-link">✨ Char Sheet</a>
   </div>
-
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
-    <strong>Class ve Subclass:</strong> Celestial Warlock / Divine Soul Sorcerer<br>
-    <strong>Level:</strong> 10 Level'da öldü / Güncel Olarak 12 Level <br>
-    <strong>Irk:</strong> Half Elf - Half Human<br>
-    <strong>Yaş:</strong>63 Yaşında Öldü / Güncel Olarak 91 Yaşında <br>
-    <strong>Cinsiyet:</strong> Erkek
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Celestial Warlock / Divine Soul Sorcerer</span></div>
+      <div class="info-row"><span class="info-label">Level:</span><span class="info-value">10 Lv öldü / Güncel: 12 Lv</span></div>
+      <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Half Elf — Half Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">63'te öldü / Güncel: 91</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+    </div>
   </div>
 
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="img01" />
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
   </div>
 
   <script>
-    function openModal(img) {
-      document.getElementById("myModal").style.display = "block";
-      document.getElementById("img01").src = img.src;
-      document.getElementById("volume-control-wrapper").style.display = "none";
-    }
-
-    function closeModal() {
-      document.getElementById("myModal").style.display = "none";
-      document.getElementById("volume-control-wrapper").style.display = "block";
-    }
-
-    document.getElementById('volume-control').addEventListener('input', function () {
-      var volume = parseFloat(this.value);
-      document.getElementById('background-music').volume = volume;
-      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
-    });
-
-    window.onbeforeunload = function () {
-      document.getElementById('background-music').pause();
-    };
-
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.id = "imageModal";
-
-    const modalImg = document.createElement("img");
-    modalImg.className = "modal-content";
-    modalImg.id = "modalImage";
-
-    const span = document.createElement("span");
-    span.className = "close";
-    span.innerHTML = "&times;";
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-    };
-
-    modal.appendChild(span);
-    modal.appendChild(modalImg);
-    document.body.appendChild(modal);
-
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
-    };
-
-    function openModal(element) {
-      modal.style.display = "block";
-      modalImg.src = element.src;
-      document.getElementById("back-button").classList.add("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
-    }
-    
+    const music=document.getElementById('background-music'),btn=document.getElementById('play-pause-btn');
+    let isPlaying=true,panelOpen=false;
+    music.volume=0.5; music.play().catch(()=>{isPlaying=false;btn.textContent='▶ Müziği Başlat';});
+    function toggleMusic(){if(isPlaying){music.pause();btn.textContent='▶ Müziği Başlat';}else{music.play();btn.textContent='⏸ Müziği Duraklat';}isPlaying=!isPlaying;}
+    function togglePanel(){const p=document.getElementById('volume-control-wrapper'),t=document.getElementById('music-toggle-btn');panelOpen=!panelOpen;p.classList.toggle('open',panelOpen);t.textContent=panelOpen?'🎵 Müzik ▾':'🎵 Müzik ▸';}
+    document.getElementById('volume-control').addEventListener('input',function(){music.volume=parseFloat(this.value);document.getElementById('volume-level').innerText=Math.round(this.value*100)+'%';});
+    window.onbeforeunload=()=>music.pause();
+    const leftBox=document.querySelector('.left-box'),rightBox=document.querySelector('.right-box');
+    function updateInfoBoxes(){const top=Math.max(70,100-window.scrollY);if(leftBox)leftBox.style.top=top+'px';if(rightBox)rightBox.style.top=top+'px';}
+    window.addEventListener('scroll',updateInfoBoxes,{passive:true});updateInfoBoxes();
+    const CAROUSEL_AUTO_MS=5000;
+    const captions=[
+      ['Sirius\'a Güçlerini Veren Archangel Mirabelle','Harpylerin Kraliçesi ve Sirius\'un Kayınvalidesi Niemlia','Sirius\'un Sevgilisi Harpy Prensesi Zaerephys'],
+      ['Henüz kayıtlı düşman görseli bulunmamaktadır.'],
+      ['Zincirdar Kayınpederinden Miras Kalan Rod of the Pact Keeper +3'],
+    ];
+    const state=[{idx:0},{idx:0},{idx:0}];
+    let activeTab=0,autoTimer=null,isPaused=false;
+    function getCards(p){return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${p}"]`));}
+    function showCard(p,newIdx){const cards=getCards(p),oldIdx=state[p].idx;if(oldIdx===newIdx)return;const old=cards[oldIdx];old.classList.remove('visible');old.classList.add('leaving');old.addEventListener('animationend',()=>old.classList.remove('leaving'),{once:true});cards[newIdx].classList.add('visible');state[p].idx=newIdx;document.getElementById(`caption-${p}`).textContent=captions[p][newIdx];document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===newIdx));}
+    function carouselShift(p,dir){const total=getCards(p).length;showCard(p,(state[p].idx+dir+total)%total);resetAutoTimer();}
+    function switchTab(idx){document.getElementById(`panel-${activeTab}`).classList.remove('active');document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active');activeTab=idx;document.getElementById(`panel-${activeTab}`).classList.add('active');document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active');resetAutoTimer();}
+    function autoAdvance(){if(isPaused)return;const total=getCards(activeTab).length;showCard(activeTab,(state[activeTab].idx+1)%total);}
+    function startAutoTimer(){clearInterval(autoTimer);autoTimer=setInterval(autoAdvance,CAROUSEL_AUTO_MS);}
+    function resetAutoTimer(){startAutoTimer();}
+    function pauseCarousel(){isPaused=true;}function resumeCarousel(){isPaused=false;resetAutoTimer();}
+    document.querySelector('.carousel-section').addEventListener('mouseenter',pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave',resumeCarousel);
+    startAutoTimer();
+    [0,1,2].forEach(p=>{document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((dot,idx)=>{dot.addEventListener('click',()=>{showCard(p,idx);resetAutoTimer();});});});
+    const modal=document.getElementById('myModal'),modalImg=document.getElementById('img01'),modalCap=document.getElementById('modal-caption'),modalCount=document.getElementById('modal-counter');
+    let modalImages=[],modalIdx=0,modalAnimating=false;
+    function buildModalImages(p){modalImages=[];getCards(p).forEach((card,i)=>{const img=card.querySelector('img');if(img)modalImages.push({src:img.src,caption:captions[p][i]||''});});}
+    function setModalImage(idx,dir){if(modalAnimating)return;modalAnimating=true;const outClass=dir>0?'slide-out-left':'slide-out-right',inClass=dir>0?'slide-in-right':'slide-in-left';modalImg.classList.add(outClass);modalImg.addEventListener('animationend',()=>{modalImg.classList.remove(outClass);modalIdx=(idx+modalImages.length)%modalImages.length;modalImg.src=modalImages[modalIdx].src;modalCap.textContent=modalImages[modalIdx].caption;modalCount.textContent=`${modalIdx+1} / ${modalImages.length}`;modalImg.classList.add(inClass);modalImg.addEventListener('animationend',()=>{modalImg.classList.remove(inClass);modalAnimating=false;},{once:true});},{once:true});}
+    function openModal(el){const card=el.closest('.carousel-card');if(card){const p=parseInt(card.dataset.panel);buildModalImages(p);modalIdx=modalImages.findIndex(m=>m.src===el.src);if(modalIdx<0)modalIdx=0;}else{modalImages=[{src:el.src,caption:el.alt||''}];modalIdx=0;}modalImg.src=modalImages[modalIdx].src;modalCap.textContent=modalImages[modalIdx].caption;modalCount.textContent=`${modalIdx+1} / ${modalImages.length}`;modalAnimating=false;modal.classList.add('open');document.getElementById('back-button').classList.add('hidden');document.getElementById('music-widget').style.display='none';document.body.style.overflow='hidden';pauseCarousel();}
+    function closeModal(){modal.classList.remove('open');document.getElementById('back-button').classList.remove('hidden');document.getElementById('music-widget').style.display='flex';document.body.style.overflow='';resumeCarousel();}
+    function modalNav(dir){setModalImage(modalIdx+dir,dir);}
+    modal.addEventListener('click',e=>{const allowed=[document.getElementById('img01'),document.getElementById('modal-caption'),document.getElementById('modal-prev'),document.getElementById('modal-next')];if(!allowed.some(el=>el&&(el===e.target||el.contains(e.target))))closeModal();});
+    document.addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;if(e.key==='ArrowRight')modalNav(1);if(e.key==='ArrowLeft')modalNav(-1);if(e.key==='Escape')closeModal();});
   </script>
-  
-  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
-  
 </body>
 </html>

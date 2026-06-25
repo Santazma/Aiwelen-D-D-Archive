@@ -4,198 +4,489 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oyuncu Karakterleri - Campaign 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #7a6030;
+      --parchment: #f2e8d0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleReveal {
+      from { opacity: 0; letter-spacing: 18px; transform: translateY(-16px); }
+      to   { opacity: 1; letter-spacing: 6px;  transform: translateY(0); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 10px var(--gold-dim), 0 0 30px rgba(201,168,76,0.1); }
+      50%      { box-shadow: 0 0 22px var(--gold), 0 0 50px rgba(201,168,76,0.25); }
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.94); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Lora', Georgia, serif;
       background: url('https://cdna.artstation.com/p/assets/images/images/041/430/008/large/jonny-sun-.jpg?1631684163') no-repeat center center fixed;
       background-size: cover;
-      position: relative;
+      color: var(--parchment);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     body::before {
       content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.65);
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(5,3,1,0.85) 0%,
+        rgba(10,8,6,0.70) 40%,
+        rgba(10,8,6,0.78) 80%,
+        rgba(5,3,1,0.92) 100%
+      );
       z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+      z-index: 0;
+      pointer-events: none;
     }
 
     main {
       position: relative;
       z-index: 1;
+      padding: 3rem 1.5rem 5rem;
       text-align: center;
-      padding: 3rem 1rem;
-      color: white;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      margin-bottom: 3.5rem;
+      animation: pageFadeIn 1.2s ease both;
+    }
+
+    .campaign-seal {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1.4rem;
+    }
+    .campaign-seal svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 8px rgba(201,168,76,0.5));
+    }
+
+    .subtitle-pre {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.6rem;
+      opacity: 0.8;
     }
 
     h1 {
-      font-size: 3.5rem;
-      margin-bottom: 3rem;
-      color: #f5f5f5;
-      text-shadow: 2px 2px 12px rgba(0,0,0,0.7);
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin: 0 0 0.5rem;
+      text-shadow:
+        0 0 30px rgba(201,168,76,0.5),
+        0 0 60px rgba(201,168,76,0.2),
+        2px 2px 8px rgba(0,0,0,0.9);
+      animation: titleReveal 1.4s cubic-bezier(.22,1,.36,1) .2s both;
     }
 
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 1.2rem auto;
+      max-width: 500px;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+    .divider-diamond {
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px rgba(201,168,76,0.6);
+    }
+
+    .subtitle-post {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: rgba(242, 232, 208, 0.55);
+      letter-spacing: 1px;
+      margin-top: 0.6rem;
+    }
+
+    /* ── GRID ── */
     .character-grid {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 2.5rem;
-      max-width: 1600px;
-      margin: 0 auto 3rem auto;
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto 4rem;
     }
 
+    /* ── CARD ── */
     .character-card {
-      width: 200px;
+      width: 190px;
       aspect-ratio: 3/4;
       position: relative;
       cursor: pointer;
-      overflow: hidden;
-      border-radius: 16px;
-      background-color: rgba(25, 25, 25, 0.75);
-      border: 5px solid #2f2f2f;
+      text-decoration: none;
+      display: block;
+      border-radius: 6px;
       box-shadow:
-        0 0 10px rgba(170, 0, 255, 0.5),
-        0 0 20px rgba(0, 0, 0, 0.6) inset,
-        0 0 3px #666 inset;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+        0 0 0 1px rgba(201,168,76,0.25),
+        0 4px 18px rgba(0,0,0,0.6);
+      transition: box-shadow 0.3s ease, transform 0.35s ease;
+      overflow: hidden;
+      animation: cardIn 0.7s ease both;
     }
 
+    .character-card:nth-child(1)  { animation-delay: 0.05s; }
+    .character-card:nth-child(2)  { animation-delay: 0.10s; }
+    .character-card:nth-child(3)  { animation-delay: 0.15s; }
+    .character-card:nth-child(4)  { animation-delay: 0.20s; }
+    .character-card:nth-child(5)  { animation-delay: 0.25s; }
+    .character-card:nth-child(6)  { animation-delay: 0.30s; }
+    .character-card:nth-child(7)  { animation-delay: 0.35s; }
+    .character-card:nth-child(8)  { animation-delay: 0.40s; }
+    .character-card:nth-child(9)  { animation-delay: 0.45s; }
+    .character-card:nth-child(10) { animation-delay: 0.50s; }
+    .character-card:nth-child(11) { animation-delay: 0.55s; }
+    .character-card:nth-child(12) { animation-delay: 0.60s; }
+    .character-card:nth-child(13) { animation-delay: 0.65s; }
+    .character-card:nth-child(14) { animation-delay: 0.70s; }
+
     .character-card:hover {
-      transform: scale(1.03);
+      transform: scale(1.05);
       box-shadow:
-        0 0 20px rgba(255, 0, 150, 0.8),
-        0 0 25px rgba(255, 255, 255, 0.1) inset;
+        0 0 0 1.5px rgba(201,168,76,0.7),
+        0 0 22px rgba(201,168,76,0.35),
+        0 8px 28px rgba(0,0,0,0.8);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      overflow: hidden;
+      background: rgba(5,3,1,0.9);
     }
 
     .character-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 12px;
-      filter: brightness(1.1) contrast(1.1);
+      object-position: top center;
+      display: block;
+      filter: brightness(0.88) contrast(1.08) saturate(0.9);
+      transition: filter 0.35s ease;
+    }
+
+    .character-card:hover img {
+      filter: brightness(1.0) contrast(1.1) saturate(1.0);
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 0.75rem 0.85rem;
+      background: linear-gradient(
+        to top,
+        rgba(5,3,1,0.97) 0%,
+        rgba(5,3,1,0.75) 55%,
+        transparent 100%
+      );
+      z-index: 3;
     }
 
     .character-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(201,168,76,0.8), 0 1px 4px rgba(0,0,0,1);
+      line-height: 1.35;
+    }
+
+    /* Köşe işaretleri — hover'da beliriyor */
+    .card-corner {
       position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #f0e6ff;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px black;
-      pointer-events: none;
+      width: 14px;
+      height: 14px;
+      z-index: 4;
       opacity: 0;
-      transition: opacity 0.3s ease;
-      text-align: center;
-      width: 100%;
+      transition: opacity 0.3s;
     }
+    .card-corner--tl { top: 5px; left: 5px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+    .card-corner--tr { top: 5px; right: 5px; border-top: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+    .card-corner--bl { bottom: 5px; left: 5px; border-bottom: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+    .card-corner--br { bottom: 5px; right: 5px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
 
-    .character-card:hover .character-name {
-      opacity: 1;
-    }
+    .character-card:hover .card-corner { opacity: 1; }
 
+    /* ── BACK BUTTON ── */
     .back-link {
-      display: inline-block;
-      margin-top: 2rem;
-      color: #87cefa;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
       text-decoration: none;
-      border: 1px solid #87cefa;
-      padding: 0.8rem 1.4rem;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      transition: background-color 0.3s, transform 0.2s;
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 0.65rem 1.6rem;
+      border-radius: 4px;
+      background: rgba(10,8,6,0.7);
+      transition: all 0.25s ease;
+      animation: glowPulse 3s ease-in-out infinite;
     }
-
     .back-link:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-      transform: scale(1.05);
+      background: rgba(201,168,76,0.12);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,168,76,0.3);
+      transform: translateY(-2px);
     }
 
-    @media (max-width: 1400px) {
-      .character-card {
-        width: 180px;
-      }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .character-card { width: 160px; }
+      .character-grid { gap: 1.4rem; }
     }
 
-    @media (max-width: 768px) {
-      .character-card {
-        width: 150px;
-      }
+    @media (max-width: 540px) {
+      main { padding: 2rem 1rem 4rem; }
+      h1 { letter-spacing: 3px; }
+      .character-grid { gap: 1rem; }
+      .character-card { width: calc(50% - 0.5rem); aspect-ratio: 3/4; }
+      .character-name { font-size: 0.68rem; }
     }
   </style>
 </head>
 <body>
   <main>
-    <h1>Oyuncu Karakterleri - Campaign 1</h1>
+    <div class="header">
+      <div class="campaign-seal">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.7"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#c9a84c" stroke-width="0.5" opacity="0.4"/>
+          <line x1="50" y1="8" x2="50" y2="92" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+          <line x1="8" y1="50" x2="92" y2="50" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+          <polygon points="50,38 62,50 50,62 38,50" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.9"/>
+          <circle cx="50" cy="50" r="4" fill="#c9a84c" opacity="0.9"/>
+          <circle cx="50" cy="10" r="1.5" fill="#c9a84c" opacity="0.7"/>
+          <circle cx="90" cy="50" r="1.5" fill="#c9a84c" opacity="0.7"/>
+          <circle cx="50" cy="90" r="1.5" fill="#c9a84c" opacity="0.7"/>
+          <circle cx="10" cy="50" r="1.5" fill="#c9a84c" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <div class="subtitle-pre">Aiwelen Tarihi — Birinci Sefer</div>
+      <h1>Oyuncu Karakterleri</h1>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-diamond"></div>
+        <div class="divider-line"></div>
+      </div>
+      <div class="subtitle-post">Campaign 1</div>
+    </div>
 
     <div class="character-grid">
-      <!-- İlk 7 Karakter -->
+
       <a class="character-card" href="daynore/index.html">
-        <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
-        <div class="character-name">Daynore Dinenlas</div>
-      </a>
-      <a class="character-card" href="john/index.html">
-        <img src="john/John.jpg" alt="John">
-        <div class="character-name">John</div>
-      </a>
-      <a class="character-card" href="uther/index.html">
-        <img src="uther/Uther Işıkgetiren.jpg" alt="Uther Işıkgetiren">
-        <div class="character-name">Uther Işıkgetiren</div>
-      </a>
-      <a class="character-card" href="ruven/index.html">
-        <img src="ruven/Ruven.jpg" alt="Ruven">
-        <div class="character-name">Ruven</div>
-      </a>
-      <a class="character-card" href="damian/index.html">
-        <img src="damian/Günahkar Damian.jpg" alt="Damian">
-        <div class="character-name">Damian</div>
-      </a>
-      <a class="character-card" href="toji/index.html">
-        <img src="toji/Toji.jpg" alt="Toji">
-        <div class="character-name">Toji</div>
-      </a>
-      <a class="character-card" href="bob/index.html">
-        <img src="bob/Bob.jpg" alt="Bob">
-        <div class="character-name">Bob</div>
+        <div class="card-inner">
+          <img src="daynore/Daynore Dínenlas.jpg" alt="Daynore Dinenlas">
+          <div class="card-overlay"><div class="character-name">Daynore Dinenlas</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
 
-      <!-- Sonraki 7 Karakter -->
+      <a class="character-card" href="john/index.html">
+        <div class="card-inner">
+          <img src="john/John.jpg" alt="John">
+          <div class="card-overlay"><div class="character-name">John</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
+      <a class="character-card" href="uther/index.html">
+        <div class="card-inner">
+          <img src="uther/Uther Işıkgetiren.jpg" alt="Uther Işıkgetiren">
+          <div class="card-overlay"><div class="character-name">Uther Işıkgetiren</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
+      <a class="character-card" href="ruven/index.html">
+        <div class="card-inner">
+          <img src="ruven/Ruven.jpg" alt="Ruven">
+          <div class="card-overlay"><div class="character-name">Ruven</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
+      <a class="character-card" href="damian/index.html">
+        <div class="card-inner">
+          <img src="damian/Günahkar Damian.jpg" alt="Damian">
+          <div class="card-overlay"><div class="character-name">Damian</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
+      <a class="character-card" href="toji/index.html">
+        <div class="card-inner">
+          <img src="toji/Toji.jpg" alt="Toji">
+          <div class="card-overlay"><div class="character-name">Toji</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
+      <a class="character-card" href="bob/index.html">
+        <div class="card-inner">
+          <img src="bob/Bob.jpg" alt="Bob">
+          <div class="card-overlay"><div class="character-name">Bob</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
+      </a>
+
       <a class="character-card" href="armani/index.html">
-        <img src="armani/Armani.jpg" alt="Armani">
-        <div class="character-name">Armani</div>
+        <div class="card-inner">
+          <img src="armani/Armani.jpg" alt="Armani">
+          <div class="card-overlay"><div class="character-name">Armani</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="sirius/index.html">
-        <img src="sirius/Sirius.jpg" alt="Sirius">
-        <div class="character-name">Sirius</div>
+        <div class="card-inner">
+          <img src="sirius/Sirius.jpg" alt="Sirius">
+          <div class="card-overlay"><div class="character-name">Sirius</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="seid/index.html">
-        <img src="seid/Seid.png" alt="Seid">
-        <div class="character-name">Seid</div>
+        <div class="card-inner">
+          <img src="seid/Seid.png" alt="Seid">
+          <div class="card-overlay"><div class="character-name">Seid</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="julius/index.html">
-        <img src="julius/Julius.jpg" alt="Seid">
-        <div class="character-name">Julius</div>
+        <div class="card-inner">
+          <img src="julius/Julius.jpg" alt="Julius">
+          <div class="card-overlay"><div class="character-name">Julius</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="silas/index.html">
-        <img src="silas/Silas.jpg" alt="Silas">
-        <div class="character-name">Silas</div>
+        <div class="card-inner">
+          <img src="silas/Silas.jpg" alt="Silas">
+          <div class="card-overlay"><div class="character-name">Silas</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="skull/index.html">
-        <img src="skull/Skull.jpg" alt="Skull">
-        <div class="character-name">Skull</div>
+        <div class="card-inner">
+          <img src="skull/Skull.jpg" alt="Skull">
+          <div class="card-overlay"><div class="character-name">Skull</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
       <a class="character-card" href="minofein/index.html">
-        <img src="minofein/Minofein.jpg" alt="Minofein">
-        <div class="character-name">Minofein</div>
+        <div class="card-inner">
+          <img src="minofein/Minofein.jpg" alt="Minofein">
+          <div class="card-overlay"><div class="character-name">Minofein</div></div>
+          <div class="card-corner card-corner--tl"></div>
+          <div class="card-corner card-corner--tr"></div>
+          <div class="card-corner card-corner--bl"></div>
+          <div class="card-corner card-corner--br"></div>
+        </div>
       </a>
+
     </div>
 
     <a class="back-link" href="../index.html">← Geri Dön</a>

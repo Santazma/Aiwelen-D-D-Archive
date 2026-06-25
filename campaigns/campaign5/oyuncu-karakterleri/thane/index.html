@@ -464,6 +464,14 @@
 
     .hidden { display: none; }
 
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #87cefa; border: 1px solid rgba(135,206,250,.45); background: rgba(135,206,250,.08); white-space: nowrap; }
+    .info-card { display: grid; gap: 5px; margin-top: 6px; }
+    .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(135,206,250,.1); padding-bottom: 5px; font-size: .85rem; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-label { font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px; color: #87cefa; white-space: nowrap; flex-shrink: 0; }
+    .info-value { color: rgba(255,255,255,.85); line-height: 1.4; }
+
     @media (max-width: 1024px) {
       .container { padding: 20px 230px; }
       .info-box { width: 190px; font-size: .82rem; }
@@ -597,19 +605,26 @@
     <div class="info-boxes-inline">
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
-        <strong>Unvanlar:</strong><br>
-        İntikam Yeminlisi, 16. Lağımcılar Komutanı, Castellan Hanesi'nin Mirası, Şeytan İle Anlaşan Paladin<br><br>
+        <strong>Unvanlar:</strong>
+        <div class="badges">
+          <span class="badge">İntikam Yeminlisi</span>
+          <span class="badge">16. Lağımcılar Komutanı</span>
+          <span class="badge">Castellan Hanesi'nin Mirası</span>
+          <span class="badge">Şeytan İle Anlaşan Paladin</span>
+        </div>
         <strong>Lore Etkisi:</strong><br>
         Engizisyon'un en gözde Paladin'lerinden biri olan Aldric, Épée Solaire'i aldığı törende Aydınlık Olan'ın gerçek yüzünü gördükten sonra inancı sarsıldı. Cecilia için çıkarılan yakalama emrini reddederek Şeytan ██████ ile bir anlaşma yaptı ve kaçak konumuna düştü. Cecilia ile birlikte kuzeye ilerlemektedir.<br><br>
         <a href="aldric thane castellan.pdf" target="_blank" class="character-link">⚔️ Aldric Olarak En Son Char Sheeti</a>
       </div>
       <div class="info-box-inline">
         <h2>Karakter Bilgileri</h2>
-        <strong>Class ve Subclass:</strong> Oath of Vengeance Paladin<br>
-        <strong>Level:</strong> 11 Level<br>
-        <strong>Irk:</strong> Human<br>
-        <strong>Yaş:</strong> 27<br>
-        <strong>Cinsiyet:</strong> Erkek
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Class</span><span class="info-value">Oath of Vengeance Paladin</span></div>
+          <div class="info-row"><span class="info-label">Level</span><span class="info-value">11</span></div>
+          <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">27</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
+        </div>
       </div>
     </div>
 
@@ -699,8 +714,13 @@
   <!-- Fixed info-boxes (desktop only) -->
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
-    <strong>Unvanlar:</strong><br>
-    İntikam Yeminlisi, 16. Lağımcılar Komutanı, Castellan Hanesi'nin Mirası, Şeytan İle Anlaşan Paladin<br><br>
+    <strong>Unvanlar:</strong>
+    <div class="badges">
+      <span class="badge">İntikam Yeminlisi</span>
+      <span class="badge">16. Lağımcılar Komutanı</span>
+      <span class="badge">Castellan Hanesi'nin Mirası</span>
+      <span class="badge">Şeytan İle Anlaşan Paladin</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
     Engizisyon'un en gözde Paladin'lerinden biri olan Aldric, Épée Solaire'i aldığı törende Aydınlık Olan'ın gerçek yüzünü gördükten sonra inancı sarsıldı. Cecilia için çıkarılan yakalama emrini reddederek Şeytan ██████ ile bir anlaşma yaptı ve kaçak konumuna düştü. Cecilia ile birlikte kuzeye ilerlemektedir.<br><br>
     <a href="aldric thane castellan.pdf" target="_blank" class="character-link">⚔️ Aldric Olarak En Son Char Sheeti</a>
@@ -708,11 +728,13 @@
 
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
-    <strong>Class ve Subclass:</strong> Oath of Vengeance Paladin<br>
-    <strong>Level:</strong> 11 Level<br>
-    <strong>Irk:</strong> Human<br>
-    <strong>Yaş:</strong> 27<br>
-    <strong>Cinsiyet:</strong> Erkek
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Class</span><span class="info-value">Oath of Vengeance Paladin</span></div>
+      <div class="info-row"><span class="info-label">Level</span><span class="info-value">11</span></div>
+      <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">27</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
+    </div>
   </div>
 
   <div id="myModal" class="modal">

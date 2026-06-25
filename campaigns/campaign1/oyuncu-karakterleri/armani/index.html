@@ -3,403 +3,472 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Armani</title>
+  <title>Armani — Carpe Diem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #ffdf6e;
+      --gold-glow: rgba(201,168,76,0.55);
+      --dark-glass: rgba(0,0,0,0.62);
+    }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-30px) scale(0.95); letter-spacing: 12px; }
+      to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 3px; }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px rgba(201,168,76,.35), 0 0 20px rgba(201,168,76,.15); }
+      50%      { box-shadow: 0 0 16px rgba(201,168,76,.7), 0 0 40px rgba(201,168,76,.3); }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      font-family: 'Lora', Georgia, serif;
+      margin: 0; padding: 0;
       background: url('https://cdna.artstation.com/p/assets/images/images/036/640/970/large/shahab-alizadeh-nebula.jpg?1618233413') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      background-color: rgba(0, 0, 0, 0.4); /* Arka planın şeffaflık eklenmesi */
-    }
-
-    /* Overlay transparency ekleme */
-    .container {
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      z-index: 1;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4); /* %40 opaklık */
-      z-index: -1;
-    }
-
-    /* Başlık stilini iyileştirme */
-    h1 {
-      font-size: 4rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-      margin-bottom: 20px;
-    }
-
-    .character-image {
-      width: 200px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      margin-bottom: 10px;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-      cursor: pointer;
-    }
-
-    .character-image:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .image-title, .image-title-alt {
-      text-align: center;
-      margin-bottom: 20px;
-      font-style: italic;
-      font-size: 1rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      padding: 5px;
-    }
-
-    .bio {
-      font-size: 1.1rem;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-      line-height: 1.6;
-      text-align: justify;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .alternative-images {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .alternative-images div {
-      text-align: center;
-      max-width: 150px;
-      flex: 0 1 150px;
-    }
-
-    .alternative-images img {
-      width: 150px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-      border: 3px solid #fff;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .alternative-images img:hover {
-      transform: scale(1.5);
-      opacity: 0.8;
-    }
-
-    .info-box {
-      position: absolute;
-      top: 100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 15px;
-      border-radius: 10px;
-      width: 240px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .info-box h2 {
-      font-size: 1.2rem;
-      color: #ffdf6e;
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .info-box strong {
-      color: #ffd700;
-    }
-
-    .left-box {
-      left: 20px;
-    }
-
-    .right-box {
-      right: 20px;
-    }
-
-    .character-link {
-      color: #ffffff;
-      text-decoration: underline;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-
-    .back-link {
-      display: inline-block;
-      color: #87cefa;
-      font-size: 1.2rem;
-      text-decoration: none;
-      margin-top: 20px;
-      border: 1px solid #87cefa;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-
-    .back-link:hover {
-      background-color: rgba(135, 206, 250, 0.2);
-    }
-
-    /* Modal Animasyonu */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.7);
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
-    }
-
-    .modal-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      border-radius: 15px;
-    }
-
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: #f44336;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    #volume-control-wrapper {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 10px 15px;
-      border-radius: 10px;
-    }
-
-    #volume-control-label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      color: #fff;
-    }
-
-    #volume-level {
-      color: #ffd700;
-      font-size: 0.9rem;
-      margin-left: 5px;
     }
 
     .fixed-back-button {
-      position: fixed;
-      top: 45px;
-      right: 185px; /* Müzik kontrol kutusunun soluna konumlandırmak için */
-      z-index: 999;
-      color: #87cefa;
-      font-size: 1.1rem;
-      text-decoration: none;
-      border: 1px solid #87cefa;
-      padding: 0.4rem 0.8rem;
+      position: fixed; top: 20px; left: 20px; z-index: 999;
+      padding: .45rem 1rem;
+      font-family: 'Cinzel', serif; font-size: .9rem;
+      font-weight: 700; letter-spacing: .5px;
+      text-decoration: none; color: #fff;
       border-radius: 8px;
-      background-color: rgba(0, 0, 0, 0.6);
-      transition: background-color 0.3s;
+      border: 1px solid rgba(201,168,76,.45);
+      background: linear-gradient(135deg,rgba(60,40,10,.82),rgba(30,18,5,.9));
+      box-shadow: 0 0 8px rgba(201,168,76,.2);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
     }
-
     .fixed-back-button:hover {
-      background-color: rgba(135, 206, 250, 0.2);
+      background: linear-gradient(135deg,rgba(100,70,20,.88),rgba(55,35,10,.94));
+      box-shadow: 0 0 20px rgba(201,168,76,.6);
+      transform: translateY(-2px);
+    }
+    .fixed-back-button:active { transform: scale(.95); }
+
+    #music-widget {
+      position: fixed; top: 20px; right: 20px; z-index: 999;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    }
+    #music-toggle-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px;
+      font-family: 'Cinzel', serif; font-size: .8rem;
+      font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(201,168,76,.45); border-radius: 8px;
+      background: linear-gradient(135deg,rgba(60,40,10,.88),rgba(30,18,5,.95));
+      cursor: pointer; white-space: nowrap;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(201,168,76,.2);
+      animation: glowPulse 3s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    #music-toggle-btn:hover {
+      background: linear-gradient(135deg,rgba(100,70,20,.92),rgba(55,35,10,.98));
+      box-shadow: 0 0 18px rgba(201,168,76,.55);
+      transform: translateY(-1px);
+    }
+    #volume-control-wrapper {
+      background: linear-gradient(135deg,rgba(30,20,5,.92),rgba(15,10,3,.97));
+      border: 1px solid rgba(201,168,76,.25);
+      padding: 12px 15px; border-radius: 12px;
+      box-shadow: 0 0 16px rgba(201,168,76,.15);
+      width: 210px; overflow: hidden;
+      max-height: 0; opacity: 0;
+      padding-top: 0; padding-bottom: 0;
+      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
+    }
+    #volume-control-wrapper.open { max-height: 160px; opacity: 1; padding-top: 12px; padding-bottom: 12px; }
+    #volume-control-label { display: block; margin-bottom: 6px; font-family: 'Cinzel', serif; font-size: .78rem; letter-spacing: .5px; color: rgba(255,255,255,.75); }
+    #volume-level { color: var(--gold-bright); font-size: .85rem; margin-left: 4px; }
+    #play-pause-btn {
+      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
+      font-family: 'Cinzel', serif; font-size: .82rem; font-weight: 700; letter-spacing: .5px; color: #fff;
+      border: 1px solid rgba(201,168,76,.4); border-radius: 7px;
+      background: linear-gradient(135deg,rgba(80,55,15,.8),rgba(35,22,5,.9));
+      cursor: pointer; transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 0 8px rgba(201,168,76,.2);
+    }
+    #play-pause-btn:hover { background: linear-gradient(135deg,rgba(130,90,25,.88),rgba(60,40,10,.95)); box-shadow: 0 0 18px rgba(201,168,76,.5); transform: translateY(-1px); }
+    #volume-control { width: 100%; accent-color: var(--gold); cursor: pointer; }
+
+    .info-box {
+      position: fixed; top: 100px; z-index: 10;
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(201,168,76,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
+    }
+    .info-box h2 { font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--gold-dim); margin-top: 0; margin-bottom: 10px; }
+    .info-box strong { color: var(--gold); }
+    .left-box { left: 20px; }
+    .right-box { right: 20px; }
+
+    .info-boxes-inline { display: none; flex-direction: column; gap: 16px; max-width: 800px; margin: 0 auto 28px auto; padding: 0 16px; }
+    .info-box-inline { background-color: var(--dark-glass); padding: 15px; border-radius: 10px; font-size: .9rem; line-height: 1.5; border: 1px solid rgba(201,168,76,.18); }
+    .info-box-inline h2 { font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--gold-dim); margin-top: 0; margin-bottom: 10px; }
+    .info-box-inline strong { color: var(--gold); }
+
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: var(--gold-dim); border: 1px solid rgba(201,168,76,.45); background: rgba(201,168,76,.08); white-space: nowrap; }
+
+    .info-card { display: grid; gap: 5px; margin-top: 6px; }
+    .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(201,168,76,.1); padding-bottom: 5px; font-size: .85rem; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-label { font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
+    .info-value { color: rgba(255,255,255,.85); line-height: 1.4; }
+
+    .container {
+      position: relative; max-width: 1200px; margin: 0 auto;
+      padding: 20px 260px; text-align: center; z-index: 1;
+      animation: pageFadeIn 1s ease .2s both;
+    }
+    .container::before {
+      content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.42); z-index: -1;
     }
 
-    .hidden {
-      display: none;
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 0 0 30px rgba(201,168,76,.6), 3px 3px 12px rgba(0,0,0,.9);
+      margin-bottom: 20px;
+      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
     }
-    
+
+    .character-image { width: 200px; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,.5); margin-bottom: 10px; transition: transform .5s ease, opacity .5s ease; cursor: pointer; animation: pageFadeIn 1s ease .5s both; }
+    .character-image:hover { transform: scale(1.5); opacity: .8; }
+
+    .image-title { text-align: center; margin-bottom: 20px; font-family: 'Lora', Georgia, serif; font-style: italic; font-size: 1.25rem; font-weight: 700; text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px; }
+
+    .bio { font-size: 1.1rem; max-width: 800px; margin: 0 auto 30px auto; line-height: 1.75; text-align: justify; background: var(--dark-glass); padding: 24px 28px; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.6); border: 1px solid rgba(201,168,76,.12); animation: pageFadeIn 1s ease .7s both; }
+
+    .character-link { display: inline-block; margin-top: 8px; padding: 6px 14px; font-size: .88rem; font-weight: 600; color: var(--gold); text-decoration: none; border: 1px solid rgba(201,168,76,.45); border-radius: 6px; background: rgba(201,168,76,.07); transition: background .25s, box-shadow .25s, transform .15s; }
+    .character-link:hover { background: rgba(201,168,76,.18); box-shadow: 0 0 14px rgba(201,168,76,.5); transform: translateY(-1px); }
+
+    .back-link { display: inline-block; margin-top: 20px; padding: .6rem 1.4rem; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-decoration: none; color: #fff; border-radius: 8px; border: 1px solid rgba(201,168,76,.5); background: linear-gradient(135deg,rgba(80,55,15,.75),rgba(35,22,5,.85)); box-shadow: 0 0 10px rgba(201,168,76,.25), inset 0 1px 0 rgba(255,255,255,.08); transition: transform .18s, box-shadow .25s, background .25s; animation: glowPulse 3s ease-in-out infinite; }
+    .back-link:hover { background: linear-gradient(135deg,rgba(130,90,25,.85),rgba(60,40,10,.9)); box-shadow: 0 0 22px rgba(201,168,76,.65), inset 0 1px 0 rgba(255,255,255,.12); transform: translateY(-2px); }
+    .back-link:active { transform: scale(.96) translateY(0); }
+
+    .modal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; overflow: hidden; background-color: rgba(0,0,0,.88); opacity: 0; animation: fadeIn .4s forwards; align-items: center; justify-content: center; cursor: pointer; }
+    .modal.open { display: flex; }
+    .modal-inner { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 96vw; max-height: 96vh; padding: 12px; box-sizing: border-box; cursor: default; }
+    .modal-stage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+
+    @keyframes modalSlideInRight { from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); } to { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); } }
+    @keyframes modalSlideInLeft  { from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); } to { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); } }
+    @keyframes modalSlideOutLeft  { from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); } to { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); } }
+    @keyframes modalSlideOutRight { from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); } to { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); } }
+
+    .modal-content { display: block; max-width: 78vw; max-height: 76vh; width: auto; height: auto; border-radius: 15px 15px 0 0; box-shadow: 0 0 50px rgba(201,168,76,.35); object-fit: contain; }
+    .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation: modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation: modalSlideOutRight 0.32s ease forwards; }
+
+    .modal-caption { width: 100%; max-width: 78vw; padding: 10px 16px 12px; box-sizing: border-box; background: rgba(20,12,3,0.88); border-radius: 0 0 15px 15px; border-top: 1px solid rgba(201,168,76,0.2); font-family: 'Lora', Georgia, serif; font-style: normal; font-size: 1.05rem; font-weight: 700; color: #fff3d4; text-shadow: 0 1px 4px rgba(0,0,0,0.9); text-align: center; line-height: 1.45; letter-spacing: 0.01em; }
+    .modal-counter { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; color: rgba(234,204,110,0.9); letter-spacing: 1.5px; pointer-events: none; z-index: 1002; background: rgba(20,12,3,0.6); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.2); }
+    .modal-arrow { flex-shrink: 0; width: 48px; height: 48px; font-size: 1.4rem; color: #fff; background: linear-gradient(135deg,rgba(80,55,15,0.75),rgba(35,22,5,0.85)); border: 1px solid rgba(201,168,76,0.45); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: box-shadow 0.2s, transform 0.15s, background 0.2s; animation: glowPulse 3s ease-in-out infinite; z-index: 1002; }
+    .modal-arrow:hover { background: linear-gradient(135deg,rgba(130,90,25,0.9),rgba(60,40,10,0.96)); box-shadow: 0 0 22px rgba(201,168,76,0.65); transform: scale(1.12); }
+    .modal-arrow:active { transform: scale(0.93); }
+    .close { position: fixed; top:15px; right:25px; color:#fff; font-size:40px; font-weight:bold; cursor:pointer; transition: color .2s, text-shadow .2s; z-index: 1003; line-height: 1; }
+    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
+
+    @keyframes cardIn { from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(6px); } to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+    @keyframes cardOut { from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } to { opacity: 0; transform: scale(0.88) translateY(-20px); filter: blur(6px); } }
+
+    .carousel-section { max-width: 600px; margin: 0 auto 48px auto; animation: pageFadeIn 1s ease 0.9s both; }
+    .carousel-tabs { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+    .carousel-tab { padding: 9px 18px; font-family: 'Lora', Georgia, serif; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.2px; color: rgba(255,255,255,0.55); border: 1px solid rgba(201,168,76,0.22); border-radius: 8px; background: rgba(30,20,5,0.55); cursor: pointer; transition: all 0.25s; }
+    .carousel-tab:hover { color: #fff; border-color: rgba(201,168,76,0.55); background: rgba(70,50,15,0.65); }
+    .carousel-tab.active { color: #fff; border-color: rgba(201,168,76,0.85); background: linear-gradient(135deg,rgba(80,55,15,0.88),rgba(35,22,5,0.96)); box-shadow: 0 0 16px rgba(201,168,76,0.4); }
+
+    .carousel-wrapper { position: relative; }
+    .carousel-panel { display: none; flex-direction: column; align-items: center; gap: 0; }
+    .carousel-panel.active { display: flex; }
+    .carousel-row { display: flex; align-items: center; justify-content: center; gap: 18px; width: 100%; }
+    .carousel-arrow { flex-shrink: 0; width: 46px; height: 46px; font-size: 1.4rem; color: #fff; background: linear-gradient(135deg,rgba(80,55,15,0.82),rgba(35,22,5,0.92)); border: 1px solid rgba(201,168,76,0.4); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: box-shadow 0.2s, transform 0.15s, background 0.2s; animation: glowPulse 3s ease-in-out infinite; }
+    .carousel-arrow:hover { background: linear-gradient(135deg,rgba(130,90,25,0.9),rgba(60,40,10,0.96)); box-shadow: 0 0 18px rgba(201,168,76,0.55); transform: scale(1.12); }
+    .carousel-arrow:active { transform: scale(0.93); }
+    .carousel-stage { position: relative; width: 320px; height: 400px; border-radius: 16px; }
+    .carousel-card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+    .carousel-card.visible { opacity: 1; pointer-events: auto; animation: cardIn 0.85s cubic-bezier(.22,1,.36,1) forwards; }
+    .carousel-card.leaving { animation: cardOut 0.55s ease forwards; }
+    .carousel-card img { width: 300px; height: 390px; object-fit: contain; border-radius: 14px; border: 2px solid var(--gold); outline: 1px solid rgba(201,168,76,0.28); outline-offset: 3px; box-shadow: 0 0 0 4px rgba(20,12,3,0.7), 0 0 0 6px rgba(201,168,76,0.25), 0 10px 28px rgba(0,0,0,0.7), inset 0 0 14px rgba(201,168,76,0.08); cursor: pointer; background: rgba(15,9,3,0.6); transition: box-shadow 0.3s, filter 0.3s; filter: brightness(0.96) saturate(0.97); }
+    .carousel-card img:hover { box-shadow: 0 0 0 4px rgba(20,12,3,0.8), 0 0 0 7px rgba(201,168,76,0.6), 0 0 36px rgba(201,168,76,0.45), 0 12px 32px rgba(0,0,0,0.75); filter: brightness(1.06) saturate(1.08); }
+    .carousel-placeholder { width: 300px; height: 390px; display: flex; align-items: center; justify-content: center; border-radius: 14px; border: 2px dashed rgba(201,168,76,0.25); background: rgba(0,0,0,0.2); font-family: 'Lora', Georgia, serif; font-style: italic; color: rgba(255,255,255,0.35); font-size: 0.95rem; text-align: center; padding: 20px; }
+    .carousel-caption { margin-top: 14px; min-height: 48px; max-width: 340px; text-align: center; font-family: 'Lora', Georgia, serif; font-style: normal; font-size: 1rem; font-weight: 700; color: #fff3d4; text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.8); line-height: 1.45; padding: 0 8px; letter-spacing: 0.01em; }
+    .carousel-dots { display: flex; justify-content: center; gap: 9px; margin-top: 14px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(201,168,76,0.28); border: 1px solid rgba(201,168,76,0.4); cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.2s; }
+    .dot.active { background: rgba(201,168,76,0.92); transform: scale(1.35); box-shadow: 0 0 8px rgba(201,168,76,0.8); }
+    .hidden { display: none; }
+
+    @media (max-width: 1024px) { .container { padding: 20px 230px; } .info-box { width: 190px; font-size: .82rem; } .left-box { left: 12px; } .right-box { right: 12px; } }
+    @media (max-width: 860px) { .info-box { display: none; } .info-boxes-inline { display: flex; } .container { padding: 20px 16px; } h1 { font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: 1px; } .bio { padding: 18px 16px; font-size: 1rem; } .carousel-stage { width: 280px; height: 360px; } .carousel-card img { width: 260px; height: 350px; } .carousel-arrow { width: 38px; height: 38px; font-size: 1.1rem; } .carousel-section { max-width: 100%; } }
+    @media (max-width: 540px) { .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; } #music-toggle-btn { font-size: .7rem; padding: 5px 10px; } h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; } .character-image { width: 160px; height: 240px; } .carousel-stage { width: 240px; height: 310px; } .carousel-card img { width: 220px; height: 300px; } .carousel-row { gap: 8px; } .carousel-arrow { width: 34px; height: 34px; font-size: 1rem; } .carousel-caption { font-size: .88rem; } .carousel-tab { padding: 7px 12px; font-size: .82rem; } .modal-arrow { width: 36px; height: 36px; font-size: 1.1rem; } .modal-content { max-width: 90vw; max-height: 70vh; } .modal-caption { font-size: .9rem; } .back-link { padding: .5rem 1rem; font-size: .88rem; } }
+    @media (max-width: 380px) { h1 { font-size: 1.2rem; } .carousel-stage { width: 200px; height: 270px; } .carousel-card img { width: 185px; height: 260px; } }
   </style>
 </head>
 <body>
   <audio id="background-music" autoplay loop preload="auto">
     <source src="Mage Tower - Sorastro.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
   </audio>
 
-  <div id="volume-control-wrapper">
-    <label id="volume-control-label">Müzik Sesi: <span id="volume-level">50%</span></label>
-    <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+
+  <div id="music-widget">
+    <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
+    <div id="volume-control-wrapper">
+      <button id="play-pause-btn" onclick="toggleMusic()">⏸ Müziği Duraklat</button>
+      <label id="volume-control-label">Ses: <span id="volume-level">50%</span></label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+    </div>
   </div>
 
   <div class="container">
     <h1>Armani</h1>
-    <img src="Armani.jpg" alt="Bob" class="character-image" onclick="openModal(this)">
+    <img src="Armani.jpg" alt="Usta Büyücü Armani" class="character-image" onclick="openModal(this)">
     <div class="image-title">Usta Büyücü Armani</div>
 
     <div class="bio">
       <p><strong>Görkem FİLİZÖZ</strong> tarafından canlandırılmış ve oynanmıştır. Görkem'in ikinci karakteridir. <strong>Armani</strong> İmparatorluk Toprakları'nda doğmuş çok zeki bir çocuktu. Kendi yaşıtlarına nazaran daha akıllı ve farklıydı. Felsefi bir düşünce yapısına sahipti. Büyü kavramı ile tanışmasının ardından bile büyüye karşı felsefi bir bakış açısı ile yaklaşıyordu. Büyü yapmaya yatkınlığı vardı ama içinde büyülü vaziyetten gelen doğuştan bir yeteneği yoktu. Armani'nin ailesi ile arasında farklı bir dinamik vardı. Armani büyüdükçe daha çok varoluşsal olaylara kafa yormak istiyor ve bir düşünür ya da bir araştırmacı olmak istiyordu, bunu da en iyi şekilde büyü kullanarak yapabileceğine inanıyordu, fakat ailesinin onun üzerine koyduğu farklı sorumluluklar vardı. Armani, aslen asil bir İmparatorluk Ailesi olan <strong>Şaşaalıkürk</strong> ailesinin bir ferdiydi. Fakat diğer asillerin aksine Armani, soyisim ile ilgilenmiyordu, sadece bilgi öğrenmek istiyordu. O zamanki ailenin lideri olan <strong>Walner Şaşaalıkürk</strong> ile, yani babasının aracılığı ile büyü öğrendi, özel hocalar ile çalıştı. En nihayetinde yaşı geldiği vakit bu ailenin lideri olması beklenen Armani, bu sorumluluğu reddetti. Bu sebepten ötürü babası, Armani'yi evlatlıktan reddetti ve evden kovdu. Evden kovulan Armani, bilgiyi en net ve kolay elde edebileceğini düşündüğü <strong>Beyaz Şehir'e</strong> doğru yola koyuldu. Beyaz Şehir'e beş parasız bir biçimde gitmedi, annesi sayesinde hatrı sayılır bir miktar para almayı başarabilmişti. Bu parayı temel ihtiyaçlarını karşılamaya ve büyü öğrenmeye harcadı Armani. Genç yaşında <strong>Dilek Büyü Koleji'nin</strong> sınavlarına katıldı ve diyardaki en prestijli büyü akademisine girmeyi başardı. Bu akademide büyü bilgisini üst seviyelere taşıdı ve felsefi çalışmalar sürdürmeye devam etti. Yaşamının çok uzun bir bölümünü bu akademide, önce öğrencilik sonra da hocalık yapacak şekilde geçirdi. Büyüye karşı yaklaşımı ve büyü bilgisi engin seviyelere ulaştığında <strong>Paragon</strong> tarafınca ona diyara hizmet etmesi için bir teklif geldi. Armani, Paragon'un teklifini kabul etti ve diyara <strong>Büyü ve Tanrısallık</strong> kavramlarını araştırarak hizmet etti. Ayrıca insan yaşam standartlarını yükseltebilmek adına çalışmalar yürütmek için İmparatorluk tarafından fonlandı. Paragon'un bünyesine girdikten sonra Armani bir kız ile tanıştı. Bu kız, <strong>Marvela</strong> adındaki bir kızdı ve <strong>kraliyet soyundan</strong> geliyordu. Armani'nin üzerinde çalışma yürütttüğü konuya ekstra bir merak ve ilgi duyuyordu. Armani'yi anlayabilen sınırlı sayıda gençlerden en yegane olanıydı Marvela. Armani zaman içerisinde bu kızı öğrencisi olarak kabul etti ve çalışmalarında asistanı olarak kullanmaya başladı. Marvela kraliyetin bir ferdi olduğu için burada bulunduğu bilinmemesi gerekiyordu, bu yüzden bu çalışmalar sırasınca Hocası Armani'ye kaçarak ona gizlice eşlik ediyordu. Armani'nin araştırdığı konu, zamanla değişime ve korozyona uğramaya başladı, aynı Armani'nin idealleri ve fikirleri gibi. Tanrısallık ve Büyü kavramları, yerini <strong>"Tanrılar ölebilir veya dirilebilir mi?"</strong> sorularına bırakmaya başlamıştı. Armani yozlaşmaya yüz tutmuş bir biçimde bu araştırmaları son hızda Marvela ile birlikte sürdürüyorken, bilinmeyen bir olayun neticesi olarak Armani'yle birlikte onun bütün çalışmaları durduruldu ve Armani'nin hafızası silindi. Silinmiş hafızası ile birlikte Armani, Paragon'un ilkelerine ihanet ettiğinden ötürü Paragon'dan ve Dilek Büyü Koleji'nden sürgün edildi.</p>
-      <p>Armani, geçmiş yaşantısını hatırlamayan, hayatını bir şekilde geçirmiş bir büyücü olarak Zonthar civarında yaşayan yaşlı ve bunamış bir büyücü olmuştu. Daha öncesinde kim olduğunu, neye hizmet ettiğini ve ne çalışmalar yürüttüğünü hatırlamıyor ve bunu sorgulama ihtiyacı bile duymuyordu. Kendisine bu denli kuvvet ile etki eden bir büyünün etkisine mağruz kalmıştı Armani, fakat bu büyünün etkilerinden bile muzdarip olduğunun farkında değildi. Artık yalnızca içmeyi ve tütütünü tüttürmeyi seven yaşlı bir büyücüydü Armani. Erzağı bittiği vakit, erzağını yenileme adına Zonthar'a gelir ve takviye yapar, kendini toplumdan uzak ve soyut bir biçimde tutardı. Kulübesinde onun en yakın arkadaşı <strong>Charlie</strong> ve diğer ruhlar ile birlikte sakin bir yaşam sürüyordu. Charlie onun en iyi arkadaşıydı, yaklaşık 15 santim boylarında bir orman ruhuydu ve en kadim dostuydı, fakat Charlie ile ne zaman tanışmıştı veya nasıl tanışmıştı... Armani kendine bu soruları sormayı bile aklından geçirmiyordu çünkü onun için ortada yanlış olan bir şey yoktu. Yaşı gereği hafıza kaybı başlamış bir adamdı sadece. Fakat Armani kadar yaşlı ve sınırlı günleri kalmış bir büyücünün kaderini değiştirecek bazı kişiler, onun hayatına girecekti.</p>
-      <p>Armani için sıradan bir erzak yenileme günüydü o gün, lakin bu sıradanlığı bozacak olaylar baş gösteriyordu. Armani Zonthar'a geldiği bir vakitte, kasabanın goblin baskını ile karşı karşıya olduğunu gördü. Zonthar Armani'nin pek de umrunda olmasa da, burası onun erzak alışverişini yapabildiği yegane yerdi, o yüzden bu yerleşkeyi korumaya karar verdi. Burada, daha sonrasında birlikte <strong>Carpe Diem</strong> olarak adlandırılacakları bir grup insan ile tanıştı. Bu grubun üyeleri olan; <strong>Daynore, John, Bob ve Damian </strong> adındaki gençler ile ve onların yanında savaşan 2 Efsungarla birlikte, gelen büyük goblin taaruzunu püskürtmeyi ve goblinleri yenmeyi başardılar. Alan tesirli alevtopu büyüsü sayesinde Armani, bu savaştan galip çıkılmasında büyük katkı oynadı. Bu gençlere; uyuklayıp kalmasıyla, adlarını karıştırmasıyla ve onları dinlememesiyle gibi sebeplerden ötürü çeşitli zorluklar çıkarmış olsa da bu saldırının atlatılmasını sağlamıştır. Bu güçlü ama yaşlı büyücünün maharetlerine tanık olan Daynore, onu grubuna katmak istemiştir, lakin Armani bu teklifi net bir şekilde reddetmese de hayatından memnundur ve onlara katılmamıştır. <strong>Büyük Zonthar Muharebesi'nin</strong> ardından birkaç gün içerisinde grup ile Armani yollarını ayırmıştır; grup yeni güzergahını Verdun'a çevirmiştir fakat Armani burada kalmayı tercih etmiştir. Evini ve çevresini korumayı başarmış olan Armani, burada belirli bir süre daha geçirmeye karar vermiştir. Birkaç ay boyunca büyük bir sorun teşkil eden hiçbir olay ile yüzleşmemiş, fakat uzun zamandır büyü yapmadığından ötürü paslandığını fark ettiği için kendini büyü antenmanlarına vermişti. Lakin Armani'nin evini ve Zonthar'ın bekasını tehlikeye atacak bir durum daha yaklaşıyordu...</p>
-      <p>Aylar sonra günün birinde Armani, rüyasında hiç hayra alamet şeyler görmemiştir. Bir <strong>Divination Büyücüsü olan Armani</strong>, bazen rüyalarında olumlu veya olumsuz olabilecek bazı olayların projeksiyonlarını görebiliyor ve belli bir ölçüde geleceği tahmin edebiliyordu. Onun bu rüyasında geldiğini öngördüğü durum, Zonthar'ı ve Armani'yi tehdit ediyordu. Bir grup kırmızı cübbeli kültistin Zonthar'a gelip kan akıtarak ritüeller yaptığını ve katliam çıkardığını gören Armani, rüyasını Zonthar'ın yeni Valisi olmuş <strong>Menzher'e anlatmıştı.</strong> Menzher'den maddi anlamda bir para beklentisi karşılığında, Zonthar halkından alabileceği kadar kişiyi evine alabilmeyi teklif etmişti. Ama bu teklifi yaptığı zaman, öngördüğü geleceğin çok da uzak olmadığını, hatta Zonthar'ın kapısına dayanıp çattığını anladılar. Kasabanın yeni Valisi Menzher, halkı için akıllıca bir karar verdi ve Armani'nin sunduğu sığınak teklifini belirli bir miktar para karşılığında kabul etti ve kaçırabildiği kadar insanı, alel acele bir şekilde Zonthar'dan uzaklaştırdı ve Armani'nin kulübesine getirdi. Kayıpların hepsi önlenemedi fakat Armani sayesinde Zonthar halkının bütünlüğü bozulmadı ve çoğunluk güvenli bir noktaya alındı. Lakin bu kültistler buraya kan akıtmaya veya katliam yapmaya gelmiş gibi durmuyorlardı. Haftalarca Zonthar'da beklemeye devam ettiler. <strong>Demir El'in</strong> kasabadan ayrılması ile ve askerlerinin çoğunun Goblin muharebesinde ağır yaralanıp ölmesinden dolayı Zonthar, askeri açıdan zayıf bir konumdaydı ve olası bir savaşı kaybedecek noktadalardı. Armani bile bu kadar kültisti, güçlerini bilmeden yok edemeyeceğini düşünüyordu. Lakin haftalarca süren bir bekleyişin ardından bazı maceracıların bu köye yeniden geldiğini fark etti Armani. Gelen kişiler <strong>Carpe Diem grubuydu.</strong> Armani bu olanları bir gözlemleme büyüsü aracılığı ile izliyordu. Damian denen kanı kaynayan genç çocuk, gözü kan bürümüş şekilde kültistlerin liderine saldırmıştı ve savaş patlak vermişti. Savaşın kendine bir çıkar veya fayda sağlamayacağını düşünen Armani bu savaşa karışmadı. Bu savaşın neticesinde ise Carpe Diem'den iki kişi ölmüş, ayakta bir tek Bob adındaki devasa yarı orc duruyordu. Lakin bu kültistlerin sıradan bir amaca hizmet etmediğini anlayan Armani, Bob'a yaklaşan yaşlı bir adamdan hissettiği devasa büyü aurası sonucunda yola koyulmuş ve olay mahaline yetişmek için harekete geçmişti. Gene de yaşlılığından ötürü Armani onlara yetişmeyi başaramasa da, savaştan çıkmış bu yaralı gruba evini açmayı teklif etti ve yaralarını saracak bir fırsat sundu. Fakat Bob adındaki yiğit oğlan, kulübenin girişinde Charlie'ye bir saygısızlık yapmıştı. Charlie bu denli bir terbiyesizliği kabul etmedi ve bu yarı orcu bir duelloya davet etti. Bob dalga geçerek bu duelloyu kabul etti, fakat sonra hiç beklemediği bir biçimde Armani tarafından küçültüldü ve kabaca Charlie ile aynı boyutlara geldi. Charlie Bob ile çekişmeli geçen bir duelloya tutuştu, fakat en sonunda Galip Charlie'ydi. Bob'a iyi bir savaşçı olduğunu söyleyerek hem onu arkadaşları önünde küçük düşürdü, hem de onun savaşçı kimliğini övdü. Daha sonrasında ise Daynore müteşekkir bir biçimde Armani'nin yardımseverliğini takdir etti ve yaşanan olayları yaşlı büyücüye anlattı. Armani böylece <strong>Kal'El, S.A.R.S. ve Flagellant</strong> gibi kavramları Daynore'den duymuş oldu. Bu kavramlar çok garip bir şekilde Armani'ye yabancı gelmiyordu, ve onu rahatsız etmişti. Daynore bu noktada Armani'ye güvenmeyi seçerek ona <strong>Zincirdarlar'dan</strong> öğrendikleri bilgileri de söyledi ve Kal'El denen tarikatın sığınağını bulmakla görevlendirildiklerini söyledi. Bu bilgiler Armani'yi olması gerektiğinden çok daha fazla rahatsız etmişti. Elindeki kaynakları kullanarak bu öğrendiği bilgilere dair yeni şeyler öğrenmeyi denedi fakat hiçbir şey bulamamıştı. Bu Armani'yi daha çok rahatsız etmişti. Ayrıca grup Damian'dan vazgeçmemişti ve Menzher'den öğrendiği bilgiler ile elf topraklarına <strong>Alve Dorei'ye</strong> gitmek istiyor ve oradaki bir druid olan <strong>Naixana</strong> aracılığıyla Damian'ı diriltmek istiyordu. Daynore sayesinde Damian'ın <strong>Tanrı Haldir'in Seçilmişi</strong> olduğunu öğrenen Armani, kendine kümulatif toplamda yetecek kadar motivasyon bulmuştu ve gruba katılarak onları Alve Dorei'ye ışınlamayı teklif etti. Bu tarikatın ardındaki gizem, bu güçlerin arkasındaki sır ve bu tanrısallık ile seçilmişliğin arkasındaki netice, Armani'nin çözmesi gereken bir gizemdi ve bundan sonra olacak bütün olayları kendi gözleri ile görmeliydi. Bu grupta özel bir şeyler olduğunu Armani anlamıştı fakat Zincirdarlar'ın bile karıştığı bir mevzunun geçiştirme olmayacak kadar büyük olduğunun da farkındaydı. Armani'nin sunduğu teklif gruba cazip gelmişti ve bu teklifi kabul ettiler. Bu teklif ile Armani'yi bir <strong>Carpe Diem</strong> üyesi olarak kabul ettiler. Işınlanmadan önce, buraya kadar ayak izi takip ederek gelmiş bir savaşçı ile karşılaştılar. <strong>Julius</strong> adındaki bu genç, Daynore'nin yakın bir arkadaşı ve Bob'un ise eski bir rakibiymiş, buraya Beyaz Şehir'den Daynore için ona yardım etmeye gelmiş. Armani ile birlikte Julius'u da bir Capre Diem üyesi olarak kabul etmelerinin ardından grup olarak elf topraklarına ışınlandılar ve Damian'ı diriltebilecek o kadını aramak adına yola koyuldular.</p>
-      <p>Elf topraklarında gitmeleri gereken güzergah Eladrin Şehri'ydi. Bu şehir yalnızca, bazı spesifik zaman aralıklarında Materyal Düzlem'de beliriyordu. Bu Eladrin şehri her vakit kendini gösteren bir şehir olmadığı için, sıradaki vakti beklememek adına ellerini hızlı tutup bu şehir halihazırda yakın vakitlerde kendini göstereceği için çabuk olmaları lazımdı. Alve Dorei topraklarında zorlu yüzleşmeler ile karşılaştılar; periler ile dostuluk kurdular, Treantlar ile savaştılar ve yaşayan ormanın puzzlelarını çözdüler. Bu süreçte Armani, gruba büyücü kulenisi yaratarak bir sığınak sağladı, grubu taaruz büyüleri ile sıkıntılı durumlarda kurtardı ve uçan süpürgesini Daynore ile paylaşarak gruba yardımcı oldu. Daha sonrasına ise ellerini olabildiğince hızlı tutarak belirli bir süre sonra gizli Eladrin Şehri'ni bulabilmeyi başardılar ve orada aradıkları Druid olan Naixana'yı buldular. Grup Naixana ile hızlıca konuşmak için ayrılmak üzereyken Armani, eski bir tanıdığı, sevmediği bir dostu diyebileceği <strong>Berikul Rüyatepe</strong> adındaki kadim büyücü ile karşılaştı. Berikul, fani zevkleri tartışmalı ve topluma göre farklı olan bir adamdı. Armani'nin gençliğinde onunla dost olmuş ve birlikte araştırmalar yürütmüşlerdir. Lakin toplumun ahlak kuralları göze alındığı vakitte şaibeli tercihleri ve zevkleri olan bu adam, birlikte geçirdiği uzun dönemler sonrasında Armani'den hoşlanmıştı ve Armani'nin sarhoş olup ayrıyetten fazla tüttürdüğü bir akşam, tabu bir ilişki yaşamışlardı. Armani'nin kişisel zevkleri ve tercihleri bu tarz bir yönelimde değildi, bu yüzden yaşanan bu olayı hayatında yaptığı en büyük hatalardan birisi olarak görür. Gene de Berikul, herhangi bir gücenme olmadan bu birlikteliğin iki tarafa da yaramayacağını kabul ederek bu durumu yalnızca o gecede yaşananlar ile bırakmıştır. Berikul Armani'ye buraya geldiğinde yardım etmiş, ona yardımcı olabilecek bilgiler vermiş ve grubu direkt olarak kendisi Naixana'nın yanına götürmüştür. Carpe Diem üyeleri, böylece öğrenmişlerdir ki <strong>Naixana ve Berikul kardeştir.</strong> Berikul sayesinde bu ritüelistik ücret için ödeme minimuma düşürülmüş, bir arkadaşa yapılan güzel bir jeste dönüşmüştür. Grup Naixana'nın istediği ücreti karşıladıktan sonra Damian'ı reenkarne etmeyi başarmıştır. Damian yeniden bir insan olarak doğmuştu fakat reenkarnasyondan sonra tamamen değişmişti. Yüzü aynı değildi ve eskisi gibi görünmmüyordu, saç rengi beyaza dönmüştü ve en önemlisi kişiliği değişmişti. Sanki doğan kişi Damian değil de başka birisi gibiydi. Armani'nin zayıf hafızası bile bu delikanlı ile ölen adamın aynı adam olmadığını ayırt edebilecek vaziyetteydi. Berikul Armani'ye bunun büyünün kuvvetle muhtemel olabilen bir yan etkisi olduğunu söyledi. Bu grubu şaşırtsa da işlerine gelen bir şeydi; akıl sağlığı yerinde olan, yakışıklı ve örnek bir insan olarak hayata geri dönmüştü Damian. Damian'ın dirilmesi ardından, Berikul'un da Armani'ye verdiği tavsiyeler ile birlikte Armani, Capre Diem'in artık istediklere yere girebileceğini düşündüğünü ve bunu oylamaları gerektiğini söyledi. Armani'nin çözmesi gereken gizem önemliydi ve yaşlı büyücü, sınırlı günü kalmış hayatından daha fazla gün feragat etmek istemiyordu. Bu noktada grup; Damian'ın da dirilmesiyle, Armani ile Julius'un onlara katılmasıyla ve atlattıkları badirelerden edindikleri güç ve tecrübeyle Underdark'a inebileceklerine karar verdi. Alve Dorei yakınlarında, sınır bölgesi olarak kabul edilen bir mağara girişinde Underdark'a uzanan bir Drow Tüneli olduğunu öğrendiler. Elf hükümetinin koruduğu bu tünelden Underdark'a inmeye karar verdiler. İniş için mağaranın yolunu tutmadan evvel son hazırlıklar ve alışverişler yapıldı. Ayrıca bu noktada <strong>Berikul,</strong> köle olan Bob'un özgür kalabilmesinde Daynore'ye bir kez daha yardımcı oldu ve genç yarı orc kölelik statüsünden kurtuldu. Bob'un özgür kalmasının ardından, belirledikleri geçite doğru yola koyulduklarında, şanssız bir karşılaşma ile bir Gümüş Ejderha ile yolları kesişti ve anlaşmazlık neticesinde Carpe Diem ile ejderha birbirine girdi. Ejder savaşı çok zorlu geçmişti; Armani neredeyse kendini kızartarak öldürüyordu, Damian'ın bütün kemikleri kırıldı, Daynore'nin ekipmanı zarar gördü. Fakat en önemlisi Julius, maalesef neredeyse 120 feet yukarıdan düşerek hayatını kaybetti. Bu yüzden grup Julius'u da Reenkarne etmek zorunda kaldı. Ejder'den hasat ettikleri parçaları satarak parayı çıkardılar ve Julius'u da dirilttiler fakat normalde; sevecen, güleryüzlü, ılımlı ve komik olan Julius, tamamen zıt bir kişilikte bir Yarı-Elf olarak yeniden dirildi ve sanki Damian ile roller değişmiş gibi, gruba sorun çıkarmaya başlamıştı. Alve Dorei'de son alışverişlerini yaptıktan sonra grup Underdark'a inişini gerçekleştirmiştir.</p>
-      <p>Underdark'a indikleri vakitten itibaren, güneş girmeyen ve daima karanlık olan bir yerde yürümenin deformasyonu olarak zaman algılarını kaybetmeye başladılar. Armani bir insandı ve önünü göremiyordu. Underdark'ın karanlık atmosferinde gün geçtikçe <strong>Sirius'a</strong> bağlı konuma gelmeye başladı. Sirius'un yaratabildiği <strong>"Günışığı"</strong> olmasa Armani kafayı yer ve delirmeye başlardı. Bunun farkında olan yaşlı büyücü gene de minnettar olmak yerine, bunun zaten Sirius'un yapması gerektiği görevi olduğunu düşünüyor ve teşekkür etmiyordu. Yolculuklarına Underdark'ta devam ettikçe <strong>Kal'El'in</strong> inini bulmak adına, yerini öğrendikleri bir drow kalesine doğru gitmeye karar verdiler. Oraya giderken, Hook Horrorlar gibi çeşitli garabetler ile savaştılar ve <strong>Gelecekten Gelmiş 2. bir Daynore</strong> ile tanıştılar. <strong>Gelecekteki Daynore</strong>, Capre Diem'e potansiyel zorlukları ve olabilecek katastrofik senaryoları anlattı ve günümüzdeki Daynore'ye bir hediye verdi, zamanı gelince kullanması adına. Armani bu adamın varlığı karşısında bile çok şaşırmıştı ve heyecanlanmıştı. Bu Daynore'nin varlığı, çoklu zaman çizgilerinin var olduğunu kanıtlıyordu, çünkü Armani araştırmalarından hatırlıyordu ki, kişi kendi zaman çizelgesinde ileriye veya geriye anlık olarak gidebilirdi, fakat bu Daynore bu zaman çizelgesine anlık olarak gelmemişti veya yok oluyor gibi gözükmüyordu. Bu adam söylediklerinde haklıydı, yalan söylemiyordu ve <strong>farklı bir zaman çizelgesinden bizim zaman çizelgemize gelmişti.</strong> Bunun insanlık tarihinin en büyük buluşu olduğunu düşünüyordu Armani, zaman çizgileri arasında potansiyel bir yolculuk imkanının bilinmesi gerekiyordu, fakat Gelecekteki Daynore insanlığın buna hazır olmadığını söyleyerek Armani'yi uyardı ve ondan bu konu hakkında kimseye bahsetmemesini istedi. Armani bunu bedava bir şekilde yapmayacağını dile getirdi ve o zaman çizelgesindeki rolünün ne olduğunu öğrenmek istediğini söyledi. <strong>Gelecekteki Daynore Armani'nin ona kendi zaman çizgisinde, zaman çizgileri arasında yolculuğu keşfetme konusunda yardımcı olduğunu ve bu araştırmayı onun yürüttüğünü söyledi, yani bu yolculuğu bulan kişi Daynore değil, Armani'nin ta kendisiydi!</strong> Armani duydukları doğrultusunda gurulanmış ve mutlu olmuştu, Daynore'nin yalan söylemediğini biliyordu. Farklı bir zaman çizgisinde Daynore ile, kaotik bir senaryoyu engellemeye çalışıp başarısız olmuşlardı ve sonrasında ise bunu başka zaman çizgilerinde başarabilmek için <strong>Zaman çizgileri arasında yolculuğu keşfetmişlerdi.</strong> Armani öğrendiği bilgiler doğrultusunda, tarihin bir tekerrürden ibaret olduğunu söyleyerek, bu kaderin kaçınılmaz olduğunu dile getirdi ve Daynore'ye bunları kimseye söylemeyeceğine dair yemin etti ve ona yardımcı olacağına söz verdi. Bu karşılaşmanın ardından Gelecekteki Daynore ile vedalaşıp yollarına koyuldular. Yolda geçirdikleri belirsiz bir vaktin ardından <strong>Vincent</strong> adındaki bir Necromancer ve onun Nagaları ile savaştılar ve bu savaştan muzaffer ayrıldılar. Lakin Necromancer'ın inine girdiklerinde oradaki tuzaklar tetiklendi ve ikincil bir savaş esnasında <strong>Julius</strong> maalesef hayatını kaybetti. Onu nerede bile olduklarını hatırlayamayacakları bir noktaya hiçbir belirteç olmadan gömmek zorunda kaldılar. Julius'un yasını tutmalarının ardından grup Drow kalesine doğru yola çıkmıştı. Kaleye varmadan önce buldukları bir mağara oyuğunda dinlenmeye karar verdiklerinde bir kadın ile karşılaştılar. Mağarada garip giyinimli, uzaylı görünümlü, upuzun bir mızrak kullanan bir <strong>Githyanki</strong> oturuyordu. Damian bu kadına fazla ilgi duyuyordu, fakat kadın konuşmasını bile bilmiyordu, Daynore onunla başka bir dilde konuşarak anlaşıyordu. Armani de Daynore gibi bu kadın ile konuşabiliyor ve bu kadına sorular soruyordu. Daynore daha ılımlı ve sevecen bir tavır alırken Armani bu kadına karşı daha sert ve sorgulayıcı sorular soruyordu. Daynore sayesinde, bu kadın ile ortak bir amaç bulmalarının ardından, <strong>Fen'le</strong> adındaki bu Githyanki'yi gruplarına dahil ettiler. Grupta bir fikir ayrılığı söz konusuydu, sanki Julius'un yerini dolduruluyormuş gibi hissettiren bir durum mevcuttu. Bob ve Armani bu kadının katılmasının yanlış birşey olduğunu düşünüyordu, öte yandan Damian, Daynore ve Sirius ise bu kadının gelmesini destekliyordu. Armani bunun ileride bir bölünmeye sebep olacağına benzer bir emareyi rüyasında görmüştü; benekli bir insan ile birlikte birileri gruptan ayrılıyordu. Armani bu kadının elbet bir bela getireceğini söylese de, en nihayetinde bu kadını da yanlarına almaya karar verdiler ve Drow kalesine ilerlemeye devam ettiler. Drow kalesine gittikleri vakit grup iyi karşılanmadı ve kendilerini bir ölüm tuzağının içerisinde buldular. Onların yardımına <strong>Gelecekten Gelen Daynore</strong> yetişmiş ve onları kurtarmış olsa da, Gelecekteki Daynore büyük bir grup ile uğraşıyorken, nispeten daha küçük fakat elit bir grup ters taraftan grubu sıkıştırmıştı ve bir çatışma kaçınılmaz gözüküyordu. <strong>Fen'le</strong> düşündüklerinden çok daha iyi savaşıyordu, ve zor bir savaşın, kümulatif katkılar ile altından kalkmayı becermişlerdi lakin bu savaşta <strong>Armani</strong>, bir büyücünün çağırdığı küçük bir <strong>Quasit</strong> yüzünden hayatını kaybetmişti. Bir Drow çağırıcının yaptığı bir conjuration büyüsü sonucunda bir büyü manifestosu olarak ortaya çıkan bu yaratık, Armani'ye savaş boyunca nefes aldırmadı ve aman vermedi. Bu hilkat garibesi yaratık önce görünmez oluyor, ondan sonra da zehirli dişleri ile Armani'yi ısırıyor ve Armani'nin yanından kaçmasına izin vermiyordu. Kendisini izole bir durumda bırakmış olan Armani için işler hiç iyi gitmiyor, bu yaratıktan kurtulamıyordu. Savaşın heyecanı ve ölüm tehlikesinden ötürü bu yaratığı başından def edemeyen Armani panik yapıyor ve bazen elinde oluşturduğu <strong>Fireboltları</strong> istemi dışında patlatıyor ve kendine zarar veriyordu. Böyle hem drowların saldırısı, hem Quasit'in pususu hem de kendine verdiği zarar neticesinde Armani savaşta şehit düştü. Armani, Underdark'ta hem bilgisi hem de gerekli büyüleri ile grubun çok işine yarıyordu, bu yüzden Armani gibi usta bir büyücünün cesedini drowlara veremezlerdi, ayrıca Armani'nin yakın dostu olan Charlie'ye de söz vermişlerdi onu sağ sağlim geri getirme konusunda. Bu yüzden Armani'nin cesedini alıp, Underdark'ın başkenti olan Saphentitte adındaki şehire gitmeye karar verdiler.</p>
-      <p>Armani'yi diriltmek için çıktıkları yolda gene birçok farklı yaratık ile savaştılar ve ilginç bir şekilde Sirius'u, bir Harpy prensesi olan <strong>Zaerephys</strong> ile evlendirerek, prensesi de gruplarına kattılar. Saphentitte'ye geldiklerinde hem <strong>Armani'yi</strong> dirilttiler, hem de <strong>Kal'El'in</strong> sığınağı ile alakalı bilgiler topladılar. Bu süreçte <strong>Ölüler Meclisi</strong> adındaki kuruluş, aldıkları paranın misliyle hakkını ödeyerek Carpe Diem'e çok yardımcı oldu. Bu süreçte <strong>Ölüler Meclisi'nden Sylas ve Skull,</strong> grup ile bizzat ilgilendi. <strong>Armani'yi</strong> onlar dirilttiler ve Kal'El'e giden yolun <strong>Syfelin</strong> adındaki Drow şehrinden geçtiğini araştırarak öğrendiler. Yapacakları plan ve para konusunda anlaştıktan sonra Carpe Diem, Sylas ve Skull birlikte Syfelin'e doğru yolculuğa çıktı. Ölüler Meclisi çok profesyonel bir şekilde çalışarak, hiçbir sorun yaşanmadan onları Syfelin'e getirmeyi başardı. Bu noktadan sonra ise Ölüler Meclisi ile grup yollarını ayırdı. Syfelin'de yeni bir rehbere ihtiyaçları vardı, bu yüzden bir drow tavernasına girerek kendilerinin işine yarayacağını düşündükleri bir drow ile anlaştılar ve o drowdan, onları Drow Tünelleri'nden geçirerek istedikleri lokasyona onları ulaştırmasını istediler. Bu drowun ismi Minofein'di ve birçok yarası olan erkek izci bir drowdu. Bu drow, grubun başına birçok bela açtı, istenmeyen düşmanlar ile savaşmalarına sebep oldu ve grubun drow tünellerinde kaybolmasına sebep oldu. Kaybolduktan sonra yolunu bulabilmesi çok uzun zaman aldı grubun ve Minofein'in, fakat bir şekilde grubu istediği noktaya getirmeyi başardı bu iştutmaz drow. Bu tünellerde <strong>Sirius</strong> ve <strong>Armani</strong> sayesinde, hem Saphentitte'de hem de Syfelin'de duydukları bir efsane hakkında ekstra bilgiler öğrendiler. <strong>Kal'El</strong>, cennetten kovulmuş ve yozlaşmış <strong>"Düşmüş Melek Fatih Harthog"</strong> adındaki ölümsüz olan bir melek ile anlaşma yapmıştı ve Kal'El'in üssüne giden bu yolda onları bu melek bekliyordu. Grup kendi içerisinde fraksiyonlara ayrılmıştı; bazı kişiler ölümsüz bir meleğin adı üstünde ölümsüz olacağını düşündüğü için bu savaşa girmemeleri gerektiğini düşünüyordu, fakat Kal'El'in sığınağına gitmenin başka alternatif bir yolu yoktu. Armani, bu meleğin varlığından özellikle korkuyordu, yukarı düzlemde tanrılara hizmet eden varlıkların ölümsüz olduğunu biliyordu ve karşılarında bir rakip olarak düşmüş bir melek olacaktı. O yüzden bir meleği nasıl alt edebileceğini ve ölümsüzlüğü nasıl kırabileceğini öğrenmek istiyordu. Bu sebepten ötürü Sirius'un gücünün kaynağı olan, onun Matron'u <strong>Mirabelle</strong> ile büyüsel bir biçimde iletişime geçti. Mirabelle ile iletişimde olduğu süre esnasında, bir <strong>Archangel'a nasıl bir meleği öldürebileceğini sordu.</strong> Mirabelle, Armani'nin niyetindeki gerçek hinliği yakalamıştı ve ona nasıl yapılacağını söylemedi, fakat bir meleği öldürmenin mümkün olduğunu belirtti ve kendi Warlock'u olan <strong>Sirius'a</strong> bu meleğin ölümsüz doğasını delmek için gereken gücü bahşetti. Armani istediğini alamamanın siniri ve bir melek ile yüzleşmenin korkusu neticesinde, Mirabelle'nin sözlerinde bir yalan aradı. Mirabelle'ye inanmayan Armani, bu savaştan kaçınılması gerektiğini söyleyerek grubu ikna etmeye çalıştı. Sirius, Armani'nin Mirabelle'ye güvenmemesini bir saygısızlık olarak nitelendirdi ve büyücünün ahmaklık ettiğini, bir Archangel'ın sözünde yalan aranmaması gerektiğini söyledi ve o da grubu bu yönde ikna etmeye çalıştı. Bu yüzden grup üyeleri arasında oraya gidip gitmemeleri gerektiğini konu alan bir tartışma çıkmıştı ve bu tartışma iyice alevlendi. Bu tartışmanın ardındaysa grup parçalanmaya ve bölünmeye başladı. Bu bölünmeyi fiziken başlatan kişi ise Damian oldu. Damian, drow tünellerinden çıktıktan sonraki ilk dinlenme esnasında hiçbir şey söylemeden ve nereye gittiği belli olmayacak şekilde grubu terk etti. Bu hem Bob'u hem de herkesi şaşırtmıştı. Bu gerçek karşısında motivasyonunu ve akıl sağlığını kaybeden Fen'le, Damian'ın ardından grubu terk eden ikinci isim oldu. Bu yola 2 kişi eksik devam etmeleri gerekiyordu, ve yollarının üzerinde bir engel olarak ölümsüz bir melek onları bekliyordu.</p>
-      <p>Bu meleğe karşı olan savaşın zor, hatta neredeyse imkansız olacağını düşünen Armani, bu savaşa katılmayı reddetti ve gruba engel olmaya çalıştı. Armani bu noktada grubu yardım beklemeye davet etti, fakat Armani eğer beklerlerse meleğin ve Kal'El'in elinin güçleneceği gerçeğini yok sayıyordu. Armani bu noktada gruba engel olmayı başaramadı ve grubun aptalca davrandığını söyleyerek onları ölümlerine terk etti. Bu aptallıklarına katlanamadığını ve istiyorlarsa o melekle savaşmalarını söyledi fakat Armani savaşmayacaktı, o savaşa girmeyecek şekilde beklemeye karar vermişti. Carpe Diem'e küserek onlardan uzaklaştı. Underdark'ın karanlık atmosferinde önünü göremeyen Armani, uçan süpürgesine binerek bir meşale yaktı ve bir aptal gibi kendisini açık hedef haline getirdi. Kalan grup üyeleri, Bob ve Daynore'nin özgüven konuşmasının ardından, ölümlerinin muhtemel olduğunu bilmelerine rağmen, bu melek ile savaşmaya gittiler. O sırada <strong>Kal'El'in</strong> sığınağının yakınlarında devriye gezen bir suikastçi, Armani'yi gördü ve ona bir suikast düzenleyerek öldürdü. Armani'yi öldüren kişi <strong>John'un babası olan Elton'du.</strong> Elton'un Armani'yi öldürdüğünü kimse görmedi. Bu usta suikastçi, Armani'nin üzerinde bulunduğunu bile bilmediği bir kitabı çaldı. Armani'nin daha önceki hatırlamadığı hayatında yürüttüğü araştırmaları kayıt aldığı o defterini çaldı. Elton, bu kitabın Armani'de olduğunu ve Armani'nin bu kitabı bir <strong>Demiplane'nin</strong> içinde sakladığını biliyordu. Bunu Elton'a söyleyen kişi ise, <strong>Kal'El'in Lideri konumunda olan Marvela adındaki kadındı.</strong> Marvela, Armani'nin hatırlamadığı hayatında onun öğrencisiydi ve asistanıydı. Aynı zamanda Marvela, <strong>kraliyet soyundan gelen, Du Couteau soyismini taşıyan bir asildi.</strong> Armani'nin Tanrılar hakkında araştırmalar yürüttüğünü bilen Marvela, onun <strong>"Tanrıları Öldürme ve Diriltme</strong> adındaki araştırma kitabını kendi çıkarlarınca kullanmak istiyordu ve <strong>Ölmüş Tanrıça Lolth'u</strong> diriltmek istiyordu. <strong>Armani'nin</strong> ölmesi, <strong>Carpe Diem'in</strong> şehit düşmesi ve <strong>Damian'ın</strong> taraf değiştirip kendini feda etmeyi kabul etmesi neticesiyle de Marvela, Tanrıça Lolth'u diriltme amacına da başarıyla ulaşmış oldu.</p>
-      <p>Armani ismi, İmparatorluk tarafından tanınmış olsa da, bu ismin Carpe Diem ile birlikte anılmasının bir yanlışlık olduğu düşünülmüştür. Bir asil olarak tanınmasa da, ona "Büyük Usta Büyücü" deniyordur. Carpe Diem'in yanında bulunmuş, kendisine Armani şeklinde hitap eden şahısın bir sahtekar veya bir yanlış anlaşılma olduğu düşünülüyordur. Kendisine Armani diyen kişinin kimliği doğrulanamamıştır. Gerçekten bu kişi Büyük Üstat Armani mi, yoksa bu ismi mahlası olarak kullanan başka birisi mi bilinmiyordur. Kimliği diyarda bulunan bütün büyücü birlikleri tarafından araştırılsa da, bedeni bulunamadığından ötürü doğrulanamamıştır. Her halükarda bu isim yaşatıldığı dolayı Armani ismi, diğer grup üyeleri ile birlikte Tanrı Anıtları'na kazıtılmıştır ve İmparatorluk tarafınca "Kahraman" ünvanına layık görülmüştür. Eğer bu ismin büyüklüğünün altında gerçekten de Büyük Üstat Armani varsa, hatırlanacak çok daha fazla şey olacaktır...</p>
+      <p>Armani, geçmiş yaşantısını hatırlamayan, hayatını bir şekilde geçirmiş bir büyücü olarak Zonthar civarında yaşayan yaşlı ve bunamış bir büyücü olmuştu. Daha öncesinde kim olduğunu, neye hizmet ettiğini ve ne çalışmalar yürüttüğünü hatırlamıyor ve bunu sorgulama ihtiyacı bile duymuyordu. Artık yalnızca içmeyi ve tütütünü tüttürmeyi seven yaşlı bir büyücüydü Armani. Erzağı bittiği vakit, erzağını yenileme adına Zonthar'a gelir ve takviye yapar, kendini toplumdan uzak ve soyut bir biçimde tutardı. Kulübesinde onun en yakın arkadaşı <strong>Charlie</strong> ve diğer ruhlar ile birlikte sakin bir yaşam sürüyordu. Charlie onun en iyi arkadaşıydı, yaklaşık 15 santim boylarında bir orman ruhuydu ve en kadim dostuydı. Armani'nin hayatına girecek bazı kişiler, onun kaderini değiştirecekti.</p>
+      <p>Armani için sıradan bir erzak yenileme günüydü o gün, lakin bu sıradanlığı bozacak olaylar baş gösteriyordu. Armani Zonthar'a geldiği bir vakitte, kasabanın goblin baskını ile karşı karşıya olduğunu gördü. Zonthar Armani'nin pek de umrunda olmasa da, burası onun erzak alışverişini yapabildiği yegane yerdi, o yüzden bu yerleşkeyi korumaya karar verdi. Burada, daha sonrasında birlikte <strong>Carpe Diem</strong> olarak adlandırılacakları bir grup insan ile tanıştı. Bu grubun üyeleri olan; <strong>Daynore, John, Bob ve Damian</strong> adındaki gençler ile ve onların yanında savaşan 2 Efsungarla birlikte, gelen büyük goblin taaruzunu püskürtmeyi ve goblinleri yenmeyi başardılar. Alan tesirli alevtopu büyüsü sayesinde Armani, bu savaştan galip çıkılmasında büyük katkı oynadı.</p>
+      <p>Aylar sonra günün birinde Armani, rüyasında hiç hayra alamet şeyler görmemişti. Bir <strong>Divination Büyücüsü olan Armani</strong>, bazen rüyalarında olumlu veya olumsuz olabilecek bazı olayların projeksiyonlarını görebiliyor ve belli bir ölçüde geleceği tahmin edebiliyordu. Bu rüyasında Zonthar'a gelip kan akıtarak ritüeller yapan ve katliam çıkaran bir grup kırmızı cübbeli kültist gördü. Grubu ile birlikte ve Underdark'a inme süreçlerinde nice zorlu maceralar yaşadılar. Alve Dorei'ye, Eladrin Şehri'ne, Underdark'a kadar uzanan bu yolculukta Armani pek çok kez grubun kurtarıcısı oldu ve pek çok kez ölümden döndü. Bu maceraların her birinde hem fiziksel hem zihinsel sınırlarını zorladı.</p>
+      <p>Underdark'ta bir Drow kalesinde çıkan savaşta, bir büyücünün çağırdığı küçük bir <strong>Quasit</strong> yüzünden Armani hayatını kaybetti. Hem kendine verdiği zarar, hem Drow saldırıları, hem de Quasit'in bitmek bilmeyen tacizi neticesinde Armani savaşta şehit düştü. Saphentitte'ye giden grup onu diriltti. Lakin daha sonra, <strong>Kal'El'in</strong> sığınağına giden yolda gruba küserek onlardan ayrılan Armani, Kal'El'in yakınlarında devriye gezen bir suikastçi tarafından öldürüldü. Armani'yi öldüren kişi <strong>John'un babası olan Elton'du.</strong> Elton, Armani'nin üzerinde bulunduğunu bile bilmediği kitabı çaldı; Armani'nin öğrencisi olan <strong>Kal'El Lideri Marvela</strong>, bu kitabı kullanarak <strong>Ölmüş Tanrıça Lolth'u</strong> diriltmeyi başardı.</p>
+      <p>Armani ismi, İmparatorluk tarafından tanınmış olsa da, bu ismin Carpe Diem ile birlikte anılmasının bir yanlışlık olduğu düşünülmüştür. Kendisine "Büyük Usta Büyücü" deniyordur. Her halükarda bu isim yaşatıldığı dolayı Armani ismi, diğer grup üyeleri ile birlikte Tanrı Anıtları'na kazıtılmıştır ve İmparatorluk tarafınca "Kahraman" ünvanına layık görülmüştür.</p>
     </div>
 
-    <div class="alternative-images">
-      <div>
-        <img src="Charlie.jpg" alt="Armani'nin Kadim Dostu ve Ruhların Koruyucusu Charlie" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'nin Kadim Dostu ve Ruhların Koruyucusu Charlie</div>
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong>
+        <div class="badges">
+          <span class="badge">Yaşlı Büyücü</span>
+          <span class="badge">Uykucu İhtiyar</span>
+          <span class="badge">Ruhları Olan Büyücü</span>
+          <span class="badge">Büyük Usta Armani</span>
+          <span class="badge">Paragon'dan Kovulan Büyücü</span>
+          <span class="badge">Tanrıları Öldürmek İsteyen Adam</span>
+          <span class="badge">Carpe Diem'in Sonunu Getiren Büyücü</span>
+        </div>
+        <strong>Lore Etkisi:</strong><br>
+        "Carpe Diem"in bünyesinde barınmış bir büyücüdür. Hatırlamadığı geçmişinde büyük bir Divination Üstadı'ydı. Tanrı kavramını ortadan kaldırmak istemiş bir büyücüdür. Ölmesinin ardından, Öğrencisi Marvela ve liderlik ettiği Kal'El adındaki örgüt, kendinde bile olduğunu hatırlamadığı araştırma defterini çalmıştır ve bu araştırma notları sayesinde Lolth Kal'El tarafından diriltilmiştir.<br><br>
+        <a href="armani.pdf" target="_blank" class="character-link">🧙‍♂️ Armani Olarak En Son Char Sheeti</a>
       </div>
-      <div>
-        <img src="Kulübe.jpg" alt="Armani'nin Zonthar'ın Dışındaki Kulübesi" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'nin Zonthar'ın Dışındaki Kulübesi</div>
-      </div>
-      <div>
-        <img src="Broom of Flying.jpg" alt="Armani'nin Uçan Süpürgesi" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'nin Uçan Süpürgesi</div>
-      </div>
-      <div>
-        <img src="Quasit.jpg" alt="Armani'yi Öldüremeyi Başaran Çağrılmış Quasit" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'yi Öldüremeyi Başaran Çağrılmış Quasit</div>
-      </div>
-      <div>
-        <img src="Elton.jpg" alt="Armani'yi Öldüren Suikastçi Elton" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'yi Öldüren Suikastçi Elton</div>
-      </div>
-      <div>
-        <img src="Lider Marvela.jpg" alt="Armani'nin Hatırlamadığı Geçmişindeki Öğrencisi Ve Kal'El'in Lideri Marvela" onclick="openModal(this)">
-        <div class="image-title-alt">Armani'nin Hatırlamadığı Geçmişindeki Öğrencisi Ve Kal'El'in Lideri Marvela</div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Divination Wizard</span></div>
+          <div class="info-row"><span class="info-label">Level:</span><span class="info-value">9 Level'da öldü</span></div>
+          <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">87 Yaşında Öldü</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+        </div>
       </div>
     </div>
 
-    <a class="back-link" href="../index.html">← Geri Dön</a>
+    <div class="carousel-section">
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+      <div class="carousel-wrapper">
+
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Charlie.jpg" alt="Charlie" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Armani'nin Kadim Dostu ve Ruhların Koruyucusu Charlie</div>
+          <div class="carousel-dots" id="dots-0"><span class="dot active"></span></div>
+        </div>
+
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Quasit.jpg" alt="Quasit" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="1">
+                <img src="Elton.jpg" alt="Elton" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="2">
+                <img src="Lider Marvela.jpg" alt="Lider Marvela" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Armani'yi Öldüremeyi Başaran Çağrılmış Quasit</div>
+          <div class="carousel-dots" id="dots-1"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+        </div>
+
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Kulübe.jpg" alt="Kulübe" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Broom of Flying.jpg" alt="Broom of Flying" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2,1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Armani'nin Zonthar'ın Dışındaki Kulübesi</div>
+          <div class="carousel-dots" id="dots-2"><span class="dot active"></span><span class="dot"></span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      <a class="back-link" href="../index.html">← Geri Dön</a>
+      <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
+    </div>
   </div>
 
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
-    <strong>Unvanlar:</strong><br>
-    Yaşlı Büyücü, Uykucu İhtiyar, Ruhları Olan Büyücü, Büyük Usta Armani, Paragon'dan Kovulan Büyücü, Tanrıları Öldürmek İsteyen Adam, Carpe Diem'in Sonunu Getiren Büyücü<br><br>
+    <strong>Unvanlar:</strong>
+    <div class="badges">
+      <span class="badge">Yaşlı Büyücü</span>
+      <span class="badge">Uykucu İhtiyar</span>
+      <span class="badge">Ruhları Olan Büyücü</span>
+      <span class="badge">Büyük Usta Armani</span>
+      <span class="badge">Paragon'dan Kovulan Büyücü</span>
+      <span class="badge">Tanrıları Öldürmek İsteyen Adam</span>
+      <span class="badge">Carpe Diem'in Sonunu Getiren Büyücü</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
-    "Carpe Diem"in bünyesinde barınmış bir büyücüdür. Hatırlamadığı geçmişinde büyük bir Divination Üstadı'ydı. Tanrı kavramını ortadan kaldırmak istemiş bir büyücüdür. Marvela adındaki öğrencisi ile bunun nasıl yapacağının araştırmasını yürütürken bilinmeyen bir şey tarafından durdurulmuş ve anılarına el konulmuştur. Ölmesinin ardından, Öğrencisi Marvela ve liderlik ettiği Kal'El adındadki örgüt, kendinde bile olduğunu hatırlamadığı araştırma defterini çalmıştır ve bu araştırma notları sayesinde Lolth Kal'El tarafından diriltilmiştir.<br><br>
+    "Carpe Diem"in bünyesinde barınmış bir büyücüdür. Hatırlamadığı geçmişinde büyük bir Divination Üstadı'ydı. Marvela adındaki öğrencisi ile Tanrı araştırması yürütürken bilinmeyen bir şey tarafından durdurulmuş ve anılarına el konulmuştur. Ölmesinin ardından araştırma defteri çalınmış; bu notlar sayesinde Lolth diriltilmiştir.<br><br>
     <a href="armani.pdf" target="_blank" class="character-link">🧙‍♂️ Armani Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
-    <strong>Class ve Subclass:</strong> Divination Wizard<br>
-    <strong>Level:</strong> 9 Level'da öldü<br>
-    <strong>Irk:</strong> Human<br>
-    <strong>Yaş:</strong> 87 Yaşında Öldü<br>
-    <strong>Cinsiyet:</strong> Erkek
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Class:</span><span class="info-value">Divination Wizard</span></div>
+      <div class="info-row"><span class="info-label">Level:</span><span class="info-value">9 Level'da öldü</span></div>
+      <div class="info-row"><span class="info-label">Irk:</span><span class="info-value">Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş:</span><span class="info-value">87 Yaşında Öldü</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet:</span><span class="info-value">Erkek</span></div>
+    </div>
   </div>
 
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img class="modal-content" id="img01" />
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
   </div>
 
   <script>
-    function openModal(img) {
-      document.getElementById("myModal").style.display = "block";
-      document.getElementById("img01").src = img.src;
-      document.getElementById("volume-control-wrapper").style.display = "none";
+    const music = document.getElementById('background-music');
+    const btn   = document.getElementById('play-pause-btn');
+    let isPlaying = true, panelOpen = false;
+    music.volume = 0.5;
+    music.play().catch(() => { isPlaying = false; btn.textContent = '▶ Müziği Başlat'; });
+    function toggleMusic() { if (isPlaying) { music.pause(); btn.textContent = '▶ Müziği Başlat'; } else { music.play(); btn.textContent = '⏸ Müziği Duraklat'; } isPlaying = !isPlaying; }
+    function togglePanel() { const p = document.getElementById('volume-control-wrapper'); const t = document.getElementById('music-toggle-btn'); panelOpen = !panelOpen; p.classList.toggle('open', panelOpen); t.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸'; }
+    document.getElementById('volume-control').addEventListener('input', function() { music.volume = parseFloat(this.value); document.getElementById('volume-level').innerText = Math.round(this.value * 100) + '%'; });
+    window.onbeforeunload = () => music.pause();
+
+    const leftBox = document.querySelector('.left-box'), rightBox = document.querySelector('.right-box');
+    function updateInfoBoxes() { const top = Math.max(70, 100 - window.scrollY); if (leftBox) leftBox.style.top = top + 'px'; if (rightBox) rightBox.style.top = top + 'px'; }
+    window.addEventListener('scroll', updateInfoBoxes, { passive: true }); updateInfoBoxes();
+
+    const CAROUSEL_AUTO_MS = 5000;
+    const captions = [
+      ['Armani\'nin Kadim Dostu ve Ruhların Koruyucusu Charlie'],
+      ['Armani\'yi Öldüremeyi Başaran Çağrılmış Quasit','Armani\'yi Öldüren Suikastçi Elton','Armani\'nin Hatırlamadığı Geçmişindeki Öğrencisi Ve Kal\'El\'in Lideri Marvela'],
+      ['Armani\'nin Zonthar\'ın Dışındaki Kulübesi','Armani\'nin Uçan Süpürgesi'],
+    ];
+    const state = [{idx:0},{idx:0},{idx:0}];
+    let activeTab = 0, autoTimer = null, isPaused = false;
+
+    function getCards(p) { return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${p}"]`)); }
+    function showCard(p, newIdx) {
+      const cards = getCards(p), oldIdx = state[p].idx;
+      if (oldIdx === newIdx) return;
+      const old = cards[oldIdx];
+      old.classList.remove('visible'); old.classList.add('leaving');
+      old.addEventListener('animationend', () => old.classList.remove('leaving'), {once:true});
+      cards[newIdx].classList.add('visible');
+      state[p].idx = newIdx;
+      document.getElementById(`caption-${p}`).textContent = captions[p][newIdx];
+      document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===newIdx));
     }
+    function carouselShift(p, dir) { const total = getCards(p).length; showCard(p, (state[p].idx+dir+total)%total); resetAutoTimer(); }
+    function switchTab(idx) { document.getElementById(`panel-${activeTab}`).classList.remove('active'); document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active'); activeTab=idx; document.getElementById(`panel-${activeTab}`).classList.add('active'); document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active'); resetAutoTimer(); }
+    function autoAdvance() { if (isPaused) return; const total = getCards(activeTab).length; showCard(activeTab, (state[activeTab].idx+1)%total); }
+    function startAutoTimer() { clearInterval(autoTimer); autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS); }
+    function resetAutoTimer() { startAutoTimer(); }
+    function pauseCarousel() { isPaused = true; }
+    function resumeCarousel() { isPaused = false; resetAutoTimer(); }
+    document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
+    startAutoTimer();
+    [0,1,2].forEach(p => { document.getElementById(`dots-${p}`).querySelectorAll('.dot').forEach((dot,idx) => { dot.addEventListener('click', () => { showCard(p,idx); resetAutoTimer(); }); }); });
 
-    function closeModal() {
-      document.getElementById("myModal").style.display = "none";
-      document.getElementById("volume-control-wrapper").style.display = "block";
+    const modal = document.getElementById('myModal'), modalImg = document.getElementById('img01'), modalCap = document.getElementById('modal-caption'), modalCount = document.getElementById('modal-counter');
+    let modalImages = [], modalIdx = 0, modalAnimating = false, modalPanel = -1;
+    function buildModalImages(p) { modalImages = []; getCards(p).forEach((card,i) => { const img = card.querySelector('img'); if (img) modalImages.push({src:img.src, caption:captions[p][i]||''}); }); }
+    function setModalImage(idx, dir) {
+      if (modalAnimating) return; modalAnimating = true;
+      const outClass = dir>0?'slide-out-left':'slide-out-right', inClass = dir>0?'slide-in-right':'slide-in-left';
+      modalImg.classList.add(outClass);
+      modalImg.addEventListener('animationend', () => {
+        modalImg.classList.remove(outClass); modalIdx = (idx+modalImages.length)%modalImages.length;
+        modalImg.src = modalImages[modalIdx].src; modalCap.textContent = modalImages[modalIdx].caption;
+        modalCount.textContent = `${modalIdx+1} / ${modalImages.length}`; modalImg.classList.add(inClass);
+        modalImg.addEventListener('animationend', () => { modalImg.classList.remove(inClass); modalAnimating = false; }, {once:true});
+      }, {once:true});
     }
-
-    document.getElementById('volume-control').addEventListener('input', function () {
-      var volume = parseFloat(this.value);
-      document.getElementById('background-music').volume = volume;
-      document.getElementById('volume-level').innerText = Math.round(volume * 100) + "%";
-    });
-
-    window.onbeforeunload = function () {
-      document.getElementById('background-music').pause();
-    };
-
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.id = "imageModal";
-
-    const modalImg = document.createElement("img");
-    modalImg.className = "modal-content";
-    modalImg.id = "modalImage";
-
-    const span = document.createElement("span");
-    span.className = "close";
-    span.innerHTML = "&times;";
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-    };
-
-    modal.appendChild(span);
-    modal.appendChild(modalImg);
-    document.body.appendChild(modal);
-
-    span.onclick = function () {
-      modal.style.display = "none";
-      document.getElementById("back-button").classList.remove("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "block"; // << SES KONTROL GERİ GELSİN
-    };
-
-    function openModal(element) {
-      modal.style.display = "block";
-      modalImg.src = element.src;
-      document.getElementById("back-button").classList.add("hidden");
-      document.getElementById("volume-control-wrapper").style.display = "none"; // << SES KONTROL GİZLENSİN
+    function openModal(el) {
+      const card = el.closest('.carousel-card');
+      if (card) { modalPanel = parseInt(card.dataset.panel); buildModalImages(modalPanel); modalIdx = modalImages.findIndex(m=>m.src===el.src); if (modalIdx<0) modalIdx=0; }
+      else { modalPanel=-1; modalImages=[{src:el.src,caption:el.alt||''}]; modalIdx=0; }
+      modalImg.src=modalImages[modalIdx].src; modalCap.textContent=modalImages[modalIdx].caption;
+      modalCount.textContent=`${modalIdx+1} / ${modalImages.length}`; modalAnimating=false;
+      modal.classList.add('open'); document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display='none'; document.body.style.overflow='hidden'; pauseCarousel();
     }
-    
+    function closeModal() { modal.classList.remove('open'); document.getElementById('back-button').classList.remove('hidden'); document.getElementById('music-widget').style.display='flex'; document.body.style.overflow=''; resumeCarousel(); }
+    function modalNav(dir) { setModalImage(modalIdx+dir, dir); }
+    modal.addEventListener('click', e => { const allowed=[document.getElementById('img01'),document.getElementById('modal-caption'),document.getElementById('modal-prev'),document.getElementById('modal-next')]; if (!allowed.some(el=>el&&(el===e.target||el.contains(e.target)))) closeModal(); });
+    document.addEventListener('keydown', e => { if (!modal.classList.contains('open')) return; if (e.key==='ArrowRight') modalNav(1); if (e.key==='ArrowLeft') modalNav(-1); if (e.key==='Escape') closeModal(); });
   </script>
-  
-  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
-  
 </body>
 </html>

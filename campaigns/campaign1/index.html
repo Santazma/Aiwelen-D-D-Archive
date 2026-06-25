@@ -3,50 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campaign 1: Carpe Diem</title>
+  <title>Campaign I — Carpe Diem | Aiwelen D&D</title>
+  <link rel="stylesheet" href="../../theme.css">
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: white;
-      text-align: center;
+      background-image: url('https://cdna.artstation.com/p/assets/images/images/041/430/008/large/jonny-sun-.jpg?1631684163');
     }
+
     h1 {
-      margin-top: 2rem;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin: 0 0 0.3rem;
+      line-height: 1.1;
+      text-shadow:
+        0 0 40px rgba(201,168,76,0.55),
+        0 0 80px rgba(201,168,76,0.2),
+        3px 3px 10px rgba(0,0,0,0.98);
+      animation: titleDrop 1.4s cubic-bezier(.22,1,.36,1) 0.1s both;
     }
-    .section-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      align-items: center;
-      margin: 3rem 0;
+
+    /* Emblemi — dönen rün halkaları + çapraz kılıçlar */
+    .emblem-wrap {
+      position: relative;
+      width: 110px; height: 110px;
+      margin-bottom: 2rem;
     }
-    .section-button {
-      background-color: #444;
-      color: white;
-      border: 2px solid #666;
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      cursor: pointer;
-      text-decoration: none;
-      border-radius: 10px;
-      width: 300px;
+    .emblem-ring-outer {
+      position: absolute; inset: 0;
+      animation: runeRotate 44s linear infinite;
     }
-    .section-button:hover {
-      background-color: #666;
+    .emblem-ring-inner {
+      position: absolute; inset: 18px;
+      animation: runeCounter 30s linear infinite;
+    }
+    .emblem-ring-outer svg,
+    .emblem-ring-inner svg {
+      width: 100%; height: 100%;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px var(--gold-glow));
+    }
+    .emblem-center {
+      position: absolute; inset: 30px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .emblem-center svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 10px rgba(201,168,76,0.6));
+    }
+
+    @media (max-width: 540px) {
+      .emblem-wrap { width: 86px; height: 86px; }
+      h1 { letter-spacing: 3px; }
+    }
+    @media (max-width: 360px) {
+      h1 { font-size: 1.6rem; }
     }
   </style>
 </head>
 <body>
-  <h1>Campaign 1: Carpe Diem</h1>
-  <div class="section-container">
-    <a href="kampanyanin-hikayesi/index.html" class="section-button">Campaign 1'in Hikayesi</a>
-    <a href="yasanmis-olaylar/index.html" class="section-button">Yaşanmış Olaylar</a>
-    <a href="oyuncu-karakterleri/index.html" class="section-button">Oyuncu Karakterleri</a>
-    <a href="onemli-npcler/index.html" class="section-button">Önemli NPC'ler</a>
+<main>
+
+  <!-- ── EMBLEM ── -->
+  <div class="emblem-wrap">
+    <div class="emblem-ring-outer">
+      <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="55" cy="55" r="52" fill="none" stroke="#c9a84c" stroke-width="0.8" stroke-dasharray="4 6" opacity="0.6"/>
+        <circle cx="55" cy="55" r="47" fill="none" stroke="#c9a84c" stroke-width="0.4" opacity="0.3"/>
+        <line x1="55" y1="3"   x2="55" y2="11"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="55" y1="99"  x2="55" y2="107" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="3"  y1="55"  x2="11" y2="55"  stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <line x1="99" y1="55"  x2="107" y2="55" stroke="#c9a84c" stroke-width="1.2" opacity="0.8"/>
+        <polygon points="55,1 57,5 55,9 53,5"        fill="#c9a84c" opacity="0.7"/>
+        <polygon points="55,101 57,105 55,109 53,105" fill="#c9a84c" opacity="0.7"/>
+        <polygon points="1,55 5,53 9,55 5,57"        fill="#c9a84c" opacity="0.7"/>
+        <polygon points="101,55 105,53 109,55 105,57" fill="#c9a84c" opacity="0.7"/>
+        <line x1="17" y1="17" x2="21" y2="21" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="89" y1="17" x2="93" y2="21" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="17" y1="89" x2="21" y2="93" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <line x1="89" y1="89" x2="93" y2="93" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+      </svg>
+    </div>
+    <div class="emblem-ring-inner">
+      <svg viewBox="0 0 74 74" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="37" cy="37" r="34" fill="none" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="2 9" opacity="0.4"/>
+        <polygon points="37,3 38.5,6 37,9 35.5,6"     fill="#c9a84c" opacity="0.5"/>
+        <polygon points="37,65 38.5,68 37,71 35.5,68"  fill="#c9a84c" opacity="0.5"/>
+        <polygon points="3,37 6,35.5 9,37 6,38.5"     fill="#c9a84c" opacity="0.5"/>
+        <polygon points="65,37 68,35.5 71,37 68,38.5"  fill="#c9a84c" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="emblem-center">
+      <!-- Çapraz kılıçlar — Carpe Diem -->
+      <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="25" cy="25" r="20" fill="rgba(8,5,2,0.82)" stroke="#c9a84c" stroke-width="0.8" opacity="0.45"/>
+        <!-- Kılıç 1: sol üst → sağ alt -->
+        <line x1="11" y1="11" x2="39" y2="39" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+        <line x1="17" y1="14" x2="13" y2="18" stroke="#c9a84c" stroke-width="3.5" stroke-linecap="round" opacity="0.65"/>
+        <circle cx="10" cy="10" r="2.2" fill="#c9a84c" opacity="0.8"/>
+        <!-- Kılıç 2: sağ üst → sol alt -->
+        <line x1="39" y1="11" x2="11" y2="39" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+        <line x1="33" y1="14" x2="37" y2="18" stroke="#c9a84c" stroke-width="3.5" stroke-linecap="round" opacity="0.65"/>
+        <circle cx="40" cy="10" r="2.2" fill="#c9a84c" opacity="0.8"/>
+        <!-- Merkez taş -->
+        <circle cx="25" cy="25" r="4.2" fill="rgba(8,5,2,0.95)" stroke="#c9a84c" stroke-width="1.2"/>
+        <circle cx="25" cy="25" r="2"   fill="#c9a84c" opacity="0.82"/>
+      </svg>
+    </div>
   </div>
 
-  <a class="back-link" href="../index.html">← Geri Dön</a>
+  <!-- ── BAŞLIK ── -->
+  <div class="page-eyebrow">Campaign I &mdash; Aiwelen D&amp;D Arşivi</div>
+  <h1>Carpe Diem</h1>
+  <div class="page-tagline">Bir grubun efsanesi, unutulmaz bir maceranın izleri</div>
+
+  <!-- ── BÖLÜCÜ ── -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-ornament">
+      <div class="divider-dot"></div>
+      <div class="divider-rune">⚔</div>
+      <div class="divider-dot"></div>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ── BÖLÜMLER ── -->
+  <nav class="nav-list" aria-label="Campaign Bölümleri">
+
+    <a class="nav-btn" href="campaignin-hikayesi/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">I</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Campaign'in Hikayesi</div>
+        <div class="btn-subtitle">Ana anlatı ve kronoloji</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-num">II</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Yaşanmış Olaylar</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn" href="oyuncu-karakterleri/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">III</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Oyuncu Karakterleri</div>
+        <div class="btn-subtitle">Carpe Diem üyeleri</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn" href="onemli-npcler/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-num">IV</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Önemli NPC'ler</div>
+        <div class="btn-subtitle">Müttefikler, düşmanlar ve sırlı figürler</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+  </nav>
+
+  <!-- ── GERİ & FOOTER ── -->
+  <a class="back-link" href="../../index.html">← Ana Menü</a>
+
+  <div class="footer-divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot" style="width:4px;height:4px;background:rgba(201,168,76,0.3);transform:rotate(45deg);flex-shrink:0;"></div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="footer-text">Aiwelen Arşivleri &mdash; Campaign I &mdash; Carpe Diem</div>
+
+</main>
 </body>
 </html>
