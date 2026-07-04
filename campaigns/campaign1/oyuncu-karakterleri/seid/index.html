@@ -283,5 +283,6 @@
     modal.addEventListener('click',e=>{const allowed=[document.getElementById('img01'),document.getElementById('modal-caption'),document.getElementById('modal-prev'),document.getElementById('modal-next')];if(!allowed.some(el=>el&&(el===e.target||el.contains(e.target))))closeModal();});
     document.addEventListener('keydown',e=>{if(!modal.classList.contains('open'))return;if(e.key==='ArrowRight')modalNav(1);if(e.key==='ArrowLeft')modalNav(-1);if(e.key==='Escape')closeModal();});
   </script>
+<script src="../../../../splash-cursor.js"></script>
 </body>
 </html>

@@ -29,44 +29,46 @@
     <div class="divider-line"></div>
   </div>
 
-  <div class="sort-bar">
-    <span class="sort-label">Sırala</span>
-    <button class="sort-btn active" data-sort="name">Alfabetik</button>
-    <button class="sort-btn" data-sort="cr">CR'ye Göre</button>
-  </div>
+  <div class="creature-table-wrap">
+    <div class="creature-table-head">
+      <div class="th-cell"></div>
+      <div class="th-cell sortable" data-sort="name">Name <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="type">Type <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="size">Size <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="cr">CR <span class="th-sort-arrow"></span></div>
+    </div>
 
-  <div class="creature-grid">
+    <div class="creature-grid">
 
-    <a class="creature-card is-boss" data-name="Alevkanat" data-cr="10" href="../alevkanat/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Alevkanat</div>
-        <div class="creature-type">Genç Kızıl Ejderha (dragon), kayıtsız kötü</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 10<small>5.900 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Flamewing" data-type="Dragon" data-size="Large" data-cr="10" href="../alevkanat/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
+          </svg>
+        </div>
+        <div class="creature-name">Flamewing</div>
+        <div class="creature-col-type">Dragon</div>
+        <div class="creature-col-size">Large</div>
+        <div class="cr-badge cr-badge--boss">CR 10<small>5,900 XP</small></div>
+      </a>
 
-    <a class="creature-card is-boss" data-name="Mordrek" data-cr="7" href="../mordrek/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <circle cx="30" cy="34" r="14"/>
-          <path d="M20 22 C16 12 10 8 6 6 C10 16 12 22 18 26"/>
-          <path d="M40 22 C44 12 50 8 54 6 C50 16 48 22 42 26"/>
-          <circle cx="24" cy="32" r="2" fill="#c9a84c"/>
-          <circle cx="36" cy="32" r="2" fill="#c9a84c"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Mordrek, Quasitlerin Efendisi</div>
-        <div class="creature-type">Küçük iblis (fiend), kaotik kötü</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 7<small>2.900 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Mordrek, Lord of Quasits" data-type="Fiend" data-size="Small" data-cr="7" href="../mordrek/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <circle cx="30" cy="34" r="14"/>
+            <path d="M20 22 C16 12 10 8 6 6 C10 16 12 22 18 26"/>
+            <path d="M40 22 C44 12 50 8 54 6 C50 16 48 22 42 26"/>
+            <circle cx="24" cy="32" r="2" fill="#c9a84c"/>
+            <circle cx="36" cy="32" r="2" fill="#c9a84c"/>
+          </svg>
+        </div>
+        <div class="creature-name">Mordrek, Lord of Quasits</div>
+        <div class="creature-col-type">Fiend</div>
+        <div class="creature-col-size">Small</div>
+        <div class="cr-badge cr-badge--boss">CR 7<small>2,900 XP</small></div>
+      </a>
 
+    </div>
   </div>
 
   <a class="back-link" href="../index.html">← Bestiary'e Dön</a>
@@ -80,5 +82,6 @@
 
 </main>
 <script src="../../../../bestiary.js"></script>
+<script src="../../../../splash-cursor.js"></script>
 </body>
 </html>

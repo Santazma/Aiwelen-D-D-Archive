@@ -16,6 +16,13 @@
   from { opacity: 0; transform: translateY(22px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes overlayFadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes portraitPopIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
 
 /* ═══════════════════════════════════════════════════════════
    HUB — Canavarlar / Bosslar / Tüm Yaratıklar seçim kartları
@@ -111,74 +118,79 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SIRALAMA ÇUBUĞU — Alfabetik / CR'ye Göre
+   YARATIK TABLOSU (liste sayfaları) — sütun başlığına tıklayarak
+   sıralama, D&D Beyond Encounter Builder tarzı
    ═══════════════════════════════════════════════════════════ */
-.sort-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  margin: 0 auto 2.6rem;
-  flex-wrap: wrap;
-}
-.sort-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(201,168,76,0.4);
-}
-.sort-btn {
-  font-family: 'Cinzel', serif;
-  font-size: 0.68rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: rgba(242,232,208,0.55);
-  background: rgba(8,5,2,0.6);
-  border: 1px solid rgba(201,168,76,0.25);
-  border-radius: 20px;
-  padding: 0.45rem 1.1rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.sort-btn:hover {
-  border-color: rgba(201,168,76,0.55);
-  color: var(--gold-bright);
-}
-.sort-btn.active {
-  background: rgba(201,168,76,0.15);
-  border-color: var(--gold);
-  color: var(--gold-bright);
-  box-shadow: 0 0 12px rgba(201,168,76,0.25);
+.creature-table-wrap {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto 2rem;
+  overflow-x: auto;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   YARATIK KARTLARI (liste sayfaları)
-   ═══════════════════════════════════════════════════════════ */
+.creature-table-head {
+  display: grid;
+  grid-template-columns: 56px 1fr 130px 90px 110px;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0 1.1rem 0.7rem;
+  border-bottom: 1px solid rgba(201,168,76,0.28);
+  margin-bottom: 0.7rem;
+  min-width: 620px;
+}
+.creature-table-head.has-campaign-col {
+  grid-template-columns: 56px 1fr 120px 80px 100px 110px;
+}
+
+.th-cell {
+  font-family: 'Cinzel', serif;
+  font-size: 0.64rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.5);
+}
+.th-cell.sortable {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+.th-cell.sortable:hover { color: var(--gold); }
+.th-cell.sortable.active { color: var(--gold-bright); }
+.th-sort-arrow {
+  font-size: 0.55rem;
+  opacity: 0.8;
+  width: 8px;
+  display: inline-block;
+}
+
 .creature-grid {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.2rem;
+  flex-direction: column;
+  gap: 0.6rem;
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto 2rem;
+  min-width: 620px;
 }
 
 .creature-card {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 56px 1fr 130px 90px 110px;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
   width: 100%;
-  max-width: 480px;
-  padding: 1rem 1.2rem;
+  padding: 0.7rem 1.1rem;
   text-decoration: none;
   border-radius: 6px;
   background: rgba(8,5,2,0.75);
   border: 1px solid rgba(201,168,76,0.22);
   transition: border-color 0.3s, transform 0.25s ease, box-shadow 0.3s;
   animation: cardReveal 0.5s ease both;
+}
+.creature-card.has-campaign-col {
+  grid-template-columns: 56px 1fr 120px 80px 100px 110px;
 }
 .creature-card:hover {
   border-color: rgba(201,168,76,0.6);
@@ -201,36 +213,54 @@
 }
 .creature-icon svg { width: 100%; height: 100%; }
 
-.creature-info {
-  flex: 1;
-  text-align: left;
+/* Yaratık portresi bulunan kartlar için (gerçek görsel) */
+.creature-icon.has-photo {
+  width: 48px;
+  height: 48px;
+  opacity: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.3);
 }
+.creature-card.is-boss .creature-icon.has-photo {
+  border-color: rgba(224,76,60,0.35);
+}
+.creature-icon.has-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
 .creature-name {
   font-family: 'Cinzel', serif;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--parchment);
   transition: color 0.3s;
+  text-align: left;
 }
 .creature-card:hover .creature-name { color: var(--gold-bright); }
 .creature-card.is-boss:hover .creature-name { color: #f0a09a; }
 
-.creature-type {
+.creature-col-type,
+.creature-col-size {
   font-family: 'Lora', serif;
   font-style: italic;
-  font-size: 0.7rem;
-  color: rgba(242,232,208,0.4);
-  margin-top: 2px;
+  font-size: 0.76rem;
+  color: rgba(242,232,208,0.55);
+  text-align: left;
 }
 
 .creature-campaign-tag {
   font-family: 'Cinzel', serif;
-  font-size: 0.56rem;
-  letter-spacing: 1.5px;
+  font-size: 0.58rem;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: rgba(201,168,76,0.5);
-  margin-top: 4px;
+  color: rgba(201,168,76,0.55);
+  text-align: left;
 }
 
 /* CR rozeti */
@@ -246,6 +276,7 @@
   text-align: center;
   line-height: 1.1;
   box-shadow: 0 0 10px rgba(201,168,76,0.35);
+  justify-self: start;
 }
 .cr-badge small {
   display: block;
@@ -277,6 +308,21 @@
 }
 .statblock.is-boss {
   border-color: rgba(224,76,60,0.4);
+}
+
+.statblock-portrait {
+  display: block;
+  width: calc(100% + 4rem);
+  height: 320px;
+  margin: -1.8rem -2rem 1.4rem;
+  object-fit: cover;
+  object-position: center 20%;
+  border-radius: 9px 9px 0 0;
+  cursor: zoom-in;
+  transition: filter 0.25s;
+}
+.statblock-portrait:hover {
+  filter: brightness(1.08);
 }
 
 .statblock-name {
@@ -415,13 +461,55 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   PORTRE LIGHTBOX — statblock-portrait'e tıklayınca büyük görünüm
+   (karakter sayfalarındaki .modal deseniyle aynı ruhta)
+   ═══════════════════════════════════════════════════════════ */
+.portrait-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(4,2,1,0.92);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: overlayFadeIn 0.3s forwards;
+  cursor: zoom-out;
+  padding: 3rem 1.5rem;
+  box-sizing: border-box;
+}
+.portrait-modal.open { display: flex; }
+.portrait-modal img {
+  max-width: 90vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 0 60px rgba(201,168,76,0.35), 0 20px 60px rgba(0,0,0,0.8);
+  animation: portraitPopIn 0.35s cubic-bezier(.22,1,.36,1) forwards;
+  cursor: default;
+}
+.portrait-modal-close {
+  position: fixed;
+  top: 20px;
+  right: 28px;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--gold-bright);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* ═══════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
   .statblock-abilities { grid-template-columns: repeat(3, 1fr); }
   .statblock { padding: 1.4rem 1.2rem 1.6rem; }
+  .statblock-portrait { width: calc(100% + 2.4rem); height: 220px; margin: -1.4rem -1.2rem 1.2rem; }
 }
 @media (max-width: 540px) {
   .bestiary-tile { flex: 1 1 100%; max-width: 100%; min-height: 160px; }
-  .creature-card { max-width: 100%; }
 }

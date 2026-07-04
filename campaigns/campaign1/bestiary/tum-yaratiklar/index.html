@@ -29,85 +29,84 @@
     <div class="divider-line"></div>
   </div>
 
-  <div class="sort-bar">
-    <span class="sort-label">Sırala</span>
-    <button class="sort-btn active" data-sort="name">Alfabetik</button>
-    <button class="sort-btn" data-sort="cr">CR'ye Göre</button>
-  </div>
+  <div class="creature-table-wrap">
+    <div class="creature-table-head">
+      <div class="th-cell"></div>
+      <div class="th-cell sortable" data-sort="name">Name <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="type">Type <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="size">Size <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="cr">CR <span class="th-sort-arrow"></span></div>
+    </div>
 
-  <div class="creature-grid">
+    <div class="creature-grid">
 
-    <a class="creature-card is-boss" data-name="Alevkanat" data-cr="10" href="../alevkanat/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Alevkanat</div>
-        <div class="creature-type">Genç Kızıl Ejderha &mdash; Boss</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 10<small>5.900 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Flamewing" data-type="Dragon" data-size="Large" data-cr="10" href="../alevkanat/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
+          </svg>
+        </div>
+        <div class="creature-name">Flamewing</div>
+        <div class="creature-col-type">Dragon &mdash; Boss</div>
+        <div class="creature-col-size">Large</div>
+        <div class="cr-badge cr-badge--boss">CR 10<small>5,900 XP</small></div>
+      </a>
 
-    <a class="creature-card" data-name="Bataklık Sürüngeni" data-cr="3" href="../bataklik-suruengeni/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M8 46 C14 30 10 22 18 16 C26 10 30 20 24 26 C18 32 30 34 36 26 C42 18 50 22 48 32 C46 42 36 46 28 42"/>
-          <circle cx="10" cy="46" r="2.5" fill="#c9a84c"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Bataklık Sürüngeni</div>
-        <div class="creature-type">Canavar (monstrosity)</div>
-      </div>
-      <div class="cr-badge">CR 3<small>700 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Mordrek, Lord of Quasits" data-type="Fiend" data-size="Small" data-cr="7" href="../mordrek/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <circle cx="30" cy="34" r="14"/>
+            <path d="M20 22 C16 12 10 8 6 6 C10 16 12 22 18 26"/>
+            <path d="M40 22 C44 12 50 8 54 6 C50 16 48 22 42 26"/>
+            <circle cx="24" cy="32" r="2" fill="#c9a84c"/>
+            <circle cx="36" cy="32" r="2" fill="#c9a84c"/>
+          </svg>
+        </div>
+        <div class="creature-name">Mordrek, Lord of Quasits</div>
+        <div class="creature-col-type">Fiend &mdash; Boss</div>
+        <div class="creature-col-size">Small</div>
+        <div class="cr-badge cr-badge--boss">CR 7<small>2,900 XP</small></div>
+      </a>
 
-    <a class="creature-card" data-name="Gölge Şahini" data-cr="1" href="../golge-sahini/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Gölge Şahini</div>
-        <div class="creature-type">Canavar (beast)</div>
-      </div>
-      <div class="cr-badge">CR 1<small>200 XP</small></div>
-    </a>
+      <a class="creature-card" data-name="Sandstorm Djinn" data-type="Elemental" data-size="Large" data-cr="5" href="../kum-firtinasi-cini/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <path d="M30 8 C44 8 50 20 44 30 C40 37 28 38 26 30 C24 24 30 20 34 24"/>
+            <circle cx="30" cy="30" r="24" stroke-dasharray="3 6" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="creature-name">Sandstorm Djinn</div>
+        <div class="creature-col-type">Elemental</div>
+        <div class="creature-col-size">Large</div>
+        <div class="cr-badge">CR 5<small>1,800 XP</small></div>
+      </a>
 
-    <a class="creature-card" data-name="Kum Fırtınası Cini" data-cr="5" href="../kum-firtinasi-cini/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M30 8 C44 8 50 20 44 30 C40 37 28 38 26 30 C24 24 30 20 34 24"/>
-          <circle cx="30" cy="30" r="24" stroke-dasharray="3 6" opacity="0.4"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Kum Fırtınası Cini</div>
-        <div class="creature-type">Elemental</div>
-      </div>
-      <div class="cr-badge">CR 5<small>1.800 XP</small></div>
-    </a>
+      <a class="creature-card" data-name="Shadow Hawk" data-type="Beast" data-size="Small" data-cr="1" href="../golge-sahini/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <path d="M8 46 C18 30 20 14 30 6 C28 20 34 24 40 20 C36 30 42 32 48 26 C42 40 30 44 20 40 C16 44 12 46 8 46 Z"/>
+          </svg>
+        </div>
+        <div class="creature-name">Shadow Hawk</div>
+        <div class="creature-col-type">Beast</div>
+        <div class="creature-col-size">Small</div>
+        <div class="cr-badge">CR 1<small>200 XP</small></div>
+      </a>
 
-    <a class="creature-card is-boss" data-name="Mordrek" data-cr="7" href="../mordrek/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <circle cx="30" cy="34" r="14"/>
-          <path d="M20 22 C16 12 10 8 6 6 C10 16 12 22 18 26"/>
-          <path d="M40 22 C44 12 50 8 54 6 C50 16 48 22 42 26"/>
-          <circle cx="24" cy="32" r="2" fill="#c9a84c"/>
-          <circle cx="36" cy="32" r="2" fill="#c9a84c"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Mordrek, Quasitlerin Efendisi</div>
-        <div class="creature-type">İblis (fiend) &mdash; Boss</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 7<small>2.900 XP</small></div>
-    </a>
+      <a class="creature-card" data-name="Swamp Crawler" data-type="Monstrosity" data-size="Medium" data-cr="3" href="../bataklik-suruengeni/index.html">
+        <div class="creature-icon">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
+            <path d="M8 46 C14 30 10 22 18 16 C26 10 30 20 24 26 C18 32 30 34 36 26 C42 18 50 22 48 32 C46 42 36 46 28 42"/>
+            <circle cx="10" cy="46" r="2.5" fill="#c9a84c"/>
+          </svg>
+        </div>
+        <div class="creature-name">Swamp Crawler</div>
+        <div class="creature-col-type">Monstrosity</div>
+        <div class="creature-col-size">Medium</div>
+        <div class="cr-badge">CR 3<small>700 XP</small></div>
+      </a>
 
+    </div>
   </div>
 
   <a class="back-link" href="../index.html">← Bestiary'e Dön</a>
@@ -121,5 +120,6 @@
 
 </main>
 <script src="../../../../bestiary.js"></script>
+<script src="../../../../splash-cursor.js"></script>
 </body>
 </html>

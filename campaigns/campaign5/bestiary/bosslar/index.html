@@ -39,41 +39,38 @@
     <div class="divider-line"></div>
   </div>
 
-  <div class="sort-bar">
-    <span class="sort-label">Sırala</span>
-    <button class="sort-btn active" data-sort="name">Alfabetik</button>
-    <button class="sort-btn" data-sort="cr">CR'ye Göre</button>
-  </div>
+  <div class="creature-table-wrap">
+    <div class="creature-table-head">
+      <div class="th-cell"></div>
+      <div class="th-cell sortable" data-sort="name">Name <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="type">Type <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="size">Size <span class="th-sort-arrow"></span></div>
+      <div class="th-cell sortable" data-sort="cr">CR <span class="th-sort-arrow"></span></div>
+    </div>
 
-  <div class="creature-grid">
+    <div class="creature-grid">
 
-    <a class="creature-card is-boss" data-name="Nyxaroth" data-cr="12" href="../nyxaroth/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <circle cx="30" cy="16" r="10" stroke-dasharray="2 4"/>
-          <path d="M8 50 C14 34 20 22 30 18 C28 30 34 34 40 30 C36 40 42 42 48 38 C42 50 30 54 20 50 C16 52 12 52 8 50 Z"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Nyxaroth, Donmuş Düşmüş Melek</div>
-        <div class="creature-type">Büyük iblis (fiend), kaotik kötü</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 12<small>8.400 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Koralith" data-type="Giant" data-size="Huge" data-cr="12" href="../koralith/index.html">
+        <div class="creature-icon has-photo">
+          <img src="../../campaignin-hikayesi/img/Koralith.jpg" alt="Koralith" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="creature-name">Koralith</div>
+        <div class="creature-col-type">Giant</div>
+        <div class="creature-col-size">Huge</div>
+        <div class="cr-badge cr-badge--boss">CR 12<small>8,400 XP</small></div>
+      </a>
 
-    <a class="creature-card is-boss" data-name="Rimehowl" data-cr="9" href="../rimehowl/index.html">
-      <div class="creature-icon">
-        <svg viewBox="0 0 60 60" fill="none" stroke="#c9a84c" stroke-width="2">
-          <path d="M18 26 L18 18 C18 14 24 14 24 18 L24 24 M24 22 L24 14 C24 10 30 10 30 14 L30 24 M30 22 L30 14 C30 10 36 10 36 14 L36 24 M36 22 L36 16 C36 12 42 12 42 16 L42 30 C42 42 34 48 24 48 C16 48 10 42 10 34 L10 28 C10 24 16 24 16 28 L16 32"/>
-        </svg>
-      </div>
-      <div class="creature-info">
-        <div class="creature-name">Rimehowl, Buzun Uluyan Devi</div>
-        <div class="creature-type">Devasa dev (giant), kayıtsız kötü</div>
-      </div>
-      <div class="cr-badge cr-badge--boss">CR 9<small>5.000 XP</small></div>
-    </a>
+      <a class="creature-card is-boss" data-name="Ophelia" data-type="Undead" data-size="Large" data-cr="17" href="../ophelia/index.html">
+        <div class="creature-icon has-photo">
+          <img src="../../campaignin-hikayesi/img/Ophelia Gerçek Formu.jpg" alt="Ophelia" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="creature-name">Ophelia</div>
+        <div class="creature-col-type">Undead</div>
+        <div class="creature-col-size">Large</div>
+        <div class="cr-badge cr-badge--boss">CR 17<small>18,000 XP</small></div>
+      </a>
 
+    </div>
   </div>
 
   <a class="back-link" href="../index.html">← Bestiary'e Dön</a>
@@ -87,5 +84,6 @@
 
 </main>
 <script src="../../../../bestiary.js"></script>
+<script src="../../../../splash-cursor.js"></script>
 </body>
 </html>

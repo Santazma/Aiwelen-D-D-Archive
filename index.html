@@ -66,6 +66,7 @@
   </style>
 </head>
 <body>
+<div id="liquid-ether-bg" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:0; pointer-events:none; opacity:0.55;"></div>
 <main>
 
   <!-- ── EMBLEM ── -->
@@ -250,5 +251,21 @@
   <div class="footer-text">Aiwelen Dünyası — D&amp;D Arşivi</div>
 
 </main>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="liquid-ether.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    initLiquidEther(document.getElementById('liquid-ether-bg'), {
+      colors: ['#c9a84c', '#7a1f1f', '#4a2f10'],
+      autoDemo: true,
+      autoSpeed: 0.4,
+      autoIntensity: 1.8,
+      mouseForce: 18,
+      cursorSize: 110,
+      resolution: 0.5
+    });
+  });
+</script>
+<script src="./splash-cursor.js"></script>
 </body>
 </html>
