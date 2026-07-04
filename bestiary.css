@@ -1,0 +1,427 @@
+/* ═══════════════════════════════════════════════════════════
+   AIWELEN D&D ARŞİVİ — BESTIARY / YARATIK ARŞİVİ (bestiary.css)
+   theme.css'e ek olarak yüklenir, onu ezmez. Tüm bestiary
+   sayfaları (hub, liste, stat-block) bu dosyayı bağlar.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --boss-red:        #c0392b;
+  --boss-red-bright: #e74c3c;
+  --boss-red-dim:    #5c1f1a;
+  --boss-red-glow:   rgba(224,76,60,0.35);
+}
+
+/* ── KEYFRAMES (ek) ── */
+@keyframes tileReveal {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HUB — Canavarlar / Bosslar / Tüm Yaratıklar seçim kartları
+   ═══════════════════════════════════════════════════════════ */
+.bestiary-hub-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.4rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.bestiary-tile {
+  position: relative;
+  flex: 1 1 240px;
+  max-width: 280px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 2rem 1.2rem;
+  text-decoration: none;
+  border-radius: 8px;
+  background: rgba(8,5,2,0.75);
+  border: 1px solid rgba(201,168,76,0.25);
+  transition: border-color 0.3s, transform 0.25s ease, box-shadow 0.3s;
+  animation: tileReveal 0.6s ease both;
+}
+.bestiary-tile:nth-child(1) { animation-delay: 0.15s; }
+.bestiary-tile:nth-child(2) { animation-delay: 0.25s; }
+.bestiary-tile:nth-child(3) { animation-delay: 0.35s; }
+
+.bestiary-tile:hover {
+  border-color: rgba(201,168,76,0.65);
+  transform: translateY(-4px);
+  box-shadow: 0 0 24px rgba(201,168,76,0.18), 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.bestiary-tile.tile--boss {
+  border-color: rgba(224,76,60,0.28);
+}
+.bestiary-tile.tile--boss:hover {
+  border-color: rgba(224,76,60,0.7);
+  box-shadow: 0 0 24px rgba(224,76,60,0.22), 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.tile-icon {
+  width: 52px;
+  height: 52px;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 8px rgba(201,168,76,0.5));
+  transition: filter 0.3s;
+}
+.tile--boss .tile-icon {
+  filter: drop-shadow(0 0 8px rgba(224,76,60,0.5));
+}
+.bestiary-tile:hover .tile-icon {
+  filter: drop-shadow(0 0 14px rgba(201,168,76,0.75));
+}
+.tile--boss:hover .tile-icon {
+  filter: drop-shadow(0 0 14px rgba(224,76,60,0.75));
+}
+
+.tile-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-align: center;
+}
+.tile--boss .tile-title { color: #f0a09a; }
+
+.tile-subtitle {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.75rem;
+  color: rgba(242,232,208,0.45);
+  text-align: center;
+}
+
+.tile-count {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 1.5px;
+  color: rgba(201,168,76,0.4);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIRALAMA ÇUBUĞU — Alfabetik / CR'ye Göre
+   ═══════════════════════════════════════════════════════════ */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 0 auto 2.6rem;
+  flex-wrap: wrap;
+}
+.sort-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.4);
+}
+.sort-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(242,232,208,0.55);
+  background: rgba(8,5,2,0.6);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 20px;
+  padding: 0.45rem 1.1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.sort-btn:hover {
+  border-color: rgba(201,168,76,0.55);
+  color: var(--gold-bright);
+}
+.sort-btn.active {
+  background: rgba(201,168,76,0.15);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  box-shadow: 0 0 12px rgba(201,168,76,0.25);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   YARATIK KARTLARI (liste sayfaları)
+   ═══════════════════════════════════════════════════════════ */
+.creature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto 2rem;
+}
+
+.creature-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 480px;
+  padding: 1rem 1.2rem;
+  text-decoration: none;
+  border-radius: 6px;
+  background: rgba(8,5,2,0.75);
+  border: 1px solid rgba(201,168,76,0.22);
+  transition: border-color 0.3s, transform 0.25s ease, box-shadow 0.3s;
+  animation: cardReveal 0.5s ease both;
+}
+.creature-card:hover {
+  border-color: rgba(201,168,76,0.6);
+  transform: translateX(4px);
+  box-shadow: 0 0 18px rgba(201,168,76,0.15);
+}
+.creature-card.is-boss {
+  border-color: rgba(224,76,60,0.3);
+}
+.creature-card.is-boss:hover {
+  border-color: rgba(224,76,60,0.65);
+  box-shadow: 0 0 18px rgba(224,76,60,0.2);
+}
+
+.creature-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.creature-icon svg { width: 100%; height: 100%; }
+
+.creature-info {
+  flex: 1;
+  text-align: left;
+}
+.creature-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--parchment);
+  transition: color 0.3s;
+}
+.creature-card:hover .creature-name { color: var(--gold-bright); }
+.creature-card.is-boss:hover .creature-name { color: #f0a09a; }
+
+.creature-type {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.7rem;
+  color: rgba(242,232,208,0.4);
+  margin-top: 2px;
+}
+
+.creature-campaign-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.5);
+  margin-top: 4px;
+}
+
+/* CR rozeti */
+.cr-badge {
+  flex-shrink: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--dark);
+  background: var(--gold);
+  border-radius: 5px;
+  padding: 0.35rem 0.6rem;
+  text-align: center;
+  line-height: 1.1;
+  box-shadow: 0 0 10px rgba(201,168,76,0.35);
+}
+.cr-badge small {
+  display: block;
+  font-size: 0.5rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  opacity: 0.75;
+}
+.cr-badge--boss {
+  background: var(--boss-red-bright);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(224,76,60,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STAT-BLOCK — D&D 2024 tarzı yaratık sayfası
+   ═══════════════════════════════════════════════════════════ */
+.statblock {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  background: rgba(10,7,3,0.88);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 10px;
+  padding: 1.8rem 2rem 2rem;
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.08), 0 10px 40px rgba(0,0,0,0.7);
+  text-align: left;
+  animation: cardReveal 0.6s ease both;
+}
+.statblock.is-boss {
+  border-color: rgba(224,76,60,0.4);
+}
+
+.statblock-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-weight: 900;
+  color: var(--gold-bright);
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(201,168,76,0.4);
+}
+.statblock.is-boss .statblock-name { color: #f0a09a; text-shadow: 0 0 20px rgba(224,76,60,0.4); }
+
+.statblock-meta {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: rgba(242,232,208,0.55);
+  margin-top: 2px;
+}
+
+.statblock-cr-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.statblock-divider {
+  height: 2px;
+  margin: 1rem 0;
+  background: linear-gradient(90deg, var(--gold), transparent 85%);
+  border-radius: 2px;
+}
+.statblock.is-boss .statblock-divider {
+  background: linear-gradient(90deg, var(--boss-red-bright), transparent 85%);
+}
+
+.statblock-core {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  margin-bottom: 1rem;
+}
+.core-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: 'Lora', serif;
+  font-size: 0.85rem;
+  color: var(--parchment);
+}
+.core-stat strong {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.statblock-abilities {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  margin: 1.1rem 0;
+}
+.ability-box {
+  text-align: center;
+  padding: 0.5rem 0.2rem;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 5px;
+  background: rgba(201,168,76,0.04);
+}
+.statblock.is-boss .ability-box { border-color: rgba(224,76,60,0.22); }
+.ability-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  color: var(--gold-dim);
+}
+.ability-score {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--parchment);
+  margin: 2px 0;
+}
+.ability-sub {
+  font-family: 'Lora', serif;
+  font-size: 0.62rem;
+  color: rgba(242,232,208,0.45);
+}
+
+.statblock-traits-line {
+  font-family: 'Lora', serif;
+  font-size: 0.8rem;
+  color: rgba(242,232,208,0.75);
+  line-height: 1.7;
+  margin-bottom: 0.4rem;
+}
+.statblock-traits-line strong {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.statblock-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  padding-bottom: 4px;
+  margin: 1.3rem 0 0.7rem;
+}
+.statblock.is-boss .statblock-section-title {
+  color: #f0a09a;
+  border-bottom-color: rgba(224,76,60,0.35);
+}
+
+.statblock-entry {
+  font-family: 'Lora', serif;
+  font-size: 0.83rem;
+  color: rgba(242,232,208,0.85);
+  line-height: 1.65;
+  margin-bottom: 0.65rem;
+}
+.statblock-entry:last-child { margin-bottom: 0; }
+.statblock-entry .entry-name {
+  font-weight: 700;
+  font-style: italic;
+  color: var(--parchment);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .statblock-abilities { grid-template-columns: repeat(3, 1fr); }
+  .statblock { padding: 1.4rem 1.2rem 1.6rem; }
+}
+@media (max-width: 540px) {
+  .bestiary-tile { flex: 1 1 100%; max-width: 100%; min-height: 160px; }
+  .creature-card { max-width: 100%; }
+}
