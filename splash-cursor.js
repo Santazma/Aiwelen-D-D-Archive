@@ -1042,8 +1042,10 @@
   function boot() {
     // Skip on touch-only small screens by choice? No — keep it everywhere,
     // pointerEvents:none means it never blocks taps; low SIM_RESOLUTION keeps it cheap.
+    // A page can override the palette (e.g. Campaign 6's crimson theme) by
+    // setting window.SPLASH_CURSOR_CONFIG before this script loads.
     try {
-      initSplashCursor();
+      initSplashCursor(window.SPLASH_CURSOR_CONFIG);
     } catch (e) {
       // WebGL unsupported or blocked — fail silently, rest of the page is unaffected.
       console.warn('Splash cursor disabled:', e);
