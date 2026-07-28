@@ -103,15 +103,20 @@
 
     /* ── INNER: padding-top = space for labels above bar.
                 padding-bottom = space for tooltip cards below bar. ── */
-    .timeline-inner{position:relative;min-width:max-content;padding:160px 40px 230px;display:flex;align-items:center;}
+    /* padding-bottom ayrica yan hikaye (branch) satirlarini da barindirir */
+    .timeline-inner{position:relative;min-width:max-content;padding:160px 40px 560px;display:flex;align-items:center;}
 
-    /* Bar sits at top:160px (same as padding-top) */
-    .timeline-bar{position:absolute;top:160px;left:40px;right:40px;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,0.12) 3%,rgba(201,168,76,0.6) 15%,var(--gold) 50%,rgba(201,168,76,0.6) 85%,rgba(201,168,76,0.12) 97%,transparent 100%);box-shadow:0 0 8px rgba(201,168,76,0.1);}
+    /* Bar sits at top:160px (same as padding-top) — goruse girince soldan saga cizilir */
+    .timeline-bar{position:absolute;top:160px;left:40px;right:40px;height:2px;transform:translateY(-50%) scaleX(0);transform-origin:left center;transition:transform 1.1s cubic-bezier(.22,1,.36,1);background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,0.12) 3%,rgba(201,168,76,0.6) 15%,var(--gold) 50%,rgba(201,168,76,0.6) 85%,rgba(201,168,76,0.12) 97%,transparent 100%);box-shadow:0 0 8px rgba(201,168,76,0.1);}
+    .timeline-frame.tl-revealed .timeline-bar{transform:translateY(-50%) scaleX(1);}
 
     /* Nodes row — align centers to bar by margin-top:-12px */
     .nodes{display:flex;align-items:center;gap:100px;position:relative;z-index:2;margin-top:-12px;}
 
-    .node-wrap{position:relative;width:130px;height:24px;display:flex;align-items:center;justify-content:center;animation:nodePopIn .6s ease both;cursor:pointer;z-index:1;}
+    /* Node'lar sabit gecikmeyle degil, goruse girdikce ortaya cikar (bkz. revealIO) */
+    .node-wrap{position:relative;width:130px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1;
+      opacity:0;transform:translateY(10px) scale(.88);transition:opacity .45s ease-out,transform .45s cubic-bezier(.22,1,.36,1);}
+    .node-wrap.revealed{opacity:1;transform:none;}
     .node-wrap:hover{z-index:300;}
     .node-label{position:absolute;bottom:calc(100% + 36px + 4px);left:50%;transform:translateX(-50%);background:rgba(4,6,10,0.9);border:1px solid rgba(201,168,76,0.22);border-radius:4px;padding:.45rem .75rem;text-align:center;width:130px;transition:border-color .25s,box-shadow .25s;z-index:2;white-space:normal;}
     .node-wrap:hover .node-label{border-color:rgba(201,168,76,0.55);box-shadow:0 0 10px rgba(201,168,76,0.12)}
@@ -136,6 +141,94 @@
     .tooltip-body{padding:.5rem .7rem .6rem}
     .tooltip-date{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin-bottom:3px}
     .tooltip-name{font-family:'Cinzel',serif;font-size:.67rem;font-weight:700;color:var(--gold-bright);line-height:1.3}
+    /* ═══════════════ YAN HATLAR (BRANCH TIMELINES) ═══════════════
+       Her yan hikaye, ana hattaki iki node'un tam ortasindan ayrilir.
+       Renk kimligi --bc degiskeniyle JS tarafindan atanir.
+       Saga dogru yeni node eklemek icin sadece branch.events dizisine
+       yeni kayit eklemek yeterlidir; konumlandirma otomatiktir. */
+    .branch-layer{position:absolute;inset:0;pointer-events:none;z-index:1;}
+    .branch{position:absolute;pointer-events:none;}
+
+    /* Ana hat uzerindeki ayrilma noktasi */
+    .branch-origin{position:absolute;left:0;top:0;width:11px;height:11px;border-radius:50%;
+      background:var(--bc);border:2px solid rgba(4,6,10,.9);
+      transform:translate(-50%,-50%) scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1) .1s;}
+    .branch.revealed .branch-origin{transform:translate(-50%,-50%) scale(1);animation:originPulse 3.2s ease-out 1.2s infinite;}
+    @keyframes originPulse{0%{box-shadow:0 0 0 0 var(--bc-glow)}70%{box-shadow:0 0 0 13px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+    /* Ana hattan yan hikayeye inen egri — goruse girince cizilir */
+    .branch-connector{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;}
+    .branch-connector path{fill:none;stroke:var(--bc);stroke-width:2;stroke-linecap:round;opacity:.75;
+      stroke-dasharray:var(--len);stroke-dashoffset:var(--len);
+      transition:stroke-dashoffset .95s cubic-bezier(.22,1,.36,1) .15s;}
+    .branch.revealed .branch-connector path{stroke-dashoffset:0;}
+
+    /* Yan hikayenin govdesi: baslik rozeti + node'lar */
+    .branch-body{position:absolute;display:flex;align-items:center;transform:translateY(-50%);pointer-events:auto;}
+    .branch-line{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;z-index:1;
+      background:linear-gradient(90deg,var(--bc) 0%,var(--bc) 70%,transparent 100%);opacity:.55;
+      transform:scaleX(0);transform-origin:left center;transition:transform .8s cubic-bezier(.22,1,.36,1) .5s;}
+    .branch.revealed .branch-line{transform:scaleX(1);}
+
+    .branch-head{position:relative;z-index:3;display:flex;align-items:center;gap:9px;white-space:nowrap;
+      padding:.42rem .8rem;border-radius:4px;background:rgba(4,6,10,.94);border:1px solid var(--bc-dim);
+      opacity:0;transform:translateX(-10px);
+      transition:opacity .45s ease-out .55s,transform .45s cubic-bezier(.22,1,.36,1) .55s,border-color .2s,box-shadow .2s;}
+    .branch.revealed .branch-head{opacity:1;transform:none;}
+    .branch-head{cursor:pointer;}
+    .branch-head:hover{border-color:var(--bc);box-shadow:0 0 16px var(--bc-glow);}
+    .branch-head:focus-visible,.bnode:focus-visible .bnode-btn,.branch-chip:focus-visible{outline:2px solid var(--bc);outline-offset:3px;}
+    .branch-head-tag{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:2.2px;text-transform:uppercase;color:var(--bc);opacity:.7;}
+    .branch-head-name{font-family:'Cinzel',serif;font-size:.6rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--bc);}
+    .branch-head-sep{width:1px;height:16px;background:var(--bc-dim);}
+
+    /* Yan hikaye node'lari — etiket ALTA acilir (ustte ana hat var) */
+    .branch-nodes{display:flex;align-items:center;gap:86px;margin-left:64px;position:relative;z-index:2;}
+    .bnode{position:relative;width:124px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1;
+      opacity:0;transform:translateY(-8px) scale(.85);
+      transition:opacity .45s ease-out,transform .45s cubic-bezier(.22,1,.36,1);}
+    .branch.revealed .bnode{opacity:1;transform:none;}
+    .bnode:hover{z-index:300;}
+    .bnode-btn{width:20px;height:20px;border-radius:50%;background:var(--dark);border:2.5px solid var(--bc);position:relative;z-index:3;flex-shrink:0;
+      box-shadow:0 0 8px var(--bc-glow),0 0 0 4px rgba(255,255,255,.03);
+      transition:transform .2s ease-out,box-shadow .2s ease-out,background .2s;}
+    .bnode-btn::after{content:'';position:absolute;inset:3.5px;border-radius:50%;background:var(--bc);opacity:.6;transition:opacity .2s;}
+    .bnode:hover .bnode-btn{transform:scale(1.4);box-shadow:0 0 20px var(--bc),0 0 0 6px var(--bc-glow);}
+    .bnode:hover .bnode-btn::after{opacity:1;}
+    .bnode-connector{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:1.5px;height:26px;z-index:2;
+      background:linear-gradient(180deg,var(--bc) 0%,transparent 100%);opacity:.5;}
+    .bnode-label{position:absolute;top:calc(100% + 26px);left:50%;transform:translateX(-50%);width:134px;z-index:2;
+      background:rgba(4,6,10,.92);border:1px solid var(--bc-dim);border-radius:4px;padding:.4rem .6rem;text-align:center;
+      transition:border-color .2s,box-shadow .2s;}
+    .bnode:hover .bnode-label{border-color:var(--bc);box-shadow:0 0 12px var(--bc-glow);}
+    .bnode-code{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--bc);opacity:.85;margin-bottom:2px;}
+    .bnode-name{font-family:'Cinzel',serif;font-size:.63rem;font-weight:700;letter-spacing:.5px;line-height:1.3;color:var(--gold-bright);}
+    .bnode.finder-highlight .bnode-btn{transform:scale(1.6);box-shadow:0 0 28px var(--bc),0 0 0 8px var(--bc-glow);}
+    .bnode.finder-highlight .bnode-label{border-color:var(--bc);box-shadow:0 0 18px var(--bc-glow);}
+
+    /* Yan hikaye gostergesi (timeline ustunde) */
+    .branch-legend{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;margin-bottom:1.3rem;}
+    .branch-legend-label{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.38);}
+    .branch-chip{display:inline-flex;align-items:center;gap:7px;padding:.38rem .75rem;border-radius:4px;cursor:pointer;
+      background:rgba(4,6,10,.72);border:1px solid var(--bc-dim);
+      font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--bc);
+      transition:border-color .2s,background .2s,box-shadow .2s;}
+    .branch-chip:hover{border-color:var(--bc);background:rgba(4,6,10,.9);box-shadow:0 0 14px var(--bc-glow);}
+    .branch-chip-dot{width:8px;height:8px;border-radius:50%;background:var(--bc);flex-shrink:0;}
+
+    /* Yan hikaye kaydinda modal etiketi */
+    .modal-archive-tag.is-branch{color:var(--bc);border-color:var(--bc-dim);}
+
+    /* ── HAREKET DUYARLILIGI: animasyonlari kapat, son hali goster ── */
+    @media (prefers-reduced-motion: reduce){
+      .node-wrap,.bnode,.branch-head{opacity:1!important;transform:none!important;}
+      .branch-line{transform:scaleX(1)!important;}
+      .branch-origin{transform:translate(-50%,-50%) scale(1)!important;animation:none!important;}
+      .branch-connector path{stroke-dashoffset:0!important;}
+      .timeline-bar{transform:translateY(-50%) scaleX(1)!important;}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+    }
+
     .tl-fade-wrap{position:relative;overflow:visible;}
     .tl-fade-left,.tl-fade-right{position:absolute;top:0;bottom:0;width:70px;z-index:5;pointer-events:none;}
     .tl-fade-left{left:0;background:linear-gradient(90deg,rgba(4,6,10,0.4),transparent);}
@@ -264,6 +357,8 @@
     </div>
     <div class="node-finder-hint">İstediğiniz Numarayı Yazınız · İstediğiniz Kelimeyi Yazınız</div>
 
+    <div class="branch-legend" id="branchLegend"></div>
+
     <div class="timeline-frame">
       <div class="timeline-border" id="timelineBorder">
         <div class="timeline-frame-header">
@@ -276,6 +371,7 @@
           <div class="timeline-track" id="timelineTrack">
             <div class="timeline-inner">
               <div class="timeline-bar"></div>
+              <div class="branch-layer" id="branchLayer"></div>
               <div class="nodes" id="nodesContainer"></div>
             </div>
           </div>
@@ -298,7 +394,7 @@
       <button class="img-zoom-btn" onclick="openLightbox(event)" title="Tam ekran görüntüle">⤢</button>
     </div>
     <div class="modal-content-col">
-      <div class="modal-archive-tag">Engizisyon Arşivi — Olay Kaydı</div>
+      <div class="modal-archive-tag" id="modalTag">Engizisyon Arşivi — Olay Kaydı</div>
       <div class="modal-title" id="modalTitle"></div>
       <div class="modal-date-row">
         <span class="modal-date-label">Tarih:</span>
@@ -1303,15 +1399,107 @@ const events = [
   },
 ];
 
-document.getElementById('nodeCountDisplay').textContent = events.length + ' Olay';
+/* ═══════════════ YAN HATLAR (BRANCH TIMELINES) ═══════════════
+   afterNode : ana hattaki GÖRÜNEN node numarası. Yan hikaye, bu node ile
+               bir sonrakinin tam ortasından ayrılır.
+   row       : dikey satır — aynı satırdaki iki hat çakışmasın diye ayrı verilir.
+   events    : yan hikayenin kendi node'ları.
+
+   ► Sağa yeni node eklemek için: ilgili branch'in events dizisine yeni bir
+     kayıt eklemek yeterli. Konum, numara, çizgi uzunluğu ve animasyon
+     otomatik hesaplanır — başka hiçbir yeri elle düzenlemeye gerek yok. */
+const BAR_Y = 160;              /* ana hattın timeline-inner içindeki y konumu */
+const BRANCH_ROWS = [330, 495]; /* yan hikaye satırlarının y konumları */
+const CONNECTOR_W = 64;         /* ayrılma eğrisinin yatay genişliği */
+
+/* Metni henüz yazılmamış node'lar için ortak şablon.
+   ► Bir node'un metnini yazarken `text:TBD` yerine kendi metnini koy:
+       text:`<p><strong>[Başlangıç.]</strong> ...</p>
+             <p><strong>[Gelişmeler.]</strong> ...</p>
+             <p><strong>[Sonuç.]</strong> ...</p>`
+   ► Tarih için `date:TBD_DATE` yerine "— 3 MAIUS M.S. 27 —" biçiminde yaz.
+   ► Görsel için img:"" yerine "img/dosya-adi.jpg" yaz. */
+const TBD_DATE = "— TARİH EKLENECEK —";
+const TBD = `<p><strong>[Başlangıç.]</strong> Buraya giriş yazılacak.</p>
+<p><strong>[Gelişmeler.]</strong> Buraya gelişme yazılacak.</p>
+<p><strong>[Sonuç.]</strong> Buraya sonuç yazılacak.</p>`;
+
+const branches = [
+  {
+    code:'NS', tag:'Yan Hikaye',
+    name:'Neryssa One Shot — Sanguis Velathri',
+    afterNode:89, row:0, color:'#c8565e',
+    events:[
+      { title:"Sanguis-Velathri Kan Hisarı",                 date:TBD_DATE, img:"", text:TBD },
+      { title:"Ursula İle Buluşma",                          date:TBD_DATE, img:"", text:TBD },
+      { title:"Yeni Bir Ev",                                 date:TBD_DATE, img:"", text:TBD },
+      { title:"Kan Banyosu",                                 date:TBD_DATE, img:"", text:TBD },
+      { title:"Üvey Kız Kardeş Lavinia",                     date:TBD_DATE, img:"", text:TBD },
+      { title:"Neryssa'nın Yersiz İstekleri",                date:TBD_DATE, img:"", text:TBD },
+      { title:"Waldron Aracılığı İle Talim",                 date:TBD_DATE, img:"", text:TBD },
+      { title:"Waldron ve Guru'lar",                         date:TBD_DATE, img:"", text:TBD },
+      { title:"Dread Domain ve Relic Cemetary",              date:TBD_DATE, img:"", text:TBD },
+      { title:"Tarnus, the Keeper of Relics",                date:TBD_DATE, img:"", text:TBD },
+      { title:"Ejder Kraliçe'nin Pelerini",                  date:TBD_DATE, img:"", text:TBD },
+      { title:"Lavinia'nın Rüyası",                          date:TBD_DATE, img:"", text:TBD },
+      { title:"Ejderlerin Çarpışması",                       date:TBD_DATE, img:"", text:TBD },
+      { title:"Neryssa'nın Kökenleri ve Ejder Mağarası",     date:TBD_DATE, img:"", text:TBD },
+      { title:"Banquet Hazırlıkları",                        date:TBD_DATE, img:"", text:TBD },
+      { title:"Lord Vendrell İle Tanışma ve Ziyafet",        date:TBD_DATE, img:"", text:TBD },
+      { title:"Neryssa'nın Kaderiyle Yüzleşmesi",            date:TBD_DATE, img:"", text:TBD }
+    ]
+  },
+  {
+    code:'TU', tag:'Yan Hikaye',
+    name:'Theron One Shot — Underdark',
+    afterNode:92, row:1, color:'#9b7ad4',
+    events:[
+      { title:"Bir Drow, Bir Duergar ve Bir Half Orc",       date:TBD_DATE, img:"", text:TBD },
+      { title:"Esaret Yolculuğu ve Kaçma Girişimleri",       date:TBD_DATE, img:"", text:TBD },
+      { title:"Underdark ve Safir Şehri",                    date:TBD_DATE, img:"", text:TBD },
+      { title:"Kemik ve İpek",                               date:TBD_DATE, img:"", text:TBD },
+      { title:"Madame Corvina ve Kavuşma",                   date:TBD_DATE, img:"", text:TBD },
+      { title:"Duygu ve Özüt Ekstrasyonu",                   date:TBD_DATE, img:"", text:TBD },
+      { title:"Theron'un Kararı",                            date:TBD_DATE, img:"", text:TBD },
+      { title:"Distorsiyonlu Ozanlar Musiki Fırkası",        date:TBD_DATE, img:"", text:TBD },
+      { title:"Lurien Veil ve Hamlet İle Karşılaşma",        date:TBD_DATE, img:"", text:TBD },
+      { title:"Gözü Oyuk Vex'al",                            date:TBD_DATE, img:"", text:TBD },
+      { title:"Underdark ve Engizisyon",                     date:TBD_DATE, img:"", text:TBD },
+      { title:"Görev ve Eve Geri Dönüş",                     date:TBD_DATE, img:"", text:TBD },
+      { title:"Ayazlı Geçit ve Yolculuk",                    date:TBD_DATE, img:"", text:TBD },
+      { title:"Luwanna ile Buluşma",                         date:TBD_DATE, img:"", text:TBD },
+      { title:"Mordain Blackthorne'nun Mektubu",             date:TBD_DATE, img:"", text:TBD }
+    ]
+  }
+];
+
+function hexA(hex,a){
+  const n=parseInt(hex.slice(1),16);
+  return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+function paintBranchVars(el,color){
+  el.style.setProperty('--bc',color);
+  el.style.setProperty('--bc-dim',hexA(color,0.42));
+  el.style.setProperty('--bc-glow',hexA(color,0.35));
+}
+
+/* Ana hat + yan hikaye node'larını tek bir kayıt defterinde topla */
+const registry=[]; const byUid={};
+events.forEach((ev,i)=>registry.push({uid:'m'+i,ev,code:'#'+String(i+1).padStart(3,'0'),branch:null}));
+branches.forEach((br,bi)=>br.events.forEach((ev,ei)=>
+  registry.push({uid:'b'+bi+'_'+ei,ev,code:br.code+'-'+String(ei+1).padStart(2,'0'),branch:br})));
+registry.forEach(r=>byUid[r.uid]=r);
+
+document.getElementById('nodeCountDisplay').textContent =
+  events.length + ' Olay' + (branches.length ? ' · ' + branches.length + ' Yan Hikaye' : '');
+
 const container = document.getElementById('nodesContainer');
 events.forEach((ev,i) => {
-  const delay = (1.0+i*0.025).toFixed(3);
   const wrap = document.createElement('div');
   wrap.className='node-wrap tip-right';
-  wrap.style.animationDelay=delay+'s';
-  wrap.id='node-'+i;
-  wrap.onclick=()=>openModal(i);
+  wrap.id='tlnode-m'+i;
+  wrap.dataset.uid='m'+i;
+  wrap.onclick=()=>openModal('m'+i);
   wrap.innerHTML=`
     <div class="node-label">
       <div class="node-date">#${String(i+1).padStart(3,'0')}</div>
@@ -1330,6 +1518,149 @@ events.forEach((ev,i) => {
     </div>`;
   container.appendChild(wrap);
 });
+
+/* ── Yan hikayeleri oluştur ── */
+const branchLayer=document.getElementById('branchLayer');
+branches.forEach((br,bi)=>{
+  const rowY=BRANCH_ROWS[br.row % BRANCH_ROWS.length];
+  const h=rowY-BAR_Y;
+  const el=document.createElement('div');
+  el.className='branch'; el.id='branch-'+bi; el.style.top=BAR_Y+'px';
+  paintBranchVars(el,br.color);
+  el.innerHTML=`
+    <div class="branch-origin"></div>
+    <svg class="branch-connector" width="${CONNECTOR_W}" height="${h}" viewBox="0 0 ${CONNECTOR_W} ${h}" aria-hidden="true">
+      <path d="M0,0 C0,${(h*0.62).toFixed(1)} ${(CONNECTOR_W*0.35).toFixed(1)},${h} ${CONNECTOR_W},${h}"/>
+    </svg>
+    <div class="branch-body" style="left:${CONNECTOR_W}px;top:${h}px">
+      <div class="branch-line"></div>
+      <div class="branch-head" role="button" tabindex="0" title="${br.name}">
+        <span class="branch-head-tag">${br.tag}</span>
+        <span class="branch-head-sep"></span>
+        <span class="branch-head-name">${br.name}</span>
+      </div>
+      <div class="branch-nodes"></div>
+    </div>`;
+  branchLayer.appendChild(el);
+
+  const head=el.querySelector('.branch-head');
+  const openFirst=()=>openModal('b'+bi+'_0');
+  head.onclick=openFirst;
+  head.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openFirst();}};
+
+  const holder=el.querySelector('.branch-nodes');
+  br.events.forEach((ev,ei)=>{
+    const uid='b'+bi+'_'+ei;
+    const n=document.createElement('div');
+    n.className='bnode'; n.id='tlnode-'+uid; n.dataset.uid=uid;
+    n.setAttribute('role','button'); n.tabIndex=0;
+    /* soldan sağa kademeli beliriş (uzun hatlarda gecikme sınırlanır) */
+    n.style.transitionDelay=(0.5+Math.min(ei,12)*0.045).toFixed(3)+'s';
+    n.onclick=()=>openModal(uid);
+    n.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(uid);}};
+    n.innerHTML=`
+      <div class="bnode-btn"></div>
+      <div class="bnode-connector"></div>
+      <div class="bnode-label">
+        <div class="bnode-code">${br.code}-${String(ei+1).padStart(2,'0')}</div>
+        <div class="bnode-name">${ev.title}</div>
+      </div>`;
+    holder.appendChild(n);
+  });
+
+  /* eğrinin çizim animasyonu için gerçek yol uzunluğu */
+  const p=el.querySelector('.branch-connector path');
+  el.style.setProperty('--len',p.getTotalLength().toFixed(1));
+});
+
+/* Yan hikayeleri ana hattaki ayrılma noktalarına hizala.
+   offsetLeft'in referans kutusu tarayıcıya göre değişebildiği için
+   konum getBoundingClientRect üzerinden hesaplanır. */
+function layoutBranches(){
+  const inner=document.querySelector('.timeline-inner');
+  if(!inner) return;
+  const ir=inner.getBoundingClientRect();
+  const mid=e=>{const r=e.getBoundingClientRect();return r.left+r.width/2;};
+  branches.forEach((br,bi)=>{
+    const a=document.getElementById('tlnode-m'+(br.afterNode-1));
+    const b=document.getElementById('tlnode-m'+br.afterNode);
+    const el=document.getElementById('branch-'+bi);
+    if(!a||!b||!el) return;
+    el.style.left=(((mid(a)+mid(b))/2)-ir.left)+'px';
+  });
+}
+layoutBranches();
+window.addEventListener('resize',layoutBranches);
+window.addEventListener('load',layoutBranches);
+
+/* Yan hikaye göstergesi */
+(function(){
+  const legend=document.getElementById('branchLegend');
+  if(!branches.length){legend.style.display='none';return;}
+  const lab=document.createElement('span');
+  lab.className='branch-legend-label'; lab.textContent='Yan Hikayeler';
+  legend.appendChild(lab);
+  branches.forEach((br,bi)=>{
+    const chip=document.createElement('button');
+    chip.type='button'; chip.className='branch-chip';
+    paintBranchVars(chip,br.color);
+    chip.innerHTML='<span class="branch-chip-dot"></span>'+br.name;
+    chip.onclick=()=>jumpToNode('b'+bi+'_0');
+    legend.appendChild(chip);
+  });
+})();
+
+/* ── Görüşe girdikçe ortaya çıkarma (yatay kaydırma da dahil) ── */
+const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function(){
+  const frame=document.querySelector('.timeline-frame');
+  /* Hareket duyarlılığı açıksa ya da IO desteklenmiyorsa: her şeyi son hâliyle göster */
+  if(prefersReduced || !('IntersectionObserver' in window)){
+    frame.classList.add('tl-revealed');
+    document.querySelectorAll('.node-wrap,.branch').forEach(el=>el.classList.add('revealed'));
+    return;
+  }
+  const barIO=new IntersectionObserver(es=>{
+    if(es[0].isIntersecting){frame.classList.add('tl-revealed');barIO.disconnect();}
+  },{threshold:0.02});
+  barIO.observe(frame);
+
+  /* .branch kendisi sıfır boyutlu (çocukları absolute) — bu yüzden
+     gerçek genişliği olan .branch-body gözlenir, sınıf üst öğeye eklenir. */
+  const revealIO=new IntersectionObserver((entries,obs)=>{
+    let k=0;
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const el=en.target;
+      const isBody=el.classList.contains('branch-body');
+      if(!isBody){
+        el.style.transitionDelay=(Math.min(k,12)*28)+'ms';
+        k++;
+        setTimeout(()=>{el.style.transitionDelay='';},900);
+      }
+      (isBody ? el.closest('.branch') : el).classList.add('revealed');
+      obs.unobserve(el);
+    });
+  },{root:null,rootMargin:'80px 140px 0px 140px',threshold:0});
+  document.querySelectorAll('.node-wrap,.branch-body').forEach(el=>revealIO.observe(el));
+})();
+
+/* Herhangi bir node'u (ana ya da yan hikaye) ortala */
+function scrollNodeIntoTrack(el){
+  const track=document.getElementById('timelineTrack');
+  const tr=track.getBoundingClientRect(), er=el.getBoundingClientRect();
+  track.scrollTo({left:track.scrollLeft+((er.left+er.width/2)-(tr.left+tr.width/2)),behavior:'smooth'});
+}
+function jumpToNode(uid){
+  const el=document.getElementById('tlnode-'+uid);
+  if(!el) return;
+  el.classList.add('revealed');
+  const br=el.closest('.branch'); if(br) br.classList.add('revealed');
+  document.querySelector('.timeline-section').scrollIntoView({behavior:'smooth',block:'center'});
+  scrollNodeIntoTrack(el);
+  el.classList.add('finder-highlight');
+  setTimeout(()=>el.classList.remove('finder-highlight'),2200);
+}
 
 function updateTooltipDirections(){
   const inner=document.querySelector('.timeline-inner');
@@ -1368,10 +1699,13 @@ function findNode(){
   finderResults=[];finderCurrentIdx=0;
   const num=parseInt(raw,10);
   if(!isNaN(num)&&String(num)===raw&&num>=1&&num<=events.length){
-    finderResults=[num-1];
+    finderResults=['m'+(num-1)];
   } else {
     const lower=raw.toLowerCase();
-    events.forEach((ev,i)=>{if(ev.title.toLowerCase().includes(lower))finderResults.push(i);});
+    registry.forEach(r=>{
+      const hay=(r.ev.title+' '+r.code+' '+(r.branch?r.branch.name:'')).toLowerCase();
+      if(hay.includes(lower)) finderResults.push(r.uid);
+    });
   }
   const countEl=document.getElementById('nodeFinderCount');
   const prevBtn=document.getElementById('nodeNavPrev');
@@ -1393,25 +1727,32 @@ function navigateFinderResult(dir){
 }
 function scrollToFinderResult(idx){
   finderCurrentIdx=idx;
-  const targetIdx=finderResults[idx];
-  document.querySelectorAll('.node-wrap.finder-highlight').forEach(el=>el.classList.remove('finder-highlight'));
-  const wrap=document.getElementById('node-'+targetIdx);
-  if(!wrap) return;
-  const track=document.getElementById('timelineTrack');
-  track.scrollTo({left:wrap.offsetLeft-track.clientWidth/2+wrap.offsetWidth/2,behavior:'smooth'});
-  document.querySelector('.timeline-section').scrollIntoView({behavior:'smooth',block:'center'});
-  wrap.classList.add('finder-highlight');
-  setTimeout(()=>wrap.classList.remove('finder-highlight'),2200);
+  document.querySelectorAll('.finder-highlight').forEach(el=>el.classList.remove('finder-highlight'));
+  jumpToNode(finderResults[idx]);
   const countEl=document.getElementById('nodeFinderCount');
   if(finderResults.length>1) countEl.textContent=(idx+1)+' / '+finderResults.length;
 }
 
 let currentImgSrc='';
-function openModal(idx){
-  const ev=events[idx]; currentImgSrc=ev.img;
+function openModal(uid){
+  const rec=byUid[uid]; if(!rec) return;
+  const ev=rec.ev; currentImgSrc=ev.img;
   const img=document.getElementById('modalImg');
-  img.src=ev.img;img.alt=ev.title;img.style.objectPosition='50% 0%';
+  img.alt=ev.title;img.style.objectPosition='50% 0%';
   img.onerror=()=>img.style.display='none';img.onload=()=>img.style.display='';
+  if(ev.img){img.src=ev.img;img.style.display='';}
+  else{img.removeAttribute('src');img.style.display='none';}
+
+  const tag=document.getElementById('modalTag');
+  if(rec.branch){
+    tag.textContent='Yan Hikaye — '+rec.branch.name+' · '+rec.code;
+    tag.classList.add('is-branch');
+    paintBranchVars(tag,rec.branch.color);
+  } else {
+    tag.textContent='Engizisyon Arşivi — Olay Kaydı · '+rec.code;
+    tag.classList.remove('is-branch');
+  }
+
   document.getElementById('modalTitle').textContent=ev.title;
   document.getElementById('modalDate').textContent=ev.date;
   document.getElementById('modalText').innerHTML=ev.text;
