@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homebrew Kurallar — Aiwelen D&D Arşivi</title>
+  <link rel="stylesheet" href="../theme.css">
+  <style>
+    body {
+      background-image: url('https://cdna.artstation.com/p/assets/images/images/081/683/086/large/andrej-rempel-ancient-thing.jpg?1730922224');
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SOL PANEL — İÇİNDEKİLER (PDF reader outline'ı gibi)
+       ═══════════════════════════════════════════════════ */
+    .toc {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 268px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      background: rgba(6,4,2,0.94);
+      border-right: 1px solid rgba(201,168,76,0.22);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+      animation: subtitleFade 0.9s ease 0.2s both;
+    }
+
+    .toc-header {
+      padding: 1.3rem 1.1rem 0.9rem;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .toc-header-text { min-width: 0; }
+
+    /* Panel içindeki ana menü düğmesi */
+    .toc-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gold-dim);
+      background: rgba(8,5,2,0.7);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 3px;
+      padding: 0.42rem 0.6rem;
+      transition: color 0.3s, border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+    .toc-home:hover {
+      color: var(--gold-bright);
+      border-color: rgba(201,168,76,0.65);
+      background: rgba(201,168,76,0.09);
+      box-shadow: 0 0 14px rgba(201,168,76,0.2);
+    }
+    .toc-home-glyph { font-size: 0.72rem; line-height: 1; }
+    .toc-header .toc-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.3rem;
+    }
+    .toc-header .toc-heading {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold-bright);
+      text-shadow: 0 0 18px rgba(201,168,76,0.4);
+    }
+
+    .toc-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.8rem 0.55rem 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(201,168,76,0.3) transparent;
+    }
+    .toc-scroll::-webkit-scrollbar { width: 7px; }
+    .toc-scroll::-webkit-scrollbar-track { background: transparent; }
+    .toc-scroll::-webkit-scrollbar-thumb {
+      background: rgba(201,168,76,0.22);
+      border-radius: 4px;
+    }
+    .toc-scroll::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.45); }
+
+    /* TOC grubu = bir bölüm */
+    .toc-group { margin-bottom: 0.35rem; }
+
+    .toc-group > summary {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      border-radius: 3px;
+      transition: background 0.25s;
+    }
+    .toc-group > summary::-webkit-details-marker { display: none; }
+    .toc-group > summary::marker { content: ""; }
+    .toc-group > summary:hover { background: rgba(201,168,76,0.07); }
+
+    .toc-group-glyph { font-size: 0.78rem; opacity: 0.7; flex-shrink: 0; }
+    .toc-group-title {
+      flex: 1;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      line-height: 1.3;
+    }
+    .toc-group-chevron {
+      font-size: 0.6rem;
+      color: rgba(201,168,76,0.4);
+      transition: transform 0.28s ease;
+      flex-shrink: 0;
+    }
+    .toc-group[open] .toc-group-chevron { transform: rotate(90deg); }
+
+    .toc-links {
+      list-style: none;
+      margin: 0.15rem 0 0.5rem;
+      padding: 0 0 0 0.95rem;
+      border-left: 1px solid rgba(201,168,76,0.14);
+      margin-left: 0.95rem;
+    }
+    .toc-links a {
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+      padding: 0.34rem 0.5rem;
+      border-radius: 3px;
+      text-decoration: none;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.74rem;
+      line-height: 1.4;
+      color: rgba(242,232,208,0.52);
+      transition: color 0.22s, background 0.22s;
+    }
+    .toc-links a:hover {
+      color: var(--gold-bright);
+      background: rgba(201,168,76,0.07);
+    }
+    .toc-links .tl-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      color: rgba(201,168,76,0.4);
+      flex-shrink: 0;
+      min-width: 1.1rem;
+      transition: color 0.22s;
+    }
+    .toc-links a:hover .tl-num { color: var(--gold); }
+
+    /* Okunan madde */
+    .toc-links a.active {
+      color: var(--gold-bright);
+      background: rgba(201,168,76,0.11);
+      box-shadow: inset 2px 0 0 var(--gold);
+    }
+    .toc-links a.active .tl-num { color: var(--gold); }
+
+    .toc-footer {
+      flex-shrink: 0;
+      padding: 0.7rem 1.1rem 0.9rem;
+      border-top: 1px solid rgba(201,168,76,0.15);
+      display: flex;
+      gap: 0.4rem;
+    }
+    .toc-footer .toolbar-btn { flex: 1; padding: 0.45rem 0.3rem; }
+
+    /* Mobil aç/kapa düğmesi ve karartma */
+    .toc-toggle {
+      position: fixed;
+      top: 0.9rem; left: 0.9rem;
+      z-index: 7;
+      display: none;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(8,5,2,0.92);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 3px;
+      padding: 0.5rem 0.9rem;
+      cursor: pointer;
+    }
+    .toc-backdrop {
+      position: fixed; inset: 0;
+      z-index: 4;
+      background: rgba(0,0,0,0.65);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    /* ── İÇERİK ALANI ── */
+    main { padding-left: calc(268px + 1.5rem); }
+
+    .rules-wrap {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* ── ARAÇ ÇUBUĞU DÜĞMELERİ ── */
+    .toolbar-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      background: rgba(8,5,2,0.7);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 3px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      transition: color 0.3s, border-color 0.3s, background 0.3s;
+    }
+    .toolbar-btn:hover {
+      color: var(--gold-bright);
+      border-color: rgba(201,168,76,0.55);
+      background: rgba(201,168,76,0.07);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       BÖLÜM BLOĞU — kendisi de açılır kapanır
+       ═══════════════════════════════════════════════════ */
+    .section-block {
+      margin-bottom: 1.5rem;
+      scroll-margin-top: 1.5rem;
+      animation: cardReveal 0.6s ease both;
+    }
+    .section-block:nth-of-type(1) { animation-delay: 0.45s; }
+    .section-block:nth-of-type(2) { animation-delay: 0.55s; }
+    .section-block:nth-of-type(3) { animation-delay: 0.65s; }
+    .section-block:nth-of-type(4) { animation-delay: 0.75s; }
+
+    .section-block > summary {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      border-radius: 4px;
+      background: rgba(10,6,3,0.7);
+      border: 1px solid rgba(201,168,76,0.22);
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+    .section-block > summary::-webkit-details-marker { display: none; }
+    .section-block > summary::marker { content: ""; }
+    .section-block > summary:hover {
+      border-color: rgba(201,168,76,0.5);
+      background: rgba(201,168,76,0.06);
+      box-shadow: 0 0 20px rgba(201,168,76,0.1);
+    }
+
+    .section-glyph { font-size: 1.05rem; line-height: 1; opacity: 0.8; flex-shrink: 0; }
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      white-space: nowrap;
+    }
+    .section-rule-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent);
+    }
+    .section-count {
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      letter-spacing: 2px;
+      color: rgba(201,168,76,0.4);
+      flex-shrink: 0;
+    }
+    .section-chevron {
+      font-size: 0.85rem;
+      color: rgba(201,168,76,0.35);
+      transition: transform 0.3s ease, color 0.3s;
+      flex-shrink: 0;
+    }
+    .section-block[open] > summary .section-chevron {
+      transform: rotate(90deg);
+      color: var(--gold);
+    }
+
+    .section-body { animation: noteOpen 0.35s ease both; }
+
+    /* ═══════════════════════════════════════════════════
+       KURAL KARTI (açılır not)
+       ═══════════════════════════════════════════════════ */
+    .rule {
+      background: rgba(8,5,2,0.78);
+      border: 1px solid rgba(201,168,76,0.16);
+      border-left: 3px solid rgba(201,168,76,0.32);
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+      overflow: hidden;
+      scroll-margin-top: 1.2rem;
+      transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+    .rule:hover {
+      border-color: rgba(201,168,76,0.4);
+      border-left-color: var(--gold);
+      box-shadow: 0 0 18px rgba(201,168,76,0.1);
+    }
+    .rule[open] {
+      background: rgba(12,8,3,0.9);
+      border-left-color: var(--gold);
+      box-shadow: 0 0 22px rgba(201,168,76,0.12);
+    }
+    /* TOC'tan atlanan maddeyi kısa süre vurgula */
+    .rule.flash { animation: ruleFlash 1.4s ease both; }
+    @keyframes ruleFlash {
+      0%, 40% { box-shadow: 0 0 0 1px var(--gold), 0 0 26px rgba(201,168,76,0.4); }
+      100%    { box-shadow: 0 0 22px rgba(201,168,76,0.12); }
+    }
+
+    .rule > summary {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .rule > summary::-webkit-details-marker { display: none; }
+    .rule > summary::marker { content: ""; }
+
+    .rule-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--gold-dim);
+      letter-spacing: 1px;
+      min-width: 1.6rem;
+      text-align: center;
+      flex-shrink: 0;
+      transition: color 0.3s;
+    }
+    .rule:hover .rule-num,
+    .rule[open] .rule-num { color: var(--gold); }
+
+    .rule-head-sep {
+      width: 1px;
+      height: 22px;
+      background: rgba(201,168,76,0.15);
+      flex-shrink: 0;
+    }
+
+    .rule-title {
+      flex: 1;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: var(--parchment);
+      line-height: 1.35;
+      transition: color 0.3s;
+    }
+    .rule:hover .rule-title,
+    .rule[open] .rule-title { color: var(--gold-bright); }
+
+    .rule-chevron {
+      flex-shrink: 0;
+      color: rgba(201,168,76,0.3);
+      font-size: 0.7rem;
+      transition: transform 0.3s ease, color 0.3s;
+    }
+    .rule[open] .rule-chevron { transform: rotate(90deg); color: var(--gold); }
+
+    /* Açık hâl: not gövdesi */
+    .rule-body {
+      padding: 0 1.15rem 1.15rem 3.5rem;
+      animation: noteOpen 0.35s ease both;
+    }
+    @keyframes noteOpen {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .rule-body::before {
+      content: "";
+      display: block;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76,0.25), transparent 70%);
+      margin-bottom: 0.85rem;
+    }
+    .rule-body p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.86rem;
+      line-height: 1.75;
+      color: rgba(242,232,208,0.82);
+      margin: 0 0 0.7rem;
+    }
+    .rule-body p:last-child { margin-bottom: 0; }
+
+    /* Bilerek İngilizce bırakılan oyun terimleri */
+    .term { color: var(--gold-bright); font-style: normal; white-space: nowrap; }
+
+    /* Örnek kutusu */
+    .rule-example {
+      border-left: 2px solid rgba(201,168,76,0.3);
+      background: rgba(201,168,76,0.04);
+      padding: 0.7rem 0.95rem;
+      border-radius: 0 3px 3px 0;
+      margin: 0.8rem 0 0;
+    }
+    .rule-example .ex-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.5);
+      margin-bottom: 0.35rem;
+    }
+    .rule-example p { font-size: 0.82rem; font-style: italic; margin: 0; }
+
+    /* DM notu */
+    .dm-note {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      margin-top: 0.8rem;
+      padding: 0.6rem 0.9rem;
+      background: rgba(122,31,31,0.12);
+      border: 1px solid rgba(122,31,31,0.35);
+      border-radius: 3px;
+    }
+    .dm-note .dm-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #d98c8c;
+      flex-shrink: 0;
+      padding-top: 0.18rem;
+    }
+    .dm-note p { font-size: 0.82rem; font-style: italic; margin: 0; color: rgba(242,232,208,0.72); }
+
+    /* d6 fumble listesi */
+    .d6-list { list-style: none; margin: 0.9rem 0 0; padding: 0; }
+    .d6-row {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      padding: 0.6rem 0;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+    .d6-row:first-child { border-top: none; padding-top: 0; }
+    .d6-face {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: var(--gold);
+      background: rgba(8,5,2,0.85);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 3px;
+      width: 1.7rem; height: 1.7rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transform: rotate(45deg);
+      margin-top: 0.15rem;
+    }
+    .d6-face span { transform: rotate(-45deg); }
+    .d6-text {
+      flex: 1;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.84rem;
+      line-height: 1.65;
+      color: rgba(242,232,208,0.82);
+    }
+    .d6-text strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       BÖLÜM RENK KİMLİKLERİ
+       ═══════════════════════════════════════════════════ */
+    /* Critical — kızıl */
+    .sec-critical > summary { border-color: rgba(160,60,55,0.3); }
+    .sec-critical > summary:hover { border-color: rgba(196,84,76,0.6); box-shadow: 0 0 20px rgba(180,60,50,0.12); }
+    .sec-critical .section-title { color: #f0a09a; }
+    .sec-critical .section-rule-line { background: linear-gradient(90deg, rgba(200,90,80,0.4), transparent); }
+    .sec-critical[open] > summary .section-chevron { color: #c4544c; }
+    .sec-critical .rule { border-left-color: rgba(160,60,55,0.4); }
+    .sec-critical .rule:hover,
+    .sec-critical .rule[open] { border-left-color: #c4544c; box-shadow: 0 0 22px rgba(180,60,50,0.14); }
+    .sec-critical .rule:hover .rule-num,
+    .sec-critical .rule[open] .rule-num { color: #e08a80; }
+    .sec-critical .rule:hover .rule-title,
+    .sec-critical .rule[open] .rule-title { color: #f0a09a; }
+    .sec-critical .rule[open] .rule-chevron { color: #c4544c; }
+
+    /* Resurrection — solgun kemik moru */
+    .sec-resurrection > summary { border-color: rgba(140,115,170,0.3); }
+    .sec-resurrection > summary:hover { border-color: rgba(156,134,189,0.6); box-shadow: 0 0 20px rgba(140,115,180,0.12); }
+    .sec-resurrection .section-title { color: #cbb8e0; }
+    .sec-resurrection .section-rule-line { background: linear-gradient(90deg, rgba(150,125,180,0.4), transparent); }
+    .sec-resurrection[open] > summary .section-chevron { color: #9c86bd; }
+    .sec-resurrection .rule { border-left-color: rgba(140,115,170,0.35); }
+    .sec-resurrection .rule:hover,
+    .sec-resurrection .rule[open] { border-left-color: #9c86bd; box-shadow: 0 0 22px rgba(140,115,180,0.14); }
+    .sec-resurrection .rule:hover .rule-num,
+    .sec-resurrection .rule[open] .rule-num { color: #b8a2d4; }
+    .sec-resurrection .rule:hover .rule-title,
+    .sec-resurrection .rule[open] .rule-title { color: #cbb8e0; }
+    .sec-resurrection .rule[open] .rule-chevron { color: #9c86bd; }
+
+    /* Kaynaklar — soluk yeşil/bronz kütüphane tonu */
+    .sec-kaynak > summary { border-color: rgba(120,150,120,0.28); }
+    .sec-kaynak > summary:hover { border-color: rgba(150,185,150,0.55); box-shadow: 0 0 20px rgba(120,160,120,0.1); }
+    .sec-kaynak .section-title { color: #b8d4b0; }
+    .sec-kaynak .section-rule-line { background: linear-gradient(90deg, rgba(130,170,130,0.4), transparent); }
+    .sec-kaynak[open] > summary .section-chevron { color: #8fb98a; }
+    .sec-kaynak .rule { border-left-color: rgba(120,155,120,0.35); }
+    .sec-kaynak .rule:hover,
+    .sec-kaynak .rule[open] { border-left-color: #8fb98a; box-shadow: 0 0 22px rgba(120,160,120,0.12); }
+    .sec-kaynak .rule:hover .rule-num,
+    .sec-kaynak .rule[open] .rule-num { color: #a6c9a0; }
+    .sec-kaynak .rule:hover .rule-title,
+    .sec-kaynak .rule[open] .rule-title { color: #b8d4b0; }
+    .sec-kaynak .rule[open] .rule-chevron { color: #8fb98a; }
+
+    /* Kaynak kartı içi */
+    .src-publisher {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(184,212,176,0.6);
+      border: 1px solid rgba(140,175,135,0.3);
+      border-radius: 2px;
+      padding: 0.2rem 0.5rem;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    @media (max-width: 780px) { .src-publisher { display: none; } }
+
+    .src-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(184,212,176,0.55);
+      margin: 0.6rem 0 0.45rem;
+    }
+    .src-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0 0 0.9rem;
+      padding: 0;
+    }
+    .src-list li {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.78rem;
+      color: rgba(242,232,208,0.85);
+      background: rgba(120,160,120,0.09);
+      border: 1px solid rgba(140,175,135,0.28);
+      border-radius: 3px;
+      padding: 0.3rem 0.65rem;
+    }
+    .src-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.7rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+    .src-meta-text {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.76rem;
+      font-style: italic;
+      color: rgba(242,232,208,0.45);
+      flex: 1;
+      min-width: 140px;
+    }
+    .src-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: rgba(184,212,176,0.8);
+      border: 1px solid rgba(140,175,135,0.35);
+      border-radius: 3px;
+      padding: 0.45rem 0.9rem;
+      background: rgba(8,5,2,0.6);
+      transition: color 0.3s, border-color 0.3s, background 0.3s;
+      white-space: nowrap;
+    }
+    .src-link:hover {
+      color: #d8ecd0;
+      border-color: rgba(150,190,145,0.7);
+      background: rgba(120,160,120,0.12);
+    }
+
+    /* Bilgi / uyarı kartları */
+    .notice-card {
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.9rem;
+    }
+    .notice-card p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.83rem;
+      line-height: 1.75;
+      margin: 0 0 0.6rem;
+    }
+    .notice-card p:last-child { margin-bottom: 0; }
+
+    .notice-spoiler {
+      background: rgba(20,12,28,0.75);
+      border: 1px dashed rgba(150,125,180,0.4);
+      text-align: center;
+    }
+    .notice-spoiler .notice-glyph { font-size: 1.1rem; opacity: 0.6; display: block; margin-bottom: 0.4rem; }
+    .notice-spoiler p { font-style: italic; color: rgba(203,184,224,0.75); }
+
+    .notice-source {
+      background: rgba(10,16,10,0.6);
+      border: 1px dashed rgba(140,175,135,0.35);
+    }
+    .notice-source p { color: rgba(242,232,208,0.7); }
+    .notice-source strong { color: #b8d4b0; font-weight: 600; }
+
+    /* ── ÖNEMLİ vurgusu (kural gövdesi içinde) ── */
+    .notice-important {
+      position: relative;
+      margin-top: 0.9rem;
+      padding: 0.9rem 1.1rem 0.9rem 1.15rem;
+      background: linear-gradient(90deg, rgba(201,168,76,0.13), rgba(201,168,76,0.04));
+      border: 1px solid rgba(201,168,76,0.5);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 0 22px rgba(201,168,76,0.12), inset 0 0 24px rgba(201,168,76,0.03);
+    }
+    .notice-important .imp-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin-bottom: 0.45rem;
+      text-shadow: 0 0 12px rgba(201,168,76,0.5);
+    }
+    .notice-important p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.87rem;
+      line-height: 1.75;
+      color: rgba(245,208,128,0.92);
+      margin: 0;
+    }
+
+    /* ── ÖZEL CONDITION BLOĞU (stat-block tarzı) ── */
+    .cond-block {
+      margin-top: 0.9rem;
+      background: linear-gradient(180deg, rgba(28,8,8,0.75), rgba(12,5,4,0.7));
+      border: 1px solid rgba(150,50,45,0.45);
+      border-left: 3px solid #a33530;
+      border-radius: 0 4px 4px 0;
+      padding: 1rem 1.2rem 1.1rem;
+      box-shadow: 0 0 24px rgba(140,35,30,0.14), inset 0 0 30px rgba(120,20,18,0.06);
+    }
+    .cond-block-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #e8918a;
+      text-shadow: 0 0 18px rgba(190,60,50,0.5);
+      margin-bottom: 0.15rem;
+    }
+    .cond-block-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(232,145,138,0.5);
+    }
+    .cond-block-divider {
+      height: 1px;
+      margin: 0.7rem 0 0.85rem;
+      background: linear-gradient(90deg, rgba(190,70,60,0.6), rgba(190,70,60,0.1) 70%, transparent);
+    }
+    /* Kitap dilindeki özgün kural metni */
+    .cond-block-rules p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.85rem;
+      line-height: 1.72;
+      color: rgba(242,232,208,0.86);
+      margin: 0 0 0.65rem;
+    }
+    .cond-block-rules p:last-child { margin-bottom: 0; }
+    .cond-block-rules em { color: #e8918a; font-style: normal; }
+
+    .cond-block-example {
+      margin-top: 0.85rem;
+      border-left: 2px solid rgba(190,70,60,0.4);
+      background: rgba(150,45,40,0.07);
+      border-radius: 0 3px 3px 0;
+      padding: 0.7rem 0.95rem;
+    }
+    .cond-block-example .ex-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.53rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(232,145,138,0.55);
+      margin-bottom: 0.35rem;
+    }
+    .cond-block-example p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.81rem;
+      font-style: italic;
+      line-height: 1.7;
+      color: rgba(242,232,208,0.72);
+      margin: 0;
+    }
+
+    /* Özgün metnin altındaki Türkçe özet */
+    .cond-block-tr {
+      margin-top: 0.9rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed rgba(190,70,60,0.28);
+    }
+    .cond-block-tr .tr-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.53rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.5);
+      margin-bottom: 0.45rem;
+    }
+    .cond-block-tr ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .cond-block-tr li {
+      position: relative;
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.83rem;
+      line-height: 1.7;
+      color: rgba(242,232,208,0.78);
+      padding-left: 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .cond-block-tr li:last-child { margin-bottom: 0; }
+    .cond-block-tr li::before {
+      content: "◆";
+      position: absolute;
+      left: 0;
+      font-size: 0.5rem;
+      top: 0.42rem;
+      color: rgba(190,70,60,0.6);
+    }
+
+    /* ── D&D 5E CONDITIONS bölümü — çelik mavisi ── */
+    .sec-conditions > summary { border-color: rgba(110,145,180,0.3); }
+    .sec-conditions > summary:hover {
+      border-color: rgba(140,180,215,0.6);
+      box-shadow: 0 0 20px rgba(110,150,190,0.12);
+    }
+    .sec-conditions .section-title { color: #a8cbe4; }
+    .sec-conditions .section-rule-line { background: linear-gradient(90deg, rgba(120,160,200,0.4), transparent); }
+    .sec-conditions[open] > summary .section-chevron { color: #7ba7ca; }
+
+    .cond-card {
+      background: rgba(8,12,18,0.7);
+      border: 1px solid rgba(110,145,180,0.28);
+      border-left: 3px solid rgba(123,167,202,0.6);
+      border-radius: 4px;
+      padding: 1.1rem 1.25rem;
+    }
+    .cond-card p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.86rem;
+      line-height: 1.75;
+      color: rgba(242,232,208,0.78);
+      margin: 0 0 0.7rem;
+    }
+    .cond-card .cond-source {
+      font-size: 0.76rem;
+      font-style: italic;
+      color: rgba(168,203,228,0.5);
+      margin-bottom: 1rem;
+    }
+    .cond-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #cfe6f5;
+      border: 1px solid rgba(140,180,215,0.5);
+      border-radius: 3px;
+      padding: 0.7rem 1.4rem;
+      background: rgba(30,55,80,0.4);
+      transition: color 0.3s, border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+    .cond-link:hover {
+      color: #eaf5fc;
+      border-color: rgba(170,210,240,0.85);
+      background: rgba(45,80,115,0.55);
+      box-shadow: 0 0 22px rgba(120,170,215,0.28);
+    }
+
+    /* ── TOC: alt maddesi olmayan doğrudan bağlantı ── */
+    .toc-direct {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      margin-bottom: 0.35rem;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: background 0.25s;
+    }
+    .toc-direct:hover { background: rgba(201,168,76,0.07); }
+    .toc-direct.active { background: rgba(201,168,76,0.11); box-shadow: inset 2px 0 0 var(--gold); }
+    .toc-direct .toc-group-title { color: #a8cbe4; }
+    .toc-direct .toc-ext { font-size: 0.6rem; color: rgba(168,203,228,0.5); flex-shrink: 0; }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════ */
+    @media (max-width: 1080px) {
+      main { padding-left: 1.5rem; padding-top: 5rem; }
+      .toc-toggle { display: inline-flex; }
+      .toc {
+        transform: translateX(-100%);
+        transition: transform 0.32s cubic-bezier(.22,1,.36,1);
+        width: 280px;
+      }
+      body.toc-open .toc { transform: translateX(0); }
+      body.toc-open .toc-backdrop { opacity: 1; pointer-events: auto; }
+      body.toc-open { overflow: hidden; }
+    }
+
+    @media (max-width: 640px) {
+      main { padding-left: 1rem; padding-right: 1rem; }
+      .rule-body { padding-left: 1.15rem; }
+      .rule > summary { gap: 0.6rem; padding: 0.8rem 0.9rem; }
+      .rule-title { font-size: 0.72rem; letter-spacing: 0.8px; }
+      .section-block > summary { gap: 0.6rem; padding: 0.7rem 0.75rem; }
+      .section-title { font-size: 0.7rem; letter-spacing: 1.6px; white-space: normal; }
+      .section-count { display: none; }
+      .src-meta-text { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ SOL PANEL: İÇİNDEKİLER ═══════════ -->
+<button class="toc-toggle" id="toc-toggle" type="button" aria-label="İçindekiler">☰ İçindekiler</button>
+<div class="toc-backdrop" id="toc-backdrop"></div>
+
+<aside class="toc" id="toc">
+  <div class="toc-header">
+    <div class="toc-header-text">
+      <div class="toc-eyebrow">Aiwelen Arşivi</div>
+      <div class="toc-heading">İçindekiler</div>
+    </div>
+    <a class="toc-home" href="../index.html" title="Ana Menüye dön">
+      <span class="toc-home-glyph">⌂</span>
+      <span>Ana Menü</span>
+    </a>
+  </div>
+
+  <nav class="toc-scroll" aria-label="Sayfa içeriği">
+
+    <a class="toc-direct" href="#cond">
+      <span class="toc-group-glyph">🩸</span>
+      <span class="toc-group-title">D&amp;D 5e Conditions</span>
+      <span class="toc-ext">↗</span>
+    </a>
+
+    <details class="toc-group" open>
+      <summary>
+        <span class="toc-group-glyph">⚔</span>
+        <span class="toc-group-title">Genel Kurallar</span>
+        <span class="toc-group-chevron">›</span>
+      </summary>
+      <ul class="toc-links">
+        <li><a href="#g1"><span class="tl-num">01</span><span>Flanking advantage</span></a></li>
+        <li><a href="#g2"><span class="tl-num">02</span><span>Spell Scroll kullanımı</span></a></li>
+        <li><a href="#g3"><span class="tl-num">03</span><span>Potion aksiyonları</span></a></li>
+        <li><a href="#g4"><span class="tl-num">04</span><span>Improvised weapon proficiency</span></a></li>
+        <li><a href="#g5"><span class="tl-num">05</span><span>Downtime training</span></a></li>
+        <li><a href="#g6"><span class="tl-num">06</span><span>Weapon mastery (2024)</span></a></li>
+        <li><a href="#g7"><span class="tl-num">07</span><span>Detect Magic ~ Arcana</span></a></li>
+        <li><a href="#g8"><span class="tl-num">08</span><span>Rest'te Identify (Arcana)</span></a></li>
+        <li><a href="#g9"><span class="tl-num">09</span><span>Exhaustion (2024)</span></a></li>
+        <li><a href="#g10"><span class="tl-num">10</span><span>Ceremony → flask Holy Water</span></a></li>
+        <li><a href="#g11"><span class="tl-num">11</span><span>Crafting/harvesting: HailJoe Ruleset</span></a></li>
+        <li><a href="#g12"><span class="tl-num">12</span><span>Bastion (2024)</span></a></li>
+        <li><a href="#g13"><span class="tl-num">13</span><span>Condition'lar</span></a></li>
+        <li><a href="#g14"><span class="tl-num">14</span><span>Inspiration stack</span></a></li>
+        <li><a href="#g15"><span class="tl-num">15</span><span>Homebrew içerik onayı</span></a></li>
+        <li><a href="#g16"><span class="tl-num">16</span><span>Passive INT ile yaratık bilgisi</span></a></li>
+        <li><a href="#g17"><span class="tl-num">17</span><span>Özel tablolar ve META</span></a></li>
+        <li><a href="#g18"><span class="tl-num">18</span><span>Warlock: Pact = invocation</span></a></li>
+        <li><a href="#g19"><span class="tl-num">19</span><span>Özel Condition'lar (Leech)</span></a></li>
+      </ul>
+    </details>
+
+    <details class="toc-group" open>
+      <summary>
+        <span class="toc-group-glyph">🎲</span>
+        <span class="toc-group-title">Critical Kuralları</span>
+        <span class="toc-group-chevron">›</span>
+      </summary>
+      <ul class="toc-links">
+        <li><a href="#c1"><span class="tl-num">01</span><span>Save/skill'de critical yok</span></a></li>
+        <li><a href="#c2"><span class="tl-num">02</span><span>Attack'ta 1: fumble tablosu</span></a></li>
+        <li><a href="#c3"><span class="tl-num">03</span><span>Attack'ta 20: max ekstra zar</span></a></li>
+      </ul>
+    </details>
+
+    <details class="toc-group" open>
+      <summary>
+        <span class="toc-group-glyph">🕯</span>
+        <span class="toc-group-title">Resurrection</span>
+        <span class="toc-group-chevron">›</span>
+      </summary>
+      <ul class="toc-links">
+        <li><a href="#r1"><span class="tl-num">01</span><span>Ölümün tanrısı Daynore</span></a></li>
+        <li><a href="#r2"><span class="tl-num">02</span><span>Oblivion Gate ve diriliş şansı</span></a></li>
+        <li><a href="#r3"><span class="tl-num">03</span><span>Revivify istisnası</span></a></li>
+      </ul>
+    </details>
+
+    <details class="toc-group" open>
+      <summary>
+        <span class="toc-group-glyph">📚</span>
+        <span class="toc-group-title">3. Parti Kaynaklar</span>
+        <span class="toc-group-chevron">›</span>
+      </summary>
+      <ul class="toc-links">
+        <li><a href="#k1"><span class="tl-num">01</span><span>Heliana's Guide to Monster Hunting</span></a></li>
+        <li><a href="#k2"><span class="tl-num">02</span><span>Steinhardt's Guide to the Eldritch Hunt</span></a></li>
+        <li><a href="#k3"><span class="tl-num">03</span><span>Heresy of Steel</span></a></li>
+        <li><a href="#k4"><span class="tl-num">04</span><span>The Heretic's Alchemy</span></a></li>
+        <li><a href="#k5"><span class="tl-num">05</span><span>Ryoko's Guide to the Yokai Realms</span></a></li>
+        <li><a href="#k6"><span class="tl-num">06</span><span>Grim Hollow</span></a></li>
+        <li><a href="#k7"><span class="tl-num">07</span><span>Erevan's Guide to Death &amp; Beyond</span></a></li>
+        <li><a href="#k8"><span class="tl-num">08</span><span>Historica Arcanum: Era of the Crusades</span></a></li>
+        <li><a href="#k9"><span class="tl-num">09</span><span>Historica Arcanum: Echoes of Renaissance</span></a></li>
+      </ul>
+    </details>
+
+  </nav>
+
+  <div class="toc-footer">
+    <button class="toolbar-btn" id="expand-all" type="button">Tümünü Aç</button>
+    <button class="toolbar-btn" id="collapse-all" type="button">Tümünü Kapat</button>
+  </div>
+</aside>
+
+<main>
+
+  <div class="page-eyebrow">Aiwelen Dünyası &mdash; D&amp;D Arşivi</div>
+  <h1 class="page-title">Homebrew Kurallar</h1>
+  <div class="page-tagline">Bu masada standart kuralların üzerine yazılan düzenlemeler</div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-ornament">
+      <div class="divider-dot"></div>
+      <div class="divider-rune">⚖</div>
+      <div class="divider-dot"></div>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="rules-wrap">
+
+    <!-- ═══════════ D&D 5E CONDITIONS ═══════════ -->
+    <details class="section-block sec-conditions" id="cond">
+      <summary>
+        <span class="section-glyph">🩸</span>
+        <span class="section-title">D&amp;D 5e Conditions</span>
+        <span class="section-rule-line"></span>
+        <span class="section-count">Hızlı Referans</span>
+        <span class="section-chevron">›</span>
+      </summary>
+      <div class="section-body">
+        <div class="cond-card">
+          <p>Condition'lar bu masada <a href="#g13" class="term" style="text-decoration:none">13. maddede</a> belirtildiği gibi standart 5e sistemiyle işler. Masa sırasında hızlıca bakmak için aşağıdaki quickref sayfasını kullanabilirsin — condition'ların yanı sıra aksiyonlar, hareket ve savaş akışının özetini de içerir.</p>
+          <p class="cond-source">Kaynak: crobi'nin D&amp;D 5e Quick Reference sayfası — harici bağlantı, yeni sekmede açılır.</p>
+          <a class="cond-link" href="https://crobi.github.io/dnd5e-quickref/preview/quickref.html" target="_blank" rel="noopener noreferrer">
+            <span>Conditions Quickref'i Aç</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+    </details>
+
+    <!-- ═══════════ GENEL KURALLAR ═══════════ -->
+    <details class="section-block sec-genel">
+      <summary>
+        <span class="section-glyph">⚔</span>
+        <span class="section-title">Genel Kurallar</span>
+        <span class="section-rule-line"></span>
+        <span class="section-count">19 Madde</span>
+        <span class="section-chevron">›</span>
+      </summary>
+      <div class="section-body">
+
+        <details class="rule" id="g1">
+          <summary>
+            <span class="rule-num">01</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Flanking advantage sağlar</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Bir yaratığın karşılıklı iki tarafında konumlanan iki müttefik, o yaratığı <span class="term">flank</span> etmiş sayılır. Flank eden karakterler o hedefe yaptıkları saldırılarda <span class="term">advantage</span> kazanır.</p>
+            <p>Yani konumlanma bu masada gerçekten önemli: düşmanı arkadaşınla arana almak, ekstra bir kaynak harcamadan avantaj üretir.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g2">
+          <summary>
+            <span class="rule-num">02</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Spell Scroll'ları herkes kullanabilir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Sınıf ya da büyü yeteneği fark etmeksizin bir <span class="term">spell scroll</span>'u herkes okumayı deneyebilir.</p>
+            <p>Scroll'daki büyü zaten senin <span class="term">spell list</span>'inde varsa ek bir kontrol gerekmez, doğrudan çalışır. Büyü senin listende <em>yoksa</em> bir d20 atılır ve zorluk büyünün seviyesine göre yükselir:</p>
+            <p><span class="term">DC = 10 + spell level</span></p>
+            <div class="rule-example">
+              <span class="ex-label">Örnek</span>
+              <p>Bir <span class="term">cantrip</span> scroll'u için DC 10, 3. seviye bir büyü için DC 13, 7. seviye bir büyü için DC 17 olur. Atış tutmazsa büyü işe yaramaz.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="g3">
+          <summary>
+            <span class="rule-num">03</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Sadece Potion of Healing bonus action ile içilir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Potion of Healing</span> ve üst kademeleri (Greater, Superior, Supreme) <span class="term">bonus action</span> ile içilebilir.</p>
+            <p>Bunun dışındaki <em>bütün</em> potion'lar tam bir <span class="term">action</span> harcar. Yani savaşın ortasında bir buff potion'u içmek, o turunu gerçekten harcamak demektir.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g4">
+          <summary>
+            <span class="rule-num">04</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Improvised weapon'lara proficiency bonus eklenebilir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Standart kuralda <span class="term">improvised weapon</span> ile saldırırken <span class="term">proficiency bonus</span> uygulanmaz. Bu masada uygulanabilir.</p>
+            <p>Sandalye, şamdan, masa bacağı ya da eline ne geçtiyse — yaratıcı çözümler mekanik olarak cezalandırılmaz.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g5">
+          <summary>
+            <span class="rule-num">05</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Downtime training süreleri kısaltılmıştır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Downtime</span> sırasındaki eğitim süreleri kitaptaki hâlinden kısaltılmış olarak uygulanır.</p>
+            <div class="rule-example">
+              <span class="ex-label">Örnek</span>
+              <p>Yeni bir <span class="term">language</span> öğrenmek için 30 gün yeterlidir.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="g6">
+          <summary>
+            <span class="rule-num">06</span><span class="rule-head-sep"></span>
+            <span class="rule-title">D&amp;D 2024 weapon mastery'leri isteğe bağlıdır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>2024 setindeki <span class="term">weapon mastery</span> sistemi masada açıktır ama zorunlu değildir.</p>
+            <p>Kullanmak isteyen karakter mastery özelliklerinden faydalanır; istemeyen eski silah kurallarıyla oynamaya devam edebilir. Karar oyuncunundur.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g7">
+          <summary>
+            <span class="rule-num">07</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Detect Magic, Arcana check ile cantrip gibi kullanılabilir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Detect Magic</span> etkisi, büyüyü bilmene ya da <span class="term">spell slot</span> harcamana gerek kalmadan bir <span class="term">Arcana check</span> ile denenebilir — sanki elinde bir cantrip varmış gibi.</p>
+            <p>Böylece büyüsel bir aurayı sezmek, büyü ekonomisi meselesi olmaktan çıkıp karakterin bilgi birikimi meselesine dönüşür.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g8">
+          <summary>
+            <span class="rule-num">08</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Rest sırasında Arcana ile eşya tanımlama (Identify)</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Short rest</span> veya <span class="term">long rest</span> sırasında, <span class="term">Arcana proficiency</span>'si olan bir karakter kimliği bilinmeyen bir eşyayı inceleyebilir. Bu inceleme, üzerine <span class="term">Identify</span> büyüsü atıyormuş gibi bir <span class="term">Arcana check</span> ile yürütülür.</p>
+            <p>Sonuç tek bir "başardı / başaramadı" değildir: belirli başarı eşikleri aşıldıkça eşya hakkında kademeli bilgi açılır. Eşikler ve hangi eşikte ne öğrenildiği DM tarafından belirlenir.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g9">
+          <summary>
+            <span class="rule-num">09</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Exhaustion, 2024 sistemiyle 1–6 arası işler</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Exhaustion</span> için D&amp;D 2024 kuralları geçerlidir ve 1'den 6'ya kadar ölçeklenir.</p>
+            <p>Her <span class="term">exhaustion level</span> kümülatif olarak tüm d20 testlerine ceza verir ve hızını düşürür; 6. seviyede karakter ölür. Yani 2014'teki basamaklı tablo (advantage kaybı, hız yarılanması vb.) yerine tek ve sürekli artan bir ceza vardır.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g10">
+          <summary>
+            <span class="rule-num">10</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Ceremony ile vial yerine flask Holy Water</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Ceremony</span> büyüsüyle <span class="term">Holy Water</span> üretilirken, tek bir <span class="term">vial</span> yerine bir <span class="term">flask</span> doldurulabilir.</p>
+            <p>Ölçü şudur: <strong>1 flask = 4 vial.</strong> Yani aynı büyüyle dört katı kutsal su elde edilmiş olur.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g11">
+          <summary>
+            <span class="rule-num">11</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Crafting, harvesting ve grafting için HailJoe Ruleset</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">HailJoe Ruleset</span>, bu derlemenin bütünüdür — yani bu sayfada okuduğun kuralların ve arkasındaki bütün düzenlemelerin toplamı.</p>
+            <p><span class="term">Crafting</span>, <span class="term">grafting</span>, <span class="term">harvesting</span> ve bunlara benzeyen ya da bunlardan farklı olan diğer üretim/işleme faaliyetleri için HailJoe Ruleset uygulanır. İşleyiş şu sırayla yürür:</p>
+            <p><strong>1.</strong> İlgili kural, 3. parti kaynaklarda belirtilmiş ya da halihazırda <span class="term">core ruleset</span>'te mevcut mu? Mevcutsa <em>ona göre</em> hareket edilir.<br>
+            <strong>2.</strong> Mevcut değilse, HailJoe'nin o konu için belirlediği spesifik kurallar çerçevesinde hareket edilir.</p>
+            <div class="notice-important">
+              <span class="imp-label">⚜ Önemli</span>
+              <p>HailJoe ve Aiwelen evreninde bu setting'lerde oyun oynatacak DM'ler, kuralları uygun gördükleri biçimde <strong>değiştirme veya tweak'leyerek uygulama konusunda tamamen özgürdür.</strong></p>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="g12">
+          <summary>
+            <span class="rule-num">12</span><span class="rule-head-sep"></span>
+            <span class="rule-title">D&amp;D 2024 Bastion kuralları aktiftir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>2024 setinin <span class="term">bastion</span> sistemi bu masada aktif olarak uygulanır.</p>
+            <p>Karakterlerin sahiplendiği üsler, kaleler ve mekânlar downtime boyunca işleyen yaşayan yapılar olarak ele alınır.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g13">
+          <summary>
+            <span class="rule-num">13</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Condition'lar 5e ile aynıdır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Condition</span> kuralları, bu sayfada açıkça belirtilen istisnalar dışında 5e sistemiyle birebir aynı işler.</p>
+            <p>Aksi yazılmadıkça kitaptaki tanım geçerlidir. Bu masaya özgü ek condition'lar için <a href="#g19" class="term" style="text-decoration:none">19. maddeye</a> bak; hızlı bakmak içinse en üstteki <a href="#cond" class="term" style="text-decoration:none">D&amp;D 5e Conditions</a> bölümündeki quickref bağlantısını kullanabilirsin.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g14">
+          <summary>
+            <span class="rule-num">14</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Inspiration 3'e kadar stacklenir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Standart kuralda <span class="term">inspiration</span> ya vardır ya yoktur. Burada en fazla 3 tane biriktirebilirsin.</p>
+            <p>Lore takibi — dünyanın hikâyesini, isimlerini, bağlantılarını gerçekten takip etmek — inspiration ile ödüllendirilebilir.</p>
+            <div class="dm-note">
+              <span class="dm-label">DM</span>
+              <p>Bu ödüllendirme tamamen DM'in takdirindedir. [UP TO DM]</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="g15">
+          <summary>
+            <span class="rule-num">15</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Homebrew içerik DM onayına tabidir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Homebrew item, spell ve benzeri içerikler üretilebilir — ancak bu, DM'e danışarak ve onun onayıyla yapılır.</p>
+            <p>Önce fikri masaya getir, sonra üret.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g16">
+          <summary>
+            <span class="rule-num">16</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Passive Intelligence ile yaratık bilgisi</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Karakterin <em>passive</em> Intelligence skill değerleri — <span class="term">Nature</span>, <span class="term">History</span>, <span class="term">Religion</span> — baz alınarak, karşılaşılan bir yaratık hakkında zar atmadan bilgi sahibi olması mümkündür.</p>
+            <p>Hangi skill'in devreye gireceği yaratığın türüne bağlıdır; DM bu değere bakarak karaktere ne bildiğini aktarır.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g17">
+          <summary>
+            <span class="rule-num">17</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Özel tablolar META'ya karşı değiştirilmiştir</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Masada özel olarak kullanılan bazı spesifik tablolar mevcuttur — örneğin <span class="term">Reincarnate</span> tablosu, <span class="term">Madness System</span> tablosu, <span class="term">Legendary Inspiration</span> tablosu ve benzerleri.</p>
+            <p>Oyuncular adına <strong>META yapmama</strong> çerçevesi gereğince bu tablolar özenle özel hâle getirilmiş ve üzerlerinde değişiklikler yapılmıştır. Yani kitaptaki tabloyu ezbere bilmek burada sana bir avantaj sağlamaz.</p>
+            <p>Hangi tabloda hangi değişikliğin yapıldığı bilgisi <span class="term">HailJoe</span>'da saklıdır. Tablo içeriklerini ve detaylarını öğrenmek için HailJoe ile iletişime geçiniz.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="g18">
+          <summary>
+            <span class="rule-num">18</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Warlock: Pact'ler invocation sayılır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Warlock</span>'lar için 2024 kuralları baz alınır: <span class="term">Pact</span>'ler ayrı bir sınıf özelliği değil, birer <span class="term">invocation</span> olarak sayılır.</p>
+            <p>Doğru invocation'u seçen bir warlock, silahlarıyla <span class="term">CHA</span> üzerinden vurabilir. Yani karizmayla dövüşmek için Hexblade olmak şart değil — bunun bir invocation maliyeti var.</p>
+            <div class="dm-note">
+              <span class="dm-label">DM</span>
+              <p>Herkes Hexblade oynamasın, sikmiyim.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="g19">
+          <summary>
+            <span class="rule-num">19</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Özel Condition'lar</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Standart 5e listesinde bulunmayan, bu masaya özgü condition'lar vardır. Bunlar sürekli açık değildir; genellikle <strong>özel durumlarda</strong> ya da belirli <span class="term">spell</span>'ler, eşyalar ve benzeri kaynaklar aracılığıyla uygulanır.</p>
+
+            <div class="cond-block">
+              <div class="cond-block-name">Leech</div>
+              <div class="cond-block-tag">Özel Condition</div>
+              <div class="cond-block-divider"></div>
+
+              <div class="cond-block-rules">
+                <p>Leech drains the life from your enemies and allows you to heal your wounds. Leech remains on a creature until the end of your next turn, and its healing effects only benefit you. Leech does not affect constructs or undead.</p>
+                <p>Your next successful melee or ranged weapon attack that deals damage to a creature affected by your instance of leech removes leech and allows you to regain 1d4 hit points. A creature that dies while affected by leech allows you to regain 1d4 hit points, whether you landed the killing blow or not. These instances of healing stack.</p>
+                <p>The amount of healing increases by 1d4 for each spell slot used when casting the spell. Leech inflicted by cantrip heals you for a number of d4 equal to the spell's damage dice.</p>
+              </div>
+
+              <div class="cond-block-example">
+                <span class="ex-label">For example</span>
+                <p>Blood Fountain spell cast using its original 3rd level spell slot allows you to regain 3d4 hit points, while using a 5th-level spell slot to cast it would increase the healing to 5d4. Casting a cantrip that inflicts leech as a level 5 character allows you to regain 2d4 hit points.</p>
+              </div>
+
+              <div class="cond-block-tr">
+                <span class="tr-label">Özet</span>
+                <ul>
+                  <li>Leech, uygulandığı yaratıkta <strong>senin sıradaki turunun sonuna kadar</strong> kalır ve iyileşme etkisinden <strong>yalnızca sen</strong> faydalanırsın.</li>
+                  <li><span class="term">Construct</span> ve <span class="term">undead</span> yaratıklara işlemez.</li>
+                  <li>Leech'li bir yaratığa hasar veren ilk başarılı yakın/menzilli silah saldırın leech'i kaldırır ve sana <strong>1d4</strong> can kazandırır.</li>
+                  <li>Leech'liyken ölen bir yaratık da sana <strong>1d4</strong> can kazandırır — öldürücü darbeyi sen vurmuş olmasan bile. Bu iyileşmeler <strong>üst üste biner</strong>.</li>
+                  <li>Leech'i uygulayan büyü hangi <span class="term">spell slot</span> seviyesinden atıldıysa, iyileşme her seviye için <strong>1d4</strong> artar. Cantrip ile uygulanan leech ise, cantrip'in hasar zarı sayısı kadar <strong>d4</strong> iyileştirir.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
+    <!-- ═══════════ CRITICAL KURALLARI ═══════════ -->
+    <details class="section-block sec-critical">
+      <summary>
+        <span class="section-glyph">🎲</span>
+        <span class="section-title">Critical Kuralları</span>
+        <span class="section-rule-line"></span>
+        <span class="section-count">3 Madde</span>
+        <span class="section-chevron">›</span>
+      </summary>
+      <div class="section-body">
+
+        <details class="rule" id="c1">
+          <summary>
+            <span class="rule-num">01</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Saving throw ve skill check'lerde critical YOK</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Saving throw</span> ve <span class="term">skill check</span>'lerde <span class="term">Critical Success</span> / <span class="term">Critical Fail</span> diye bir durum yoktur.</p>
+            <p>Atılan 20 sadece 20'dir, atılan 1 sadece 1'dir; modifier'lar eklenir ve sonuç DC ile karşılaştırılır. Critical mekaniği <em>yalnızca</em> attack roll'larda çalışır.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="c2">
+          <summary>
+            <span class="rule-num">02</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Attack roll'da 1: 1d6'lık fumble tablosu</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Savaş sırasında bir <span class="term">attack roll</span>'da 1 gelirse (<span class="term">Critical Fail</span>), bir de 1d6 atılır ve gelen sonuca göre aşağıdaki etki uygulanır:</p>
+            <ul class="d6-list">
+              <li class="d6-row">
+                <span class="d6-face"><span>1</span></span>
+                <span class="d6-text">
+                  <strong>Kendine zarar verirsin</strong>
+                  Saldırını kontrol edemezsin. Kendi silahının normal hasarını kendine uygularsın. Büyü kullanıyorsan büyünün hasarı sana döner.
+                </span>
+              </li>
+              <li class="d6-row">
+                <span class="d6-face"><span>2</span></span>
+                <span class="d6-text">
+                  <strong>Silahın zarar görür</strong>
+                  Silah büyülü değilse fiziksel olarak hasar alır (kiriş kopar, kılıç kırılır vb.). Silah büyülüyse kırılmaz, ancak bir sonraki saldırın <span class="term">disadvantage</span> ile atılır.
+                </span>
+              </li>
+              <li class="d6-row">
+                <span class="d6-face"><span>3</span></span>
+                <span class="d6-text">
+                  <strong>Dengen bozulur</strong>
+                  Ayağın kayar. Bir sonraki turunda yalnızca hareket <em>veya</em> <span class="term">bonus action</span> kullanabilirsin.
+                </span>
+              </li>
+              <li class="d6-row">
+                <span class="d6-face"><span>4</span></span>
+                <span class="d6-text">
+                  <strong>Müttefiğini tehlikeye atarsın</strong>
+                  Saldırın, senin veya hedefin yakınındaki bir müttefiğe savrulur. O müttefiğe karşı yeni bir attack roll atılır; tutarsa müttefik saldırının hasarını ve tüm etkilerini alır.
+                </span>
+              </li>
+              <li class="d6-row">
+                <span class="d6-face"><span>5</span></span>
+                <span class="d6-text">
+                  <strong>Silahını düşürürsün</strong>
+                  Silahın veya saldırı aracın elinden düşer. Menzilli saldırılarda bu, mühimmatının da yere saçılması olabilir (sadağın düşmesi, şarjörün düşmesi vb.).
+                </span>
+              </li>
+              <li class="d6-row">
+                <span class="d6-face"><span>6</span></span>
+                <span class="d6-text">
+                  <strong>Dalga konusu olursun</strong>
+                  Yaptığın saldırı yüzünden alay konusu olursun. Mekanik olarak herhangi bir ekstra negatif etkisi yoktur.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="rule" id="c3">
+          <summary>
+            <span class="rule-num">03</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Attack roll'da 20: ekstra zarlar maksimum sayılır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Savaş sırasında bir attack roll'da 20 gelirse (<span class="term">Critical Success</span>), hasar zarlarının <em>adedini</em> ikiye katlamak yerine, kritikten gelen ekstra zarlar <strong>maksimum gelmiş kabul edilir</strong>.</p>
+            <p>Yani normal hasar zarını atarsın, kritiğin getirdiği ek zar ise atılmadan doğrudan en yüksek değerinden sayılır. Kritikler böylece hem daha güçlü hem de daha öngörülebilir olur.</p>
+            <div class="rule-example">
+              <span class="ex-label">Örnek</span>
+              <p>Hasar zarı 1d8+4 olan bir <span class="term">paladin</span> kritik vurduğunda 2d8+4 atmaz. Bunun yerine 1d8+8+4 hasarı vurur — ikinci d8, maksimum olan 8 kabul edilmiştir.</p>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
+    <!-- ═══════════ RESURRECTION KURALLARI ═══════════ -->
+    <details class="section-block sec-resurrection">
+      <summary>
+        <span class="section-glyph">🕯</span>
+        <span class="section-title">Resurrection Kuralları</span>
+        <span class="section-rule-line"></span>
+        <span class="section-count">3 Madde</span>
+        <span class="section-chevron">›</span>
+      </summary>
+      <div class="section-body">
+
+        <div class="notice-card notice-spoiler">
+          <span class="notice-glyph">🔒</span>
+          <p>Bu kuralların tamamının açıklanması spoiler içerdiğinden uygun görülmemiştir. Aşağıda yalnızca masaya açık olan kısımlar yer alır.</p>
+        </div>
+
+        <details class="rule" id="r1">
+          <summary>
+            <span class="rule-num">01</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Ölümün yeni tanrısı Daynore'dur</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p>Ölümün tanrısı artık <span class="term">Daynore</span>'dur.</p>
+            <p>Daynore'un ölüme ve dirilişe bakışı, <span class="term">Vidar</span>'ın tutumuyla aynı değildir. Eskiden işleyen dengeler artık aynı şekilde işlemiyor olabilir.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="r2">
+          <summary>
+            <span class="rule-num">02</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Vidar's Oblivion Gate'ten geçen ruhlar kolay dönmez</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Vidar's Oblivion Gate</span>'ten geçmiş bir ruhu hayata döndürmek eskisi kadar kolay değildir.</p>
+            <p>Bu ancak belirli ritüellerle denenebilir ve <strong>başarı ihtimali hiçbir zaman %100 değildir.</strong> Kullanılan diriltme büyüsünün seviyesi ne kadar yüksekse, geri dönüş şansı da o kadar yüksek olur.</p>
+            <p>Yani ölüm artık bir kaynak meselesi değil, bir kumar meselesidir.</p>
+          </div>
+        </details>
+
+        <details class="rule" id="r3">
+          <summary>
+            <span class="rule-num">03</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Revivify bir istisnadır</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <p><span class="term">Revivify</span> yukarıdaki şans sisteminin dışındadır.</p>
+            <p>Çünkü bu büyü yalnızca henüz Vidar'ın Geçidi'nden geçmemiş, yani gerçek anlamda göçüp gitmemiş kişilere uygulanabilir. Ruh hâlâ eşikteyken müdahale edildiği için ritüele ve şans atışına gerek kalmaz.</p>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
+    <!-- ═══════════ 3. PARTİ KAYNAKLAR ═══════════ -->
+    <details class="section-block sec-kaynak">
+      <summary>
+        <span class="section-glyph">📚</span>
+        <span class="section-title">Kullanılan 3. Parti Kaynaklar</span>
+        <span class="section-rule-line"></span>
+        <span class="section-count">9 Kitap</span>
+        <span class="section-chevron">›</span>
+      </summary>
+      <div class="section-body">
+
+        <div class="notice-card notice-source">
+          <p>Aşağıdaki kitapların <strong>genel içeriğini</strong> (class, subclass, feat, item, spell vb.) masada serbestçe kullanıyoruz. Her kartta ayrıca, o kitabın <strong>kendine özgü alt sistemlerinden</strong> bu masada aktif olarak işletilenler listelenmiştir.</p>
+          <p>Bu sayfa yalnızca <strong>hangi kaynağı kullandığımızı</strong> belgeler; kitapların kendisi burada dağıtılmaz. Kuralı masada nasıl işlettiğimiz bizim özetimizdir — tabloların, metinlerin ve tam kuralların tamamı ilgili kitapta bulunur. Kullanmak isteyen resmî satış sayfasından edinmelidir.</p>
+        </div>
+
+        <details class="rule" id="k1">
+          <summary>
+            <span class="rule-num">01</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Heliana's Guide to Monster Hunting</span>
+            <span class="src-publisher">Loot Tavern</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Harvesting and Crafting</li>
+              <li>Monster Tracking</li>
+              <li>Familiars</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Loot Tavern</span>
+              <a class="src-link" href="https://loottavern.com/product/helianas-guide-to-monster-hunting/" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k2">
+          <summary>
+            <span class="rule-num">02</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Steinhardt's Guide to the Eldritch Hunt</span>
+            <span class="src-publisher">MonkeyDM</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Eldritch Moons</li>
+              <li>Madness System</li>
+              <li>Eldritch Carvings</li>
+              <li>Trick Weapons and Firearms</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: MonkeyDM (Evan Mascaro)</span>
+              <a class="src-link" href="https://monkeydm.com/collections/steinhardts-guide-to-the-eldritch-hunt-all" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k3">
+          <summary>
+            <span class="rule-num">03</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Heresy of Steel — A Steinhardt's Adventure</span>
+            <span class="src-publisher">MonkeyDM</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Downtime in Luyarnha</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: MonkeyDM — Steinhardt's serisinin macera kitabı</span>
+              <a class="src-link" href="https://monkeydm.com/products/heresy-of-steel" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k4">
+          <summary>
+            <span class="rule-num">04</span><span class="rule-head-sep"></span>
+            <span class="rule-title">The Heretic's Alchemy — Forbidden Science &amp; Eldritch Flesh</span>
+            <span class="src-publisher">MonkeyDM</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Cursed Resurrection</li>
+              <li>Alchemist Bullet</li>
+              <li>Poison Rework</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: MonkeyDM</span>
+              <a class="src-link" href="https://monkeydm.com/" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k5">
+          <summary>
+            <span class="rule-num">05</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Ryoko's Guide to the Yokai Realms</span>
+            <span class="src-publisher">Loot Tavern</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Kaiju Battle Mechanics</li>
+              <li>Prostheses</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Loot Tavern</span>
+              <a class="src-link" href="https://loottavern.com/product/ryokos-guide-to-the-yokai-realms-digital/" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k6">
+          <summary>
+            <span class="rule-num">06</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Grim Hollow</span>
+            <span class="src-publisher">Ghostfire Gaming</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Transformations</li>
+              <li>Curses</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Ghostfire Gaming</span>
+              <a class="src-link" href="https://ghostfiregaming.com/grim-hollow/" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k7">
+          <summary>
+            <span class="rule-num">07</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Erevan's Guide to Death &amp; Beyond</span>
+            <span class="src-publisher">Archvillain Games</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Death &amp; Beyond</li>
+              <li>Void Taint</li>
+              <li>Grafting</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Archvillain Games</span>
+              <a class="src-link" href="https://www.archvillaingames.com/products/erevan-s-guide-to-death-beyond-pdf" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k8">
+          <summary>
+            <span class="rule-num">08</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Historica Arcanum: Era of the Crusades</span>
+            <span class="src-publisher">Metis Media</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Professions</li>
+              <li>Deck of the Damned</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Metis Media</span>
+              <a class="src-link" href="https://www.metismedia.net/product-page/digital-version-pdf-of-historica-arcanum-era-of-the-crusades" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+        <details class="rule" id="k9">
+          <summary>
+            <span class="rule-num">09</span><span class="rule-head-sep"></span>
+            <span class="rule-title">Historica Arcanum: Echoes of Renaissance</span>
+            <span class="src-publisher">Metis Media</span>
+            <span class="rule-chevron">›</span>
+          </summary>
+          <div class="rule-body">
+            <span class="src-label">Bu masada kullanılan sistemler</span>
+            <ul class="src-list">
+              <li>Professions</li>
+              <li>Legendary Inspiration Deck</li>
+              <li>Hosting a Carnival</li>
+            </ul>
+            <div class="src-meta">
+              <span class="src-meta-text">Yayıncı: Metis Media</span>
+              <a class="src-link" href="https://www.metismedia.net/product-page/hardcover-with-pdf-of-historica-arcanum-echoes-of-renaissance" target="_blank" rel="noopener noreferrer">Resmî Sayfa ↗</a>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </details>
+
+  </div>
+
+  <a class="back-link" href="../index.html">← Ana Menü</a>
+
+  <div class="footer-divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot" style="width:4px;height:4px;background:rgba(201,168,76,0.3);transform:rotate(45deg);flex-shrink:0;"></div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="footer-text">Aiwelen Dünyası &mdash; D&amp;D Arşivi</div>
+
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var sections = Array.prototype.slice.call(document.querySelectorAll('.section-block'));
+    var rules    = Array.prototype.slice.call(document.querySelectorAll('.rule'));
+    var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-scroll a[href^="#"]'));
+    var body     = document.body;
+
+    /* Kaydırma takibinde maddelerin yanı sıra alt maddesi olmayan
+       bölümler de hedef sayılır (ör. D&D 5e Conditions). */
+    var spyTargets = rules.concat(
+      Array.prototype.slice.call(document.querySelectorAll('.section-block[id]'))
+    );
+
+    /* ── Mobil çekmece ── */
+    var toggle   = document.getElementById('toc-toggle');
+    var backdrop = document.getElementById('toc-backdrop');
+    function closeDrawer() { body.classList.remove('toc-open'); }
+    toggle.addEventListener('click', function () { body.classList.toggle('toc-open'); });
+    backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    /* ── Tümünü aç / kapat (hem bölümler hem maddeler) ── */
+    document.getElementById('expand-all').addEventListener('click', function () {
+      sections.forEach(function (s) { s.open = true; });
+      rules.forEach(function (r) { r.open = true; });
+    });
+    document.getElementById('collapse-all').addEventListener('click', function () {
+      rules.forEach(function (r) { r.open = false; });
+      sections.forEach(function (s) { s.open = false; });
+    });
+
+    /* ── İçindekiler'den maddeye atlama ──
+       Hedef madde kapalı bir bölümün içindeyse önce bölümü, sonra
+       maddeyi açar; ardından kaydırıp kısa süre vurgular. */
+    var jumpLinks = tocLinks.concat(
+      Array.prototype.slice.call(document.querySelectorAll('.rules-wrap a[href^="#"]'))
+    );
+    jumpLinks.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (!target) return;
+        e.preventDefault();
+
+        var parentSection = target.closest('.section-block');
+        if (parentSection) parentSection.open = true;
+        target.open = true;
+
+        closeDrawer();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        target.classList.remove('flash');
+        void target.offsetWidth;          /* animasyonu yeniden tetikle */
+        target.classList.add('flash');
+      });
+    });
+
+    /* ── Okunan maddeyi içindekiler'de işaretle ── */
+    var ticking = false;
+    function syncActive() {
+      ticking = false;
+      var current = null;
+      spyTargets.forEach(function (el) {
+        if (!el.offsetParent) return;                   /* kapalı bölüm içinde */
+        if (el.getBoundingClientRect().top <= 140) current = el;
+      });
+      tocLinks.forEach(function (link) {
+        var on = current && link.getAttribute('href') === '#' + current.id;
+        link.classList.toggle('active', !!on);
+      });
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(syncActive); }
+    }, { passive: true });
+    syncActive();
+  });
+</script>
+<script src="../splash-cursor.js"></script>
+</body>
+</html>
