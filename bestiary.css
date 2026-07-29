@@ -25,6 +25,82 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   NAV — sayfanın en üstündeki kırıntı yolu (breadcrumb).
+   Her bestiary sayfası bunu <main>'in ilk öğesi olarak taşır.
+   Ana menü / campaign / bestiary ayrı ayrı tıklanabilir durur.
+   ═══════════════════════════════════════════════════════════ */
+.bestiary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  margin: -1.7rem 0 2.3rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 5px;
+  background: rgba(8,5,2,0.62);
+  border: 1px solid rgba(201,168,76,0.16);
+  max-width: 100%;
+  animation: subtitleFade 1s ease 0.15s both;
+}
+.bnav-btn,
+.bnav-current {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 0.35rem 0.8rem;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.bnav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gold-dim);
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.bnav-btn:hover {
+  color: var(--gold-bright);
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(201,168,76,0.07);
+}
+.bnav-btn:focus-visible,
+.bestiary-tile:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+.bnav-btn .bnav-ico { font-size: 0.85rem; line-height: 1; }
+/* Bulunulan sayfa: tıklanamaz, işaretli */
+.bnav-current {
+  color: var(--gold-bright);
+  border-color: rgba(201,168,76,0.3);
+  background: rgba(201,168,76,0.08);
+}
+.bnav-sep {
+  color: rgba(201,168,76,0.28);
+  font-size: 0.72rem;
+  line-height: 1;
+  user-select: none;
+}
+@media (max-width: 620px) {
+  .bnav-btn, .bnav-current { padding: 0.3rem 0.55rem; font-size: 0.54rem; letter-spacing: 1.1px; }
+  .bestiary-nav { margin-bottom: 1.8rem; }
+}
+
+/* Sayfa altındaki dönüş bağlantıları — tek satırda, ayrı ayrı */
+.back-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 2.5rem;
+}
+.back-link-row .back-link { margin-top: 0; }
+
+/* ═══════════════════════════════════════════════════════════
    HUB — Canavarlar / Bosslar / Tüm Yaratıklar seçim kartları
    ═══════════════════════════════════════════════════════════ */
 .bestiary-hub-grid {
@@ -33,7 +109,9 @@
   justify-content: center;
   gap: 1.4rem;
   width: 100%;
-  max-width: 900px;
+  /* 4 kutu tek satıra sığsın; 3 kutulu hub'lar zaten 280px'te
+     sınırlandığı için görünümleri değişmez. */
+  max-width: 1180px;
   margin: 0 auto;
 }
 
@@ -58,6 +136,7 @@
 .bestiary-tile:nth-child(1) { animation-delay: 0.15s; }
 .bestiary-tile:nth-child(2) { animation-delay: 0.25s; }
 .bestiary-tile:nth-child(3) { animation-delay: 0.35s; }
+.bestiary-tile:nth-child(4) { animation-delay: 0.45s; }
 
 .bestiary-tile:hover {
   border-color: rgba(201,168,76,0.65);
@@ -72,6 +151,18 @@
   border-color: rgba(224,76,60,0.7);
   box-shadow: 0 0 24px rgba(224,76,60,0.22), 0 10px 30px rgba(0,0,0,0.6);
 }
+
+/* Kampanyanın dışına, tüm campaign'leri kapsayan global arşive giden kutu.
+   Kampanya içi kutulardan ayrışsın diye soğuk mavi kimlik taşır. */
+.bestiary-tile.tile--global { border-color: rgba(168,207,224,0.28); }
+.bestiary-tile.tile--global:hover {
+  border-color: rgba(168,207,224,0.7);
+  box-shadow: 0 0 24px rgba(168,207,224,0.2), 0 10px 30px rgba(0,0,0,0.6);
+}
+.tile--global .tile-icon svg { stroke: #a8cfe0; }
+.tile--global .tile-icon { filter: drop-shadow(0 0 8px rgba(168,207,224,0.5)); }
+.tile--global:hover .tile-icon { filter: drop-shadow(0 0 14px rgba(168,207,224,0.75)); }
+.tile--global .tile-title { color: #cfe6f2; }
 
 .tile-icon {
   width: 52px;
