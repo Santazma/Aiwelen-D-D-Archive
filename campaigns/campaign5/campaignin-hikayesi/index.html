@@ -104,7 +104,7 @@
     /* ── INNER: padding-top = space for labels above bar.
                 padding-bottom = space for tooltip cards below bar. ── */
     /* padding-bottom ayrica yan hikaye (branch) satirlarini da barindirir */
-    .timeline-inner{position:relative;min-width:max-content;padding:160px 40px 560px;display:flex;align-items:center;}
+    .timeline-inner{position:relative;min-width:max-content;padding:160px 40px 720px;display:flex;align-items:center;}
 
     /* Bar sits at top:160px (same as padding-top) — goruse girince soldan saga cizilir */
     .timeline-bar{position:absolute;top:160px;left:40px;right:40px;height:2px;transform:translateY(-50%) scaleX(0);transform-origin:left center;transition:transform 1.1s cubic-bezier(.22,1,.36,1);background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,0.12) 3%,rgba(201,168,76,0.6) 15%,var(--gold) 50%,rgba(201,168,76,0.6) 85%,rgba(201,168,76,0.12) 97%,transparent 100%);box-shadow:0 0 8px rgba(201,168,76,0.1);}
@@ -181,6 +181,22 @@
     .branch-head-tag{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:2.2px;text-transform:uppercase;color:var(--bc);opacity:.7;}
     .branch-head-name{font-family:'Cinzel',serif;font-size:.6rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--bc);}
     .branch-head-sep{width:1px;height:16px;background:var(--bc-dim);}
+    .branch-head-code{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:1.6px;color:var(--bc);opacity:.5;
+      padding-left:9px;border-left:1px solid var(--bc-dim);}
+    .branch-head.finder-highlight{border-color:var(--bc);box-shadow:0 0 20px var(--bc-glow);}
+
+    /* Yan hikayenin kapak karti — baslik rozetinin uzerine gelince acilir */
+    .branch-cover{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+      width:0;height:0;overflow:visible;z-index:401;pointer-events:none;opacity:0;transition:opacity .18s ease;}
+    .branch-head:hover .branch-cover,.branch-head:focus-visible .branch-cover{opacity:1;animation:tooltipFadeIn .18s ease both;}
+    .branch-cover-card{position:absolute;top:0;left:-110px;width:220px;
+      background:rgba(4,6,10,.97);border:1px solid var(--bc);border-radius:6px;overflow:hidden;
+      box-shadow:0 8px 28px rgba(0,0,0,.8);white-space:normal;text-align:left;}
+    .branch-cover-card img{width:100%;height:180px;object-fit:cover;object-position:center top;display:block;
+      background:rgba(8,5,2,.95);filter:brightness(.9) saturate(.9);}
+    .branch-cover-body{padding:.5rem .7rem .6rem;}
+    .branch-cover-tag{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--bc);opacity:.75;margin-bottom:3px;}
+    .branch-cover-name{font-family:'Cinzel',serif;font-size:.67rem;font-weight:700;line-height:1.3;color:var(--gold-bright);}
 
     /* Yan hikaye node'lari — etiket ALTA acilir (ustte ana hat var) */
     .branch-nodes{display:flex;align-items:center;gap:86px;margin-left:64px;position:relative;z-index:2;}
@@ -205,6 +221,30 @@
     .bnode-name{font-family:'Cinzel',serif;font-size:.63rem;font-weight:700;letter-spacing:.5px;line-height:1.3;color:var(--gold-bright);}
     .bnode.finder-highlight .bnode-btn{transform:scale(1.6);box-shadow:0 0 28px var(--bc),0 0 0 8px var(--bc-glow);}
     .bnode.finder-highlight .bnode-label{border-color:var(--bc);box-shadow:0 0 18px var(--bc-glow);}
+
+    /* Onizleme karti — ana hattaki .tooltip-card ile ayni olcu, sure ve easing;
+       tek fark yan hikayenin renk kimligi (--bc). Etikete tutturuldugu icin
+       etiket kac satir olursa olsun tam altinda acilir. */
+    /* DIKKAT: tooltipFadeIn keyframe'i transform'u yazar (translateY). Karti
+       ortalamak icin transform KULLANILAMAZ — yoksa animasyon translateX(-50%)
+       degerini ezip karti 110px saga kaydirir. Ana hatta oldugu gibi 0 boyutlu
+       bir sarmalayici ortalanir, kart ise left:-110px ile konumlanir. */
+    .bnode-tooltip{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+      width:0;height:0;overflow:visible;z-index:401;pointer-events:none;opacity:0;transition:opacity .18s ease;}
+    .bnode:hover .bnode-tooltip{opacity:1;animation:tooltipFadeIn .18s ease both;}
+    .bnode-tip-card{position:absolute;top:0;left:-110px;width:220px;
+      background:rgba(4,6,10,.97);border:1px solid var(--bc);border-radius:6px;overflow:hidden;
+      box-shadow:0 8px 28px rgba(0,0,0,.8);text-align:left;}
+    .bnode-tip-card img{width:100%;height:180px;object-fit:cover;object-position:center top;display:block;
+      background:rgba(8,5,2,.95);filter:brightness(.9) saturate(.9);}
+    .bnode-tip-body{padding:.5rem .7rem .6rem;}
+    .bnode-tip-code{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--bc);opacity:.75;margin-bottom:3px;}
+    .bnode-tip-name{font-family:'Cinzel',serif;font-size:.67rem;font-weight:700;color:var(--gold-bright);line-height:1.3;}
+
+    /* Yigilma sirasi: uzerine gelinen yan hikaye digerlerinin ustunde kalsin,
+       kart komsu hat tarafindan ortulmesin. */
+    .branch:hover{z-index:20;}
+    .branch-head:hover,.branch-nodes:hover{z-index:8;}
 
     /* Yan hikaye gostergesi (timeline ustunde) */
     .branch-legend{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;margin-bottom:1.3rem;}
@@ -239,7 +279,9 @@
     .modal-overlay.open{opacity:1;pointer-events:auto}
     .modal-box{position:relative;background:rgba(4,6,10,.97);border:1px solid rgba(201,168,76,.32);border-radius:6px;max-width:1020px;width:100%;max-height:88vh;overflow-y:auto;display:flex;flex-direction:row;box-shadow:0 0 60px rgba(0,0,0,.8),0 0 0 1px rgba(201,168,76,.1) inset;animation:modalIn .4s cubic-bezier(.22,1,.36,1) both;}
     .modal-box::-webkit-scrollbar{width:4px}.modal-box::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);border-radius:2px}
-    .modal-img-col{flex-shrink:0;width:380px;position:relative;overflow:hidden;cursor:grab;user-select:none;}
+    /* Gorsel sutununun yuksekligi metin sutunundan gelir; kisa metinli kayitlarda
+       gorsel kuculmesin diye taban yukseklik verilir. */
+    .modal-img-col{flex-shrink:0;width:380px;min-height:min(540px,72vh);position:relative;overflow:hidden;cursor:grab;user-select:none;}
     .modal-img-col.dragging-img{cursor:grabbing;}
     .modal-img-col img{width:100%;height:100%;object-fit:cover;object-position:50% 0%;display:block;filter:brightness(.88) saturate(.9);pointer-events:none;}
     .modal-img-col::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 60%,rgba(4,6,10,.95));pointer-events:none;}
@@ -268,7 +310,7 @@
     .back-link{display:inline-flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:.82rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.35);padding:.6rem 1.5rem;border-radius:4px;background:rgba(4,6,10,.75);transition:all .25s ease;animation:glowPulse 3s ease-in-out infinite;}
     .back-link:hover{background:rgba(201,168,76,.1);border-color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,.25);transform:translateY(-2px)}
     .footer-text{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:rgba(201,168,76,.18);margin-top:1.8rem;animation:subtitleFade 1s ease 1.9s both}
-    @media(max-width:700px){.modal-box{flex-direction:column}.modal-img-col{width:100%;height:260px}.modal-img-col::after{background:linear-gradient(180deg,transparent 50%,rgba(4,6,10,.95))}.modal-content-col{padding:1.4rem}}
+    @media(max-width:700px){.modal-box{flex-direction:column}.modal-img-col{width:100%;height:260px;min-height:0}.modal-img-col::after{background:linear-gradient(180deg,transparent 50%,rgba(4,6,10,.95))}.modal-content-col{padding:1.4rem}}
     @media(max-width:540px){main{padding:2.5rem 1rem 5rem}.seal-wrap{width:80px;height:80px}h1{letter-spacing:3px}.nodes{gap:70px}}
   </style>
 </head>
@@ -1403,6 +1445,9 @@ const events = [
    afterNode : ana hattaki GÖRÜNEN node numarası. Yan hikaye, bu node ile
                bir sonrakinin tam ortasından ayrılır.
    row       : dikey satır — aynı satırdaki iki hat çakışmasın diye ayrı verilir.
+   cover     : yan hikayenin KAPAK NODE'u — başlık rozetinin kendisi. {date,img,text}
+               alır; üzerine gelince önizleme kartı açılır, tıklanınca one shot
+               özetini gösteren modal açılır. Kayıt kodu <code>-00'dır.
    events    : yan hikayenin kendi node'ları.
 
    ► Sağa yeni node eklemek için: ilgili branch'in events dizisine yeni bir
@@ -1420,6 +1465,7 @@ const CONNECTOR_W = 64;         /* ayrılma eğrisinin yatay genişliği */
    ► Tarih için `date:TBD_DATE` yerine "— 3 MAIUS M.S. 27 —" biçiminde yaz.
    ► Görsel için img:"" yerine "img/dosya-adi.jpg" yaz. */
 const TBD_DATE = "— TARİH EKLENECEK —";
+const TBD_SUMMARY = `<p>Buraya bu one shot'ın özeti yazılacak.</p>`;
 const TBD = `<p><strong>[Başlangıç.]</strong> Buraya giriş yazılacak.</p>
 <p><strong>[Gelişmeler.]</strong> Buraya gelişme yazılacak.</p>
 <p><strong>[Sonuç.]</strong> Buraya sonuç yazılacak.</p>`;
@@ -1429,46 +1475,144 @@ const branches = [
     code:'NS', tag:'Yan Hikaye',
     name:'Neryssa One Shot — Sanguis Velathri',
     afterNode:89, row:0, color:'#c8565e',
+    cover:{ date:TBD_DATE, img:"img/Sanguis Velathri.jpg", text:TBD_SUMMARY },
     events:[
-      { title:"Sanguis-Velathri Kan Hisarı",                 date:TBD_DATE, img:"", text:TBD },
-      { title:"Ursula İle Buluşma",                          date:TBD_DATE, img:"", text:TBD },
-      { title:"Yeni Bir Ev",                                 date:TBD_DATE, img:"", text:TBD },
-      { title:"Kan Banyosu",                                 date:TBD_DATE, img:"", text:TBD },
-      { title:"Üvey Kız Kardeş Lavinia",                     date:TBD_DATE, img:"", text:TBD },
-      { title:"Neryssa'nın Yersiz İstekleri",                date:TBD_DATE, img:"", text:TBD },
-      { title:"Waldron Aracılığı İle Talim",                 date:TBD_DATE, img:"", text:TBD },
-      { title:"Waldron ve Guru'lar",                         date:TBD_DATE, img:"", text:TBD },
-      { title:"Dread Domain ve Relic Cemetary",              date:TBD_DATE, img:"", text:TBD },
-      { title:"Tarnus, the Keeper of Relics",                date:TBD_DATE, img:"", text:TBD },
-      { title:"Ejder Kraliçe'nin Pelerini",                  date:TBD_DATE, img:"", text:TBD },
-      { title:"Lavinia'nın Rüyası",                          date:TBD_DATE, img:"", text:TBD },
-      { title:"Ejderlerin Çarpışması",                       date:TBD_DATE, img:"", text:TBD },
-      { title:"Neryssa'nın Kökenleri ve Ejder Mağarası",     date:TBD_DATE, img:"", text:TBD },
-      { title:"Banquet Hazırlıkları",                        date:TBD_DATE, img:"", text:TBD },
-      { title:"Lord Vendrell İle Tanışma ve Ziyafet",        date:TBD_DATE, img:"", text:TBD },
-      { title:"Neryssa'nın Kaderiyle Yüzleşmesi",            date:TBD_DATE, img:"", text:TBD }
+      { title:"Sanguis-Velathri Kan Hisarı", date:TBD_DATE, img:"img/Sanguis Velathri Gerçek Formu.jpeg",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa'nın yolu, adı kanla anılan Sanguis-Velathri Hisarı'na düştü.</p>
+              <p><strong>[Gelişmeler.]</strong> Hisarın duvarları ardında Sanguis-Velathri'nin gerçek yüzü yavaş yavaş açığa çıktı.</p>
+              <p><strong>[Sonuç.]</strong> Bu ilk karşılaşma, Neryssa'nın önündeki bütün yolu baştan çizdi.</p>` },
+      { title:"Ursula İle Buluşma", date:TBD_DATE, img:"img/Neryssa'nın Annesi Ursula.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa, yıllar sonra annesi Ursula ile aynı çatı altında buldu kendini.</p>
+              <p><strong>[Gelişmeler.]</strong> İkisi arasındaki konuşma, geçmişten kalan soruları tek tek masaya getirdi.</p>
+              <p><strong>[Sonuç.]</strong> Buluşma bittiğinde Neryssa için geri dönülecek eski bir hayat kalmamıştı.</p>` },
+      { title:"Yeni Bir Ev", date:TBD_DATE, img:"img/Neryssa Snow.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa Snow, kendisine sunulan yeni evin eşiğinden içeri adım attı.</p>
+              <p><strong>[Gelişmeler.]</strong> Hisarın düzenine, kurallarına ve sakinlerine alışmak sandığından zor oldu.</p>
+              <p><strong>[Sonuç.]</strong> Zamanla burası ona bir sığınak kadar bir kafes gibi de gelmeye başladı.</p>` },
+      { title:"Kan Banyosu", date:TBD_DATE, img:"img/Kan Banyosu.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Hisarın âdetlerinden biri Neryssa'nın karşısına kan banyosu olarak çıktı.</p>
+              <p><strong>[Gelişmeler.]</strong> Bu ayinin ne anlama geldiğini ve kimin için yapıldığını adım adım öğrendi.</p>
+              <p><strong>[Sonuç.]</strong> Gördükleri, yaşadığı yerin doğası hakkında ona ilk net cevabı verdi.</p>` },
+      { title:"Üvey Kız Kardeş Lavinia", date:TBD_DATE, img:"img/Lavinia.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa, hisarda kendisine üvey kız kardeş olarak tanıtılan Lavinia ile tanıştı.</p>
+              <p><strong>[Gelişmeler.]</strong> İkisi arasında merak, rekabet ve temkinli bir yakınlık aynı anda büyüdü.</p>
+              <p><strong>[Sonuç.]</strong> Lavinia, bundan sonrası için Neryssa'nın en yakın ve en karmaşık bağı oldu.</p>` },
+      { title:"Neryssa'nın Yersiz İstekleri", date:TBD_DATE, img:"img/Sanguis Velathri Kabul Odası.png",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa, kabul odasında istediklerini çekinmeden dile getirdi.</p>
+              <p><strong>[Gelişmeler.]</strong> İstekleri hisarın hiyerarşisini rahatsız etti ve karşısına sınırlar dikildi.</p>
+              <p><strong>[Sonuç.]</strong> Bu çıkış ona hisarda neyin istenebilir, neyin istenemez olduğunu öğretti.</p>` },
+      { title:"Waldron Aracılığı İle Talim", date:TBD_DATE, img:"img/Waldron.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Neryssa'nın eğitimi Waldron'un eline verildi.</p>
+              <p><strong>[Gelişmeler.]</strong> Talimler sertti; Waldron ona hem dövüşmeyi hem de kendini tutmayı belletti.</p>
+              <p><strong>[Sonuç.]</strong> Bu sürecin sonunda Neryssa artık korunması gereken biri olmaktan çıkmıştı.</p>` },
+      { title:"Waldron ve Guru'lar", date:TBD_DATE, img:"img/Guru Vampire Hunters.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Waldron'un geçmişi, Guru adıyla anılan vampir avcılarına dayanıyordu.</p>
+              <p><strong>[Gelişmeler.]</strong> Bu topluluğun amaçları ve hisarla olan hesabı yavaş yavaş açığa çıktı.</p>
+              <p><strong>[Sonuç.]</strong> Neryssa, kendi evinin dışarıdan nasıl göründüğünü ilk kez böyle gördü.</p>` },
+      { title:"Dread Domain ve Relic Cemetary", date:TBD_DATE, img:"img/Relic Cemetary.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Yolculuk, Dread Domain'in içindeki Relic Cemetary'ye uzandı.</p>
+              <p><strong>[Gelişmeler.]</strong> Mezarlıkta gömülü olanların yalnızca ölüler olmadığı anlaşıldı.</p>
+              <p><strong>[Sonuç.]</strong> Buradan çıkarken yanlarında taşıdıkları şey bir hatıradan fazlasıydı.</p>` },
+      { title:"Tarnus, the Keeper of Relics", date:TBD_DATE, img:"img/Living Relic Cleric Tarnus.png",
+        text:`<p><strong>[Başlangıç.]</strong> Mezarlığın bekçisi Tarnus, grubun karşısına dikildi.</p>
+              <p><strong>[Gelişmeler.]</strong> Relic'lerin koruyucusu olarak neyi neden sakladığını kendi ağzından anlattı.</p>
+              <p><strong>[Sonuç.]</strong> Tarnus ile varılan sonuç, Neryssa'nın eline yeni bir anahtar bıraktı.</p>` },
+      { title:"Ejder Kraliçe'nin Pelerini", date:TBD_DATE, img:"img/Neryssa'nın Annesi Ursula.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Ejder Kraliçe'nin pelerini olarak anılan emanet gündeme geldi.</p>
+              <p><strong>[Gelişmeler.]</strong> Pelerinin kime ait olduğu ve Ursula ile olan bağı ortaya çıktı.</p>
+              <p><strong>[Sonuç.]</strong> Emanet el değiştirdiğinde Neryssa'nın soyuna dair şüpheler güçlendi.</p>` },
+      { title:"Lavinia'nın Rüyası", date:TBD_DATE, img:"img/Lavinia.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Lavinia gördüğü rüyayı Neryssa'ya anlattı.</p>
+              <p><strong>[Gelişmeler.]</strong> Rüyadaki imgeler, olacakların habercisi gibi tek tek yerine oturmaya başladı.</p>
+              <p><strong>[Sonuç.]</strong> Kimse söylemese de iki kardeş de bunun bir uyarı olduğunu anladı.</p>` },
+      { title:"Ejderlerin Çarpışması", date:TBD_DATE, img:"img/Ejderlerin Çarpışması.png",
+        text:`<p><strong>[Başlangıç.]</strong> Gökyüzü, karşı karşıya gelen ejderlerin gölgesiyle kapandı.</p>
+              <p><strong>[Gelişmeler.]</strong> Çarpışma büyüdükçe altta kalanların saklanacak yeri kalmadı.</p>
+              <p><strong>[Sonuç.]</strong> Toz dağıldığında bölgedeki dengeler tamamen değişmişti.</p>` },
+      { title:"Neryssa'nın Kökenleri ve Ejder Mağarası", date:TBD_DATE, img:"img/Sanguis Velathri Beyaz Ejder İni.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> İzler, Neryssa'yı beyaz ejderin inine kadar götürdü.</p>
+              <p><strong>[Gelişmeler.]</strong> Mağaranın içinde kökenine dair bırakılmış işaretlerle yüzleşti.</p>
+              <p><strong>[Sonuç.]</strong> Kim olduğu sorusunun cevabı ilk kez elle tutulur hale geldi.</p>` },
+      { title:"Banquet Hazırlıkları", date:TBD_DATE, img:"img/Neryssa Banquet Elbisesi.png",
+        text:`<p><strong>[Başlangıç.]</strong> Hisarda büyük bir ziyafetin hazırlıkları başladı.</p>
+              <p><strong>[Gelişmeler.]</strong> Neryssa'nın elbisesinden davetli listesine kadar her ayrıntı özenle ayarlandı.</p>
+              <p><strong>[Sonuç.]</strong> Hazırlıklar bittiğinde bu gecenin sıradan bir ziyafet olmayacağı belliydi.</p>` },
+      { title:"Lord Vendrell İle Tanışma ve Ziyafet", date:TBD_DATE, img:"img/Lord Vendrell.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Ziyafetin baş konuğu Lord Vendrell salona girdi.</p>
+              <p><strong>[Gelişmeler.]</strong> Nezaket sözlerinin altında yürüyen asıl pazarlık masaya oturdu.</p>
+              <p><strong>[Sonuç.]</strong> Gece bittiğinde Neryssa'ya biçilen rol artık açıkça ortadaydı.</p>` },
+      { title:"Neryssa'nın Kaderiyle Yüzleşmesi", date:TBD_DATE, img:"img/Neryssa'nın Annesi Ursula.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Bütün yollar Neryssa'yı son bir hesaplaşmaya getirdi.</p>
+              <p><strong>[Gelişmeler.]</strong> Ursula'nın karşısında, kendisi için çizilen kaderi tek tek sorguladı.</p>
+              <p><strong>[Sonuç.]</strong> Verdiği karar, Sanguis-Velathri'de geçen hikayesini noktaladı.</p>` }
     ]
   },
   {
     code:'TU', tag:'Yan Hikaye',
     name:'Theron One Shot — Underdark',
     afterNode:92, row:1, color:'#9b7ad4',
+    cover:{ date:TBD_DATE, img:"img/Gnome Şehri Safir.jpg", text:TBD_SUMMARY },
     events:[
-      { title:"Bir Drow, Bir Duergar ve Bir Half Orc",       date:TBD_DATE, img:"", text:TBD },
-      { title:"Esaret Yolculuğu ve Kaçma Girişimleri",       date:TBD_DATE, img:"", text:TBD },
-      { title:"Underdark ve Safir Şehri",                    date:TBD_DATE, img:"", text:TBD },
-      { title:"Kemik ve İpek",                               date:TBD_DATE, img:"", text:TBD },
-      { title:"Madame Corvina ve Kavuşma",                   date:TBD_DATE, img:"", text:TBD },
-      { title:"Duygu ve Özüt Ekstrasyonu",                   date:TBD_DATE, img:"", text:TBD },
-      { title:"Theron'un Kararı",                            date:TBD_DATE, img:"", text:TBD },
-      { title:"Distorsiyonlu Ozanlar Musiki Fırkası",        date:TBD_DATE, img:"", text:TBD },
-      { title:"Lurien Veil ve Hamlet İle Karşılaşma",        date:TBD_DATE, img:"", text:TBD },
-      { title:"Gözü Oyuk Vex'al",                            date:TBD_DATE, img:"", text:TBD },
-      { title:"Underdark ve Engizisyon",                     date:TBD_DATE, img:"", text:TBD },
-      { title:"Görev ve Eve Geri Dönüş",                     date:TBD_DATE, img:"", text:TBD },
-      { title:"Ayazlı Geçit ve Yolculuk",                    date:TBD_DATE, img:"", text:TBD },
-      { title:"Luwanna ile Buluşma",                         date:TBD_DATE, img:"", text:TBD },
-      { title:"Mordain Blackthorne'nun Mektubu",             date:TBD_DATE, img:"", text:TBD }
+      { title:"Bir Drow, Bir Duergar ve Bir Half Orc", date:TBD_DATE, img:"img/Ferrix.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'un karşısına bir drow, bir duergar ve bir half orc'tan oluşan üçlü çıktı.</p>
+              <p><strong>[Gelişmeler.]</strong> Ferrix'in başını çektiği bu grup, Theron'a hiç de dostça olmayan bir teklifle geldi.</p>
+              <p><strong>[Sonuç.]</strong> Bu karşılaşma, Theron'un ana hattan kopan yolculuğunun başlangıcı oldu.</p>` },
+      { title:"Esaret Yolculuğu ve Kaçma Girişimleri", date:TBD_DATE, img:"img/Theron'u Kaçıran Araba.png",
+        text:`<p><strong>[Başlangıç.]</strong> Theron kendini kilitli bir arabanın içinde, esir olarak buldu.</p>
+              <p><strong>[Gelişmeler.]</strong> Yol boyunca defalarca kaçmayı denedi; her denemesi bir öncekinden pahalıya patladı.</p>
+              <p><strong>[Sonuç.]</strong> Araba durduğunda artık nereye götürüldüğünü tahmin edebiliyordu.</p>` },
+      { title:"Underdark ve Safir Şehri", date:TBD_DATE, img:"img/Gnome Şehri Safir.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Yolun sonu Underdark'a, gnome'ların Safir şehrine çıktı.</p>
+              <p><strong>[Gelişmeler.]</strong> Yer altındaki bu şehrin düzeni, ticareti ve gizli anlaşmaları gözler önüne serildi.</p>
+              <p><strong>[Sonuç.]</strong> Theron için burası hem bir hapishane hem de tek çıkış kapısıydı.</p>` },
+      { title:"Kemik ve İpek", date:TBD_DATE, img:"img/Kemik ve İpek.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'un getirildiği yerin adı Kemik ve İpek'ti.</p>
+              <p><strong>[Gelişmeler.]</strong> Mekânın ipek perdeleri ardında ne alınıp satıldığı yavaşça anlaşıldı.</p>
+              <p><strong>[Sonuç.]</strong> Burada geçirdiği ilk saatler ona kimin elinde olduğunu öğretti.</p>` },
+      { title:"Madame Corvina ve Kavuşma", date:TBD_DATE, img:"img/Madame Corvina.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Mekânın sahibi Madame Corvina, Theron'u bizzat karşısına aldı.</p>
+              <p><strong>[Gelişmeler.]</strong> Beklenmedik biçimde bu karşılaşma bir hesaplaşma değil, bir kavuşma oldu.</p>
+              <p><strong>[Sonuç.]</strong> Corvina ile kurulan bağ, Theron'un buradaki konumunu tamamen değiştirdi.</p>` },
+      { title:"Duygu ve Özüt Ekstrasyonu", date:TBD_DATE, img:"img/Duygu ve Özüt Ekstrasyonu.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Mekânın asıl işi, duyguların özüt olarak çekilmesiydi.</p>
+              <p><strong>[Gelişmeler.]</strong> Theron bu işlemin nasıl yapıldığını ve kimlerin üzerinde uygulandığını gördü.</p>
+              <p><strong>[Sonuç.]</strong> Gördükleri ona buradan sağ çıkmanın bedelini gösterdi.</p>` },
+      { title:"Theron'un Kararı", date:TBD_DATE, img:"img/Theron Nightgale.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'un önüne iki yol kondu: kalmak ya da kaçmak.</p>
+              <p><strong>[Gelişmeler.]</strong> Kararını verirken kendi geçmişini ve kime dönebileceğini yeniden tarttı.</p>
+              <p><strong>[Sonuç.]</strong> Seçtiği yol, bundan sonraki her adımını belirledi.</p>` },
+      { title:"Distorsiyonlu Ozanlar Musiki Fırkası", date:TBD_DATE, img:"img/Ozan Mekan Dış Girişi.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'un yolu Distorsiyonlu Ozanlar Musiki Fırkası'nın kapısına vardı.</p>
+              <p><strong>[Gelişmeler.]</strong> Fırkanın müziği, üyeleri ve asıl işlevi sahnenin arkasında saklıydı.</p>
+              <p><strong>[Sonuç.]</strong> Theron burada, hiç beklemediği bir yerde kendine bir yer edindi.</p>` },
+      { title:"Lurien Veil ve Hamlet İle Karşılaşma", date:TBD_DATE, img:"img/Lurien Veil.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron, Lurien Veil ile ve Hamlet'ten gelenlerle karşı karşıya geldi.</p>
+              <p><strong>[Gelişmeler.]</strong> İki tarafın da aradığı şeyin aynı olduğu, konuşma ilerledikçe ortaya çıktı.</p>
+              <p><strong>[Sonuç.]</strong> Karşılaşmanın sonunda beklenmedik bir ortaklık doğdu.</p>` },
+      { title:"Gözü Oyuk Vex'al", date:TBD_DATE, img:"img/Gözü Oyuk Vex'al.png",
+        text:`<p><strong>[Başlangıç.]</strong> Karanlığın içinden gözü oyuk Vex'al çıktı.</p>
+              <p><strong>[Gelişmeler.]</strong> Vex'al'in ne olduğu ve neyin peşinde olduğu pahalıya öğrenildi.</p>
+              <p><strong>[Sonuç.]</strong> Bu karşılaşmadan herkes bir şeyini geride bırakarak ayrıldı.</p>` },
+      { title:"Underdark ve Engizisyon", date:TBD_DATE, img:"img/Engizisyoncu Hawthorne.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Underdark'a Engizisyon'un gölgesi düştü; Hawthorne oradaydı.</p>
+              <p><strong>[Gelişmeler.]</strong> Engizisyoncunun yer altında ne aradığı ve kimi kolladığı açığa çıktı.</p>
+              <p><strong>[Sonuç.]</strong> Theron kendini iki ateş arasında bulmuş oldu.</p>` },
+      { title:"Görev ve Eve Geri Dönüş", date:TBD_DATE, img:"img/Theron Nightgale.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'a, yüzeye dönebilmesi için bir görev verildi.</p>
+              <p><strong>[Gelişmeler.]</strong> Görevin şartları, eve dönüşü sandığından çok daha karmaşık hale getirdi.</p>
+              <p><strong>[Sonuç.]</strong> Sonunda yüzeye çıktığında, aşağı inen Theron değildi artık.</p>` },
+      { title:"Ayazlı Geçit ve Yolculuk", date:TBD_DATE, img:"img/Ayazlı Geçit.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Dönüş yolu Ayazlı Geçit'ten geçiyordu.</p>
+              <p><strong>[Gelişmeler.]</strong> Soğuk, yol arkadaşları ve geçidin kendisi yolculuğu bir sınava çevirdi.</p>
+              <p><strong>[Sonuç.]</strong> Geçit aşıldığında ekip, başladığından çok daha sıkı bağlıydı.</p>` },
+      { title:"Luwanna ile Buluşma", date:TBD_DATE, img:"img/Luwanna Maria Jacquelyn Gaetana Günkalkanı.jpg",
+        text:`<p><strong>[Başlangıç.]</strong> Yolun sonunda Theron'u Luwanna karşıladı.</p>
+              <p><strong>[Gelişmeler.]</strong> Konuşmaları, Theron'un yokluğunda olup bitenleri tek tek önüne serdi.</p>
+              <p><strong>[Sonuç.]</strong> Buluşma, ana hikayeye dönme vaktinin geldiğini gösterdi.</p>` },
+      { title:"Mordain Blackthorne'nun Mektubu", date:TBD_DATE, img:"img/Blackthorne'nun Mektubu.png",
+        text:`<p><strong>[Başlangıç.]</strong> Theron'un eline Mordain Blackthorne'dan gelen bir mektup geçti.</p>
+              <p><strong>[Gelişmeler.]</strong> Mektupta yazanlar, bu yan hikayede yaşananları çok daha büyük bir tabloya bağladı.</p>
+              <p><strong>[Sonuç.]</strong> Mektup okunduğunda Theron'un yolu yeniden ana hatla kesişti.</p>` }
     ]
   }
 ];
@@ -1486,8 +1630,14 @@ function paintBranchVars(el,color){
 /* Ana hat + yan hikaye node'larını tek bir kayıt defterinde topla */
 const registry=[]; const byUid={};
 events.forEach((ev,i)=>registry.push({uid:'m'+i,ev,code:'#'+String(i+1).padStart(3,'0'),branch:null}));
-branches.forEach((br,bi)=>br.events.forEach((ev,ei)=>
-  registry.push({uid:'b'+bi+'_'+ei,ev,code:br.code+'-'+String(ei+1).padStart(2,'0'),branch:br})));
+branches.forEach((br,bi)=>{
+  /* kapak node'u: yan hikayenin başlık rozeti — kendi özet kaydını taşır */
+  if(br.cover) registry.push({uid:'b'+bi+'_cover',
+    ev:Object.assign({title:br.name},br.cover),
+    code:br.code+'-00',branch:br,isCover:true});
+  br.events.forEach((ev,ei)=>
+    registry.push({uid:'b'+bi+'_'+ei,ev,code:br.code+'-'+String(ei+1).padStart(2,'0'),branch:br}));
+});
 registry.forEach(r=>byUid[r.uid]=r);
 
 document.getElementById('nodeCountDisplay').textContent =
@@ -1534,19 +1684,30 @@ branches.forEach((br,bi)=>{
     </svg>
     <div class="branch-body" style="left:${CONNECTOR_W}px;top:${h}px">
       <div class="branch-line"></div>
-      <div class="branch-head" role="button" tabindex="0" title="${br.name}">
+      <div class="branch-head" id="tlnode-b${bi}_cover" role="button" tabindex="0" title="${br.name}">
         <span class="branch-head-tag">${br.tag}</span>
         <span class="branch-head-sep"></span>
         <span class="branch-head-name">${br.name}</span>
+        <span class="branch-head-code">${br.code}-00</span>
+        ${br.cover ? `<div class="branch-cover">
+          <div class="branch-cover-card">
+            <img src="${br.cover.img}" alt="${br.name}" onerror="this.remove()">
+            <div class="branch-cover-body">
+              <div class="branch-cover-tag">${br.code}-00 · Özet</div>
+              <div class="branch-cover-name">${br.name}</div>
+            </div>
+          </div>
+        </div>` : ''}
       </div>
       <div class="branch-nodes"></div>
     </div>`;
   branchLayer.appendChild(el);
 
   const head=el.querySelector('.branch-head');
-  const openFirst=()=>openModal('b'+bi+'_0');
-  head.onclick=openFirst;
-  head.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openFirst();}};
+  const coverUid=br.cover ? 'b'+bi+'_cover' : 'b'+bi+'_0';
+  head.dataset.uid=coverUid;
+  head.onclick=()=>openModal(coverUid);
+  head.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(coverUid);}};
 
   const holder=el.querySelector('.branch-nodes');
   br.events.forEach((ev,ei)=>{
@@ -1564,6 +1725,15 @@ branches.forEach((br,bi)=>{
       <div class="bnode-label">
         <div class="bnode-code">${br.code}-${String(ei+1).padStart(2,'0')}</div>
         <div class="bnode-name">${ev.title}</div>
+        ${ev.img ? `<div class="bnode-tooltip">
+          <div class="bnode-tip-card">
+            <img src="${ev.img}" alt="${ev.title}" onerror="this.remove()">
+            <div class="bnode-tip-body">
+              <div class="bnode-tip-code">${br.code}-${String(ei+1).padStart(2,'0')}</div>
+              <div class="bnode-tip-name">${ev.title}</div>
+            </div>
+          </div>
+        </div>` : ''}
       </div>`;
     holder.appendChild(n);
   });
@@ -1605,7 +1775,7 @@ window.addEventListener('load',layoutBranches);
     chip.type='button'; chip.className='branch-chip';
     paintBranchVars(chip,br.color);
     chip.innerHTML='<span class="branch-chip-dot"></span>'+br.name;
-    chip.onclick=()=>jumpToNode('b'+bi+'_0');
+    chip.onclick=()=>jumpToNode(br.cover?'b'+bi+'_cover':'b'+bi+'_0');
     legend.appendChild(chip);
   });
 })();
@@ -1745,7 +1915,7 @@ function openModal(uid){
 
   const tag=document.getElementById('modalTag');
   if(rec.branch){
-    tag.textContent='Yan Hikaye — '+rec.branch.name+' · '+rec.code;
+    tag.textContent=(rec.isCover?'Yan Hikaye Özeti — ':'Yan Hikaye — ')+rec.branch.name+' · '+rec.code;
     tag.classList.add('is-branch');
     paintBranchVars(tag,rec.branch.color);
   } else {
