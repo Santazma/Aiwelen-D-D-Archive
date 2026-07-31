@@ -6,7 +6,7 @@
   <title>Cecilia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&family=Nosifer&display=swap" rel="stylesheet">
   <style>
     :root {
       --blue-glow: #87cefa;
@@ -78,68 +78,7 @@
     }
     .fixed-back-button:active { transform: scale(.95); }
 
-    #music-widget {
-      position: fixed; top: 20px; right: 20px; z-index: 999;
-      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
-      max-height: calc(100vh - 40px);
-    }
-    #music-toggle-btn {
-      display: flex; align-items: center; gap: 7px;
-      padding: 7px 14px;
-      font-family: 'Cinzel', serif; font-size: .8rem;
-      font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(135,206,250,.45); border-radius: 8px;
-      background: linear-gradient(135deg,rgba(20,60,100,.88),rgba(8,24,50,.95));
-      cursor: pointer; white-space: nowrap;
-      transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(135,206,250,.2);
-      animation: glowPulse 3s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    #music-toggle-btn:hover {
-      background: linear-gradient(135deg,rgba(50,120,180,.92),rgba(18,55,110,.98));
-      box-shadow: 0 0 18px rgba(135,206,250,.55);
-      transform: translateY(-1px);
-    }
-    #music-toggle-btn:active { transform: scale(.96); }
 
-    #volume-control-wrapper {
-      background: linear-gradient(135deg,rgba(10,28,55,.92),rgba(5,15,35,.97));
-      border: 1px solid rgba(135,206,250,.25);
-      padding: 12px 15px; border-radius: 12px;
-      box-shadow: 0 0 16px rgba(135,206,250,.15);
-      width: 210px; overflow: hidden;
-      max-height: 0; opacity: 0;
-      padding-top: 0; padding-bottom: 0;
-      transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
-    }
-    #volume-control-wrapper.open {
-      max-height: 160px; opacity: 1;
-      padding-top: 12px; padding-bottom: 12px;
-    }
-    #volume-control-label {
-      display: block; margin-bottom: 6px;
-      font-family: 'Cinzel', serif; font-size: .78rem;
-      letter-spacing: .5px; color: rgba(255,255,255,.75);
-    }
-    #volume-level { color: var(--gold); font-size: .85rem; margin-left: 4px; }
-    #play-pause-btn {
-      display: block; width: 100%; margin-bottom: 10px; padding: 5px 0;
-      font-family: 'Cinzel', serif; font-size: .82rem;
-      font-weight: 700; letter-spacing: .5px; color: #fff;
-      border: 1px solid rgba(135,206,250,.4); border-radius: 7px;
-      background: linear-gradient(135deg,rgba(30,80,130,.8),rgba(10,35,70,.9));
-      cursor: pointer;
-      transition: background .2s, box-shadow .2s, transform .15s;
-      box-shadow: 0 0 8px rgba(135,206,250,.2);
-    }
-    #play-pause-btn:hover {
-      background: linear-gradient(135deg,rgba(55,130,200,.88),rgba(20,65,120,.95));
-      box-shadow: 0 0 18px rgba(135,206,250,.5);
-      transform: translateY(-1px);
-    }
-    #play-pause-btn:active { transform: scale(.96); }
-    #volume-control { width: 100%; accent-color: var(--blue-glow); cursor: pointer; }
 
     .info-box {
       position: fixed;
@@ -508,7 +447,6 @@
 
     @media (max-width: 540px) {
       .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; }
-      #music-toggle-btn  { font-size: .7rem;  padding: 5px 10px; }
       h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; }
       .character-image { width: 160px; height: 240px; }
       .carousel-stage { width: 240px; height: 310px; }
@@ -528,23 +466,532 @@
       .carousel-stage { width: 200px; height: 270px; }
       .carousel-card img { width: 185px; height: 260px; }
     }
+
+    /* ══════════════ NEABAZ — CEHENNEM ATEŞİ ══════════════ */
+
+    /* ── Kalıcı katman: sayfadan çıkılana kadar yaşar ── */
+    #fire-canvas {
+      position: fixed; inset: 0;
+      z-index: 8500; pointer-events: none;
+      opacity: 0; transition: opacity 2.6s ease;
+    }
+    #fire-canvas.on { opacity: 1; }
+
+    /* DİKKAT: buraya doğrudan animasyon verilmemeli. CSS animasyonu temel
+       `opacity: 0` kuralını ezer ve katman Neabaz açılmadan görünür hale
+       gelir. Nabız efekti bu yüzden yalnızca .on varken pseudo-elemanda. */
+    #infernal-ambient {
+      position: fixed; inset: 0;
+      z-index: 8400; pointer-events: none;
+      opacity: 0; transition: opacity 2.6s ease;
+      background:
+        radial-gradient(ellipse at 50% 116%, rgba(255,120,26,.34) 0%, rgba(178,38,8,.2) 26%, rgba(0,0,0,0) 58%),
+        radial-gradient(ellipse at 50% 44%, rgba(0,0,0,0) 34%, rgba(46,8,2,.42) 74%, rgba(18,3,1,.8) 100%);
+    }
+    #infernal-ambient.on { opacity: 1; }
+    #infernal-ambient.on::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 118%,
+        rgba(255,138,32,.28) 0%, rgba(190,44,10,.14) 30%, rgba(0,0,0,0) 62%);
+      animation: infAmbientPulse 4.5s ease-in-out infinite alternate;
+    }
+    @keyframes infAmbientPulse { from { opacity:.35 } to { opacity:1 } }
+
+    /* Alevler sayfayı kalıcı olarak ısıtır */
+    body.infernal .container,
+    body.infernal .info-box,
+    body.infernal #back-button,
+    body.infernal .player-toggle,
+    body.infernal .player-panel {
+      filter: sepia(.34) saturate(1.42) hue-rotate(-14deg) contrast(1.1) brightness(.84);
+      transition: filter 2.6s ease;
+    }
+
+    /* ── Sinematik katman ── */
+    #infernal-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      pointer-events: none; opacity: 0; overflow: hidden;
+      transition: opacity 1.6s ease;
+    }
+    #infernal-overlay.on { opacity: 1; }
+
+    .inf-stage { position: absolute; inset: -8%; }
+    #infernal-overlay.shake .inf-stage { animation: infShake .26s linear infinite; }
+    @keyframes infShake {
+      0%   { transform: translate(0,0) }
+      25%  { transform: translate(5px,-3px) }
+      50%  { transform: translate(-6px,4px) }
+      75%  { transform: translate(4px,5px) }
+      100% { transform: translate(0,0) }
+    }
+
+    .inf-haze {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 120%,
+        rgba(255,168,52,.72) 0%, rgba(206,52,12,.5) 24%,
+        rgba(72,10,4,.62) 50%, rgba(10,2,1,.94) 82%);
+      animation: infHaze 3.2s ease-in-out infinite alternate;
+    }
+    @keyframes infHaze { from { opacity:.8 } to { opacity:1 } }
+
+    /* Sayfanın altından yükselen alev katmanları */
+    .inf-flame {
+      position: absolute; left: 50%; bottom: -34vh;
+      width: 160vw; height: 142vh; margin-left: -80vw;
+      border-radius: 46% 46% 0 0 / 62% 62% 0 0;
+      filter: blur(34px); mix-blend-mode: screen; will-change: transform;
+      background: radial-gradient(ellipse at 50% 100%,
+        rgba(255,244,196,.98) 0%, rgba(255,176,52,.94) 17%,
+        rgba(238,84,16,.85) 37%, rgba(158,24,8,.6) 60%, rgba(0,0,0,0) 82%);
+      animation: infRise 5.5s ease-in-out infinite;
+    }
+    .inf-flame.f2 { width:126vw; margin-left:-63vw; height:114vh; opacity:.82; filter: blur(50px); animation-duration:4.2s; animation-delay:-1.4s; }
+    .inf-flame.f3 { width: 92vw; margin-left:-46vw; height:158vh; opacity:.74; filter: blur(24px); animation-duration:6.4s; animation-delay:-3s; }
+    .inf-flame.f4 { width: 62vw; margin-left:-31vw; height:172vh; opacity:.6;  filter: blur(16px); animation-duration:7.6s; animation-delay:-5s; }
+    @keyframes infRise {
+      0%   { transform: translateY(6vh)  scaleX(1)    scaleY(.94); }
+      35%  { transform: translateY(-4vh) scaleX(1.09) scaleY(1.09); }
+      65%  { transform: translateY(1vh)  scaleX(.94)  scaleY(1.03); }
+      100% { transform: translateY(6vh)  scaleX(1)    scaleY(.94); }
+    }
+
+    /* Yanlardan sızan alev dilleri */
+    .inf-tongue {
+      position: absolute; bottom: -14vh;
+      width: 17vmax; height: 92vh;
+      filter: blur(22px); mix-blend-mode: screen; transform-origin: 50% 100%;
+      background: linear-gradient(to top,
+        rgba(255,206,96,.92), rgba(240,96,18,.62) 38%, rgba(150,20,6,.24) 66%, rgba(0,0,0,0) 90%);
+      animation: tongueLick 6s ease-in-out infinite;
+    }
+    .inf-tongue.g1 { left:  2%; animation-duration:5.4s; animation-delay:-1s; }
+    .inf-tongue.g2 { left: 26%; animation-duration:7.2s; animation-delay:-3s; }
+    .inf-tongue.g3 { left: 55%; animation-duration:6.1s; animation-delay:-5s; }
+    .inf-tongue.g4 { left: 79%; animation-duration:8s;   animation-delay:-2s; }
+    @keyframes tongueLick {
+      0%,100% { transform: translateY(18vh) scaleY(.68) skewX(6deg);  opacity:.5; }
+      50%     { transform: translateY(-10vh) scaleY(1.24) skewX(-7deg); opacity:.98; }
+    }
+
+    /* Kor patlamaları */
+    .inf-flash {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 105%, rgba(255,214,130,.85) 0%, rgba(255,120,24,.35) 30%, rgba(0,0,0,0) 62%);
+      opacity: 0;
+      animation: infFlash 6s steps(1,end) infinite;
+    }
+    @keyframes infFlash {
+      0%,11%,11.5%,33%,33.6%,61%,61.4%,88%,88.3%,100% { opacity:0 }
+      11.2%,33.3%,61.2%,88.15% { opacity:.75 }
+    }
+
+    /* ── Sinematik yazı ── */
+    .inf-text {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: .16em .34em;
+      padding: 0 7vw; text-align: center;
+      font-family: 'Nosifer', 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+      font-size: clamp(1.2rem, 4.2vw, 3rem);
+      letter-spacing: .03em; line-height: 1.42;
+    }
+    .inf-word {
+      display: inline-block; opacity: 0;
+      background: linear-gradient(180deg, #fff6cf 0%, #ffc94d 32%, #ff6f12 64%, #c81f04 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      filter: drop-shadow(0 0 16px rgba(255,142,28,.92)) drop-shadow(0 0 46px rgba(206,42,8,.78));
+      animation: infWordIn 1.9s cubic-bezier(.16,.8,.3,1) forwards;
+    }
+    @keyframes infWordIn {
+      0%   { opacity:0; filter: blur(30px) drop-shadow(0 0 40px rgba(255,120,20,1)); transform: translateY(34px) scale(1.3); }
+      65%  { opacity:1; }
+      100% { opacity:1; filter: blur(0) drop-shadow(0 0 16px rgba(255,142,28,.92)) drop-shadow(0 0 46px rgba(206,42,8,.78)); transform: translateY(0) scale(1); }
+    }
+    /* Kayboluş: kelimeler tek tek değil, yazı tek parça hâlinde yanıp dağılır */
+    .inf-text.dissolving {
+      animation: infTextBurn 4.4s cubic-bezier(.36,0,.66,1) forwards;
+    }
+    @keyframes infTextBurn {
+      0%   { opacity:1;  filter: blur(0)    brightness(1);   transform: translateY(0)    scale(1); }
+      35%  { opacity:.85; filter: blur(9px)  brightness(1.8); transform: translateY(-14px) scale(1.04); }
+      100% { opacity:0;  filter: blur(42px) brightness(2.6); transform: translateY(-76px) scale(1.2); }
+    }
+
+    /* Harflerden sızan erimiş damlalar */
+    #inf-drips { position: absolute; inset: 0; pointer-events: none; }
+    .inf-drip {
+      position: absolute;
+      width: 6px; height: 13px;
+      border-radius: 50% 50% 60% 60% / 38% 38% 72% 72%;
+      background: linear-gradient(180deg, #ffe6a2 0%, #ffa62c 42%, #d42c05 100%);
+      filter: drop-shadow(0 0 8px rgba(255,140,30,.95));
+      animation: dripFall 2.6s cubic-bezier(.48,0,.86,.58) forwards;
+    }
+    @keyframes dripFall {
+      0%   { opacity:0;  transform: translateY(0)     scaleY(.45) scaleX(1); }
+      14%  { opacity:1;  transform: translateY(7px)   scaleY(1)   scaleX(1); }
+      70%  { opacity:.85; }
+      100% { opacity:0;  transform: translateY(210px) scaleY(2.6) scaleX(.6); }
+    }
+
+    body.infernal-active .container,
+    body.infernal-active .info-box,
+    body.infernal-active #back-button,
+    body.infernal-active #myModal,
+    body.infernal-active .player-toggle,
+    body.infernal-active .player-panel {
+      filter: sepia(.72) saturate(2.3) hue-rotate(-20deg) contrast(1.35) brightness(.42);
+      transition: filter 2s ease;
+    }
+    body.infernal-fading .container,
+    body.infernal-fading .info-box,
+    body.infernal-fading #back-button,
+    body.infernal-fading #myModal,
+    body.infernal-fading .player-toggle,
+    body.infernal-fading .player-panel {
+      filter: sepia(.34) saturate(1.42) hue-rotate(-14deg) contrast(1.1) brightness(.84);
+      transition: filter 2.6s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .inf-flame, .inf-tongue, .inf-haze, .inf-flash, #infernal-ambient { animation: none; }
+      #infernal-overlay.shake .inf-stage { animation: none; }
+    }
+
+/* ══════════════════════════════════
+       MUSIC PLAYER
+    ══════════════════════════════════ */
+    @keyframes playerSlideIn {
+      from{opacity:0;transform:translateY(-12px) scale(0.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes progressPulse {
+      0%,100%{box-shadow:0 0 4px rgba(135,206,250,0.35)}
+      50%{box-shadow:0 0 10px rgba(135,206,250,0.6)}
+    }
+    @keyframes trackReveal {
+      from{opacity:0;transform:translateX(-6px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @keyframes vinylSpin {
+      from{transform:rotate(0deg)} to{transform:rotate(360deg)}
+    }
+
+    #music-widget { display: block; }
+
+    /* Toggle button — fixed top right */
+    .player-toggle {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 900;
+      background: rgba(6,16,32,0.93);
+      border: 1px solid rgba(135,206,250,0.35);
+      color: #87cefa;
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; letter-spacing: 2px;
+      padding: .6rem 1.1rem;
+      cursor: pointer;
+      transition: all .25s ease;
+      display: flex; align-items: center; gap: 7px;
+      backdrop-filter: blur(8px);
+    }
+    .player-toggle:hover { border-color: #87cefa; background: rgba(135,206,250,0.1); }
+    .player-toggle-icon { font-size: .85rem; line-height: 1; }
+    .player-toggle-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #a8d8ea;
+      transition: background .3s;
+    }
+    .player-toggle-dot.playing { background: #cfefff; animation: progressPulse 1.5s ease-in-out infinite; }
+
+    /* Player panel */
+    .player-panel {
+      position: fixed;
+      top: 58px; right: 18px;
+      z-index: 800;
+      width: 320px;
+      background: rgba(6,16,32,0.96);
+      border: 1px solid rgba(135,206,250,0.28);
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      animation: playerSlideIn .3s ease both;
+    }
+    .player-panel.open { display: flex; }
+
+    /* Panel header */
+    .player-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem .9rem;
+      border-bottom: 1px solid rgba(135,206,250,0.12);
+      background: rgba(135,206,250,0.04);
+    }
+    .player-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: .68rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(135,206,250,0.5);
+    }
+    .player-header-archive {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 2px;
+      color: rgba(135,206,250,0.28);
+    }
+
+    /* Now playing section */
+    .player-now {
+      padding: .9rem .9rem .7rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .player-now-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(135,206,250,0.32); margin-bottom: .5rem;
+    }
+    .player-now-info {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    /* Vinyl disc */
+    .player-vinyl {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid rgba(135,206,250,0.25);
+      overflow: hidden; flex-shrink: 0;
+      position: relative;
+      background: rgba(4,10,20,1);
+    }
+    .player-vinyl img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.7);
+      border-radius: 50%;
+    }
+    .player-vinyl::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+        rgba(4,11,24,0.72) 28%, transparent 30%,
+        transparent 80%, rgba(135,206,250,0.1) 100%);
+      pointer-events: none;
+    }
+    .player-vinyl.spinning img { animation: vinylSpin 4s linear infinite; }
+
+    .player-track-info { flex: 1; min-width: 0; }
+    .player-track-name {
+      font-family: 'Cinzel', serif;
+      font-size: .8rem; font-weight: 700;
+      color: #cfefff; letter-spacing: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .player-track-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 2px;
+      color: rgba(135,206,250,0.38); margin-top: 2px;
+    }
+
+    /* Progress bar */
+    .player-progress-wrap {
+      padding: .6rem .9rem .4rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .player-progress-bar {
+      position: relative; height: 3px;
+      background: rgba(135,206,250,0.1);
+      cursor: pointer; margin-bottom: .35rem;
+    }
+    .player-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a8d8ea, #cfefff);
+      width: 0%;
+      pointer-events: none;
+      transition: width .1s linear;
+    }
+    .player-progress-bar:hover .player-progress-fill { filter: brightness(1.2); }
+    .player-time-row {
+      display: flex; justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.4);
+    }
+
+    /* Controls */
+    .player-controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; padding: .65rem .9rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .ctrl-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(135,206,250,0.55);
+      font-size: 1rem; line-height: 1;
+      padding: .3rem;
+      transition: color .2s, transform .15s;
+      display: flex; align-items: center;
+    }
+    .ctrl-btn:hover { color: #cfefff; }
+    .ctrl-btn.active { color: #cfefff; }
+    .ctrl-btn.play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(135,206,250,0.4);
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(135,206,250,0.06);
+    }
+    .ctrl-btn.play-btn:hover { background: rgba(135,206,250,0.15); border-color: #87cefa; transform: scale(1.05); }
+    .ctrl-btn.loop-btn { font-size: .8rem; }
+
+    /* Volume */
+    .player-volume {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .9rem .6rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .vol-icon {
+      font-size: .8rem; color: rgba(135,206,250,0.45); flex-shrink: 0;
+    }
+    .vol-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 3px;
+      background: linear-gradient(90deg, #a8d8ea 70%, rgba(135,206,250,0.12) 70%);
+      outline: none; cursor: pointer;
+      border-radius: 2px;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #87cefa; cursor: pointer;
+      box-shadow: 0 0 6px rgba(135,206,250,0.5);
+    }
+    .vol-slider::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #87cefa; cursor: pointer; border: none;
+    }
+    .vol-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.38); width: 26px; text-align: right;
+    }
+
+    /* Track list */
+    .player-tracklist {
+      max-height: 200px; overflow-y: auto;
+    }
+    .player-tracklist::-webkit-scrollbar { width: 3px; }
+    .player-tracklist::-webkit-scrollbar-thumb { background: rgba(135,206,250,0.2); border-radius: 2px; }
+
+    .track-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem .9rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(135,206,250,0.06);
+      transition: background .2s;
+      animation: trackReveal .3s ease both;
+    }
+    .track-item:hover { background: rgba(135,206,250,0.05); }
+    .track-item.active { background: rgba(135,206,250,0.08); }
+    .track-item:last-child { border-bottom: none; }
+
+    .track-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.28); width: 16px; flex-shrink: 0;
+    }
+    .track-item.active .track-num { color: #87cefa; }
+
+    .track-thumb {
+      width: 32px; height: 32px; border-radius: 2px;
+      overflow: hidden; flex-shrink: 0;
+      border: 1px solid rgba(135,206,250,0.15);
+      background: rgba(4,10,20,1);
+    }
+    .track-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.6);
+    }
+
+    .track-label { flex: 1; min-width: 0; }
+    .track-title {
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; font-weight: 700; letter-spacing: .8px;
+      color: rgba(226,240,252,0.74);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-item.active .track-title { color: #cfefff; }
+    .track-dur {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; color: rgba(135,206,250,0.28);
+      flex-shrink: 0;
+    }
+    .track-playing-icon {
+      font-size: .7rem; color: #87cefa;
+      display: none; flex-shrink: 0;
+    }
+    .track-item.active .track-playing-icon { display: block; }
+    .track-item.active .track-dur { display: none; }
+
+    @media (max-width: 540px) {
+      .player-panel { width: calc(100vw - 36px); }
+      .player-toggle { font-size: .64rem; padding: .5rem .8rem; letter-spacing: 1.5px; }
+    }
   </style>
 </head>
 <body>
-  <audio id="background-music" autoplay loop preload="auto">
-    <source src="Cecilia Theme.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
-  </audio>
 
   <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
 
   <div id="music-widget">
-    <button id="music-toggle-btn" onclick="togglePanel()">🎵 Müzik ▾</button>
-    <div id="volume-control-wrapper">
-      <button id="play-pause-btn" onclick="toggleMusic()">⏸ Müziği Duraklat</button>
-      <label id="volume-control-label">Ses: <span id="volume-level">50%</span></label>
-      <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5"/>
+    <!-- ── MUSIC PLAYER ── -->
+    <button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
+      <span class="player-toggle-icon">♪</span>
+      <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">KARAKTER MÜZİĞİ</span>
+      <span class="player-toggle-dot" id="playerDot"></span>
+    </button>
+
+    <div class="player-panel" id="playerPanel">
+      <div class="player-header">
+        <span class="player-header-title">Karakter Müziği</span>
+        <span class="player-header-archive">CV-MÜZ · Campaign V</span>
+      </div>
+      <div class="player-now">
+        <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
+        <div class="player-now-info">
+          <div class="player-vinyl" id="playerVinyl">
+            <img id="playerVinylImg" src="" alt="">
+          </div>
+          <div class="player-track-info">
+            <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
+            <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
+          </div>
+        </div>
+      </div>
+      <div class="player-progress-wrap">
+        <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
+          <div class="player-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="player-time-row">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeDuration">0:00</span>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
+        <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
+        <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
+        <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
+      </div>
+      <div class="player-volume">
+        <span class="vol-icon" id="volIcon">🔊</span>
+        <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="10" oninput="setVolume(this.value)">
+        <span class="vol-val" id="volVal">10</span>
+      </div>
+      <div class="player-tracklist" id="trackList"></div>
     </div>
+
+    <audio id="audioEl"></audio>
   </div>
 
   <div class="container">
@@ -711,20 +1158,34 @@
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-0">
               <div class="carousel-card visible" data-panel="0" data-idx="0">
-                <img src="Aldric Thane Castellan.jpeg" alt="Aldric Thane Castellan" onclick="openModal(this)">
-              </div>
-              <div class="carousel-card" data-panel="0" data-idx="1">
                 <img src="Gallo, Büyü Kaşifi.jpg" alt="Gallo" onclick="openModal(this)">
               </div>
-              <div class="carousel-card" data-panel="0" data-idx="2">
+              <div class="carousel-card" data-panel="0" data-idx="1">
                 <img src="Eclipse of the Moon (Eclipse).jpg" alt="Eclipse" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Orv Bezmadan Parlakçekiç.jpg" alt="Orv Bezmadan Parlakçekiç" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="3">
+                <img src="Steel Saint Zephyr.png" alt="Steel Saint Zephyr" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="4">
+                <img src="Stephen.png" alt="Stephen" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="5">
+                <img src="Rin Stormbringer.png" alt="Rin Stormbringer" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="6">
+                <img src="Luwanna Maria Jacquelyn Gaetana Günkalkanı.jpg" alt="Luwanna" onclick="openModal(this)">
               </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
-          <div class="carousel-caption" id="caption-0">Cecilia'nın Engizisyon Tarafından Aranırken Hayatını Kurtaran Ve Birlikte Kuzeye İlerledikleri Paladin Aldric Thane Castellan</div>
+          <div class="carousel-caption" id="caption-0">Cecilia'yı Küçüklüğünden Beri Tanıyan Ve Serverus Hanesi'ne Yerleştiren Büyü Kaşifi Gallo</div>
           <div class="carousel-dots" id="dots-0">
             <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
           </div>
         </div>
 
@@ -736,12 +1197,29 @@
               <div class="carousel-card visible" data-panel="1" data-idx="0">
                 <img src="Beyaz Şehir Sıçan Mahallesi.jpg" alt="İmparatorluk Engizisyonu" onclick="openModal(this)">
               </div>
+              <div class="carousel-card" data-panel="1" data-idx="1">
+                <img src="Aldric Thane Castellan.jpeg" alt="Aldric Thane Castellan" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="2">
+                <img src="Discount.jpg" alt="Discount" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="3">
+                <img src="Coil.jpg" alt="Coil" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="4">
+                <img src="Taint, Kızıl Sükût.jpg" alt="Taint, Kızıl Sükût" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="1" data-idx="5">
+                <img src="Neabaz.jpg" alt="Neabaz" onclick="openModal(this); triggerInfernalScene();">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
           <div class="carousel-caption" id="caption-1">Cecilia'yı Kaçak İlan Eden Ve Peşinden Vazgeçmeyecek Olan İmparatorluk Engizisyonu</div>
           <div class="carousel-dots" id="dots-1">
-            <span class="dot active"></span>
+            <span class="dot active"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
           </div>
         </div>
 
@@ -762,6 +1240,9 @@
               <div class="carousel-card" data-panel="2" data-idx="3">
                 <img src="Cape of the Mountebank.jpeg" alt="Cape of the Mountebank" onclick="openModal(this)">
               </div>
+              <div class="carousel-card" data-panel="2" data-idx="4">
+                <img src="Metal Kar Tavşanı.png" alt="Metal Kar Tavşanı" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
@@ -769,6 +1250,7 @@
           <div class="carousel-dots" id="dots-2">
             <span class="dot active"></span><span class="dot"></span>
             <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
           </div>
         </div>
 
@@ -807,6 +1289,29 @@
     </div>
   </div>
 
+  <!-- ══ Neabaz — kalıcı cehennem ateşi ══ -->
+  <canvas id="fire-canvas" aria-hidden="true"></canvas>
+  <div id="infernal-ambient" aria-hidden="true"></div>
+
+  <!-- ══ Neabaz — sinematik ══ -->
+  <div id="infernal-overlay" aria-hidden="true">
+    <div class="inf-haze"></div>
+    <div class="inf-stage">
+      <div class="inf-flame f4"></div>
+      <div class="inf-flame f3"></div>
+      <div class="inf-flame f2"></div>
+      <div class="inf-flame"></div>
+      <div class="inf-tongue g1"></div>
+      <div class="inf-tongue g2"></div>
+      <div class="inf-tongue g3"></div>
+      <div class="inf-tongue g4"></div>
+    </div>
+    <div class="inf-flash"></div>
+    <div class="inf-text" id="inf-text"></div>
+    <div id="inf-drips"></div>
+  </div>
+
+
   <div id="myModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
     <div class="modal-counter" id="modal-counter"></div>
@@ -821,38 +1326,141 @@
   </div>
 
   <script>
-    /* ── Music ── */
-    const music = document.getElementById('background-music');
-    const btn   = document.getElementById('play-pause-btn');
-    let isPlaying = true;
-    let panelOpen = false;
+    /* ══════════════ MUSIC PLAYER ══════════════ */
+    const tracks = [
+      { name: "Cecilia Theme", file: "Cecilia Theme.mp3", img: "Cecilia.jpeg" },
+    ];
 
-    music.volume = 0.5;
-    music.play().catch(() => {
-      isPlaying = false;
-      btn.textContent = '▶ Müziği Başlat';
-    });
+    let currentTrack = 0;
+    let isLooping    = false;
+    let playerOpen   = false;
 
-    function toggleMusic() {
-      if (isPlaying) { music.pause(); btn.textContent = '▶ Müziği Başlat'; }
-      else           { music.play();  btn.textContent = '⏸ Müziği Duraklat'; }
-      isPlaying = !isPlaying;
+    const audio        = document.getElementById('audioEl');
+    const playBtn      = document.getElementById('playBtn');
+    const playerDot    = document.getElementById('playerDot');
+    const vinylEl      = document.getElementById('playerVinyl');
+    const vinylImg     = document.getElementById('playerVinylImg');
+    const trackNameEl  = document.getElementById('playerTrackName');
+    const trackSubEl   = document.getElementById('playerTrackSub');
+    const progressFill = document.getElementById('progressFill');
+    const timeElapsed  = document.getElementById('timeElapsed');
+    const timeDuration = document.getElementById('timeDuration');
+    const volSlider    = document.getElementById('volSlider');
+    const volVal       = document.getElementById('volVal');
+    const volIcon      = document.getElementById('volIcon');
+
+    audio.volume = 0.10;
+
+    function buildTrackList() {
+      const tl = document.getElementById('trackList');
+      tl.innerHTML = '';
+      tracks.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = 'track-item' + (i === currentTrack ? ' active' : '');
+        item.id = `track-${i}`;
+        item.onclick = () => { loadTrack(i); audio.play(); };
+        item.innerHTML = `
+          <span class="track-num">${String(i+1).padStart(2,'0')}</span>
+          <div class="track-thumb"><img src="${t.img}" alt="${t.name}" onerror="this.style.opacity='.2'"></div>
+          <div class="track-label"><div class="track-title">${t.name}</div></div>
+          <span class="track-playing-icon">▶</span>
+          <span class="track-dur" id="dur-${i}">--:--</span>`;
+        tl.appendChild(item);
+      });
+      tracks.forEach((t, i) => {
+        const tmp = new Audio(t.file);
+        tmp.addEventListener('loadedmetadata', () => {
+          const el = document.getElementById(`dur-${i}`);
+          if (el) el.textContent = fmtTime(tmp.duration);
+        });
+      });
     }
 
-    function togglePanel() {
-      const panel = document.getElementById('volume-control-wrapper');
-      const tBtn  = document.getElementById('music-toggle-btn');
-      panelOpen = !panelOpen;
-      panel.classList.toggle('open', panelOpen);
-      tBtn.textContent = panelOpen ? '🎵 Müzik ▾' : '🎵 Müzik ▸';
+    function fmtTime(s) {
+      if (!s || isNaN(s)) return '0:00';
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${m}:${sec.toString().padStart(2,'0')}`;
     }
 
-    document.getElementById('volume-control').addEventListener('input', function () {
-      music.volume = parseFloat(this.value);
-      document.getElementById('volume-level').innerText = Math.round(this.value * 100) + '%';
+    function loadTrack(idx) {
+      currentTrack = idx;
+      const t = tracks[idx];
+      audio.src = t.file;
+      audio.loop = isLooping;
+      trackNameEl.textContent = t.name;
+      vinylImg.src = t.img;
+      progressFill.style.width = '0%';
+      timeElapsed.textContent  = '0:00';
+      timeDuration.textContent = '0:00';
+      document.querySelectorAll('.track-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    function togglePlayer() {
+      playerOpen = !playerOpen;
+      document.getElementById('playerPanel').classList.toggle('open', playerOpen);
+    }
+
+    function togglePlay() {
+      if (!audio.src || audio.src === window.location.href) { loadTrack(currentTrack); audio.play(); return; }
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); audio.play(); }
+    function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); audio.play(); }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      audio.loop = isLooping;
+      document.getElementById('loopBtn').classList.toggle('active', isLooping);
+    }
+
+    function setVolume(v) {
+      audio.volume = v / 100;
+      volVal.textContent = v;
+      updateVolSliderBg(v);
+      volIcon.textContent = v == 0 ? '🔇' : v < 40 ? '🔉' : '🔊';
+    }
+
+    function updateVolSliderBg(v) {
+      volSlider.style.background = `linear-gradient(90deg, #87cefa ${v}%, rgba(135,206,250,0.12) ${v}%)`;
+    }
+
+    function seekAudio(e) {
+      const bar  = document.getElementById('progressBar');
+      const rect = bar.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (audio.duration) audio.currentTime = pct * audio.duration;
+    }
+
+    audio.addEventListener('play', () => {
+      playBtn.textContent = '⏸';
+      vinylEl.classList.add('spinning');
+      playerDot.classList.add('playing');
+    });
+    audio.addEventListener('pause', () => {
+      playBtn.textContent = '▶';
+      vinylEl.classList.remove('spinning');
+      playerDot.classList.remove('playing');
+    });
+    audio.addEventListener('ended', () => {
+      if (!isLooping) { nextTrack(); audio.play(); }
+    });
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      timeElapsed.textContent  = fmtTime(audio.currentTime);
+      timeDuration.textContent = fmtTime(audio.duration);
     });
 
-    window.onbeforeunload = () => music.pause();
+    buildTrackList();
+    loadTrack(0);
+    updateVolSliderBg(10);
+    audio.play().catch(() => {});
+
+    window.onbeforeunload = () => audio.pause();
 
     /* ── Info-box scroll tracking ── */
     const leftBox  = document.querySelector('.left-box');
@@ -871,18 +1479,28 @@
 
     const captions = [
       [
-        'Cecilia\'nın Engizisyon Tarafından Aranırken Hayatını Kurtaran Ve Birlikte Kuzeye İlerledikleri Paladin Aldric Thane Castellan',
         'Cecilia\'yı Küçüklüğünden Beri Tanıyan Ve Serverus Hanesi\'ne Yerleştiren Büyü Kaşifi Gallo',
-        'Cecilia\'nın Yolculuğu Sırasında Karşılaştığı Gizemli Varlık Eclipse of the Moon',
+        'Cecilia\'nın Yolculuğu Sırasında Karşılaştığı Gizemli Tabaxi Düzenbaz Eclipse of the Moon',
+        'Cecilia\'nın Bastion\'da Tanıştığı Ve Daha Sonrasında Kavgalar Etseler Bile Onu En Sonunda Kabullenmiş Olan Son Kıvılcım\'ın Demirci Ruhban Cücesi Orv Bezmadan Parlakçekiç',
+        'Cecilia\'nın Bastion\'da Tanıştığı Ve Grupta İlk Güvendiği İsimlerden Birisi Olan Son Kıvılcım\'ın Ejderdoğan Düzenbazı Zephyr',
+        'Cecilia\'nın Bastion\'da Tanıştığı Son Kıvılcım\'ın Owlin Suikastçisi Stephen',
+        'Cecilia\'nın Bastion\'da Tanıştığı Son Kıvılcım\'ın Wano\'lu Bir Oni Rün Savaşçısı Olan Rin Stormbringer',
+        'Cecilia\'nın Bastion\'da Karşılaştığı Fakat İmparatorluk Dönemleri\'nden Beri İsim Olarak Tanıdığı Ve Bildiği Eski İmparatorluk Asilzadesi Ve Eski Engizisyoncu Luwanna',
       ],
       [
         'Cecilia\'yı Kaçak İlan Eden Ve Peşinden Vazgeçmeyecek Olan İmparatorluk Engizisyonu',
+        'Cecilia\'nın Engizisyon Tarafından Aranırken Hayatını Kurtaran Ama Birlikte Kuzey Maceraları Sırasında Hem Onun Duygularına Hem De Son Kıvılcıma İhanet Ederek Partiden Ayrılan Engizisyon Kaçağı Paladin Aldric Thane Castellan',
+        'Cecilia\'nın Karşısına Çıkan Ve Orv Bezmadan İle Birlikte Yüce Baba Moradin\'in Kutsal Müdahalesi İle Öldürdüğü İmparatorluk Jeager Avcısı Discount',
+        'Cecilia\'nın İmparatorluk Arşivlerini Kurcaladığı İmparatorluk Dönemlerinde Öğrendiği Bir İsim Olan Akıl Sağlığı Yerinde Olmayan Öngörülemez Bir İmparatorluk Jeager Avcısı Olan Coil',
+        'Cecilia\'nın Grup İle Birlikte Karlı Matem Katedrali\'ne İlerlediği Sırada Karşılaşıp Savaştığı Ve Cecilia\'ya Karşı Anlaşılması Zor Takıntılı Duygular Beslese De Cecilia\'nın Ona Karşı Ne Hissettiği Şaibeli Ve Muallak Olan Korkutucu Bir Engizisyoncu Olan Taint',
+        'Thane\'nin Anlaşma Yaptığı Ve Cecilia\'yı Bu Anlaşmanın İçerisine Sürüklemiş Olan Ve Belki De Aralarının Bozulmasına Sebep Olan Şeytan Olan Neabaz',
       ],
       [
         'Cecilia\'nın Gölge Büyüsünden Çağırdığı Uğursuz Hound of Ill Omen',
         'Cecilia\'nın Alternatif Görünümü',
         'Cecilia\'nın Büyü Gücünü Besleyen Bloodwell Vial',
         'Cecilia\'nın Kaçış Sırasında Vazgeçilmezi Olan Cape of the Mountebank',
+        'Cecilia\'nın Metal Kar Tavşanı',
       ],
     ];
 
@@ -948,6 +1566,265 @@
           dot.addEventListener('click', () => { showCard(panelIdx, idx); resetAutoTimer(); });
         });
     });
+
+    /* ══════════════ NEABAZ — CEHENNEM ATEŞİ ══════════════ */
+    const INFERNAL_LINE     = 'Aşk uğruna neler yapmayız ki...';
+    const INFERNAL_SFX_MS   = 8000;   /* yazılar ve ses efekti bu kadar sürer */
+    const INFERNAL_DECAY_MS = 1000;   /* son 1 saniyede efekt sönümlenir */
+    let infernalRunning = false, infernal = false;
+
+    /* Web fontlar ancak kullanıldıklarında indirilir; sinematik anında
+       yedek yazı tipiyle görünüp sonra atlamasın diye şimdiden yükle. */
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('1em "Nosifer"', INFERNAL_LINE).catch(() => {});
+    }
+
+    /* ── 1) Kalıcı cehennem ateşi ──────────────────────────
+       Ekranın altında toplayıcı (additive) harmanlama ile
+       çizilen alev dilleri ve yukarı süzülen korlar. Alev
+       ve kor lekeleri tek sefer çizilip önbelleğe alınır.  */
+    const hellFire = (() => {
+      const cv  = document.getElementById('fire-canvas');
+      const ctx = cv.getContext('2d');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let embers = [], columns = [], raf = 0, running = false, t0 = 0;
+
+      function makeSprite(stops) {
+        const S = 128;
+        const c = document.createElement('canvas');
+        c.width = c.height = S;
+        const s = c.getContext('2d');
+        const g = s.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+        stops.forEach(([o, col]) => g.addColorStop(o, col));
+        s.fillStyle = g;
+        s.fillRect(0, 0, S, S);
+        return c;
+      }
+      const flameSprite = makeSprite([
+        [0,   'rgba(255,236,170,.95)'],
+        [.28, 'rgba(255,158,42,.72)'],
+        [.58, 'rgba(216,58,12,.34)'],
+        [1,   'rgba(150,20,4,0)'],
+      ]);
+      const emberSprite = makeSprite([
+        [0,   'rgba(255,226,150,1)'],
+        [.35, 'rgba(255,152,44,.72)'],
+        [1,   'rgba(255,96,16,0)'],
+      ]);
+
+      function seed() {
+        const nE = reduced ? 24 : 90;
+        embers = [];
+        for (let i = 0; i < nE; i++) embers.push(newEmber(true));
+
+        const nC = Math.max(7, Math.round(innerWidth / 150));
+        columns = [];
+        for (let i = 0; i < nC; i++) {
+          columns.push({
+            x:  (i + .5) / nC * innerWidth + (Math.random() - .5) * 60,
+            h:  90 + Math.random() * 190,
+            w:  110 + Math.random() * 150,
+            ph: Math.random() * Math.PI * 2,
+            sp: 1.1 + Math.random() * 1.9,
+          });
+        }
+      }
+
+      function newEmber(spread) {
+        return {
+          x:  Math.random() * innerWidth,
+          y:  spread ? Math.random() * innerHeight : innerHeight + 20,
+          r:  1.6 + Math.random() * 4.2,
+          vy: -(14 + Math.random() * 42),
+          dx: (Math.random() - .5) * 26,
+          ph: Math.random() * Math.PI * 2,
+          li: .55 + Math.random() * .45,
+        };
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cv.width  = Math.floor(innerWidth  * dpr);
+        cv.height = Math.floor(innerHeight * dpr);
+        cv.style.width  = innerWidth  + 'px';
+        cv.style.height = innerHeight + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        seed();
+      }
+
+      let last = 0;
+      function frame(now) {
+        if (!t0) { t0 = now; last = now; }
+        const t  = (now - t0) / 1000;
+        const dt = Math.min((now - last) / 1000, .05);
+        last = now;
+
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        ctx.globalCompositeOperation = 'lighter';
+
+        /* Alt kenardaki alev dilleri */
+        for (const c of columns) {
+          const flick = .72 + Math.sin(t * c.sp + c.ph) * .2 + Math.random() * .1;
+          const h = c.h * flick;
+          const w = c.w * (.86 + Math.sin(t * c.sp * .7 + c.ph) * .16);
+          ctx.globalAlpha = .34 * flick;
+          ctx.drawImage(flameSprite, c.x - w / 2, innerHeight - h * 1.15, w, h * 1.6);
+        }
+
+        /* Yükselen korlar */
+        for (const e of embers) {
+          e.y += e.vy * dt;
+          e.x += Math.sin(t * 1.6 + e.ph) * e.dx * dt;
+          if (e.y < -30) Object.assign(e, newEmber(false));
+          const fade = Math.min(1, e.y / innerHeight + .12);
+          ctx.globalAlpha = e.li * fade * (.7 + Math.sin(t * 7 + e.ph) * .3);
+          const d = e.r * 7;
+          ctx.drawImage(emberSprite, e.x - d / 2, e.y - d / 2, d, d);
+        }
+
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+        raf = requestAnimationFrame(frame);
+      }
+
+      return {
+        start() {
+          if (running) return;
+          running = true;
+          resize();
+          addEventListener('resize', resize);
+          cv.classList.add('on');
+          document.getElementById('infernal-ambient').classList.add('on');
+          raf = requestAnimationFrame(frame);
+        }
+      };
+    })();
+
+    /* ── 2) Cehennem alevleri — Rain of Fire A ses efekti ──
+       8 saniye boyunca çalar, son 1 saniyede sönümlenir. */
+    function playFireSfx() {
+      const el = new Audio("Rain of Fire A.wav");
+      el.preload = 'auto';
+      el.volume  = 0;
+      el.play().catch(() => {});
+
+      /* Yumusak giris */
+      const t0 = performance.now();
+      const FADE_IN = 900;
+      let raf = requestAnimationFrame(function up(now) {
+        const k = Math.min(1, (now - t0) / FADE_IN);
+        el.volume = k;
+        if (k < 1) raf = requestAnimationFrame(up);
+      });
+
+      return {
+        /* Son saniyede ussel sonumlenip susar */
+        decay(ms) {
+          cancelAnimationFrame(raf);
+          const v0 = el.volume, s = performance.now();
+          const down = now => {
+            const k = Math.min(1, (now - s) / ms);
+            el.volume = Math.max(0, v0 * (1 - k) * (1 - k));
+            if (k < 1) requestAnimationFrame(down);
+            else { el.pause(); el.src = ''; }
+          };
+          requestAnimationFrame(down);
+        }
+      };
+    }
+
+    /* ── 3) Neabaz'ın teması müzik çalara eklenir ── */
+    function unlockNeabazTrack() {
+      if (tracks.length > 1) return;
+      tracks.push({
+        name: 'Neabaz Theme',
+        file: 'Neabaz Theme.mp3',
+        img:  'Neabaz.jpg',
+      });
+      isLooping  = true;          /* döngüde başlar, kullanıcı ↺ ile kapatabilir */
+      audio.loop = true;
+      document.getElementById('loopBtn').classList.add('active');
+      buildTrackList();
+      loadTrack(tracks.length - 1);
+      audio.play().catch(() => {});
+    }
+
+    /* ── 4) Sinematik ── */
+    function triggerInfernalScene() {
+      if (infernalRunning || infernal) return;
+      infernalRunning = true;
+
+      const overlay = document.getElementById('infernal-overlay');
+      const textEl  = document.getElementById('inf-text');
+
+      textEl.innerHTML = '';
+      const words = INFERNAL_LINE.split(' ');
+      words.forEach((w, i) => {
+        const s = document.createElement('span');
+        s.className   = 'inf-word';
+        s.textContent = w;
+        s.style.animationDelay = (0.5 + i * 0.38) + 's';
+        textEl.appendChild(s);
+      });
+
+      document.body.classList.add('infernal-active');
+      overlay.classList.add('on', 'shake');
+      const sfx = playFireSfx();
+
+      /* Son 1 saniye: ses efekti sönümlenirken müzik devreye girer */
+      setTimeout(() => {
+        sfx.decay(INFERNAL_DECAY_MS);
+        unlockNeabazTrack();
+      }, INFERNAL_SFX_MS - INFERNAL_DECAY_MS);
+
+      /* Harflerden erimiş damlalar sızsın */
+      const dripHost = document.getElementById('inf-drips');
+      let dripping = true;
+      function spawnDrip() {
+        if (!dripping) return;
+        const ws = textEl.children;
+        if (ws.length) {
+          const w = ws[Math.floor(Math.random() * ws.length)];
+          const r = w.getBoundingClientRect();
+          if (r.width) {
+            const d = document.createElement('span');
+            d.className = 'inf-drip';
+            d.style.left = (r.left + 4 + Math.random() * Math.max(1, r.width - 8)) + 'px';
+            d.style.top  = (r.bottom - 12) + 'px';
+            d.style.animationDuration = (2 + Math.random() * 1.7).toFixed(2) + 's';
+            dripHost.appendChild(d);
+            d.addEventListener('animationend', () => d.remove(), { once: true });
+          }
+        }
+        setTimeout(spawnDrip, 90 + Math.random() * 210);
+      }
+      setTimeout(spawnDrip, 1700);
+      setTimeout(() => { dripping = false; }, INFERNAL_SFX_MS + 900);
+
+      /* 8. saniye: yazı tek parça hâlinde yanıp dağılır */
+      setTimeout(() => {
+        overlay.classList.remove('shake');
+        textEl.classList.add('dissolving');
+      }, INFERNAL_SFX_MS);
+
+      /* Kalıcı alevler devralır */
+      setTimeout(() => hellFire.start(), INFERNAL_SFX_MS + 500);
+
+      setTimeout(() => {
+        overlay.classList.remove('on');
+        document.body.classList.remove('infernal-active');
+        document.body.classList.add('infernal-fading', 'infernal');
+        infernal = true;
+      }, INFERNAL_SFX_MS + 2600);
+
+      setTimeout(() => {
+        document.body.classList.remove('infernal-fading');
+        textEl.classList.remove('dissolving');
+        textEl.innerHTML   = '';
+        dripHost.innerHTML = '';
+        infernalRunning = false;
+      }, INFERNAL_SFX_MS + 5400);
+    }
 
     /* ── Modal ── */
     const modal      = document.getElementById('myModal');
