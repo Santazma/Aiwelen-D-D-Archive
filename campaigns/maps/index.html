@@ -3,34 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiwelen Map - D&D Haritası</title>
+    <title>Aiwelen Haritası — Yolculuk Planlayıcı</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --gold:        #c9a84c;
+            --gold-bright: #f5d080;
+            --gold-dim:    #6b5420;
+            --gold-glow:   rgba(201,168,76,0.35);
+            --parchment:   #f2e8d0;
+            --dark:        #080604;
+            --red-accent:  #7a1f1f;
+            --panel-bg:    rgba(8,5,2,0.84);
+            --panel-border: rgba(201,168,76,0.25);
         }
-        
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html, body { height: 100%; }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background: #1a1a1a;
-            color: #fff;
+            margin: 0;
+            font-family: 'Lora', Georgia, serif;
+            background: var(--dark);
+            color: var(--parchment);
             overflow: hidden;
             height: 100vh;
         }
-        
-        .map-container {
+
+        /* ── KEYFRAMES ── */
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes titleDrop {
+            from { opacity: 0; transform: translateY(-18px); letter-spacing: 10px; }
+            to   { opacity: 1; transform: translateY(0); letter-spacing: 4px; }
+        }
+        @keyframes subtitleFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes panelSlideRight {
+            from { opacity: 0; transform: translateX(26px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes panelSlideLeft {
+            from { opacity: 0; transform: translateX(-26px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes panelSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wpPop {
+            0%   { transform: translate(-50%, -50%) scale(0); }
+            65%  { transform: translate(-50%, -50%) scale(1.25); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes routeDash { to { stroke-dashoffset: -34; } }
+        @keyframes legRowIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes poiPulse {
+            0%   { transform: translate(-50%, -50%) rotate(45deg) scale(0.7); opacity: 0.85; }
+            100% { transform: translate(-50%, -50%) rotate(45deg) scale(2.6); opacity: 0; }
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate(-50%, 14px); }
+            to   { opacity: 1; transform: translate(-50%, 0); }
+        }
+        @keyframes lightboxIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes lightboxImgIn {
+            from { opacity: 0; transform: scale(0.94); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* ── AMBİYANS ARKAPLANI ──
+           Harita dışında kalan alan simsiyah kalmasın: haritanın bulanık,
+           karartılmış bir kopyası tüm ekranı doldurur. */
+        .map-underlay {
+            position: fixed;
+            inset: -60px;
+            z-index: 0;
+            background: url('aiwelen-map.jpg') center/cover no-repeat;
+            filter: blur(26px) brightness(0.68) saturate(1.1);
+            pointer-events: none;
+            animation: pageFadeIn 1.4s ease both;
+        }
+        .map-underlay::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(60,40,10,0.12) 0%, transparent 65%),
+                linear-gradient(180deg, rgba(4,2,1,0.22), rgba(4,2,1,0.4));
+        }
+
+        /* ── HARİTA ── */
+        .map-viewport {
             position: relative;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
             cursor: grab;
+            touch-action: none;
+            animation: pageFadeIn 0.9s ease both;
         }
-        
-        .map-container:active {
-            cursor: grabbing;
-        }
-        
+        .map-viewport.dragging { cursor: grabbing; }
+        .map-viewport.placing { cursor: crosshair; }
+        .map-viewport.measuring { cursor: crosshair; }
+
         .map-image {
             position: absolute;
             width: 1920px;
@@ -38,545 +120,3643 @@
             background: url('aiwelen-map.jpg') no-repeat center center;
             background-size: contain;
             transform-origin: 0 0;
-            transition: none;
+            z-index: 1;
         }
-        
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(4,2,1,0.28) 100%),
+                linear-gradient(180deg, rgba(4,2,1,0.32) 0%, transparent 12%, transparent 90%, rgba(4,2,1,0.36) 100%);
+        }
+
+        /* ── ROTA (SVG) ── */
+        .route-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: visible;
+        }
+        .route-glow {
+            fill: none;
+            stroke: rgba(201,168,76,0.22);
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        .route-path {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 12 10;
+            animation: routeDash 1.6s linear infinite;
+        }
+        .route-path.difficult { stroke: #c25b5b; }
+        .route-glow.difficult { stroke: rgba(194,91,91,0.22); }
+        .route-path.highlighted { stroke: var(--gold-bright); stroke-width: 4; }
+        .route-glow.highlighted { stroke: rgba(245,208,128,0.35); stroke-width: 12; }
+        .route-path.difficult.highlighted { stroke: #e07f7f; }
+
+        .measure-line {
+            fill: none;
+            stroke: #9fd0e0;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 7 8;
+        }
+        .measure-glow {
+            fill: none;
+            stroke: rgba(159,208,224,0.28);
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+        .measure-cap { fill: #9fd0e0; }
+
+        .leg-label {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            pointer-events: none;
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gold-bright);
+            background: rgba(8,5,2,0.85);
+            border: 1px solid var(--panel-border);
+            border-radius: 3px;
+            padding: 2px 7px;
+            white-space: nowrap;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+        .leg-label.difficult { border-color: rgba(194,91,91,0.45); color: #e8a8a8; }
+        .leg-label.measure {
+            border-color: rgba(159,208,224,0.55);
+            color: #d4eef8;
+            font-size: 0.78rem;
+            padding: 4px 11px;
+            letter-spacing: 1.5px;
+        }
+
+        /* ── NOKTALAR (WAYPOINT) ── */
         .waypoint {
             position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #ff4444;
-            border: 3px solid #fff;
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 35% 30%, rgba(40,28,8,0.95), rgba(8,5,2,0.95));
+            border: 2px solid var(--gold);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--gold-bright);
             cursor: pointer;
-            z-index: 10;
+            z-index: 8;
             transform: translate(-50%, -50%);
-            pointer-events: auto;
+            box-shadow: 0 0 12px var(--gold-glow), 0 2px 6px rgba(0,0,0,0.8);
+            animation: wpPop 0.35s cubic-bezier(.34,1.56,.64,1) both;
+            user-select: none;
+            touch-action: none;
         }
-        
-        .route-line {
+        .waypoint:hover {
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 20px rgba(245,208,128,0.5), 0 2px 8px rgba(0,0,0,0.8);
+        }
+        .waypoint.first { border-color: var(--gold-bright); }
+        .waypoint.dragging-wp { cursor: grabbing; box-shadow: 0 0 26px rgba(245,208,128,0.6); }
+
+        /* ── POI İŞARETÇİLERİ ── */
+        .poi {
             position: absolute;
-            height: 3px;
-            background: #ff4444;
-            z-index: 5;
-            transform-origin: left center;
-            pointer-events: none;
+            width: 26px;
+            height: 26px;
+            transform: translate(-50%, -50%);
+            z-index: 7;
+            cursor: pointer;
+            user-select: none;
+            touch-action: none;
         }
-        
-        .controls-left {
+        .poi-diamond {
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 12px;
+            height: 12px;
+            transform: translate(-50%, -50%) rotate(45deg);
+            background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, #8a6f2c);
+            border: 1.5px solid rgba(8,5,2,0.9);
+            box-shadow: 0 0 8px rgba(201,168,76,0.55), 0 1px 4px rgba(0,0,0,0.8);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+        .poi-diamond::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            background: rgba(8,5,2,0.75);
+        }
+        .poi:hover .poi-diamond {
+            transform: translate(-50%, -50%) rotate(45deg) scale(1.35);
+            box-shadow: 0 0 16px rgba(245,208,128,0.7), 0 1px 5px rgba(0,0,0,0.8);
+        }
+        .poi.custom .poi-diamond {
+            background: linear-gradient(135deg, #e8f0f5, #9fb8c8 60%, #5d7383);
+            box-shadow: 0 0 8px rgba(159,184,200,0.55), 0 1px 4px rgba(0,0,0,0.8);
+        }
+        .poi.active .poi-diamond {
+            transform: translate(-50%, -50%) rotate(45deg) scale(1.35);
+            background: linear-gradient(135deg, #fff2cf, var(--gold-bright) 60%, var(--gold));
+        }
+        .poi.active::before {
+            content: "";
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 14px; height: 14px;
+            border: 1.5px solid var(--gold-bright);
+            transform: translate(-50%, -50%) rotate(45deg);
+            animation: poiPulse 1.8s ease-out infinite;
+        }
+        .poi-label {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 1px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            background: rgba(8,5,2,0.85);
+            border: 1px solid var(--panel-border);
+            border-radius: 3px;
+            padding: 2px 7px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+        .poi:hover .poi-label, .poi.active .poi-label { opacity: 1; }
+
+        /* ── ÜST BAŞLIK ── */
+        .title-block {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid #333;
+            top: 1.1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
             z-index: 100;
         }
-        
-        .control-group {
-            margin-bottom: 15px;
+        .page-eyebrow {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 0.25rem;
+            animation: subtitleFade 1s ease 0.5s both;
         }
-        
-        .control-group:last-child {
-            margin-bottom: 0;
+        .map-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.05rem, 2.4vw, 1.55rem);
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            margin: 0;
+            text-shadow:
+                0 0 30px rgba(201,168,76,0.55),
+                0 0 60px rgba(201,168,76,0.2),
+                2px 2px 8px rgba(0,0,0,0.95);
+            animation: titleDrop 1.2s cubic-bezier(.22,1,.36,1) 0.15s both;
         }
-        
-        .control-label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        
-        select {
-            width: 200px;
-            padding: 8px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background: #333;
-            color: #fff;
-            font-size: 14px;
-        }
-        
-        .zoom-controls {
+
+        /* ── YAN SÜTUNLAR ── */
+        .side-col {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            top: 0;
+            bottom: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            padding: 16px;
             z-index: 100;
+            pointer-events: none;
         }
-        
-        .zoom-btn {
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #333;
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 8px;
+        .side-col > * { pointer-events: auto; flex-shrink: 0; }
+        .side-col.left  { left: 0;  width: 306px; animation: panelSlideLeft 0.8s ease 0.35s both; }
+        .side-col.right {
+            right: 0; width: 336px;
+            animation: panelSlideRight 0.8s ease 0.45s both;
+            transition: transform 0.45s cubic-bezier(.22,1,.36,1), opacity 0.35s ease;
+        }
+        .side-col.right.slid-out {
+            transform: translateX(110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .side-col.right.slid-out > * { pointer-events: none; }
+
+        .top-row { display: flex; gap: 8px; }
+
+        .back-link, .cal-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gold-dim);
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid rgba(201,168,76,0.2);
+            padding: 0.55rem 1.1rem;
+            border-radius: 3px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(6px);
+            cursor: pointer;
+            transition: color 0.3s, border-color 0.3s, background 0.3s;
+        }
+        .back-link:hover, .cal-toggle:hover, .cal-toggle.open {
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.55);
+            background: rgba(201,168,76,0.07);
+        }
+
+        /* ── PANELLER ── */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding: 0.7rem 0.95rem;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid rgba(201,168,76,0.14);
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+        .panel-header:hover { background: rgba(201,168,76,0.06); }
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .panel-chevron {
+            color: var(--gold-dim);
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+        .panel.collapsed .panel-chevron { transform: rotate(-90deg); }
+        .panel-body {
+            padding: 0.85rem 0.95rem 0.95rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dim) transparent;
+        }
+        .panel.collapsed .panel-body { display: none; }
+        .panel.collapsed .panel-header { border-bottom-color: transparent; }
+
+        .locations-panel { flex: 0 1 auto; }
+        .locations-panel .panel-body { max-height: 40vh; padding-top: 0.65rem; }
+        .defaults-panel { margin-top: auto; }
+        .details-panel .panel-body { max-height: 34vh; }
+        .presets-panel .panel-body { max-height: 22vh; }
+        .calendar-panel { display: none; animation: panelSlideUp 0.35s ease both; }
+        .calendar-panel.open { display: flex; }
+
+        /* ── FORM ELEMANLARI ── */
+        .control-group { margin-bottom: 0.75rem; }
+        .control-group:last-child { margin-bottom: 0; }
+        .control-label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(242,232,208,0.55);
+        }
+        select, .text-input {
+            width: 100%;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 3px;
+            background: rgba(8,5,2,0.9);
+            color: var(--parchment);
+            font-family: 'Lora', serif;
+            font-size: 0.78rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        select { cursor: pointer; }
+        select:hover, select:focus, .text-input:focus {
+            border-color: rgba(201,168,76,0.6);
+            outline: none;
+            box-shadow: 0 0 8px rgba(201,168,76,0.15);
+        }
+        select option { background: #14100a; color: var(--parchment); }
+        .text-input::placeholder { color: rgba(242,232,208,0.3); font-style: italic; }
+        textarea.text-input { resize: vertical; min-height: 74px; line-height: 1.5; }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 3px;
+            background: rgba(201,168,76,0.08);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.25s, border-color 0.25s, color 0.25s;
+        }
+        .btn:hover {
+            background: rgba(201,168,76,0.18);
+            border-color: rgba(201,168,76,0.6);
+            color: var(--gold-bright);
+        }
+        .btn.btn-danger {
+            border-color: rgba(122,31,31,0.6);
+            background: rgba(122,31,31,0.14);
+            color: #d98a8a;
+        }
+        .btn.btn-danger:hover {
+            background: rgba(122,31,31,0.3);
+            border-color: rgba(180,60,60,0.7);
+            color: #f0b0b0;
+        }
+        .btn-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+        .btn-row .btn { flex: 1; }
+
+        /* ── LOKASYON LİSTESİ ── */
+        .loc-toolbar { display: flex; gap: 0.45rem; margin-bottom: 0.6rem; }
+        .loc-toolbar .text-input { flex: 1; }
+        .loc-add-btn {
+            flex-shrink: 0;
+            width: 34px;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 3px;
+            background: rgba(201,168,76,0.08);
+            color: var(--gold);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.25s, color 0.25s, border-color 0.25s;
+        }
+        .loc-add-btn:hover, .loc-add-btn.armed {
+            background: rgba(201,168,76,0.2);
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.6);
+        }
+        .loc-row {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.42rem 0.5rem;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .loc-row:hover { background: rgba(201,168,76,0.08); }
+        .loc-row.active { background: rgba(201,168,76,0.13); }
+        .loc-diamond {
+            width: 7px; height: 7px;
+            flex-shrink: 0;
+            background: var(--gold);
+            transform: rotate(45deg);
+            box-shadow: 0 0 4px var(--gold-glow);
+        }
+        .loc-row.custom .loc-diamond { background: #9fb8c8; box-shadow: 0 0 4px rgba(159,184,200,0.4); }
+        .loc-name {
+            flex: 1;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--parchment);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .loc-type {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 0.62rem;
+            color: rgba(201,168,76,0.55);
+            flex-shrink: 0;
+        }
+        .loc-empty {
+            font-style: italic;
+            font-size: 0.72rem;
+            color: rgba(242,232,208,0.4);
+            padding: 0.4rem 0.2rem;
+        }
+
+        /* ── POI PANELİ (sağdan açılan büyük pencere) ── */
+        .poi-panel {
+            position: fixed;
+            top: 0; right: 0; bottom: 0;
+            width: min(440px, 94vw);
+            z-index: 110;
+            transform: translateX(105%);
+            transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+        }
+        .poi-panel.open { transform: translateX(0); }
+        .poi-panel-inner {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dim) transparent;
+            background:
+                linear-gradient(180deg, rgba(26,18,6,0.55), rgba(8,5,2,0.4) 220px),
+                rgba(10,7,3,0.94);
+            border-left: 1px solid rgba(201,168,76,0.35);
+            box-shadow: -12px 0 50px rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1.7rem 2.2rem;
+        }
+        .poi-panel-inner::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 4px; bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, rgba(201,168,76,0.4) 20%, rgba(201,168,76,0.4) 80%, transparent);
+            pointer-events: none;
+        }
+        .poi-panel-close {
+            position: absolute;
+            left: -34px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 74px;
+            border: 1px solid rgba(201,168,76,0.4);
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            background: rgba(10,7,3,0.92);
+            color: var(--gold);
+            font-size: 1.15rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(10px);
-            transition: background 0.2s ease;
+            transition: color 0.25s, background 0.25s;
+            backdrop-filter: blur(8px);
         }
-        
-        .zoom-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .poi-panel-close:hover {
+            color: var(--gold-bright);
+            background: rgba(201,168,76,0.12);
         }
-        
-        .details-panel {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 300px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid #333;
-            z-index: 100;
+        .poi-fade { animation: subtitleFade 0.55s ease both; }
+
+        .poi-eyebrow {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.65);
+            margin-bottom: 0.45rem;
         }
-        
-        .details-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #ff4444;
+        .poi-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            line-height: 1.2;
+            margin: 0 0 0.9rem;
+            text-shadow: 0 0 30px rgba(201,168,76,0.4), 2px 2px 8px rgba(0,0,0,0.9);
         }
-        
-        .details-content {
-            font-size: 14px;
-            line-height: 1.5;
+        input.poi-title-input {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold-bright);
+            margin-bottom: 0.9rem;
+            padding: 0.5rem 0.6rem;
         }
-        
-        .distance-info {
-            background: rgba(255, 68, 68, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            border-left: 3px solid #ff4444;
+        .poi-ornament {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 1.2rem;
         }
-        
-        .clear-btn {
-            background: #ff4444;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
+        .poi-ornament .orn-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(201,168,76,0.6), transparent);
+        }
+        .poi-ornament .orn-line.rev {
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.6));
+        }
+        .poi-ornament .orn-diamond {
+            width: 6px; height: 6px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        .poi-hero {
+            position: relative;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
             cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-            width: 100%;
+            background: rgba(0,0,0,0.4);
+            transition: border-color 0.25s;
         }
-        
-        .clear-btn:hover {
-            background: #cc3333;
+        .poi-hero:hover { border-color: rgba(201,168,76,0.65); }
+        .poi-hero img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease, filter 0.3s;
+        }
+        .poi-hero:hover img { transform: scale(1.03); filter: brightness(1.08); }
+        .poi-hero .hero-caption {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 1.4rem 0.8rem 0.5rem;
+            background: linear-gradient(transparent, rgba(4,2,1,0.9));
+            font-family: 'Cinzel', serif;
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            text-align: center;
+        }
+
+        .poi-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.4rem;
+            margin-bottom: 0.4rem;
+        }
+        .poi-thumb {
+            position: relative;
+            aspect-ratio: 1;
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            background: rgba(0,0,0,0.4);
+            transition: border-color 0.25s, transform 0.2s;
+        }
+        .poi-thumb:hover { border-color: rgba(201,168,76,0.6); transform: scale(1.05); }
+        .poi-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .poi-thumb-add {
+            aspect-ratio: 1;
+            border: 1px dashed rgba(201,168,76,0.4);
+            border-radius: 3px;
+            background: none;
+            color: var(--gold-dim);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.25s, border-color 0.25s, background 0.25s;
+        }
+        .poi-thumb-add:hover {
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.7);
+            background: rgba(201,168,76,0.06);
+        }
+
+        .poi-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.7);
+            margin: 1.3rem 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .poi-section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+        }
+        .poi-info-text {
+            font-family: 'Lora', serif;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            color: rgba(242,232,208,0.85);
+            white-space: pre-wrap;
+        }
+        .poi-info-text.empty {
+            font-style: italic;
+            color: rgba(242,232,208,0.4);
+        }
+
+        /* ── PROFİL ── */
+        .profile-body { display: flex; align-items: center; gap: 0.75rem; }
+        .profile-avatar {
+            position: relative;
+            width: 52px; height: 52px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(201,168,76,0.45);
+            background: rgba(201,168,76,0.08) center/cover no-repeat;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.15rem;
+            color: var(--gold);
+            transition: border-color 0.25s, box-shadow 0.25s;
+            overflow: hidden;
+        }
+        .profile-avatar:hover {
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 14px rgba(201,168,76,0.35);
+        }
+        .profile-avatar::after {
+            content: "✎";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8,5,2,0.55);
+            color: var(--gold-bright);
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .profile-avatar:hover::after { opacity: 1; }
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gold-bright);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.4rem;
+            max-width: 100%;
+        }
+        .profile-name:hover { text-decoration: underline; text-decoration-color: rgba(201,168,76,0.5); }
+        .profile-name .edit-ic { font-size: 0.65rem; color: var(--gold-dim); }
+        .profile-sub {
+            font-size: 0.66rem;
+            font-style: italic;
+            color: rgba(242,232,208,0.45);
+            margin-top: 2px;
+        }
+        .profile-actions { display: flex; gap: 0.4rem; margin-top: 0.75rem; }
+        .profile-actions .btn { flex: 1; padding: 0.42rem 0.3rem; font-size: 0.54rem; }
+
+        /* ── ROTA ÖZETİ ── */
+        .empty-state {
+            font-style: italic;
+            font-size: 0.8rem;
+            color: rgba(242,232,208,0.5);
+            line-height: 1.6;
+        }
+        .empty-state .hint {
+            display: block;
+            margin-top: 0.6rem;
+            font-size: 0.7rem;
+            color: rgba(201,168,76,0.45);
+        }
+        .summary-box {
+            border: 1px solid rgba(201,168,76,0.22);
+            border-left: 3px solid var(--gold);
+            border-radius: 3px;
+            background: rgba(201,168,76,0.06);
+            padding: 0.7rem 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.8rem;
+            padding: 0.18rem 0;
+            font-size: 0.78rem;
+        }
+        .summary-row .s-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: rgba(242,232,208,0.5);
+            white-space: nowrap;
+        }
+        .summary-row .s-value { color: var(--parchment); text-align: right; }
+        .summary-row.main .s-value {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--gold-bright);
+            font-size: 0.85rem;
+        }
+        .summary-sep {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+            margin: 0.4rem 0;
+        }
+
+        /* ── ETAP LİSTESİ ── */
+        .legs-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.6);
+            margin: 0 0 0.5rem;
+        }
+        .leg-row {
+            border: 1px solid rgba(201,168,76,0.16);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.02);
+            padding: 0.55rem 0.65rem;
+            margin-bottom: 0.55rem;
+            transition: border-color 0.25s, background 0.25s;
+            animation: legRowIn 0.35s ease both;
+        }
+        .leg-row:hover {
+            border-color: rgba(201,168,76,0.45);
+            background: rgba(201,168,76,0.05);
+        }
+        .leg-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.45rem;
+        }
+        .leg-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+        .leg-stats {
+            font-size: 0.68rem;
+            color: rgba(242,232,208,0.65);
+            text-align: right;
+            line-height: 1.45;
+        }
+        .leg-stats b { color: var(--parchment); font-weight: 600; }
+        .leg-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.35rem;
+        }
+        .leg-controls select { padding: 0.3rem 0.25rem; font-size: 0.66rem; }
+        .leg-controls .mini-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.5rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: rgba(242,232,208,0.4);
+            margin-bottom: 0.15rem;
+            display: block;
+        }
+
+        /* ── PRESET LİSTESİ ── */
+        .preset-save-row { display: flex; gap: 0.45rem; margin-bottom: 0.65rem; }
+        .preset-save-row .text-input { flex: 1; }
+        .preset-save-row .btn { width: auto; flex-shrink: 0; padding: 0.45rem 0.7rem; }
+        .preset-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid rgba(201,168,76,0.14);
+            border-radius: 3px;
+            margin-bottom: 0.4rem;
+            background: rgba(255,255,255,0.02);
+            transition: border-color 0.2s;
+        }
+        .preset-row:hover { border-color: rgba(201,168,76,0.4); }
+        .preset-info { flex: 1; min-width: 0; cursor: pointer; }
+        .preset-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--parchment);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .preset-info:hover .preset-name { color: var(--gold-bright); }
+        .preset-meta {
+            font-size: 0.6rem;
+            font-style: italic;
+            color: rgba(242,232,208,0.4);
+        }
+        .preset-btn {
+            flex-shrink: 0;
+            width: 24px; height: 24px;
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 3px;
+            background: none;
+            color: var(--gold-dim);
+            font-size: 0.68rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .preset-btn:hover { color: var(--gold-bright); border-color: rgba(201,168,76,0.6); }
+        .preset-btn.del:hover { color: #f0b0b0; border-color: rgba(180,60,60,0.7); }
+
+        /* ── TAKVİM ── */
+        .cal-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 0.7rem;
+        }
+        .cal-nav-btn {
+            width: 26px; height: 26px;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 3px;
+            background: rgba(201,168,76,0.06);
+            color: var(--gold);
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+        .cal-nav-btn:hover { background: rgba(201,168,76,0.16); color: var(--gold-bright); }
+        .cal-month-label {
+            flex: 1;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            line-height: 1.3;
+        }
+        .cal-month-label .cal-epithet {
+            display: block;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: none;
+            color: rgba(242,232,208,0.5);
+        }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+        }
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.56rem;
+            font-weight: 700;
+            color: rgba(242,232,208,0.7);
+            border: 1px solid rgba(201,168,76,0.12);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+            user-select: none;
+        }
+        .cal-day:hover {
+            background: rgba(201,168,76,0.14);
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.45);
+        }
+        .cal-day.today {
+            background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+            color: #14100a;
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 10px rgba(201,168,76,0.5);
+        }
+        .cal-footer {
+            margin-top: 0.75rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(201,168,76,0.15);
+            text-align: center;
+        }
+        .cal-current {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold-bright);
+        }
+        .cal-current-en {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 0.62rem;
+            color: rgba(242,232,208,0.45);
+            margin-top: 3px;
+        }
+        .cal-hint {
+            font-size: 0.58rem;
+            font-style: italic;
+            color: rgba(201,168,76,0.4);
+            margin-top: 0.5rem;
+        }
+
+        /* ── ALT HUD ── */
+        .map-hud {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.55rem 1rem;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 5px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+            z-index: 100;
+            animation: panelSlideUp 0.8s ease 0.6s both;
+        }
+        .hud-btn {
+            width: 30px; height: 30px;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 3px;
+            background: rgba(201,168,76,0.06);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, color 0.25s, border-color 0.25s;
+        }
+        .hud-btn:hover {
+            background: rgba(201,168,76,0.16);
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.6);
+        }
+        .hud-btn.armed {
+            background: rgba(159,208,224,0.15);
+            color: #c8e8f2;
+            border-color: rgba(159,208,224,0.6);
+        }
+        .hud-zoom-wrap { position: relative; }
+        .hud-zoom-pct {
+            font-family: 'Cinzel', serif;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--parchment);
+            min-width: 48px;
+            text-align: center;
+            background: none;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            padding: 0.32rem 0.2rem;
+            cursor: pointer;
+            transition: color 0.25s, border-color 0.25s, background 0.25s;
+        }
+        .hud-zoom-pct:hover, .hud-zoom-pct.open {
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.4);
+            background: rgba(201,168,76,0.08);
+        }
+        .zoom-menu {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            flex-direction: column-reverse;
+            gap: 2px;
+            padding: 5px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 6px 26px rgba(0,0,0,0.6);
+            z-index: 130;
+            animation: panelSlideUp 0.2s ease both;
+        }
+        .zoom-menu.open { display: flex; }
+        .zoom-menu button {
+            border: 1px solid transparent;
+            border-radius: 3px;
+            background: none;
+            color: rgba(242,232,208,0.75);
+            font-family: 'Cinzel', serif;
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 0.32rem 1rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s, color 0.15s;
+        }
+        .zoom-menu button:hover {
+            background: rgba(201,168,76,0.14);
+            color: var(--gold-bright);
+        }
+        .zoom-menu button.current {
+            color: var(--gold-bright);
+            border-color: rgba(201,168,76,0.4);
+            background: rgba(201,168,76,0.08);
+        }
+        .hud-sep {
+            width: 1px;
+            height: 26px;
+            background: linear-gradient(180deg, transparent, rgba(201,168,76,0.4), transparent);
+        }
+        .hud-scale { display: flex; align-items: center; gap: 0.6rem; }
+        .scale-ruler { position: relative; height: 12px; transition: width 0.15s ease; }
+        .scale-ruler::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 4px;
+            border: 1.5px solid var(--gold);
+            border-top: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+        .scale-ruler::after {
+            content: "";
+            position: absolute;
+            left: 50%; bottom: 0;
+            width: 1.5px; height: 7px;
+            background: var(--gold);
+        }
+        .scale-value {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold-bright);
+            white-space: nowrap;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 76px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            border: 1px solid rgba(201,168,76,0.45);
+            border-radius: 4px;
+            padding: 0.55rem 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--gold-bright);
+            z-index: 400;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            animation: toastIn 0.3s ease both;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.error { border-color: rgba(180,60,60,0.7); color: #f0b0b0; }
+
+        /* ── LIGHTBOX ── */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(4,2,1,0.93);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: lightboxIn 0.25s ease both;
+            padding: 60px 24px 50px;
+        }
+        .lb-stage {
+            display: flex;
+            gap: 1.2rem;
+            align-items: stretch;
+            max-width: min(94vw, 1400px);
+            max-height: 84vh;
+            animation: lightboxImgIn 0.3s cubic-bezier(.22,1,.36,1) both;
+        }
+        .lb-imgwrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+        .lb-stage img {
+            max-width: 100%;
+            max-height: 84vh;
+            object-fit: contain;
+            border: 1px solid rgba(201,168,76,0.4);
+            border-radius: 4px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 30px rgba(201,168,76,0.12);
+        }
+        .lb-meta {
+            width: 290px;
+            flex-shrink: 0;
+            background: rgba(10,7,3,0.9);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 5px;
+            padding: 1.1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold-dim) transparent;
+        }
+        .lb-meta .lb-meta-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.65);
+            margin-top: 0.3rem;
+        }
+        .lb-meta textarea.text-input { flex: 1; min-height: 120px; }
+        .lb-btn {
+            position: absolute;
+            width: 42px; height: 42px;
+            border: 1px solid rgba(201,168,76,0.35);
+            border-radius: 4px;
+            background: rgba(8,5,2,0.8);
+            color: var(--gold);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.25s, border-color 0.25s, background 0.25s;
+            z-index: 2;
+        }
+        .lb-btn:hover { color: var(--gold-bright); border-color: rgba(201,168,76,0.7); background: rgba(201,168,76,0.12); }
+        .lb-close { top: 16px; right: 20px; }
+        .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+        .lb-count {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: rgba(201,168,76,0.7);
+        }
+        @media (max-width: 760px) {
+            .lb-stage { flex-direction: column; overflow-y: auto; }
+            .lb-meta { width: 100%; }
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 350;
+            background: rgba(4,2,1,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: lightboxIn 0.2s ease both;
+        }
+        .modal-box {
+            width: min(90vw, 400px);
+            background: #14100a;
+            border: 1px solid rgba(201,168,76,0.4);
+            border-radius: 5px;
+            padding: 1.3rem 1.4rem 1.2rem;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+            animation: lightboxImgIn 0.25s cubic-bezier(.22,1,.36,1) both;
+        }
+        .modal-msg {
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: var(--parchment);
+            margin-bottom: 1.1rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1100px) {
+            .side-col.left { width: 262px; }
+            .side-col.right { width: 296px; }
+        }
+        @media (max-width: 820px) {
+            .title-block { display: none; }
+            .side-col.left { width: 240px; padding: 10px; }
+            .side-col.right { width: 262px; padding: 10px; }
+            .map-hud { bottom: 10px; gap: 0.55rem; padding: 0.45rem 0.7rem; }
+            .hud-scale { display: none; }
+        }
+        @media (max-width: 600px) {
+            .side-col.left { width: 220px; }
+            .side-col.right { width: 236px; }
+            .locations-panel .panel-body { max-height: 28vh; }
+            .details-panel .panel-body { max-height: 24vh; }
         }
     </style>
 </head>
 <body>
-    <div class="map-container" id="mapContainer">
+    <div class="map-underlay"></div>
+    <div class="map-viewport" id="mapViewport">
         <div class="map-image" id="mapImage"></div>
+        <svg class="route-svg" id="routeSvg"></svg>
     </div>
-    
-    <div class="controls-left">
-        <div class="control-group">
-            <label class="control-label">Travel Speed</label>
-            <select id="travelSpeed">
-                <option value="30">Fast (30 mile/day)</option>
-                <option value="24" selected>Normal (24 mile/day)</option>
-                <option value="18">Slow (18 mile/day)</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Terrain Difficulty</label>
-            <select id="terrainDifficulty">
-                <option value="1" selected>Normal Terrain</option>
-                <option value="2">Difficult Terrain (x2)</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Daily Travel Time</label>
-            <select id="travelTime">
-                <option value="2">2 Hours</option>
-                <option value="4">4 Hours</option>
-                <option value="6">6 Hours</option>
-                <option value="8" selected>8 Hours</option>
-                <option value="10">10 Hours</option>
-                <option value="12">12 Hours</option>
-            </select>
-        </div>
+
+    <div class="vignette"></div>
+
+    <div class="title-block">
+        <div class="page-eyebrow">Yolculuk Planlayıcı</div>
+        <h1 class="map-title">Aiwelen Haritası</h1>
     </div>
-    
-    <div class="zoom-controls">
-        <button class="zoom-btn" id="zoomIn">+</button>
-        <button class="zoom-btn" id="zoomOut">-</button>
-    </div>
-    
-    <div class="details-panel">
-        <div class="details-title">Route Details</div>
-        <div class="details-content" id="detailsContent">
-            Click on the map to start planning your route...
+
+    <!-- ── SOL SÜTUN ── -->
+    <div class="side-col left">
+        <div class="top-row">
+            <a class="back-link" href="../../index.html">‹ Ana Menü</a>
+            <button class="cal-toggle" id="calToggle" title="Aiwelen Takvimi">☾ Takvim</button>
+        </div>
+
+        <div class="panel calendar-panel" id="calendarPanel">
+            <div class="panel-header" data-toggle-cal>
+                <span class="panel-title">Aiwelen Takvimi</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body" id="calendarBody"></div>
+        </div>
+
+        <div class="panel locations-panel" id="locationsPanel">
+            <div class="panel-header" data-toggle>
+                <span class="panel-title">Lokasyonlar</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body" id="locationsBody"></div>
+        </div>
+
+        <div class="panel defaults-panel" id="defaultsPanel">
+            <div class="panel-header" data-toggle>
+                <span class="panel-title">Varsayılan Ayarlar</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body">
+                <div class="control-group">
+                    <label class="control-label">Travel Pace</label>
+                    <select id="defaultPace">
+                        <option value="30">Fast — 30 mil/gün</option>
+                        <option value="24" selected>Normal — 24 mil/gün</option>
+                        <option value="18">Slow — 18 mil/gün</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Terrain</label>
+                    <select id="defaultTerrain">
+                        <option value="1" selected>Normal Terrain</option>
+                        <option value="2">Difficult Terrain (×2)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Günlük Yol Saati</label>
+                    <select id="defaultHours">
+                        <option value="2">2 saat/gün</option>
+                        <option value="4">4 saat/gün</option>
+                        <option value="6">6 saat/gün</option>
+                        <option value="8" selected>8 saat/gün</option>
+                        <option value="10">10 saat/gün</option>
+                        <option value="12">12 saat/gün</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button class="btn" id="applyAllBtn" title="Bu ayarları mevcut tüm etaplara uygula">Tümüne Uygula</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- ── SAĞ SÜTUN ── -->
+    <div class="side-col right" id="rightCol">
+        <div class="panel profile-panel" id="profilePanel">
+            <div class="panel-header" data-toggle>
+                <span class="panel-title">Oyuncu Profili</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body">
+                <div class="profile-body">
+                    <div class="profile-avatar" id="profileAvatar" title="Profil resmi yükle"></div>
+                    <div class="profile-info">
+                        <span class="profile-name" id="profileName" title="İsmi değiştir"></span>
+                        <div class="profile-sub" id="profileSub"></div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn" id="exportProfileBtn" title="Profili JSON dosyası olarak indir">Dışa Aktar</button>
+                    <button class="btn" id="importProfileBtn" title="JSON dosyasından profil yükle">İçe Aktar</button>
+                    <button class="btn" id="shareProfileBtn" title="Profili link olarak paylaş (resimler hariç)">Link</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel details-panel" id="detailsPanel">
+            <div class="panel-header" data-toggle>
+                <span class="panel-title">Rota Detayları</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body" id="detailsContent"></div>
+        </div>
+
+        <div class="panel presets-panel" id="presetsPanel">
+            <div class="panel-header" data-toggle>
+                <span class="panel-title">Rota Presetleri</span>
+                <span class="panel-chevron">▾</span>
+            </div>
+            <div class="panel-body">
+                <div class="preset-save-row">
+                    <input class="text-input" id="presetNameInput" type="text" maxlength="40" placeholder="Rota adı...">
+                    <button class="btn" id="savePresetBtn">Kaydet</button>
+                </div>
+                <div id="presetList"></div>
+                <div class="btn-row" style="margin-top:0.5rem;">
+                    <button class="btn" id="importRouteBtn">Rota İçe Aktar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── POI PANELİ (sağdan açılır) ── -->
+    <div class="poi-panel" id="poiPanel">
+        <button class="poi-panel-close" id="poiPanelClose" title="Kapat (Esc)">›</button>
+        <div class="poi-panel-inner" id="poiPanelContent"></div>
+    </div>
+
+    <!-- ── ALT HUD ── -->
+    <div class="map-hud">
+        <button class="hud-btn" id="zoomOut" title="Uzaklaştır (−)">−</button>
+        <span class="hud-zoom-wrap">
+            <button class="hud-zoom-pct" id="zoomPct" title="Zoom seviyesi seç">100%</button>
+            <div class="zoom-menu" id="zoomMenu"></div>
+        </span>
+        <button class="hud-btn" id="zoomIn" title="Yakınlaştır (+)">+</button>
+        <button class="hud-btn" id="zoomReset" title="Görünümü sıfırla (0)">⌂</button>
+        <button class="hud-btn" id="measureBtn" title="Serbest Cetvel (M) — sürükleyerek ölç">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16.2 2.5 21.5 7.8 7.8 21.5 2.5 16.2Z"/>
+                <path d="m6.8 12.2 2 2"/>
+                <path d="m9.8 9.2 2 2"/>
+                <path d="m12.8 6.2 2 2"/>
+            </svg>
+        </button>
+        <div class="hud-sep"></div>
+        <div class="hud-scale">
+            <div class="scale-ruler" id="scaleRuler"></div>
+            <span class="scale-value" id="scaleValue"></span>
+        </div>
+    </div>
+
+    <!-- gizli dosya girişleri -->
+    <input type="file" id="avatarInput" accept="image/*" hidden>
+    <input type="file" id="galleryInput" accept="image/*" multiple hidden>
+    <input type="file" id="importProfileInput" accept=".json,application/json" hidden>
+    <input type="file" id="importRouteInput" accept=".json,application/json" hidden>
+
     <script>
-        class MapApp {
-            constructor() {
-                this.mapContainer = document.getElementById('mapContainer');
-                this.mapImage = document.getElementById('mapImage');
-                this.detailsContent = document.getElementById('detailsContent');
-                this.travelSpeedSelect = document.getElementById('travelSpeed');
-                this.terrainDifficultySelect = document.getElementById('terrainDifficulty');
-                this.travelTimeSelect = document.getElementById('travelTime');
-                
-                // Map properties
-                this.mapWidth = 1920;
-                this.mapHeight = 1080;
-                this.minZoom = 0.3;
-                this.maxZoom = 3;
-                this.zoom = 0.8;
-                this.panX = 0;
-                this.panY = 0;
-                
-                // Waypoints
-                this.waypoints = [];
-                this.waypointCounter = 0;
-                
-                // Dragging
-                this.isDragging = false;
-                this.dragStartX = 0;
-                this.dragStartY = 0;
-                this.lastPanX = 0;
-                this.lastPanY = 0;
-                
-                this.init();
+    /* ═══════════ SABİT POI LİSTESİ ═══════════
+       Koordinatlar harita düzlemindedir (1920×1080, 1 px = 1 mil).
+       `info` alanı DM (site sahibi) tarafından buradan doldurulur —
+       sayfada salt-okunur gösterilir, ziyaretçiler değiştiremez. */
+    const POI_TYPES = {
+        baskent: 'Başkent', sehir: 'Şehir', sinir: 'Sınır Şehri', kale: 'Kale',
+        harabe: 'Harabe', tapinak: 'Tapınak', gecit: 'Geçit', bolge: 'Bölge',
+        doga: 'Doğa', dogayerleske: 'Doğa / Yerleşke', fener: 'Deniz Feneri / Yerleşke', ozel: 'Özel'
+    };
+    const BASE_POIS = [
+        { id: 'paragon',          name: 'Paragon',                     type: 'kale',         x: 390,  y: 98,   info: '' },
+        { id: 'pillivar',         name: 'Pillivar',                    type: 'baskent',      x: 572,  y: 243,  info: '' },
+        { id: 'frozen-monuments', name: 'Frozen Monuments',            type: 'harabe',       x: 641,  y: 95,   info: '' },
+        { id: 'dawn-path',        name: 'The Dawn Path',               type: 'gecit',        x: 732,  y: 198,  info: '' },
+        { id: 'wolfs-inn',        name: "Wolf's Inn",                  type: 'baskent',      x: 821,  y: 278,  info: '' },
+        { id: 'blood-hollow',     name: 'Blood Hollow',                type: 'bolge',        x: 1021, y: 150,  info: '' },
+        { id: 'cloud-monastery',  name: 'Cloud Monastery',             type: 'tapinak',      x: 1152, y: 164,  info: '' },
+        { id: 'godwood-peak',     name: 'Godwood Peak',                type: 'doga',         x: 1228, y: 140,  info: '' },
+        { id: 'frozen-grove',     name: 'Frozen Grove',                type: 'doga',         x: 1136, y: 287,  info: '' },
+        { id: 'frosty-passage',   name: 'Frosty Passage',              type: 'sinir',        x: 1183, y: 388,  info: '' },
+        { id: 'wolfgrad',         name: 'Wolfgrad',                    type: 'sehir',        x: 1440, y: 255,  info: '' },
+        { id: 'mountain-grounds', name: 'Mountain Grounds',            type: 'baskent',      x: 1486, y: 425,  info: '' },
+        { id: 'verdun',           name: 'Verdun',                      type: 'sehir',        x: 600,  y: 534,  info: '' },
+        { id: 'balance-ruins',    name: 'Castle of the Balance Ruins', type: 'harabe',       x: 796,  y: 525,  info: '' },
+        { id: 'far-islands',      name: 'Far Islands',                 type: 'bolge',        x: 300,  y: 510,  info: '' },
+        { id: 'western-shield',   name: 'Western Shield',              type: 'kale',         x: 800,  y: 630,  info: '' },
+        { id: 'zonthar',          name: 'Zonthar',                     type: 'sehir',        x: 614,  y: 694,  info: '' },
+        { id: 'karakuma',         name: 'Karakuma',                    type: 'baskent',      x: 549,  y: 764,  info: '' },
+        { id: 'okukita',          name: 'Okukita',                     type: 'sehir',        x: 676,  y: 737,  info: '' },
+        { id: 'yamai',            name: 'Yamai',                       type: 'sehir',        x: 612,  y: 802,  info: '' },
+        { id: 'irongrove',        name: 'Irongrove',                   type: 'sehir',        x: 915,  y: 768,  info: '' },
+        { id: 'white-citadel',    name: 'White Citadel',               type: 'baskent',      x: 1029, y: 548,  info: '' },
+        { id: 'moradin-pass',     name: 'Moradin Pass',                type: 'sinir',        x: 1408, y: 558,  info: '' },
+        { id: 'mountainside',     name: 'Mountainside',                type: 'sehir',        x: 1532, y: 644,  info: '' },
+        { id: 'white-linn',       name: 'White Linn',                  type: 'sehir',        x: 1298, y: 751,  info: '' },
+        { id: 'alve-dorei',       name: 'Alve Dorei',                  type: 'baskent',      x: 572,  y: 1030, info: '' },
+        { id: 'merdalon',         name: 'Merdalon',                    type: 'fener',        x: 933,  y: 913,  info: '' },
+        { id: 'lierin',           name: 'Lierin',                      type: 'dogayerleske', x: 1145, y: 980,  info: '' },
+        { id: 'order-ruins',      name: 'Fortress of the Order Ruins', type: 'harabe',       x: 1473, y: 830,  info: '' }
+    ];
+
+    /* DM (site sahibi) görselleri — POI panelinin üst "Arşiv Görselleri" alanında
+       gösterilir; ziyaretçiler ekleyemez/silemez. Dosyaları bu klasöre (veya bir alt
+       klasöre) koyup yollarını buraya yaz. Örn:
+       'white-citadel': ['img/white-citadel-1.jpg', 'img/white-citadel-2.jpg'] */
+    const DM_IMAGES = {
+    };
+
+    /* ═══════════ AİWELEN TAKVİMİ ═══════════
+       Yıl = 10 ay, toplam 304 gün. Z.G.S. = Zafer Gününden Sonra (A.V.D.) */
+    const CAL_MONTHS = [
+        ['MARTUS',    'Coldlight',    31],
+        ['APRALAS',   'Breezen',      30],
+        ['MAIUS',     'Mildlight',    31],
+        ['ONIOS',     'Flower',       30],
+        ['QUINTILES', 'Summerwake',   31],
+        ['SECTILIS',  'Highsun Days', 30],
+        ['SEPTER',    'Last Ember',   30],
+        ['OCTER',     'Yellowleaf',   31],
+        ['NOVA',      'Winterwake',   30],
+        ['DECAN',     'Nightwold',    30]
+    ];
+    const CAL_YEAR_DAYS = 304;
+    const CAL_DEFAULT = { year: 27, month: 2, day: 6 }; // 6 MAIUS Z.G.S. 27
+
+    function calDayOfYear(d) {
+        let n = d.day - 1;
+        for (let i = 0; i < d.month; i++) n += CAL_MONTHS[i][2];
+        return n;
+    }
+    function calFromTotal(total) {
+        const year = Math.floor(total / CAL_YEAR_DAYS);
+        let doy = total - year * CAL_YEAR_DAYS;
+        let month = 0;
+        while (doy >= CAL_MONTHS[month][2]) { doy -= CAL_MONTHS[month][2]; month++; }
+        return { year, month, day: doy + 1 };
+    }
+    function calAddDays(d, n) {
+        return calFromTotal(d.year * CAL_YEAR_DAYS + calDayOfYear(d) + n);
+    }
+    function calFormatTr(d) {
+        return d.day + ' ' + CAL_MONTHS[d.month][0] + ' Z.G.S. ' + d.year;
+    }
+    function calFormatEn(d) {
+        const day = d.day;
+        const suf = (day % 10 === 1 && day !== 11) ? 'st'
+                  : (day % 10 === 2 && day !== 12) ? 'nd'
+                  : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+        return day + suf + ' day of ' + CAL_MONTHS[d.month][0] + ', "' + CAL_MONTHS[d.month][1] + '", Year ' + d.year + ' A.V.D.';
+    }
+
+    /* ═══════════ URL PAYLAŞIM YARDIMCILARI ═══════════
+       Koordinatlar base62 ile 2 karaktere sığar (62² = 3844 > 1920). */
+    const B62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const toB62 = n => {
+        n = Math.max(0, Math.min(3843, Math.round(n)));
+        return B62[Math.floor(n / 62)] + B62[n % 62];
+    };
+    const fromB62 = s => {
+        const a = B62.indexOf(s[0]), b = B62.indexOf(s[1]);
+        return (a === -1 || b === -1) ? NaN : a * 62 + b;
+    };
+    const PACE_LIST = [30, 24, 18];
+    const HOURS_LIST = [2, 4, 6, 8, 10, 12];
+
+    function encodeRouteCode(name, wps, legs) {
+        let s = 'B';
+        s += wps.map(w => toB62(w.x) + toB62(w.y)).join('');
+        s += '-' + legs.map(l => {
+            const p = Math.max(0, PACE_LIST.indexOf(l.pace));
+            const t = l.terrain === 2 ? 1 : 0;
+            const h = Math.max(0, HOURS_LIST.indexOf(l.dailyHours));
+            return B62[p * 12 + t * 6 + h];
+        }).join('');
+        if (name) s += '~' + encodeURIComponent(String(name).slice(0, 30).replace(/ /g, '_'));
+        return s;
+    }
+    function decodeRouteCode(code) {
+        try {
+            if (!code || code[0] !== 'B') return null;
+            let rest = code.slice(1);
+            let name = '';
+            const tilde = rest.indexOf('~');
+            if (tilde !== -1) {
+                name = decodeURIComponent(rest.slice(tilde + 1)).replace(/_/g, ' ').slice(0, 40);
+                rest = rest.slice(0, tilde);
             }
-            
-            init() {
-                this.centerMap();
-                this.initEventListeners();
+            const dash = rest.indexOf('-');
+            if (dash === -1) return null;
+            const wpStr = rest.slice(0, dash);
+            const legStr = rest.slice(dash + 1);
+            if (wpStr.length % 4 !== 0) return null;
+            const wps = [];
+            for (let i = 0; i < wpStr.length; i += 4) {
+                const x = fromB62(wpStr.slice(i, i + 2));
+                const y = fromB62(wpStr.slice(i + 2, i + 4));
+                if (isNaN(x) || isNaN(y) || x > 1920 || y > 1080) return null;
+                wps.push({ x, y });
+            }
+            if (wps.length < 2) return null;
+            const legs = [];
+            for (let i = 0; i < wps.length - 1; i++) {
+                const v = B62.indexOf(legStr[i] || '0');
+                if (v === -1) return null;
+                legs.push({
+                    pace: PACE_LIST[Math.floor(v / 12) % 3] || 24,
+                    terrain: Math.floor(v / 6) % 2 === 1 ? 2 : 1,
+                    dailyHours: HOURS_LIST[v % 6] || 8
+                });
+            }
+            return { name, waypoints: wps, legs };
+        } catch (e) { return null; }
+    }
+
+    /* Paylaşım URL tabanı: sondaki index.html'i at — daha kısa ve temiz görünür */
+    function shareBase() {
+        return location.origin + location.pathname.replace(/index\.html$/, '');
+    }
+
+    function bytesToB64url(bytes) {
+        let bin = '';
+        for (let i = 0; i < bytes.length; i += 8192) {
+            bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+        }
+        return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function b64urlToBytes(s) {
+        s = s.replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        const bin = atob(s);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return bytes;
+    }
+    async function deflateText(text) {
+        const input = new TextEncoder().encode(text);
+        if (typeof CompressionStream === 'undefined') return { c: false, data: input };
+        const stream = new Blob([input]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+        const buf = await new Response(stream).arrayBuffer();
+        return { c: true, data: new Uint8Array(buf) };
+    }
+    async function inflateToText(bytes, compressed) {
+        if (!compressed) return new TextDecoder().decode(bytes);
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        const buf = await new Response(stream).arrayBuffer();
+        return new TextDecoder().decode(buf);
+    }
+
+    class MapApp {
+        constructor() {
+            this.viewport = document.getElementById('mapViewport');
+            this.mapImage = document.getElementById('mapImage');
+            this.routeSvg = document.getElementById('routeSvg');
+            this.detailsContent = document.getElementById('detailsContent');
+            this.locationsBody = document.getElementById('locationsBody');
+
+            this.defaultPaceSel = document.getElementById('defaultPace');
+            this.defaultTerrainSel = document.getElementById('defaultTerrain');
+            this.defaultHoursSel = document.getElementById('defaultHours');
+
+            // ── HARİTA ÖLÇEĞİ (DEĞİŞTİRME — doğrulanmış kalibrasyon) ──
+            this.mapWidth = 1920;
+            this.mapHeight = 1080;
+            this.milesPerPixel = 1.0;
+
+            this.minZoom = 0.3;
+            this.maxZoom = 3;
+            this.zoom = 0.8;
+            this.panX = 0;
+            this.panY = 0;
+
+            this.waypoints = [];
+            this.legs = [];
+            this.waypointCounter = 0;
+            this.highlightedLeg = -1;
+
+            this.isPanning = false;
+            this.didPan = false;
+            this.dragStartX = 0;
+            this.dragStartY = 0;
+            this.lastPanX = 0;
+            this.lastPanY = 0;
+            this.wpDrag = null;
+            this.poiDrag = null;
+            this.flyAnim = null;
+
+            this.selectedPoiId = null;
+            this.placingPoi = false;
+            this.measuring = false;
+            this.measureDrag = false;
+            this.measure = null;
+            this.locFilter = '';
+            this.poiMarkers = new Map();
+            this.calView = null;
+
+            this.routeKey = 'aiwelen-map-route-v2';
+            this.profileKey = 'aiwelen-map-profile-v1';
+            this.profile = this.loadProfile();
+
+            this.init();
+        }
+
+        init() {
+            this.fitView();
+            this.initEventListeners();
+            this.loadRoute();
+            this.renderPoiMarkers();
+            this.renderLocationsList();
+            this.renderProfile();
+            this.renderPresets();
+            this.renderCalendar();
+            this.updateMapTransform();
+            this.updateDetails();
+            this.handleShareHash();
+        }
+
+        /* ═══════════ GÖRÜNÜM ═══════════ */
+
+        fitView() {
+            const cw = this.viewport.clientWidth;
+            const ch = this.viewport.clientHeight;
+            this.zoom = Math.max(this.minZoom,
+                Math.min(this.maxZoom, Math.min(cw / this.mapWidth, ch / this.mapHeight)));
+            this.panX = (cw - this.mapWidth * this.zoom) / 2;
+            this.panY = (ch - this.mapHeight * this.zoom) / 2;
+        }
+
+        zoomAtCenter(delta) {
+            this.zoomAtPoint(this.viewport.clientWidth / 2, this.viewport.clientHeight / 2, delta);
+        }
+
+        /* Ekran merkezini sabit tutarak mutlak zoom seviyesine geç */
+        setZoomLevel(z) {
+            const cx = this.viewport.clientWidth / 2;
+            const cy = this.viewport.clientHeight / 2;
+            const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, z));
+            const mapX = (cx - this.panX) / this.zoom;
+            const mapY = (cy - this.panY) / this.zoom;
+            this.zoom = newZoom;
+            this.panX = cx - mapX * this.zoom;
+            this.panY = cy - mapY * this.zoom;
+            this.constrainPan();
+            this.updateMapTransform();
+        }
+
+        toggleZoomMenu(open) {
+            const menu = document.getElementById('zoomMenu');
+            const pct = document.getElementById('zoomPct');
+            menu.classList.toggle('open', open);
+            pct.classList.toggle('open', open);
+            if (open) {
+                const cur = Math.round(this.zoom * 100);
+                menu.querySelectorAll('button').forEach(b => {
+                    b.classList.toggle('current', parseInt(b.dataset.zoom) === cur);
+                });
+            }
+        }
+
+        zoomAtPoint(screenX, screenY, delta) {
+            const oldZoom = this.zoom;
+            const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom + delta));
+            if (newZoom === oldZoom) return;
+            const mapX = (screenX - this.panX) / oldZoom;
+            const mapY = (screenY - this.panY) / oldZoom;
+            this.zoom = newZoom;
+            this.panX = screenX - mapX * this.zoom;
+            this.panY = screenY - mapY * this.zoom;
+            this.constrainPan();
+            this.updateMapTransform();
+        }
+
+        constrainPan() {
+            const cw = this.viewport.clientWidth;
+            const ch = this.viewport.clientHeight;
+            const mw = this.mapWidth * this.zoom;
+            const mh = this.mapHeight * this.zoom;
+            const over = 100;
+            this.panX = Math.max(-mw - over, Math.min(cw + over, this.panX));
+            this.panY = Math.max(-mh - over, Math.min(ch + over, this.panY));
+        }
+
+        updateMapTransform() {
+            this.mapImage.style.transform =
+                `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+            this.updateWaypointPositions();
+            this.updatePoiPositions();
+            this.drawRoutes();
+            this.updateHud();
+        }
+
+        toScreen(mapX, mapY) {
+            return { x: mapX * this.zoom + this.panX, y: mapY * this.zoom + this.panY };
+        }
+
+        toMap(screenX, screenY) {
+            return { x: (screenX - this.panX) / this.zoom, y: (screenY - this.panY) / this.zoom };
+        }
+
+        updateHud() {
+            document.getElementById('zoomPct').textContent = Math.round(this.zoom * 100) + '%';
+            const ruler = document.getElementById('scaleRuler');
+            const value = document.getElementById('scaleValue');
+            const candidates = [10, 25, 50, 100, 150, 200, 300, 500];
+            let miles = candidates[candidates.length - 1];
+            for (const c of candidates) {
+                const px = (c / this.milesPerPixel) * this.zoom;
+                if (px >= 70 && px <= 190) { miles = c; break; }
+                if (px > 190) { miles = c; break; }
+            }
+            ruler.style.width = ((miles / this.milesPerPixel) * this.zoom) + 'px';
+            value.textContent = miles + ' MİL';
+        }
+
+        /* Kamera uçuşu: hedefi görünür alanın ortasına yumuşakça getirir */
+        flyTo(mapX, mapY, targetZoom) {
+            this.cancelFly();
+            const leftCol = document.querySelector('.side-col.left');
+            const poiPanel = document.getElementById('poiPanel');
+            const lw = leftCol ? leftCol.offsetWidth : 0;
+            const rw = (poiPanel && poiPanel.classList.contains('open')) ? poiPanel.offsetWidth : 0;
+            const cw = this.viewport.clientWidth;
+            const ch = this.viewport.clientHeight;
+            const cx = lw + (cw - lw - rw) / 2;
+            const cy = ch / 2;
+
+            const z1 = Math.max(this.minZoom, Math.min(this.maxZoom, targetZoom || 1.5));
+            const from = { panX: this.panX, panY: this.panY, zoom: this.zoom };
+            const to = { panX: cx - mapX * z1, panY: cy - mapY * z1, zoom: z1 };
+            const dur = 950;
+            const t0 = performance.now();
+            const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            const step = (now) => {
+                if (!this.flyAnim) return;
+                const t = Math.min(1, (now - t0) / dur);
+                const e = ease(t);
+                this.panX = from.panX + (to.panX - from.panX) * e;
+                this.panY = from.panY + (to.panY - from.panY) * e;
+                this.zoom = from.zoom + (to.zoom - from.zoom) * e;
                 this.updateMapTransform();
-                this.updateDetails();
-            }
-            
-            centerMap() {
-                const containerWidth = this.mapContainer.clientWidth;
-                const containerHeight = this.mapContainer.clientHeight;
-                
-                // Haritayı ekranın ortasında konumlandır
-                this.panX = (containerWidth - this.mapWidth * this.zoom) / 2;
-                this.panY = (containerHeight - this.mapHeight * this.zoom) / 2;
-            }
-            
-            initEventListeners() {
-                // Map click for waypoints
-                this.mapContainer.addEventListener('click', (e) => {
-                    if (!this.isDragging) {
-                        this.addWaypoint(e);
-                    }
-                });
-                
-                // Mouse down - start dragging
-                this.mapContainer.addEventListener('mousedown', (e) => {
-                    if (e.target.classList.contains('waypoint')) return;
-                    
-                    this.isDragging = false;
-                    this.dragStartX = e.clientX;
-                    this.dragStartY = e.clientY;
-                    this.lastPanX = this.panX;
-                    this.lastPanY = this.panY;
-                    
+                if (t < 1) this.flyAnim = requestAnimationFrame(step);
+                else this.flyAnim = null;
+            };
+            this.flyAnim = requestAnimationFrame(step);
+        }
+
+        cancelFly() {
+            if (this.flyAnim) { cancelAnimationFrame(this.flyAnim); this.flyAnim = null; }
+        }
+
+        /* ═══════════ OLAYLAR ═══════════ */
+
+        initEventListeners() {
+            this.viewport.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('.waypoint') || e.target.closest('.poi')) return;
+                if (e.button !== undefined && e.button !== 0) return;
+                this.cancelFly();
+                if (this.measuring) {
+                    const rect = this.viewport.getBoundingClientRect();
+                    const m = this.toMap(e.clientX - rect.left, e.clientY - rect.top);
+                    this.measure = { a: m, b: m };
+                    this.measureDrag = true;
+                    this.drawRoutes();
+                    try { this.viewport.setPointerCapture(e.pointerId); } catch (err) {}
                     e.preventDefault();
-                });
-                
-                // Mouse move - handle dragging
-                this.mapContainer.addEventListener('mousemove', (e) => {
-                    if (e.buttons === 1) {
-                        const deltaX = e.clientX - this.dragStartX;
-                        const deltaY = e.clientY - this.dragStartY;
-                        
-                        // Reduced sensitivity for slower panning
-                        const sensitivity = 0.8;
-                        
-                        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-                            this.isDragging = true;
-                            this.panX = this.lastPanX + (deltaX * sensitivity);
-                            this.panY = this.lastPanY + (deltaY * sensitivity);
-                            
-                            this.constrainPan();
-                            this.updateMapTransform();
-                        }
-                    }
-                });
-                
-                // Mouse up - stop dragging
-                window.addEventListener('mouseup', () => {
-                    if (this.isDragging) {
-                        setTimeout(() => {
-                            this.isDragging = false;
-                        }, 50);
-                    }
-                });
-                
-                // Zoom controls
-                document.getElementById('zoomIn').addEventListener('click', () => {
-                    this.zoomAtCenter(0.2);
-                });
-                
-                document.getElementById('zoomOut').addEventListener('click', () => {
-                    this.zoomAtCenter(-0.2);
-                });
-                
-                // Mouse wheel zoom
-                this.mapContainer.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    
-                    const rect = this.mapContainer.getBoundingClientRect();
-                    const mouseX = e.clientX - rect.left;
-                    const mouseY = e.clientY - rect.top;
-                    
-                    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                    this.zoomAtPoint(mouseX, mouseY, delta);
-                });
-                
-                // Settings change listeners
-                this.travelSpeedSelect.addEventListener('change', () => this.updateDetails());
-                this.terrainDifficultySelect.addEventListener('change', () => this.updateDetails());
-                this.travelTimeSelect.addEventListener('change', () => this.updateDetails());
-            }
-            
-            zoomAtCenter(zoomDelta) {
-                const centerX = this.mapContainer.clientWidth / 2;
-                const centerY = this.mapContainer.clientHeight / 2;
-                this.zoomAtPoint(centerX, centerY, zoomDelta);
-            }
-            
-            zoomAtPoint(screenX, screenY, zoomDelta) {
-                const oldZoom = this.zoom;
-                const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom + zoomDelta));
-                
-                if (newZoom !== oldZoom) {
-                    // Calculate the point on the map that should stay fixed
-                    const mapX = (screenX - this.panX) / oldZoom;
-                    const mapY = (screenY - this.panY) / oldZoom;
-                    
-                    // Update zoom
-                    this.zoom = newZoom;
-                    
-                    // Adjust pan to keep the point fixed
-                    this.panX = screenX - mapX * this.zoom;
-                    this.panY = screenY - mapY * this.zoom;
-                    
+                    return;
+                }
+                this.isPanning = true;
+                this.didPan = false;
+                this.dragStartX = e.clientX;
+                this.dragStartY = e.clientY;
+                this.lastPanX = this.panX;
+                this.lastPanY = this.panY;
+                try { this.viewport.setPointerCapture(e.pointerId); } catch (err) {}
+                e.preventDefault();
+            });
+
+            this.viewport.addEventListener('pointermove', (e) => {
+                if (this.measureDrag) {
+                    const rect = this.viewport.getBoundingClientRect();
+                    this.measure.b = this.toMap(e.clientX - rect.left, e.clientY - rect.top);
+                    this.drawRoutes();
+                    return;
+                }
+                if (this.poiDrag) { this.movePoiDrag(e); return; }
+                if (this.wpDrag) { this.moveWaypointDrag(e); return; }
+                if (!this.isPanning) return;
+                const dx = e.clientX - this.dragStartX;
+                const dy = e.clientY - this.dragStartY;
+                if (this.didPan || Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                    this.didPan = true;
+                    this.viewport.classList.add('dragging');
+                    this.panX = this.lastPanX + dx;
+                    this.panY = this.lastPanY + dy;
                     this.constrainPan();
                     this.updateMapTransform();
                 }
-            }
-            
-            constrainPan() {
-                const containerWidth = this.mapContainer.clientWidth;
-                const containerHeight = this.mapContainer.clientHeight;
-                const mapDisplayWidth = this.mapWidth * this.zoom;
-                const mapDisplayHeight = this.mapHeight * this.zoom;
-                
-                // Allow some overscroll but not too much
-                const maxOverscroll = 100;
-                
-                this.panX = Math.max(-mapDisplayWidth - maxOverscroll, 
-                           Math.min(containerWidth + maxOverscroll, this.panX));
-                this.panY = Math.max(-mapDisplayHeight - maxOverscroll, 
-                           Math.min(containerHeight + maxOverscroll, this.panY));
-            }
-            
-            updateMapTransform() {
-                this.mapImage.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
-                this.updateWaypointPositions();
-                this.drawRoutes();
-            }
-            
-            addWaypoint(e) {
-                const rect = this.mapContainer.getBoundingClientRect();
-                const screenX = e.clientX - rect.left;
-                const screenY = e.clientY - rect.top;
-                
-                // Convert screen coordinates to map coordinates
-                const mapX = (screenX - this.panX) / this.zoom;
-                const mapY = (screenY - this.panY) / this.zoom;
-                
-                // Check if coordinates are within map bounds
-                if (mapX < 0 || mapX > this.mapWidth || mapY < 0 || mapY > this.mapHeight) {
-                    return;
+            });
+
+            this.viewport.addEventListener('pointerup', (e) => {
+                if (this.measureDrag) { this.measureDrag = false; return; }
+                if (this.poiDrag) { this.endPoiDrag(); return; }
+                if (this.wpDrag) { this.endWaypointDrag(); return; }
+                if (!this.isPanning) return;
+                this.isPanning = false;
+                this.viewport.classList.remove('dragging');
+                if (!this.didPan) {
+                    const rect = this.viewport.getBoundingClientRect();
+                    const sx = e.clientX - rect.left;
+                    const sy = e.clientY - rect.top;
+                    if (this.placingPoi) this.finishPoiPlacement(sx, sy);
+                    else this.addWaypointAt(sx, sy);
                 }
-                
+            });
+
+            this.viewport.addEventListener('pointercancel', () => {
+                this.isPanning = false;
+                this.wpDrag = null;
+                this.poiDrag = null;
+                this.measureDrag = false;
+                this.viewport.classList.remove('dragging');
+            });
+
+            this.viewport.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                this.cancelFly();
+                const rect = this.viewport.getBoundingClientRect();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                this.zoomAtPoint(e.clientX - rect.left, e.clientY - rect.top, delta);
+            }, { passive: false });
+
+            document.getElementById('zoomIn').addEventListener('click', () => { this.cancelFly(); this.zoomAtCenter(0.2); });
+            document.getElementById('zoomOut').addEventListener('click', () => { this.cancelFly(); this.zoomAtCenter(-0.2); });
+            document.getElementById('zoomReset').addEventListener('click', () => {
+                this.cancelFly();
+                this.fitView();
+                this.updateMapTransform();
+            });
+            document.getElementById('measureBtn').addEventListener('click', () => this.setMeasuring(!this.measuring));
+
+            // Zoom seviyesi menüsü
+            const zoomMenu = document.getElementById('zoomMenu');
+            const zoomPct = document.getElementById('zoomPct');
+            [50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300].forEach(p => {
+                const b = document.createElement('button');
+                b.textContent = '%' + p;
+                b.dataset.zoom = p;
+                b.addEventListener('click', () => {
+                    this.cancelFly();
+                    this.setZoomLevel(p / 100);
+                    this.toggleZoomMenu(false);
+                });
+                zoomMenu.appendChild(b);
+            });
+            zoomPct.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleZoomMenu(!zoomMenu.classList.contains('open'));
+            });
+            document.addEventListener('pointerdown', (e) => {
+                if (!e.target.closest('.hud-zoom-wrap')) this.toggleZoomMenu(false);
+            });
+
+            document.getElementById('applyAllBtn').addEventListener('click', () => {
+                const d = this.getDefaults();
+                this.legs.forEach(leg => Object.assign(leg, d));
+                this.saveRoute();
+                this.drawRoutes();
+                this.updateDetails();
+                if (this.legs.length) this.showToast('Ayarlar tüm etaplara uygulandı');
+            });
+
+            document.querySelectorAll('.panel-header[data-toggle]').forEach(h => {
+                h.addEventListener('click', () => h.parentElement.classList.toggle('collapsed'));
+            });
+
+            // Takvim
+            document.getElementById('calToggle').addEventListener('click', () => {
+                const panel = document.getElementById('calendarPanel');
+                panel.classList.toggle('open');
+                document.getElementById('calToggle').classList.toggle('open', panel.classList.contains('open'));
+                if (panel.classList.contains('open')) {
+                    this.calView = { year: this.profile.calendar.year, month: this.profile.calendar.month };
+                    this.renderCalendar();
+                }
+            });
+            document.querySelector('[data-toggle-cal]').addEventListener('click', () => {
+                document.getElementById('calendarPanel').classList.remove('open');
+                document.getElementById('calToggle').classList.remove('open');
+            });
+
+            // POI paneli kapatma
+            document.getElementById('poiPanelClose').addEventListener('click', () => this.closePoiPanel());
+
+            // Profil
+            document.getElementById('profileAvatar').addEventListener('click', () =>
+                document.getElementById('avatarInput').click());
+            document.getElementById('avatarInput').addEventListener('change', (e) => this.onAvatarPicked(e));
+            document.getElementById('profileName').addEventListener('click', () => this.editProfileName());
+            document.getElementById('exportProfileBtn').addEventListener('click', () => this.exportProfile());
+            document.getElementById('importProfileBtn').addEventListener('click', () =>
+                document.getElementById('importProfileInput').click());
+            document.getElementById('importProfileInput').addEventListener('change', (e) => this.onProfileFilePicked(e));
+            document.getElementById('shareProfileBtn').addEventListener('click', () => this.shareProfileLink());
+
+            // Presetler
+            document.getElementById('savePresetBtn').addEventListener('click', () => this.saveCurrentAsPreset());
+            document.getElementById('presetNameInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') this.saveCurrentAsPreset();
+            });
+            document.getElementById('importRouteBtn').addEventListener('click', () =>
+                document.getElementById('importRouteInput').click());
+            document.getElementById('importRouteInput').addEventListener('change', (e) => this.onRouteFilePicked(e));
+
+            document.getElementById('galleryInput').addEventListener('change', (e) => this.onGalleryFilesPicked(e));
+
+            window.addEventListener('keydown', (e) => {
+                const tag = e.target.tagName;
+                if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+                if (document.querySelector('.lightbox')) return; // lightbox kendi tuşlarını yönetir
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    this.removeLastWaypoint();
+                } else if (e.key === '+' || e.key === '=') {
+                    this.zoomAtCenter(0.2);
+                } else if (e.key === '-') {
+                    this.zoomAtCenter(-0.2);
+                } else if (e.key === '0') {
+                    this.cancelFly();
+                    this.fitView();
+                    this.updateMapTransform();
+                } else if (e.key.toLowerCase() === 'm') {
+                    this.setMeasuring(!this.measuring);
+                } else if (e.key === 'Escape') {
+                    if (this.measuring) this.setMeasuring(false);
+                    else if (this.placingPoi) this.setPlacingMode(false);
+                    else if (this.selectedPoiId) this.closePoiPanel();
+                    else {
+                        document.getElementById('calendarPanel').classList.remove('open');
+                        document.getElementById('calToggle').classList.remove('open');
+                    }
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                this.constrainPan();
+                this.updateMapTransform();
+            });
+
+            // Sayfa açıkken adres çubuğuna paylaşım linki yapıştırılırsa da çalışsın
+            window.addEventListener('hashchange', () => this.handleShareHash());
+        }
+
+        getDefaults() {
+            return {
+                pace: parseInt(this.defaultPaceSel.value),
+                terrain: parseInt(this.defaultTerrainSel.value),
+                dailyHours: parseInt(this.defaultHoursSel.value)
+            };
+        }
+
+        setMeasuring(on) {
+            this.measuring = on;
+            this.measureDrag = false;
+            if (!on) this.measure = null;
+            this.viewport.classList.toggle('measuring', on);
+            document.getElementById('measureBtn').classList.toggle('armed', on);
+            if (on) {
+                this.setPlacingMode(false);
+                this.showToast('Cetvel: sürükleyerek ölç — Kapat: M / Esc');
+            }
+            this.drawRoutes();
+        }
+
+        /* ═══════════ NOKTALAR (WAYPOINT) ═══════════ */
+
+        addWaypointAt(screenX, screenY) {
+            const m = this.toMap(screenX, screenY);
+            if (m.x < 0 || m.x > this.mapWidth || m.y < 0 || m.y > this.mapHeight) return;
+            this.addWaypointAtMap(m.x, m.y);
+        }
+
+        addWaypointAtMap(mapX, mapY) {
+            const waypoint = {
+                id: ++this.waypointCounter,
+                mapX, mapY,
+                element: this.createWaypointElement()
+            };
+            this.waypoints.push(waypoint);
+            if (this.waypoints.length > 1) {
+                this.legs.push({ ...this.getDefaults() });
+            }
+            this.bindWaypointEvents(waypoint);
+            this.refreshWaypointNumbers();
+            this.updateWaypointPositions();
+            this.drawRoutes();
+            this.updateDetails();
+            this.saveRoute();
+        }
+
+        createWaypointElement() {
+            const el = document.createElement('div');
+            el.className = 'waypoint';
+            el.title = 'Sürükle: taşı · Tıkla: sil';
+            this.viewport.appendChild(el);
+            return el;
+        }
+
+        bindWaypointEvents(waypoint) {
+            waypoint.element.addEventListener('pointerdown', (e) => {
+                if (e.button !== undefined && e.button !== 0) return;
+                e.stopPropagation();
+                e.preventDefault();
+                this.cancelFly();
+                this.wpDrag = { waypoint, startX: e.clientX, startY: e.clientY, moved: false };
+                waypoint.element.classList.add('dragging-wp');
+                try { this.viewport.setPointerCapture(e.pointerId); } catch (err) {}
+            });
+            waypoint.element.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.removeWaypoint(waypoint.id);
+            });
+        }
+
+        moveWaypointDrag(e) {
+            const d = this.wpDrag;
+            if (!d.moved &&
+                Math.abs(e.clientX - d.startX) < 4 && Math.abs(e.clientY - d.startY) < 4) return;
+            d.moved = true;
+            const rect = this.viewport.getBoundingClientRect();
+            const m = this.toMap(e.clientX - rect.left, e.clientY - rect.top);
+            d.waypoint.mapX = Math.max(0, Math.min(this.mapWidth, m.x));
+            d.waypoint.mapY = Math.max(0, Math.min(this.mapHeight, m.y));
+            this.updateWaypointPositions();
+            this.drawRoutes();
+            this.updateDetails();
+        }
+
+        endWaypointDrag() {
+            const d = this.wpDrag;
+            this.wpDrag = null;
+            d.waypoint.element.classList.remove('dragging-wp');
+            if (d.moved) this.saveRoute();
+            else this.removeWaypoint(d.waypoint.id);
+        }
+
+        removeWaypoint(id) {
+            const i = this.waypoints.findIndex(w => w.id === id);
+            if (i === -1) return;
+            this.waypoints[i].element.remove();
+            this.waypoints.splice(i, 1);
+            if (this.legs.length > 0) {
+                if (i === 0) this.legs.splice(0, 1);
+                else if (i >= this.legs.length) this.legs.splice(this.legs.length - 1, 1);
+                else this.legs.splice(i, 1);
+            }
+            this.highlightedLeg = -1;
+            this.refreshWaypointNumbers();
+            this.updateWaypointPositions();
+            this.drawRoutes();
+            this.updateDetails();
+            this.saveRoute();
+        }
+
+        removeLastWaypoint() {
+            if (this.waypoints.length === 0) return;
+            this.removeWaypoint(this.waypoints[this.waypoints.length - 1].id);
+        }
+
+        refreshWaypointNumbers() {
+            this.waypoints.forEach((w, i) => {
+                w.element.textContent = i + 1;
+                w.element.classList.toggle('first', i === 0);
+            });
+        }
+
+        updateWaypointPositions() {
+            this.waypoints.forEach(w => {
+                const s = this.toScreen(w.mapX, w.mapY);
+                w.element.style.left = s.x + 'px';
+                w.element.style.top = s.y + 'px';
+            });
+        }
+
+        clearAll() {
+            this.waypoints.forEach(w => w.element.remove());
+            this.waypoints = [];
+            this.legs = [];
+            this.waypointCounter = 0;
+            this.highlightedLeg = -1;
+            this.drawRoutes();
+            this.updateDetails();
+            this.saveRoute();
+        }
+
+        loadRouteData(waypoints, legs) {
+            this.waypoints.forEach(w => w.element.remove());
+            this.waypoints = [];
+            this.legs = [];
+            this.waypointCounter = 0;
+            this.highlightedLeg = -1;
+
+            (waypoints || []).forEach(p => {
                 const waypoint = {
                     id: ++this.waypointCounter,
-                    mapX: mapX,
-                    mapY: mapY,
-                    element: null
+                    mapX: p.x, mapY: p.y,
+                    element: this.createWaypointElement()
                 };
-                
-                // Create waypoint element
-                const waypointEl = document.createElement('div');
-                waypointEl.className = 'waypoint';
-                waypointEl.textContent = this.waypoints.length + 1;
-                
-                // Add click handler for removal
-                waypointEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.removeWaypoint(waypoint.id);
-                });
-                
-                waypoint.element = waypointEl;
-                this.mapContainer.appendChild(waypointEl);
+                this.bindWaypointEvents(waypoint);
                 this.waypoints.push(waypoint);
-                
-                this.updateWaypointPositions();
-                this.drawRoutes();
-                this.updateDetails();
-            }
-            
-            removeWaypoint(id) {
-                const index = this.waypoints.findIndex(w => w.id === id);
-                if (index !== -1) {
-                    this.waypoints[index].element.remove();
-                    this.waypoints.splice(index, 1);
-                    
-                    // Renumber waypoints
-                    this.waypoints.forEach((waypoint, i) => {
-                        waypoint.element.textContent = i + 1;
-                    });
-                    
-                    this.drawRoutes();
-                    this.updateDetails();
-                }
-            }
-            
-            updateWaypointPositions() {
-                this.waypoints.forEach(waypoint => {
-                    const screenX = waypoint.mapX * this.zoom + this.panX;
-                    const screenY = waypoint.mapY * this.zoom + this.panY;
-                    
-                    waypoint.element.style.left = screenX + 'px';
-                    waypoint.element.style.top = screenY + 'px';
+            });
+
+            const defaults = this.getDefaults();
+            const savedLegs = Array.isArray(legs) ? legs : [];
+            for (let i = 0; i < this.waypoints.length - 1; i++) {
+                const l = savedLegs[i] || {};
+                this.legs.push({
+                    pace: [30, 24, 18].includes(l.pace) ? l.pace : defaults.pace,
+                    terrain: [1, 2].includes(l.terrain) ? l.terrain : defaults.terrain,
+                    dailyHours: [2, 4, 6, 8, 10, 12].includes(l.dailyHours) ? l.dailyHours : defaults.dailyHours
                 });
             }
-            
-            drawRoutes() {
-                // Remove old route lines
-                const oldLines = this.mapContainer.querySelectorAll('.route-line');
-                oldLines.forEach(line => line.remove());
-                
-                // Draw new route lines
-                for (let i = 0; i < this.waypoints.length - 1; i++) {
-                    const start = this.waypoints[i];
-                    const end = this.waypoints[i + 1];
-                    
-                    const startX = start.mapX * this.zoom + this.panX;
-                    const startY = start.mapY * this.zoom + this.panY;
-                    const endX = end.mapX * this.zoom + this.panX;
-                    const endY = end.mapY * this.zoom + this.panY;
-                    
-                    const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-                    
-                    const line = document.createElement('div');
-                    line.className = 'route-line';
-                    line.style.left = startX + 'px';
-                    line.style.top = startY + 'px';
-                    line.style.width = distance + 'px';
-                    line.style.transform = `rotate(${angle}deg)`;
-                    
-                    this.mapContainer.appendChild(line);
-                }
+            this.refreshWaypointNumbers();
+            this.updateWaypointPositions();
+            this.drawRoutes();
+            this.updateDetails();
+            this.saveRoute();
+        }
+
+        /* ═══════════ ROTA + CETVEL ÇİZİMİ ═══════════ */
+
+        drawRoutes() {
+            this.routeSvg.innerHTML = '';
+            this.viewport.querySelectorAll('.leg-label').forEach(l => l.remove());
+
+            for (let i = 0; i < this.waypoints.length - 1; i++) {
+                const a = this.toScreen(this.waypoints[i].mapX, this.waypoints[i].mapY);
+                const b = this.toScreen(this.waypoints[i + 1].mapX, this.waypoints[i + 1].mapY);
+                const leg = this.legs[i];
+                const difficult = leg && leg.terrain > 1;
+                const hl = i === this.highlightedLeg;
+
+                const glow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                glow.setAttribute('x1', a.x); glow.setAttribute('y1', a.y);
+                glow.setAttribute('x2', b.x); glow.setAttribute('y2', b.y);
+                glow.setAttribute('class',
+                    'route-glow' + (difficult ? ' difficult' : '') + (hl ? ' highlighted' : ''));
+                this.routeSvg.appendChild(glow);
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+                line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+                line.setAttribute('class',
+                    'route-path' + (difficult ? ' difficult' : '') + (hl ? ' highlighted' : ''));
+                this.routeSvg.appendChild(line);
+
+                const miles = this.legRawMiles(i);
+                const label = document.createElement('div');
+                label.className = 'leg-label' + (difficult ? ' difficult' : '');
+                label.textContent = this.fmt(miles) + ' mil';
+                label.style.left = ((a.x + b.x) / 2) + 'px';
+                label.style.top = ((a.y + b.y) / 2 - 14) + 'px';
+                this.viewport.appendChild(label);
             }
-            
-            calculateTotalDistance() {
-                let totalDistance = 0;
-                for (let i = 0; i < this.waypoints.length - 1; i++) {
-                    const start = this.waypoints[i];
-                    const end = this.waypoints[i + 1];
-                    const distance = Math.sqrt(Math.pow(end.mapX - start.mapX, 2) + Math.pow(end.mapY - start.mapY, 2));
-                    totalDistance += distance;
-                }
-                
-                // Convert pixels to miles (adjusted for your map scale)
-                const milesPerPixel = 1.0;
-                return totalDistance * milesPerPixel;
+
+            this.drawMeasure();
+        }
+
+        drawMeasure() {
+            if (!this.measure) return;
+            const a = this.toScreen(this.measure.a.x, this.measure.a.y);
+            const b = this.toScreen(this.measure.b.x, this.measure.b.y);
+
+            const glow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            glow.setAttribute('x1', a.x); glow.setAttribute('y1', a.y);
+            glow.setAttribute('x2', b.x); glow.setAttribute('y2', b.y);
+            glow.setAttribute('class', 'measure-glow');
+            this.routeSvg.appendChild(glow);
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+            line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+            line.setAttribute('class', 'measure-line');
+            this.routeSvg.appendChild(line);
+
+            [a, b].forEach(p => {
+                const cap = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                cap.setAttribute('cx', p.x); cap.setAttribute('cy', p.y);
+                cap.setAttribute('r', 4.5);
+                cap.setAttribute('class', 'measure-cap');
+                this.routeSvg.appendChild(cap);
+            });
+
+            const miles = Math.hypot(this.measure.b.x - this.measure.a.x,
+                this.measure.b.y - this.measure.a.y) * this.milesPerPixel;
+            const label = document.createElement('div');
+            label.className = 'leg-label measure';
+            label.textContent = this.fmt(miles) + ' mil';
+            label.style.left = ((a.x + b.x) / 2) + 'px';
+            label.style.top = ((a.y + b.y) / 2 - 18) + 'px';
+            this.viewport.appendChild(label);
+        }
+
+        setHighlight(i) {
+            if (this.highlightedLeg === i) return;
+            this.highlightedLeg = i;
+            this.drawRoutes();
+        }
+
+        /* ═══════════ HESAPLAMALAR ═══════════
+           Ölçek: 1 piksel (harita koordinatı) = 1 mil.
+           mil/saat = pace / 8 · etap saat = (mesafe × terrain) / (mil/saat)
+           etap gün = etap saat / o etabın günlük yol saati */
+
+        legRawMiles(i) {
+            const a = this.waypoints[i], b = this.waypoints[i + 1];
+            const px = Math.hypot(b.mapX - a.mapX, b.mapY - a.mapY);
+            return px * this.milesPerPixel;
+        }
+
+        legStats(i) {
+            const leg = this.legs[i];
+            const rawMiles = this.legRawMiles(i);
+            const effMiles = rawMiles * leg.terrain;
+            const mph = leg.pace / 8;
+            const hours = effMiles / mph;
+            const dayUnits = hours / leg.dailyHours;
+            return { rawMiles, effMiles, hours, dayUnits };
+        }
+
+        fmt(n) {
+            const r = Math.round(n * 10) / 10;
+            return Number.isInteger(r) ? String(r) : r.toFixed(1);
+        }
+
+        formatJourney(totalDayUnits) {
+            if (this.legs.length === 0) return '—';
+            const lastDaily = this.legs[this.legs.length - 1].dailyHours;
+            let fullDays = Math.floor(totalDayUnits + 1e-9);
+            let extraHours = Math.round((totalDayUnits - fullDays) * lastDaily * 10) / 10;
+            if (extraHours >= lastDaily) { fullDays += 1; extraHours = 0; }
+            if (fullDays === 0) return this.fmt(extraHours) + ' saat (tek günde)';
+            let out = fullDays + ' gün';
+            if (extraHours > 0) out += ' ' + this.fmt(extraHours) + ' saat';
+            return out;
+        }
+
+    /* ═══════════ ROTA DETAY PANELİ ═══════════ */
+
+        updateDetails() {
+            if (this.waypoints.length === 0) {
+                this.detailsContent.innerHTML = `
+                    <div class="empty-state">
+                        Rota oluşturmak için haritaya tıklayarak noktalar ekle.
+                        <span class="hint">Nokta taşı: sürükle · Nokta sil: tıkla ·
+                        Geri al: Ctrl+Z · Cetvel: M</span>
+                    </div>`;
+                return;
             }
-            
-            updateDetails() {
-                if (this.waypoints.length === 0) {
-                    this.detailsContent.innerHTML = 'Click on the map to start planning your route...';
-                } else if (this.waypoints.length === 1) {
-                    this.detailsContent.innerHTML = 'Add a second point to create a route...';
-                } else {
-                    const totalMiles = this.calculateTotalDistance();
-                    const travelSpeed = parseInt(this.travelSpeedSelect.value);
-                    const terrainMultiplier = parseInt(this.terrainDifficultySelect.value);
-                    const dailyHours = parseInt(this.travelTimeSelect.value);
-                    const adjustedMiles = totalMiles * terrainMultiplier;
-                    
-                    // Calculate daily distance based on hours traveled
-                    const dailyMiles = (travelSpeed / 8) * dailyHours; // 8 hours = standard travel day
-                    const totalDays = adjustedMiles / dailyMiles;
-                    
-                    const fullDays = Math.floor(totalDays);
-                    const extraHours = Math.round((totalDays - fullDays) * dailyHours);
-                    
-                    let timeText = '';
-                    if (fullDays > 0) {
-                        timeText = `${fullDays} day${fullDays !== 1 ? 's' : ''}`;
-                        if (extraHours > 0) {
-                            timeText += ` and ${extraHours} hour${extraHours !== 1 ? 's' : ''}`;
-                        }
-                    } else {
-                        timeText = `${extraHours} hour${extraHours !== 1 ? 's' : ''}`;
-                    }
-                    
-                    this.detailsContent.innerHTML = `
-                        <div class="distance-info">
-                            <strong>Route Summary:</strong><br>
-                            Distance: ${totalMiles.toFixed(1)} miles<br>
-                            Adjusted Distance: ${adjustedMiles.toFixed(1)} miles<br>
-                            Travel Time: ${timeText}
+            if (this.waypoints.length === 1) {
+                this.detailsContent.innerHTML = `
+                    <div class="empty-state">
+                        Rota oluşturmak için ikinci bir nokta ekle...
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn btn-danger" id="clearBtn">Rotayı Temizle</button>
+                    </div>`;
+                document.getElementById('clearBtn')
+                    .addEventListener('click', () => this.confirmClearRoute());
+                return;
+            }
+
+            let totRaw = 0, totEff = 0, totHours = 0, totDayUnits = 0;
+            const stats = [];
+            for (let i = 0; i < this.legs.length; i++) {
+                const s = this.legStats(i);
+                stats.push(s);
+                totRaw += s.rawMiles;
+                totEff += s.effMiles;
+                totHours += s.hours;
+                totDayUnits += s.dayUnits;
+            }
+
+            const arriveOffset = Math.max(0, Math.ceil(totDayUnits - 1e-9) - 1);
+            const arrival = calAddDays(this.profile.calendar, arriveOffset);
+
+            const uniformSettings = this.legs.every(l =>
+                l.pace === this.legs[0].pace &&
+                l.terrain === this.legs[0].terrain &&
+                l.dailyHours === this.legs[0].dailyHours);
+
+            let html = `
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="s-label">Mesafe</span>
+                        <span class="s-value">${this.fmt(totRaw)} mil</span>
+                    </div>
+                    ${totEff > totRaw + 0.05 ? `
+                    <div class="summary-row">
+                        <span class="s-label">Efektif Mesafe</span>
+                        <span class="s-value">${this.fmt(totEff)} mil</span>
+                    </div>` : ''}
+                    <div class="summary-sep"></div>
+                    <div class="summary-row main">
+                        <span class="s-label">Yol Süresi</span>
+                        <span class="s-value">${this.fmt(totHours)} saat</span>
+                    </div>
+                    <div class="summary-row main">
+                        <span class="s-label">Yolculuk</span>
+                        <span class="s-value">${this.formatJourney(totDayUnits)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="s-label">Varış</span>
+                        <span class="s-value">${calFormatTr(arrival)}</span>
+                    </div>
+                    <div class="summary-sep"></div>
+                    <div class="summary-row">
+                        <span class="s-label">Nokta / Etap</span>
+                        <span class="s-value">${this.waypoints.length} / ${this.legs.length}</span>
+                    </div>
+                </div>
+                <div class="legs-title">Etaplar${uniformSettings ? '' : ' — karışık ayarlar'}</div>`;
+
+            for (let i = 0; i < this.legs.length; i++) {
+                const leg = this.legs[i];
+                const s = stats[i];
+                html += `
+                <div class="leg-row" data-leg="${i}" style="animation-delay:${i * 0.05}s">
+                    <div class="leg-head">
+                        <span class="leg-name">${i + 1} → ${i + 2}</span>
+                        <span class="leg-stats">
+                            <b>${this.fmt(s.rawMiles)} mil</b>${leg.terrain > 1 ? ' (×' + leg.terrain + ' = ' + this.fmt(s.effMiles) + ')' : ''}<br>
+                            ${this.fmt(s.hours)} saat · ${this.fmt(s.dayUnits)} gün
+                        </span>
+                    </div>
+                    <div class="leg-controls">
+                        <div>
+                            <span class="mini-label">Pace</span>
+                            <select data-leg="${i}" data-key="pace">
+                                <option value="30" ${leg.pace === 30 ? 'selected' : ''}>Fast 30</option>
+                                <option value="24" ${leg.pace === 24 ? 'selected' : ''}>Normal 24</option>
+                                <option value="18" ${leg.pace === 18 ? 'selected' : ''}>Slow 18</option>
+                            </select>
                         </div>
                         <div>
-                            <strong>Waypoints:</strong> ${this.waypoints.length}<br>
-                            <strong>Travel Speed:</strong> ${travelSpeed} miles/day<br>
-                            <strong>Daily Hours:</strong> ${dailyHours} hours/day<br>
-                            <strong>Terrain:</strong> ${terrainMultiplier}x difficulty
+                            <span class="mini-label">Terrain</span>
+                            <select data-leg="${i}" data-key="terrain">
+                                <option value="1" ${leg.terrain === 1 ? 'selected' : ''}>Normal</option>
+                                <option value="2" ${leg.terrain === 2 ? 'selected' : ''}>Difficult</option>
+                            </select>
                         </div>
-                        <button class="clear-btn" onclick="mapApp.clearAll()">Clear All Waypoints</button>
-                    `;
-                }
+                        <div>
+                            <span class="mini-label">Saat/Gün</span>
+                            <select data-leg="${i}" data-key="dailyHours">
+                                ${[2,4,6,8,10,12].map(h =>
+                                    `<option value="${h}" ${leg.dailyHours === h ? 'selected' : ''}>${h} saat</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>`;
             }
-            
-            clearAll() {
-                this.waypoints.forEach(waypoint => waypoint.element.remove());
-                const lines = this.mapContainer.querySelectorAll('.route-line');
-                lines.forEach(line => line.remove());
-                
-                this.waypoints = [];
-                this.waypointCounter = 0;
-                this.updateDetails();
+
+            html += `
+                <div class="btn-row">
+                    <button class="btn" id="undoBtn" title="Ctrl+Z">Son Noktayı Sil</button>
+                    <button class="btn btn-danger" id="clearBtn">Rotayı Temizle</button>
+                </div>
+                <div class="btn-row">
+                    <button class="btn" id="shareRouteBtn" title="Bu rotayı kısa bir link olarak kopyala">Rota Linkini Kopyala</button>
+                </div>`;
+
+            this.detailsContent.innerHTML = html;
+
+            this.detailsContent.querySelectorAll('.leg-controls select').forEach(sel => {
+                sel.addEventListener('change', () => {
+                    const leg = this.legs[parseInt(sel.dataset.leg)];
+                    leg[sel.dataset.key] = parseInt(sel.value);
+                    this.saveRoute();
+                    this.drawRoutes();
+                    this.updateDetails();
+                });
+            });
+            this.detailsContent.querySelectorAll('.leg-row').forEach(row => {
+                row.addEventListener('mouseenter', () => this.setHighlight(parseInt(row.dataset.leg)));
+                row.addEventListener('mouseleave', () => this.setHighlight(-1));
+            });
+            document.getElementById('undoBtn').addEventListener('click', () => this.removeLastWaypoint());
+            document.getElementById('clearBtn').addEventListener('click', () => this.confirmClearRoute());
+            document.getElementById('shareRouteBtn').addEventListener('click', () => this.shareRouteLink());
+        }
+
+        confirmClearRoute() {
+            this.showConfirm('Mevcut rota silinecek. Emin misin?', () => {
+                this.clearAll();
+                this.showToast('Rota temizlendi');
+            });
+        }
+
+        /* ═══════════ POI SİSTEMİ ═══════════ */
+
+        allPois() {
+            return BASE_POIS.concat(this.profile.customPois);
+        }
+
+        findPoi(id) {
+            return this.allPois().find(p => p.id === id) || null;
+        }
+
+        isCustomPoi(id) {
+            return this.profile.customPois.some(p => p.id === id);
+        }
+
+        getPoiData(id) {
+            if (!this.profile.pois[id]) {
+                this.profile.pois[id] = { info: '', notes: '', images: [] };
+            }
+            const d = this.profile.pois[id];
+            if (!Array.isArray(d.images)) d.images = [];
+            return d;
+        }
+
+        renderPoiMarkers() {
+            this.poiMarkers.forEach(el => el.remove());
+            this.poiMarkers.clear();
+            this.allPois().forEach(poi => {
+                const el = document.createElement('div');
+                const custom = this.isCustomPoi(poi.id);
+                el.className = 'poi' + (custom ? ' custom' : '');
+                el.innerHTML = `<div class="poi-diamond"></div><div class="poi-label"></div>`;
+                const label = el.querySelector('.poi-label');
+                label.textContent = poi.name;
+                // İngilizce özel adlarda TR locale "i→İ" büyütmesini engelle
+                if (!custom) label.setAttribute('lang', 'en');
+                el.addEventListener('pointerdown', (e) => {
+                    if (e.button !== undefined && e.button !== 0) return;
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.cancelFly();
+                    this.poiDrag = { poi, startX: e.clientX, startY: e.clientY, moved: false };
+                    try { this.viewport.setPointerCapture(e.pointerId); } catch (err) {}
+                });
+                this.viewport.appendChild(el);
+                this.poiMarkers.set(poi.id, el);
+            });
+            this.updatePoiPositions();
+            this.updatePoiActiveState();
+        }
+
+        movePoiDrag(e) {
+            const d = this.poiDrag;
+            if (!d.moved &&
+                Math.abs(e.clientX - d.startX) < 5 && Math.abs(e.clientY - d.startY) < 5) return;
+            if (!this.isCustomPoi(d.poi.id)) return; // sabit POI'ler taşınamaz
+            d.moved = true;
+            const rect = this.viewport.getBoundingClientRect();
+            const m = this.toMap(e.clientX - rect.left, e.clientY - rect.top);
+            d.poi.x = Math.max(0, Math.min(this.mapWidth, m.x));
+            d.poi.y = Math.max(0, Math.min(this.mapHeight, m.y));
+            this.updatePoiPositions();
+        }
+
+        endPoiDrag() {
+            const d = this.poiDrag;
+            this.poiDrag = null;
+            if (d.moved) {
+                this.saveProfile();
+                this.showToast('POI taşındı');
+            } else {
+                this.selectPoi(d.poi.id);
             }
         }
-        
-        // Initialize the map application
-        const mapApp = new MapApp();
+
+        updatePoiPositions() {
+            this.poiMarkers.forEach((el, id) => {
+                const poi = this.findPoi(id);
+                if (!poi) return;
+                const s = this.toScreen(poi.x, poi.y);
+                el.style.left = s.x + 'px';
+                el.style.top = s.y + 'px';
+            });
+        }
+
+        updatePoiActiveState() {
+            this.poiMarkers.forEach((el, id) => {
+                el.classList.toggle('active', id === this.selectedPoiId);
+            });
+            this.locationsBody.querySelectorAll('.loc-row').forEach(row => {
+                row.classList.toggle('active', row.dataset.poi === this.selectedPoiId);
+            });
+        }
+
+        selectPoi(id, opts) {
+            const poi = this.findPoi(id);
+            if (!poi) return;
+            this.selectedPoiId = id;
+            this.updatePoiActiveState();
+            this.openPoiPanel(poi);
+            if (!opts || opts.fly !== false) this.flyTo(poi.x, poi.y, 1.5);
+        }
+
+        openPoiPanel(poi) {
+            document.getElementById('rightCol').classList.add('slid-out');
+            const panel = document.getElementById('poiPanel');
+            this.renderPoiPanel(poi);
+            panel.classList.add('open');
+        }
+
+        closePoiPanel() {
+            this.selectedPoiId = null;
+            document.getElementById('poiPanel').classList.remove('open');
+            document.getElementById('rightCol').classList.remove('slid-out');
+            this.updatePoiActiveState();
+        }
+
+        /* ── Lokasyon listesi (sol panel) ── */
+
+        renderLocationsList() {
+            const pois = this.allPois()
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+                .filter(p => !this.locFilter ||
+                    p.name.toLocaleLowerCase('tr').includes(this.locFilter));
+
+            let html = `
+                <div class="loc-toolbar">
+                    <input class="text-input" id="locSearch" type="text" placeholder="Ara...">
+                    <button class="loc-add-btn${this.placingPoi ? ' armed' : ''}" id="addPoiBtn"
+                        title="Yeni POI ekle: butona bas, sonra haritada bir yere tıkla">+</button>
+                </div>`;
+            if (pois.length === 0) {
+                html += `<div class="loc-empty">Sonuç yok...</div>`;
+            }
+            pois.forEach(p => {
+                const custom = this.isCustomPoi(p.id);
+                html += `
+                <div class="loc-row${custom ? ' custom' : ''}" data-poi="${p.id}">
+                    <span class="loc-diamond"></span>
+                    <span class="loc-name"${custom ? '' : ' lang="en"'}></span>
+                    <span class="loc-type">${POI_TYPES[p.type] || ''}</span>
+                </div>`;
+            });
+            this.locationsBody.innerHTML = html;
+
+            const rows = this.locationsBody.querySelectorAll('.loc-row');
+            let ri = 0;
+            pois.forEach(p => {
+                const row = rows[ri++];
+                row.querySelector('.loc-name').textContent = p.name;
+                row.addEventListener('click', () => this.selectPoi(p.id));
+            });
+
+            const search = document.getElementById('locSearch');
+            search.value = this.locFilter;
+            search.addEventListener('input', () => {
+                this.locFilter = search.value.trim().toLocaleLowerCase('tr');
+                const keep = document.activeElement === search;
+                this.renderLocationsList();
+                if (keep) {
+                    const s2 = document.getElementById('locSearch');
+                    s2.focus();
+                    s2.setSelectionRange(s2.value.length, s2.value.length);
+                }
+            });
+            document.getElementById('addPoiBtn').addEventListener('click', () =>
+                this.setPlacingMode(!this.placingPoi));
+            this.updatePoiActiveState();
+        }
+
+        setPlacingMode(on) {
+            this.placingPoi = on;
+            this.viewport.classList.toggle('placing', on);
+            const btn = document.getElementById('addPoiBtn');
+            if (btn) btn.classList.toggle('armed', on);
+            if (on) {
+                this.setMeasuring(false);
+                this.showToast('Haritada bir yere tıkla — İptal: Esc');
+            }
+        }
+
+        finishPoiPlacement(screenX, screenY) {
+            const m = this.toMap(screenX, screenY);
+            this.setPlacingMode(false);
+            if (m.x < 0 || m.x > this.mapWidth || m.y < 0 || m.y > this.mapHeight) return;
+            const poi = {
+                id: 'c' + Date.now(),
+                name: 'Yeni Lokasyon',
+                type: 'ozel',
+                x: Math.round(m.x), y: Math.round(m.y)
+            };
+            this.profile.customPois.push(poi);
+            this.saveProfile();
+            this.renderPoiMarkers();
+            this.renderLocationsList();
+            this.selectPoi(poi.id, { fly: false });
+            this.showToast('POI eklendi — ismini panelden düzenle');
+        }
+
+        /* ── POI paneli içeriği (LoL tarzı) ── */
+
+        renderPoiPanel(poi) {
+            const content = document.getElementById('poiPanelContent');
+            const data = this.getPoiData(poi.id);
+            const custom = this.isCustomPoi(poi.id);
+            const typeLabel = POI_TYPES[poi.type] || '';
+
+            let html = `
+                <div class="poi-eyebrow poi-fade" style="animation-delay:0.08s">${typeLabel} — <span lang="en">Aiwelen</span></div>
+                ${custom
+                    ? `<input class="text-input poi-title-input poi-fade" id="poiNameInput" type="text"
+                         maxlength="50" style="animation-delay:0.14s">`
+                    : `<h2 class="poi-title poi-fade" id="poiTitle" lang="en" style="animation-delay:0.14s"></h2>`}
+                <div class="poi-ornament poi-fade" style="animation-delay:0.2s">
+                    <div class="orn-line rev"></div>
+                    <div class="orn-diamond"></div>
+                    <div class="orn-line"></div>
+                </div>
+                <div id="dmHeroWrap" class="poi-fade" style="animation-delay:0.26s"></div>
+                <div class="poi-gallery poi-fade" id="dmGallery" style="animation-delay:0.3s"></div>
+                <div class="poi-section-title poi-fade" style="animation-delay:0.36s">Bilgi</div>
+                ${custom
+                    ? `<textarea class="text-input poi-fade" id="poiInfoInput" style="animation-delay:0.4s"
+                         placeholder="Bu yer hakkında bilgi yaz..."></textarea>`
+                    : `<div class="poi-info-text poi-fade" id="poiInfoText" style="animation-delay:0.4s"></div>`}
+                <div class="poi-section-title poi-fade" style="animation-delay:0.46s">Galerim</div>
+                <div class="poi-gallery poi-fade" id="playerGallery" style="animation-delay:0.5s"></div>
+                <div class="poi-section-title poi-fade" style="animation-delay:0.56s">Notlarım</div>
+                <textarea class="text-input poi-fade" id="poiNotesInput" style="animation-delay:0.6s"
+                    placeholder="Kişisel notların... (görevler, ipuçları, planlar)"></textarea>
+                <div class="btn-row poi-fade" style="animation-delay:0.66s">
+                    <button class="btn" id="poiAddRouteBtn">Rotaya Ekle</button>
+                    ${custom ? `<button class="btn btn-danger" id="poiDeleteBtn">POI'yi Sil</button>` : ''}
+                </div>`;
+
+            content.innerHTML = html;
+
+            if (custom) {
+                const nameInput = document.getElementById('poiNameInput');
+                nameInput.value = poi.name;
+                nameInput.addEventListener('input', () => {
+                    poi.name = nameInput.value || 'İsimsiz';
+                    const marker = this.poiMarkers.get(poi.id);
+                    if (marker) marker.querySelector('.poi-label').textContent = poi.name;
+                    this.debouncedProfileSave();
+                });
+                nameInput.addEventListener('blur', () => this.renderLocationsList());
+                document.getElementById('poiDeleteBtn').addEventListener('click', () => {
+                    this.showConfirm(`"${poi.name}" POI'si ve notları silinecek. Emin misin?`, () => {
+                        this.profile.customPois = this.profile.customPois.filter(p => p.id !== poi.id);
+                        delete this.profile.pois[poi.id];
+                        this.saveProfile();
+                        this.renderPoiMarkers();
+                        this.renderLocationsList();
+                        this.closePoiPanel();
+                        this.showToast('POI silindi');
+                    });
+                });
+                const infoInput = document.getElementById('poiInfoInput');
+                infoInput.value = data.info || '';
+                infoInput.addEventListener('input', () => {
+                    data.info = infoInput.value;
+                    this.debouncedProfileSave();
+                });
+            } else {
+                document.getElementById('poiTitle').textContent = poi.name;
+                const infoText = document.getElementById('poiInfoText');
+                if (poi.info && poi.info.trim()) {
+                    infoText.textContent = poi.info;
+                } else {
+                    infoText.textContent = 'Bu yer hakkında henüz kayıtlı bilgi yok. Arşiv yazıcıları çalışıyor...';
+                    infoText.classList.add('empty');
+                }
+            }
+
+            document.getElementById('poiAddRouteBtn').addEventListener('click', () => {
+                this.addWaypointAtMap(poi.x, poi.y);
+                this.showToast('Rotaya eklendi: ' + poi.name);
+            });
+
+            const notesInput = document.getElementById('poiNotesInput');
+            notesInput.value = data.notes || '';
+            notesInput.addEventListener('input', () => {
+                data.notes = notesInput.value;
+                this.debouncedProfileSave();
+            });
+
+            this.renderGallery(poi.id);
+        }
+
+        renderGallery(poiId) {
+            const dmGallery = document.getElementById('dmGallery');
+            const heroWrap = document.getElementById('dmHeroWrap');
+            const playerGallery = document.getElementById('playerGallery');
+            if (!playerGallery || this.selectedPoiId !== poiId) return;
+
+            // ── DM arşiv görselleri (salt görüntüleme, kodda DM_IMAGES'ten gelir) ──
+            const dmImages = DM_IMAGES[poiId] || [];
+            heroWrap.innerHTML = '';
+            dmGallery.innerHTML = '';
+            dmGallery.style.display = dmImages.length > 1 ? '' : 'none';
+            if (dmImages.length > 0) {
+                const hero = document.createElement('div');
+                hero.className = 'poi-hero';
+                const img = document.createElement('img');
+                img.src = dmImages[0];
+                img.alt = '';
+                img.onerror = () => hero.remove();
+                hero.appendChild(img);
+                hero.addEventListener('click', () => this.openSimpleLightbox(dmImages, 0));
+                heroWrap.appendChild(hero);
+
+                dmImages.forEach((src, i) => {
+                    if (i === 0) return; // kapakta gösteriliyor
+                    const thumb = document.createElement('div');
+                    thumb.className = 'poi-thumb';
+                    const im = document.createElement('img');
+                    im.src = src;
+                    im.alt = '';
+                    im.onerror = () => thumb.remove();
+                    thumb.appendChild(im);
+                    thumb.addEventListener('click', () => this.openSimpleLightbox(dmImages, i));
+                    dmGallery.appendChild(thumb);
+                });
+            }
+
+            // ── Oyuncu galerisi (yüklenebilir, isim + not düzenlenebilir) ──
+            const data = this.getPoiData(poiId);
+            playerGallery.innerHTML = '';
+            data.images.forEach((im, i) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'poi-thumb';
+                thumb.title = im.title || '';
+                const img = document.createElement('img');
+                img.src = im.src;
+                img.alt = '';
+                thumb.appendChild(img);
+                thumb.addEventListener('click', () => this.openLightbox(poiId, i));
+                playerGallery.appendChild(thumb);
+            });
+            const add = document.createElement('button');
+            add.className = 'poi-thumb-add';
+            add.textContent = '+';
+            add.title = 'Resim yükle';
+            add.addEventListener('click', () => document.getElementById('galleryInput').click());
+            playerGallery.appendChild(add);
+        }
+
+        /* DM görselleri için sade görüntüleyici: sadece resim, yazı alanı yok */
+        openSimpleLightbox(srcList, index) {
+            if (!srcList.length) return;
+            let idx = Math.max(0, Math.min(index, srcList.length - 1));
+
+            const lb = document.createElement('div');
+            lb.className = 'lightbox';
+            lb.innerHTML = `
+                <div class="lb-stage">
+                    <div class="lb-imgwrap"><img alt=""></div>
+                </div>
+                <button class="lb-btn lb-close" title="Kapat (Esc)">✕</button>
+                <button class="lb-btn lb-prev" title="Önceki">‹</button>
+                <button class="lb-btn lb-next" title="Sonraki">›</button>
+                <div class="lb-count"></div>`;
+            document.body.appendChild(lb);
+
+            const img = lb.querySelector('img');
+            const count = lb.querySelector('.lb-count');
+            const render = () => {
+                img.src = srcList[idx];
+                count.textContent = (idx + 1) + ' / ' + srcList.length;
+                const multi = srcList.length > 1;
+                lb.querySelector('.lb-prev').style.display = multi ? '' : 'none';
+                lb.querySelector('.lb-next').style.display = multi ? '' : 'none';
+                count.style.display = multi ? '' : 'none';
+            };
+            const close = () => {
+                document.removeEventListener('keydown', onKey);
+                lb.remove();
+            };
+            const onKey = (e) => {
+                if (e.key === 'Escape') close();
+                else if (e.key === 'ArrowLeft') { idx = (idx - 1 + srcList.length) % srcList.length; render(); }
+                else if (e.key === 'ArrowRight') { idx = (idx + 1) % srcList.length; render(); }
+            };
+            lb.querySelector('.lb-close').addEventListener('click', close);
+            lb.querySelector('.lb-prev').addEventListener('click', () => { idx = (idx - 1 + srcList.length) % srcList.length; render(); });
+            lb.querySelector('.lb-next').addEventListener('click', () => { idx = (idx + 1) % srcList.length; render(); });
+            lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+            document.addEventListener('keydown', onKey);
+            render();
+        }
+
+        onGalleryFilesPicked(e) {
+            const files = Array.from(e.target.files || []);
+            e.target.value = '';
+            if (!files.length || !this.selectedPoiId) return;
+            const poiId = this.selectedPoiId;
+            const data = this.getPoiData(poiId);
+            let pending = files.length;
+            files.forEach(file => {
+                this.readImageScaled(file, 1280, 0.82).then(url => {
+                    data.images.push({ src: url, title: '', desc: '' });
+                    if (!this.trySaveProfile()) {
+                        data.images.pop();
+                        this.showToast('Depolama sınırı aşıldı — resim eklenemedi', true);
+                    }
+                }).catch(() => {
+                    this.showToast('Resim okunamadı', true);
+                }).finally(() => {
+                    if (--pending === 0 && this.selectedPoiId === poiId) this.renderGallery(poiId);
+                });
+            });
+        }
+
+    /* ── Lightbox: resim + isim/not düzenleme ── */
+
+        openLightbox(poiId, index) {
+            const data = this.getPoiData(poiId);
+            if (!data.images.length) return;
+            let idx = Math.max(0, Math.min(index, data.images.length - 1));
+
+            const lb = document.createElement('div');
+            lb.className = 'lightbox';
+            lb.innerHTML = `
+                <div class="lb-stage">
+                    <div class="lb-imgwrap"><img alt=""></div>
+                    <div class="lb-meta">
+                        <span class="lb-meta-label">Resim Adı</span>
+                        <input class="text-input" id="lbTitle" type="text" maxlength="60"
+                            placeholder="İsim / mahlas ver...">
+                        <span class="lb-meta-label">Notlar</span>
+                        <textarea class="text-input" id="lbDesc"
+                            placeholder="Bu resim hakkında bildiklerin... (kim, ne, neden önemli)"></textarea>
+                        <button class="btn btn-danger" id="lbDelete" style="margin-top:0.5rem;">Resmi Sil</button>
+                    </div>
+                </div>
+                <button class="lb-btn lb-close" title="Kapat (Esc)">✕</button>
+                <button class="lb-btn lb-prev" title="Önceki">‹</button>
+                <button class="lb-btn lb-next" title="Sonraki">›</button>
+                <div class="lb-count"></div>`;
+            document.body.appendChild(lb);
+
+            const img = lb.querySelector('img');
+            const count = lb.querySelector('.lb-count');
+            const titleIn = lb.querySelector('#lbTitle');
+            const descIn = lb.querySelector('#lbDesc');
+
+            const render = () => {
+                const im = data.images[idx];
+                img.src = im.src;
+                titleIn.value = im.title || '';
+                descIn.value = im.desc || '';
+                count.textContent = (idx + 1) + ' / ' + data.images.length;
+                const multi = data.images.length > 1;
+                lb.querySelector('.lb-prev').style.display = multi ? '' : 'none';
+                lb.querySelector('.lb-next').style.display = multi ? '' : 'none';
+            };
+            const close = () => {
+                document.removeEventListener('keydown', onKey);
+                lb.remove();
+                this.renderGallery(poiId); // başlıklar/kapak güncellensin
+            };
+            const onKey = (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    if (e.key === 'Escape') { e.target.blur(); }
+                    return;
+                }
+                if (e.key === 'Escape') close();
+                else if (e.key === 'ArrowLeft') { idx = (idx - 1 + data.images.length) % data.images.length; render(); }
+                else if (e.key === 'ArrowRight') { idx = (idx + 1) % data.images.length; render(); }
+            };
+
+            titleIn.addEventListener('input', () => {
+                data.images[idx].title = titleIn.value;
+                this.debouncedProfileSave();
+            });
+            descIn.addEventListener('input', () => {
+                data.images[idx].desc = descIn.value;
+                this.debouncedProfileSave();
+            });
+            lb.querySelector('#lbDelete').addEventListener('click', () => {
+                this.showConfirm('Bu resim ve notları silinecek. Emin misin?', () => {
+                    data.images.splice(idx, 1);
+                    this.saveProfile();
+                    if (data.images.length === 0) { close(); return; }
+                    idx = Math.min(idx, data.images.length - 1);
+                    render();
+                });
+            });
+            lb.querySelector('.lb-close').addEventListener('click', close);
+            lb.querySelector('.lb-prev').addEventListener('click', () => { idx = (idx - 1 + data.images.length) % data.images.length; render(); });
+            lb.querySelector('.lb-next').addEventListener('click', () => { idx = (idx + 1) % data.images.length; render(); });
+            lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+            document.addEventListener('keydown', onKey);
+            render();
+        }
+
+        /* ═══════════ PROFİL ═══════════ */
+
+        defaultProfile() {
+            return {
+                name: 'Oyuncu', avatar: null, routes: [], pois: {}, customPois: [],
+                calendar: { ...CAL_DEFAULT }
+            };
+        }
+
+        loadProfile() {
+            try {
+                const raw = localStorage.getItem(this.profileKey);
+                if (!raw) return this.defaultProfile();
+                const p = this.normalizeProfile(JSON.parse(raw));
+                // Migrasyon: eski 'okunta' id'si 'okukita' olarak yeniden adlandırıldı
+                if (p.pois['okunta'] && !p.pois['okukita']) {
+                    p.pois['okukita'] = p.pois['okunta'];
+                    delete p.pois['okunta'];
+                }
+                return p;
+            } catch (e) {
+                return this.defaultProfile();
+            }
+        }
+
+        normalizeProfile(p) {
+            const d = this.defaultProfile();
+            if (!p || typeof p !== 'object') return d;
+            const pois = {};
+            if (p.pois && typeof p.pois === 'object') {
+                Object.keys(p.pois).forEach(id => {
+                    const src = p.pois[id] || {};
+                    pois[id] = {
+                        info: typeof src.info === 'string' ? src.info : '',
+                        notes: typeof src.notes === 'string' ? src.notes : '',
+                        images: Array.isArray(src.images) ? src.images.map(im =>
+                            typeof im === 'string'
+                                ? { src: im, title: '', desc: '' }
+                                : { src: String(im && im.src || ''),
+                                    title: String(im && im.title || '').slice(0, 60),
+                                    desc: String(im && im.desc || '') }
+                        ).filter(im => im.src) : []
+                    };
+                });
+            }
+            let cal = { ...CAL_DEFAULT };
+            if (p.calendar && typeof p.calendar === 'object') {
+                const y = parseInt(p.calendar.year), m = parseInt(p.calendar.month), dy = parseInt(p.calendar.day);
+                if (!isNaN(y) && m >= 0 && m < 10 && dy >= 1 && dy <= CAL_MONTHS[m][2]) {
+                    cal = { year: y, month: m, day: dy };
+                }
+            }
+            return {
+                name: typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 40) : d.name,
+                avatar: typeof p.avatar === 'string' ? p.avatar : null,
+                routes: Array.isArray(p.routes) ? p.routes.filter(r =>
+                    r && typeof r === 'object' && Array.isArray(r.waypoints)) : [],
+                pois,
+                customPois: Array.isArray(p.customPois) ? p.customPois.filter(c =>
+                    c && typeof c.id === 'string' && typeof c.x === 'number' && typeof c.y === 'number')
+                    .map(c => ({ id: c.id, name: String(c.name || 'İsimsiz').slice(0, 50), type: 'ozel', x: c.x, y: c.y })) : [],
+                calendar: cal
+            };
+        }
+
+        trySaveProfile() {
+            try {
+                localStorage.setItem(this.profileKey, JSON.stringify(this.profile));
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        saveProfile() {
+            if (!this.trySaveProfile()) {
+                this.showToast('Depolama sınırı aşıldı — kaydedilemedi', true);
+            }
+        }
+
+        debouncedProfileSave() {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = setTimeout(() => this.saveProfile(), 500);
+        }
+
+        renderProfile() {
+            const avatar = document.getElementById('profileAvatar');
+            if (this.profile.avatar) {
+                avatar.style.backgroundImage = `url("${this.profile.avatar}")`;
+                avatar.textContent = '';
+            } else {
+                avatar.style.backgroundImage = '';
+                avatar.textContent = (this.profile.name || 'O').trim().charAt(0).toLocaleUpperCase('tr');
+            }
+            const nameEl = document.getElementById('profileName');
+            nameEl.innerHTML = '';
+            nameEl.appendChild(document.createTextNode(this.profile.name));
+            const ic = document.createElement('span');
+            ic.className = 'edit-ic';
+            ic.textContent = '✎';
+            nameEl.appendChild(ic);
+
+            const nRoutes = this.profile.routes.length;
+            const nPois = this.profile.customPois.length;
+            const nNotes = Object.values(this.profile.pois)
+                .filter(dd => dd && ((dd.notes && dd.notes.trim()) || (dd.info && dd.info.trim()) || (dd.images && dd.images.length))).length;
+            document.getElementById('profileSub').textContent =
+                `${nRoutes} rota · ${nPois} özel POI · ${nNotes} kayıtlı yer`;
+        }
+
+        editProfileName() {
+            const nameEl = document.getElementById('profileName');
+            const input = document.createElement('input');
+            input.className = 'text-input';
+            input.type = 'text';
+            input.maxLength = 40;
+            input.value = this.profile.name;
+            input.style.width = '100%';
+            nameEl.replaceWith(input);
+            input.focus();
+            input.select();
+            const commit = () => {
+                this.profile.name = input.value.trim() || 'Oyuncu';
+                this.saveProfile();
+                const span = document.createElement('span');
+                span.className = 'profile-name';
+                span.id = 'profileName';
+                span.title = 'İsmi değiştir';
+                input.replaceWith(span);
+                span.addEventListener('click', () => this.editProfileName());
+                this.renderProfile();
+            };
+            input.addEventListener('blur', commit);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') input.blur();
+                if (e.key === 'Escape') { input.value = this.profile.name; input.blur(); }
+            });
+        }
+
+        onAvatarPicked(e) {
+            const file = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            this.readImageScaled(file, 220, 0.85).then(url => {
+                const prev = this.profile.avatar;
+                this.profile.avatar = url;
+                if (!this.trySaveProfile()) {
+                    this.profile.avatar = prev;
+                    this.showToast('Depolama sınırı aşıldı', true);
+                    return;
+                }
+                this.renderProfile();
+                this.showToast('Profil resmi güncellendi');
+            }).catch(() => this.showToast('Resim okunamadı', true));
+        }
+
+        slugify(s) {
+            return (s || '').toLocaleLowerCase('tr')
+                .replace(/[çÇ]/g, 'c').replace(/[ğĞ]/g, 'g').replace(/[ıİi]/g, 'i')
+                .replace(/[öÖ]/g, 'o').replace(/[şŞ]/g, 's').replace(/[üÜ]/g, 'u')
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        exportProfile() {
+            const out = {
+                type: 'aiwelen-profile',
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                profile: this.profile
+            };
+            this.downloadJson(out, `aiwelen-profil-${this.slugify(this.profile.name) || 'oyuncu'}.json`);
+            this.showToast('Profil dışa aktarıldı');
+        }
+
+        onProfileFilePicked(e) {
+            const file = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            this.readJsonFile(file).then(obj => {
+                if (!obj || obj.type !== 'aiwelen-profile' || !obj.profile) {
+                    this.showToast('Geçersiz profil dosyası', true);
+                    return;
+                }
+                this.showConfirm(
+                    'İçe aktarılan profil mevcut profilin (rotalar, notlar, resimler) yerine geçecek. Devam edilsin mi?',
+                    () => {
+                        this.profile = this.normalizeProfile(obj.profile);
+                        if (!this.trySaveProfile()) this.showToast('Profil çok büyük — kaydedilemedi', true);
+                        this.afterProfileChange();
+                        this.showToast('Profil içe aktarıldı');
+                    });
+            }).catch(() => this.showToast('Dosya okunamadı', true));
+        }
+
+        afterProfileChange() {
+            this.closePoiPanel();
+            this.renderPoiMarkers();
+            this.renderLocationsList();
+            this.renderProfile();
+            this.renderPresets();
+            this.renderCalendar();
+            this.updateDetails();
+        }
+
+        /* ═══════════ ROTA PRESETLERİ ═══════════ */
+
+        saveCurrentAsPreset() {
+            if (this.waypoints.length < 2) {
+                this.showToast('Kaydetmek için en az 2 noktalı bir rota çiz', true);
+                return;
+            }
+            const input = document.getElementById('presetNameInput');
+            const name = input.value.trim() || ('Rota ' + (this.profile.routes.length + 1));
+            this.profile.routes.push({
+                id: 'r' + Date.now(),
+                name,
+                createdAt: new Date().toISOString(),
+                waypoints: this.waypoints.map(w => ({ x: w.mapX, y: w.mapY })),
+                legs: this.legs.map(l => ({ ...l }))
+            });
+            this.saveProfile();
+            input.value = '';
+            this.renderPresets();
+            this.renderProfile();
+            this.showToast('Rota kaydedildi: ' + name);
+        }
+
+        renderPresets() {
+            const list = document.getElementById('presetList');
+            if (this.profile.routes.length === 0) {
+                list.innerHTML = `<div class="loc-empty">Henüz kayıtlı rota yok. Rota çiz, isim ver, kaydet.</div>`;
+                return;
+            }
+            list.innerHTML = '';
+            this.profile.routes.forEach(route => {
+                const totalMiles = this.routeMiles(route);
+                const row = document.createElement('div');
+                row.className = 'preset-row';
+
+                const info = document.createElement('div');
+                info.className = 'preset-info';
+                info.title = 'Rotayı yükle';
+                const nm = document.createElement('div');
+                nm.className = 'preset-name';
+                nm.textContent = route.name;
+                const meta = document.createElement('div');
+                meta.className = 'preset-meta';
+                meta.textContent = `${route.waypoints.length} nokta · ${this.fmt(totalMiles)} mil`;
+                info.appendChild(nm);
+                info.appendChild(meta);
+                info.addEventListener('click', () => this.loadPreset(route.id));
+
+                const lnk = document.createElement('button');
+                lnk.className = 'preset-btn';
+                lnk.textContent = '∞';
+                lnk.title = 'Rota linkini kopyala';
+                lnk.addEventListener('click', () => this.copyRouteLink(route.name, route.waypoints, route.legs));
+
+                const exp = document.createElement('button');
+                exp.className = 'preset-btn';
+                exp.textContent = '⤓';
+                exp.title = 'Rotayı dosya olarak dışa aktar';
+                exp.addEventListener('click', () => this.exportRoute(route));
+
+                const del = document.createElement('button');
+                del.className = 'preset-btn del';
+                del.textContent = '✕';
+                del.title = 'Rotayı sil';
+                del.addEventListener('click', () => {
+                    this.showConfirm(`"${route.name}" rotası silinecek. Emin misin?`, () => {
+                        this.profile.routes = this.profile.routes.filter(r => r.id !== route.id);
+                        this.saveProfile();
+                        this.renderPresets();
+                        this.renderProfile();
+                        this.showToast('Rota silindi');
+                    });
+                });
+
+                row.appendChild(info);
+                row.appendChild(lnk);
+                row.appendChild(exp);
+                row.appendChild(del);
+                list.appendChild(row);
+            });
+        }
+
+        routeMiles(route) {
+            let total = 0;
+            for (let i = 0; i < route.waypoints.length - 1; i++) {
+                const a = route.waypoints[i], b = route.waypoints[i + 1];
+                total += Math.hypot(b.x - a.x, b.y - a.y) * this.milesPerPixel;
+            }
+            return total;
+        }
+
+        loadPreset(id) {
+            const route = this.profile.routes.find(r => r.id === id);
+            if (!route) return;
+            const apply = () => {
+                this.loadRouteData(route.waypoints, route.legs);
+                this.showToast('Rota yüklendi: ' + route.name);
+            };
+            if (this.waypoints.length > 0) {
+                this.showConfirm('Mevcut rota, "' + route.name + '" ile değiştirilecek. Devam edilsin mi?', apply);
+            } else {
+                apply();
+            }
+        }
+
+        exportRoute(route) {
+            const out = {
+                type: 'aiwelen-route',
+                version: 1,
+                name: route.name,
+                waypoints: route.waypoints,
+                legs: route.legs
+            };
+            this.downloadJson(out, `aiwelen-rota-${this.slugify(route.name) || 'rota'}.json`);
+            this.showToast('Rota dışa aktarıldı');
+        }
+
+        onRouteFilePicked(e) {
+            const file = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            this.readJsonFile(file).then(obj => {
+                if (!obj || obj.type !== 'aiwelen-route' || !Array.isArray(obj.waypoints)) {
+                    this.showToast('Geçersiz rota dosyası', true);
+                    return;
+                }
+                this.profile.routes.push({
+                    id: 'r' + Date.now(),
+                    name: String(obj.name || 'İçe aktarılan rota').slice(0, 40),
+                    createdAt: new Date().toISOString(),
+                    waypoints: obj.waypoints
+                        .filter(p => p && typeof p.x === 'number' && typeof p.y === 'number')
+                        .map(p => ({ x: p.x, y: p.y })),
+                    legs: Array.isArray(obj.legs) ? obj.legs : []
+                });
+                this.saveProfile();
+                this.renderPresets();
+                this.renderProfile();
+                this.showToast('Rota içe aktarıldı — listeden yükleyebilirsin');
+            }).catch(() => this.showToast('Dosya okunamadı', true));
+        }
+
+    /* ═══════════ TAKVİM ═══════════ */
+
+        renderCalendar() {
+            const body = document.getElementById('calendarBody');
+            if (!this.calView) {
+                this.calView = { year: this.profile.calendar.year, month: this.profile.calendar.month };
+            }
+            const v = this.calView;
+            const [mName, mEpithet, mDays] = CAL_MONTHS[v.month];
+            const cur = this.profile.calendar;
+
+            let html = `
+                <div class="cal-nav">
+                    <button class="cal-nav-btn" data-cal="py" title="Önceki yıl">«</button>
+                    <button class="cal-nav-btn" data-cal="pm" title="Önceki ay">‹</button>
+                    <div class="cal-month-label" lang="en">${mName} · Z.G.S. ${v.year}
+                        <span class="cal-epithet">"${mEpithet}" — ${mDays} gün</span>
+                    </div>
+                    <button class="cal-nav-btn" data-cal="nm" title="Sonraki ay">›</button>
+                    <button class="cal-nav-btn" data-cal="ny" title="Sonraki yıl">»</button>
+                </div>
+                <div class="cal-grid">`;
+            for (let day = 1; day <= mDays; day++) {
+                const isToday = cur.year === v.year && cur.month === v.month && cur.day === day;
+                html += `<div class="cal-day${isToday ? ' today' : ''}" data-day="${day}"
+                    title="${day} ${mName} Z.G.S. ${v.year}">${day}</div>`;
+            }
+            html += `</div>
+                <div class="cal-footer">
+                    <div class="cal-current">${calFormatTr(cur)}</div>
+                    <div class="cal-current-en" lang="en">${calFormatEn(cur)}</div>
+                    <div class="cal-hint">Bir güne tıklayarak kampanya tarihini ayarla</div>
+                </div>`;
+            body.innerHTML = html;
+
+            body.querySelector('[data-cal="pm"]').addEventListener('click', () => {
+                v.month--; if (v.month < 0) { v.month = 9; v.year--; }
+                this.renderCalendar();
+            });
+            body.querySelector('[data-cal="nm"]').addEventListener('click', () => {
+                v.month++; if (v.month > 9) { v.month = 0; v.year++; }
+                this.renderCalendar();
+            });
+            body.querySelector('[data-cal="py"]').addEventListener('click', () => { v.year--; this.renderCalendar(); });
+            body.querySelector('[data-cal="ny"]').addEventListener('click', () => { v.year++; this.renderCalendar(); });
+            body.querySelectorAll('.cal-day').forEach(cell => {
+                cell.addEventListener('click', () => {
+                    this.profile.calendar = { year: v.year, month: v.month, day: parseInt(cell.dataset.day) };
+                    this.saveProfile();
+                    this.renderCalendar();
+                    this.updateDetails(); // varış tarihi güncellensin
+                    this.showToast('Tarih ayarlandı: ' + calFormatTr(this.profile.calendar));
+                });
+            });
+        }
+
+        /* ═══════════ URL PAYLAŞIMI ═══════════
+           Rota ve profil linkleri birbirinden tamamen bağımsızdır:
+           #r= yalnızca rotayı, #p= yalnızca profili (resimler/avatar hariç) taşır. */
+
+        shareRouteLink() {
+            if (this.waypoints.length < 2) {
+                this.showToast('Paylaşmak için en az 2 noktalı bir rota çiz', true);
+                return;
+            }
+            this.copyRouteLink('',
+                this.waypoints.map(w => ({ x: w.mapX, y: w.mapY })), this.legs);
+        }
+
+        copyRouteLink(name, wps, legs) {
+            const code = encodeRouteCode(name, wps, legs);
+            const url = shareBase() + '#r=' + code;
+            this.copyToClipboard(url, 'Rota linki kopyalandı');
+        }
+
+        async shareProfileLink() {
+            // Resimler ve avatar linke sığmaz — bilinçli olarak hariç tutulur
+            const slim = {
+                name: this.profile.name,
+                routes: this.profile.routes,
+                customPois: this.profile.customPois,
+                calendar: this.profile.calendar,
+                pois: {}
+            };
+            Object.keys(this.profile.pois).forEach(id => {
+                const d = this.profile.pois[id];
+                if ((d.info && d.info.trim()) || (d.notes && d.notes.trim())) {
+                    slim.pois[id] = { info: d.info, notes: d.notes, images: [] };
+                }
+            });
+            try {
+                const { c, data } = await deflateText(JSON.stringify(slim));
+                const code = (c ? 'z' : 'j') + bytesToB64url(data);
+                const url = shareBase() + '#p=' + code;
+                if (url.length > 2500) {
+                    this.showToast('Profil link için çok büyük — dosya olarak dışa aktar', true);
+                    return;
+                }
+                this.copyToClipboard(url, 'Profil linki kopyalandı (resimler hariç)');
+            } catch (e) {
+                this.showToast('Link oluşturulamadı', true);
+            }
+        }
+
+        async handleShareHash() {
+            const hash = location.hash || '';
+            const clear = () => history.replaceState(null, '', location.pathname + location.search);
+
+            if (hash.startsWith('#r=')) {
+                const route = decodeRouteCode(hash.slice(3));
+                clear();
+                if (!route) { this.showToast('Geçersiz rota linki', true); return; }
+                const label = route.name ? `"${route.name}" rotası` : 'Paylaşılan rota';
+                this.showConfirm(label + ' bu bağlantıyla geldi. Haritaya yüklensin mi? (Mevcut rotanın yerine geçer)', () => {
+                    this.loadRouteData(route.waypoints, route.legs);
+                    this.showToast('Rota linkten yüklendi');
+                });
+            } else if (hash.startsWith('#p=')) {
+                const code = hash.slice(3);
+                clear();
+                try {
+                    const compressed = code[0] === 'z';
+                    const text = await inflateToText(b64urlToBytes(code.slice(1)), compressed);
+                    const incoming = this.normalizeProfile(JSON.parse(text));
+                    this.showConfirm(
+                        `"${incoming.name}" profili bu bağlantıyla geldi. İçe aktarılsın mı? ` +
+                        'Rotalar, notlar ve özel POI\'ler değişir; cihazındaki resimler korunur.',
+                        () => {
+                            // Yereldeki resimleri ve avatarı koru
+                            Object.keys(this.profile.pois).forEach(id => {
+                                const localImgs = this.profile.pois[id].images;
+                                if (localImgs && localImgs.length) {
+                                    if (!incoming.pois[id]) incoming.pois[id] = { info: '', notes: '', images: [] };
+                                    incoming.pois[id].images = localImgs;
+                                }
+                            });
+                            incoming.avatar = this.profile.avatar;
+                            this.profile = incoming;
+                            if (!this.trySaveProfile()) this.showToast('Profil kaydedilemedi', true);
+                            this.afterProfileChange();
+                            this.showToast('Profil linkten içe aktarıldı');
+                        });
+                } catch (e) {
+                    this.showToast('Geçersiz profil linki', true);
+                }
+            }
+        }
+
+        copyToClipboard(text, successMsg) {
+            const fallback = () => this.showLinkModal(text);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => this.showToast(successMsg))
+                    .catch(fallback);
+            } else {
+                fallback();
+            }
+        }
+
+        showLinkModal(url) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-box">
+                    <div class="modal-msg">Link hazır — kopyala:</div>
+                    <input class="text-input" type="text" readonly>
+                    <div class="btn-row">
+                        <button class="btn" data-copy>Kopyala</button>
+                        <button class="btn btn-danger" data-no>Kapat</button>
+                    </div>
+                </div>`;
+            const input = overlay.querySelector('input');
+            input.value = url;
+            const close = () => overlay.remove();
+            overlay.querySelector('[data-copy]').addEventListener('click', () => {
+                input.select();
+                try { document.execCommand('copy'); this.showToast('Kopyalandı'); } catch (e) {}
+                close();
+            });
+            overlay.querySelector('[data-no]').addEventListener('click', close);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+            document.body.appendChild(overlay);
+            input.select();
+        }
+
+        /* ═══════════ YARDIMCILAR ═══════════ */
+
+        downloadJson(obj, filename) {
+            const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 2000);
+        }
+
+        readJsonFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    try { resolve(JSON.parse(reader.result)); }
+                    catch (e) { reject(e); }
+                };
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+        }
+
+        /* Resmi küçültüp dataURL döndürür (localStorage boyutu için) */
+        readImageScaled(file, maxDim, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let { width, height } = img;
+                        if (width > maxDim || height > maxDim) {
+                            const s = maxDim / Math.max(width, height);
+                            width = Math.round(width * s);
+                            height = Math.round(height * s);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = reader.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        showToast(msg, isError) {
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            const t = document.createElement('div');
+            t.className = 'toast' + (isError ? ' error' : '');
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2800);
+        }
+
+        showConfirm(message, onYes) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-box">
+                    <div class="modal-msg"></div>
+                    <div class="btn-row" style="margin-top:0;">
+                        <button class="btn" data-yes>Evet</button>
+                        <button class="btn btn-danger" data-no>Vazgeç</button>
+                    </div>
+                </div>`;
+            overlay.querySelector('.modal-msg').textContent = message;
+            const close = () => overlay.remove();
+            overlay.querySelector('[data-yes]').addEventListener('click', () => { close(); onYes(); });
+            overlay.querySelector('[data-no]').addEventListener('click', close);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+            document.body.appendChild(overlay);
+        }
+
+        /* ═══════════ ROTA KAYDI (otomatik) ═══════════ */
+
+        saveRoute() {
+            try {
+                localStorage.setItem(this.routeKey, JSON.stringify({
+                    waypoints: this.waypoints.map(w => ({ x: w.mapX, y: w.mapY })),
+                    legs: this.legs
+                }));
+            } catch (e) { /* localStorage kapalıysa sessizce geç */ }
+        }
+
+        loadRoute() {
+            let data;
+            try {
+                data = JSON.parse(localStorage.getItem(this.routeKey));
+            } catch (e) { return; }
+            if (!data || !Array.isArray(data.waypoints) || data.waypoints.length === 0) return;
+
+            data.waypoints.forEach(p => {
+                const waypoint = {
+                    id: ++this.waypointCounter,
+                    mapX: p.x, mapY: p.y,
+                    element: this.createWaypointElement()
+                };
+                this.bindWaypointEvents(waypoint);
+                this.waypoints.push(waypoint);
+            });
+            const defaults = this.getDefaults();
+            const savedLegs = Array.isArray(data.legs) ? data.legs : [];
+            for (let i = 0; i < this.waypoints.length - 1; i++) {
+                const l = savedLegs[i] || {};
+                this.legs.push({
+                    pace: [30, 24, 18].includes(l.pace) ? l.pace : defaults.pace,
+                    terrain: [1, 2].includes(l.terrain) ? l.terrain : defaults.terrain,
+                    dailyHours: [2, 4, 6, 8, 10, 12].includes(l.dailyHours) ? l.dailyHours : defaults.dailyHours
+                });
+            }
+            this.refreshWaypointNumbers();
+        }
+    }
+
+    const mapApp = new MapApp();
     </script>
 <script src="../../splash-cursor.js"></script>
 </body>
