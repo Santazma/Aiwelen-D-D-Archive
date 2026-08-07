@@ -1569,7 +1569,8 @@
 
     <script>
     /* ═══════════ SABİT POI LİSTESİ ═══════════
-       Koordinatlar harita düzlemindedir (1920×1080, 1 px = 1 mil).
+       Koordinatlar harita düzlemindedir (1920×1080 piksel; ölçek için
+       MapApp.milesPerPixel'e bak).
        `info` alanı DM (site sahibi) tarafından buradan doldurulur —
        sayfada salt-okunur gösterilir, ziyaretçiler değiştiremez. */
     const POI_TYPES = {
@@ -1578,35 +1579,35 @@
         doga: 'Doğa', dogayerleske: 'Doğa / Yerleşke', fener: 'Deniz Feneri / Yerleşke', ozel: 'Özel'
     };
     const BASE_POIS = [
-        { id: 'paragon',          name: 'Paragon',                     type: 'kale',         x: 390,  y: 98,   info: '' },
-        { id: 'pillivar',         name: 'Pillivar',                    type: 'baskent',      x: 572,  y: 243,  info: '' },
-        { id: 'frozen-monuments', name: 'Frozen Monuments',            type: 'harabe',       x: 641,  y: 95,   info: '' },
-        { id: 'dawn-path',        name: 'The Dawn Path',               type: 'gecit',        x: 732,  y: 198,  info: '' },
-        { id: 'wolfs-inn',        name: "Wolf's Inn",                  type: 'baskent',      x: 821,  y: 278,  info: '' },
-        { id: 'blood-hollow',     name: 'Blood Hollow',                type: 'bolge',        x: 1021, y: 150,  info: '' },
-        { id: 'cloud-monastery',  name: 'Cloud Monastery',             type: 'tapinak',      x: 1152, y: 164,  info: '' },
-        { id: 'godwood-peak',     name: 'Godwood Peak',                type: 'doga',         x: 1228, y: 140,  info: '' },
-        { id: 'frozen-grove',     name: 'Frozen Grove',                type: 'doga',         x: 1136, y: 287,  info: '' },
-        { id: 'frosty-passage',   name: 'Frosty Passage',              type: 'sinir',        x: 1183, y: 388,  info: '' },
-        { id: 'wolfgrad',         name: 'Wolfgrad',                    type: 'sehir',        x: 1440, y: 255,  info: '' },
-        { id: 'mountain-grounds', name: 'Mountain Grounds',            type: 'baskent',      x: 1486, y: 425,  info: '' },
-        { id: 'verdun',           name: 'Verdun',                      type: 'sehir',        x: 600,  y: 534,  info: '' },
-        { id: 'balance-ruins',    name: 'Castle of the Balance Ruins', type: 'harabe',       x: 796,  y: 525,  info: '' },
-        { id: 'far-islands',      name: 'Far Islands',                 type: 'bolge',        x: 300,  y: 510,  info: '' },
-        { id: 'western-shield',   name: 'Western Shield',              type: 'kale',         x: 800,  y: 630,  info: '' },
-        { id: 'zonthar',          name: 'Zonthar',                     type: 'sehir',        x: 614,  y: 694,  info: '' },
-        { id: 'karakuma',         name: 'Karakuma',                    type: 'baskent',      x: 549,  y: 764,  info: '' },
-        { id: 'okukita',          name: 'Okukita',                     type: 'sehir',        x: 676,  y: 737,  info: '' },
-        { id: 'yamai',            name: 'Yamai',                       type: 'sehir',        x: 612,  y: 802,  info: '' },
-        { id: 'irongrove',        name: 'Irongrove',                   type: 'sehir',        x: 915,  y: 768,  info: '' },
-        { id: 'white-citadel',    name: 'White Citadel',               type: 'baskent',      x: 1029, y: 548,  info: '' },
-        { id: 'moradin-pass',     name: 'Moradin Pass',                type: 'sinir',        x: 1408, y: 558,  info: '' },
-        { id: 'mountainside',     name: 'Mountainside',                type: 'sehir',        x: 1532, y: 644,  info: '' },
-        { id: 'white-linn',       name: 'White Linn',                  type: 'sehir',        x: 1298, y: 751,  info: '' },
-        { id: 'alve-dorei',       name: 'Alve Dorei',                  type: 'baskent',      x: 572,  y: 1030, info: '' },
-        { id: 'merdalon',         name: 'Merdalon',                    type: 'fener',        x: 933,  y: 913,  info: '' },
-        { id: 'lierin',           name: 'Lierin',                      type: 'dogayerleske', x: 1145, y: 980,  info: '' },
-        { id: 'order-ruins',      name: 'Fortress of the Order Ruins', type: 'harabe',       x: 1473, y: 830,  info: '' }
+        { id: 'paragon',           name: 'Paragon',                     type: 'kale',           x: 380,   y: 99,    info: '' },
+        { id: 'pillivar',          name: 'Pillivar',                    type: 'baskent',        x: 576,   y: 251,   info: '' },
+        { id: 'frozen-monuments',  name: 'Frozen Monuments',            type: 'harabe',         x: 651,   y: 112,   info: '' },
+        { id: 'dawn-path',         name: 'The Dawn Path',               type: 'gecit',          x: 741,   y: 207,   info: '' },
+        { id: 'wolfs-inn',         name: "Wolf's Inn",                  type: 'baskent',        x: 821,   y: 278,   info: '' },
+        { id: 'blood-hollow',      name: 'Blood Hollow',                type: 'bolge',          x: 1029,  y: 150,   info: '' },
+        { id: 'cloud-monastery',   name: 'Cloud Monastery',             type: 'tapinak',        x: 1156,  y: 165,   info: '' },
+        { id: 'godwood-peak',      name: 'Godwood Peak',                type: 'doga',           x: 1222,  y: 130,   info: '' },
+        { id: 'frozen-grove',      name: 'Frozen Grove',                type: 'doga',           x: 1136,  y: 287,   info: '' },
+        { id: 'frosty-passage',    name: 'Frosty Passage',              type: 'sinir',          x: 1179,  y: 386,   info: '' },
+        { id: 'wolfgrad',          name: 'Wolfgrad',                    type: 'sehir',          x: 1440,  y: 255,   info: '' },
+        { id: 'mountain-grounds',  name: 'Mountain Grounds',            type: 'baskent',        x: 1486,  y: 425,   info: '' },
+        { id: 'verdun',            name: 'Verdun',                      type: 'sehir',          x: 614,   y: 542,   info: '' },
+        { id: 'balance-ruins',     name: 'Castle of the Balance Ruins', type: 'harabe',         x: 805,   y: 513,   info: '' },
+        { id: 'far-islands',       name: 'Far Islands',                 type: 'bolge',          x: 300,   y: 510,   info: '' },
+        { id: 'western-shield',    name: 'Western Shield',              type: 'kale',           x: 821,   y: 641,   info: '' },
+        { id: 'zonthar',           name: 'Zonthar',                     type: 'sehir',          x: 619,   y: 684,   info: '' },
+        { id: 'karakuma',          name: 'Karakuma',                    type: 'baskent',        x: 541,   y: 745,   info: '' },
+        { id: 'okukita',           name: 'Okukita',                     type: 'sehir',          x: 693,   y: 726,   info: '' },
+        { id: 'yamai',             name: 'Yamai',                       type: 'sehir',          x: 616,   y: 792,   info: '' },
+        { id: 'irongrove',         name: 'Irongrove',                   type: 'sehir',          x: 915,   y: 768,   info: '' },
+        { id: 'white-citadel',     name: 'White Citadel',               type: 'baskent',        x: 1038,  y: 557,   info: '' },
+        { id: 'moradin-pass',      name: 'Moradin Pass',                type: 'sinir',          x: 1408,  y: 558,   info: '' },
+        { id: 'mountainside',      name: 'Mountainside',                type: 'sehir',          x: 1545,  y: 643,   info: '' },
+        { id: 'white-linn',        name: 'White Linn',                  type: 'sehir',          x: 1292,  y: 761,   info: '' },
+        { id: 'alve-dorei',        name: 'Alve Dorei',                  type: 'baskent',        x: 610,   y: 1004,  info: '' },
+        { id: 'merdalon',          name: 'Merdalon',                    type: 'fener',          x: 935,   y: 930,   info: '' },
+        { id: 'lierin',            name: 'Lierin',                      type: 'dogayerleske',   x: 1153,  y: 994,   info: '' },
+        { id: 'order-ruins',       name: 'Fortress of the Order Ruins', type: 'harabe',         x: 1482,  y: 851,   info: '' }
     ];
 
     /* DM (site sahibi) görselleri — POI panelinin üst "Arşiv Görselleri" alanında
@@ -1768,10 +1769,12 @@
             this.defaultTerrainSel = document.getElementById('defaultTerrain');
             this.defaultHoursSel = document.getElementById('defaultHours');
 
-            // ── HARİTA ÖLÇEĞİ (DEĞİŞTİRME — doğrulanmış kalibrasyon) ──
+            // ── HARİTA ÖLÇEĞİ ──
+            // Tüm mesafe/süre hesapları bu tek katsayıdan türer; değiştirirsen
+            // etaplar, cetvel, ölçek çubuğu ve varış tarihi birlikte ölçeklenir.
             this.mapWidth = 1920;
             this.mapHeight = 1080;
-            this.milesPerPixel = 1.0;
+            this.milesPerPixel = 2.1;
 
             this.minZoom = 0.3;
             this.maxZoom = 3;
@@ -2417,7 +2420,7 @@
         }
 
         /* ═══════════ HESAPLAMALAR ═══════════
-           Ölçek: 1 piksel (harita koordinatı) = 1 mil.
+           Ölçek: 1 piksel (harita koordinatı) = milesPerPixel mil.
            mil/saat = pace / 8 · etap saat = (mesafe × terrain) / (mil/saat)
            etap gün = etap saat / o etabın günlük yol saati */
 
