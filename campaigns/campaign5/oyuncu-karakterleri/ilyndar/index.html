@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ilyndar Zyn'aere Faen Tlabbar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue-glow: #87cefa;
+      --gold: #ffd700;
+      --gold-dim: #ffdf6e;
+      --dark-glass: rgba(0, 0, 0, 0.62);
+      --ice: #a8d8ea;
+      --ice-glow: rgba(168,216,234,0.55);
+    }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleDrop {
+      from { opacity: 0; transform: translateY(-30px) scale(0.95); letter-spacing: 12px; }
+      to   { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 3px; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 8px rgba(135,206,250,.35), 0 0 20px rgba(135,206,250,.15); }
+      50%      { box-shadow: 0 0 16px rgba(135,206,250,.7), 0 0 40px rgba(135,206,250,.3); }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      margin: 0; padding: 0;
+      background: url('.Drow Şehiri Syfelin.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    /* ══════════════ FIXED UI ══════════════ */
+    .fixed-back-button {
+      position: fixed; top: 20px; left: 20px; z-index: 999;
+      padding: .45rem 1rem;
+      font-family: 'Cinzel', serif; font-size: .9rem;
+      font-weight: 700; letter-spacing: .5px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.45);
+      background: linear-gradient(135deg,rgba(20,60,100,.82),rgba(8,24,50,.9));
+      box-shadow: 0 0 8px rgba(135,206,250,.2);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .fixed-back-button:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.88),rgba(20,60,110,.94));
+      box-shadow: 0 0 20px rgba(135,206,250,.6);
+      transform: translateY(-2px);
+    }
+    .fixed-back-button:active { transform: scale(.95); }
+
+
+
+    /* ══════════════ INFO BOXES ══════════════ */
+    .info-box {
+      position: fixed;
+      top: 100px;
+      z-index: 10;
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      width: 210px; font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+      animation: pageFadeIn 1s ease .6s both;
+      transition: top .1s linear;
+    }
+    .info-box h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box strong { color: var(--gold); }
+    .left-box  { left: 20px; }
+    .right-box { right: 20px; }
+
+    .info-boxes-inline {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 28px auto;
+      padding: 0 16px;
+    }
+    .info-box-inline {
+      background-color: var(--dark-glass);
+      padding: 15px; border-radius: 10px;
+      font-size: .9rem; line-height: 1.5;
+      border: 1px solid rgba(135,206,250,.18);
+    }
+    .info-box-inline h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; color: var(--gold-dim);
+      margin-top: 0; margin-bottom: 10px;
+    }
+    .info-box-inline strong { color: var(--gold); }
+
+    /* ══════════════ MAIN CONTAINER ══════════════ */
+    .container {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 260px;
+      text-align: center;
+      z-index: 1;
+      animation: pageFadeIn 1s ease .2s both;
+    }
+    .container::before {
+      content: '';
+      position: absolute; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.42);
+      z-index: -1;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
+      text-transform: uppercase; letter-spacing: 3px;
+      text-shadow: 0 0 30px rgba(135,206,250,.6), 3px 3px 12px rgba(0,0,0,.9);
+      margin-bottom: 20px;
+      animation: titleDrop 1s cubic-bezier(.22,1,.36,1) .1s both;
+    }
+
+    .character-image {
+      width: 200px; height: 300px;
+      object-fit: cover; border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.5);
+      margin-bottom: 10px;
+      transition: transform .5s ease, opacity .5s ease;
+      cursor: pointer;
+      animation: pageFadeIn 1s ease .5s both;
+    }
+    .character-image:hover { transform: scale(1.5); opacity: .8; }
+
+    .image-title {
+      text-align: center; margin-bottom: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic; font-size: 1.25rem; font-weight: 700;
+      text-shadow: 0 0 10px rgba(0,0,0,.8); padding: 5px;
+    }
+
+    .bio {
+      font-size: 1.1rem; max-width: 800px;
+      margin: 0 auto 30px auto;
+      line-height: 1.75; text-align: justify;
+      background: var(--dark-glass);
+      padding: 24px 28px; border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.6);
+      border: 1px solid rgba(135,206,250,.12);
+      animation: pageFadeIn 1s ease .7s both;
+    }
+
+
+    /* ── Bölüm başlıkları ve dipnotlar ── */
+    .bio h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem; font-weight: 700; letter-spacing: 1px;
+      color: var(--gold-dim); text-align: center;
+      margin: 26px 0 14px;
+      text-shadow: 0 0 12px rgba(135,206,250,.35);
+    }
+    .bio h3.bio-book {
+      font-size: 1.4rem; letter-spacing: 3px; margin-top: 4px;
+      color: var(--gold);
+    }
+    .bio hr {
+      border: none; height: 1px; margin: 28px auto 0; width: 60%;
+      background: linear-gradient(90deg, transparent, rgba(135,206,250,.45), transparent);
+    }
+    .bio hr.bio-break { width: 30%; margin: 32px auto; }
+    .bio-note {
+      font-style: italic; font-size: .98rem;
+      color: rgba(232,246,255,.82);
+      border-left: 2px solid rgba(135,206,250,.45);
+      padding-left: 14px;
+    }
+    .bio-list { text-align: left; margin: 0 0 1em; padding-left: 1.4em; }
+    .bio-list li { margin-bottom: 4px; }
+
+    .character-link {
+      display: inline-block; margin-top: 8px;
+      padding: 6px 14px; font-size: .88rem; font-weight: 600;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid rgba(255,215,0,.45); border-radius: 6px;
+      background: rgba(255,215,0,.07);
+      transition: background .25s, box-shadow .25s, transform .15s;
+    }
+    .character-link:hover {
+      background: rgba(255,215,0,.18);
+      box-shadow: 0 0 14px rgba(255,215,0,.5);
+      transform: translateY(-1px);
+    }
+    .character-link:active { transform: scale(.96); }
+
+    .back-link {
+      display: inline-block; margin-top: 20px;
+      padding: .6rem 1.4rem;
+      font-family: 'Cinzel', serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: 1px;
+      text-decoration: none; color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(135,206,250,.5);
+      background: linear-gradient(135deg,rgba(30,80,120,.75),rgba(10,30,60,.85));
+      box-shadow: 0 0 10px rgba(135,206,250,.25), inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .18s, box-shadow .25s, background .25s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: linear-gradient(135deg,rgba(50,120,180,.85),rgba(20,60,110,.9));
+      box-shadow: 0 0 22px rgba(135,206,250,.65), inset 0 1px 0 rgba(255,255,255,.12);
+      transform: translateY(-2px);
+    }
+    .back-link:active { transform: scale(.96) translateY(0); }
+
+    /* ══════════════ MODAL ══════════════ */
+    .modal {
+      display: none; position: fixed; z-index: 1000;
+      left:0; top:0; width:100%; height:100%;
+      overflow: hidden;
+      background-color: rgba(0,0,0,.88);
+      opacity: 0; animation: fadeIn .4s forwards;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .modal.open { display: flex; }
+
+    .modal-inner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; max-width: 96vw; max-height: 96vh;
+      padding: 12px; box-sizing: border-box; cursor: default;
+    }
+
+    .modal-stage {
+      position: relative; display: flex;
+      flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    @keyframes modalSlideInRight {
+      from { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+    }
+    @keyframes modalSlideInLeft {
+      from { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
+      to   { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+    }
+    @keyframes modalSlideOutLeft {
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(-60px) scale(0.93) rotateY(8deg); filter: blur(5px); }
+    }
+    @keyframes modalSlideOutRight {
+      from { opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); filter: blur(0); }
+      to   { opacity: 0; transform: translateX(60px) scale(0.93) rotateY(-8deg); filter: blur(5px); }
+    }
+
+    .modal-content {
+      display: block; max-width: 78vw; max-height: 76vh;
+      width: auto; height: auto;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 0 50px rgba(135,206,250,.35); object-fit: contain;
+    }
+    .modal-content.slide-in-right  { animation: modalSlideInRight  0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-in-left   { animation: modalSlideInLeft   0.55s cubic-bezier(.22,1,.36,1) forwards; }
+    .modal-content.slide-out-left  { animation: modalSlideOutLeft  0.32s ease forwards; }
+    .modal-content.slide-out-right { animation: modalSlideOutRight 0.32s ease forwards; }
+
+    .modal-caption {
+      width: 100%; max-width: 78vw;
+      padding: 10px 16px 12px; box-sizing: border-box;
+      background: rgba(5,15,40,0.88);
+      border-radius: 0 0 15px 15px;
+      border-top: 1px solid rgba(135,206,250,0.2);
+      font-family: 'Lora', Georgia, serif;
+      font-style: normal; font-size: 1.05rem; font-weight: 700;
+      color: #e8f6ff; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      text-align: center; line-height: 1.45; letter-spacing: 0.01em;
+    }
+
+    .modal-counter {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700;
+      color: rgba(168,216,234,0.9); letter-spacing: 1.5px;
+      pointer-events: none; z-index: 1002;
+      background: rgba(5,15,40,0.6); padding: 4px 12px;
+      border-radius: 20px; border: 1px solid rgba(135,206,250,0.2);
+    }
+
+    .modal-arrow {
+      flex-shrink: 0; width: 48px; height: 48px; font-size: 1.4rem; color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.75), rgba(10,35,70,0.85));
+      border: 1px solid rgba(135,206,250,0.45); border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite; z-index: 1002;
+    }
+    .modal-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 22px rgba(135,206,250,0.65); transform: scale(1.12);
+    }
+    .modal-arrow:active { transform: scale(0.93); }
+
+    .close {
+      position: fixed; top:15px; right:25px;
+      color:#fff; font-size:40px; font-weight:bold; cursor:pointer;
+      transition: color .2s, text-shadow .2s; z-index: 1003; line-height: 1;
+    }
+    .close:hover { color:#f44336; text-shadow: 0 0 10px rgba(244,67,54,.6); }
+
+    /* ══════════════ CAROUSEL ══════════════ */
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+    }
+    @keyframes cardOut {
+      from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+      to   { opacity: 0; transform: scale(0.88) translateY(-20px); filter: blur(6px); }
+    }
+
+    .carousel-section {
+      max-width: 600px; margin: 0 auto 48px auto;
+      animation: pageFadeIn 1s ease 0.9s both;
+    }
+
+    .carousel-tabs {
+      display: flex; justify-content: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 22px;
+    }
+    .carousel-tab {
+      padding: 9px 18px;
+      font-family: 'Lora', Georgia, serif; font-size: 0.92rem;
+      font-weight: 700; letter-spacing: 0.2px;
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(135,206,250,0.22); border-radius: 8px;
+      background: rgba(10,28,55,0.55); cursor: pointer; transition: all 0.25s;
+    }
+    .carousel-tab:hover {
+      color: #fff; border-color: rgba(135,206,250,0.55); background: rgba(30,75,130,0.65);
+    }
+    .carousel-tab.active {
+      color: #fff; border-color: rgba(135,206,250,0.85);
+      background: linear-gradient(135deg, rgba(30,80,130,0.88), rgba(10,35,70,0.96));
+      box-shadow: 0 0 16px rgba(135,206,250,0.4);
+    }
+
+    .carousel-wrapper { position: relative; }
+    .carousel-panel   { display: none; flex-direction: column; align-items: center; gap: 0; }
+    .carousel-panel.active { display: flex; }
+
+    .carousel-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; width: 100%;
+    }
+
+    .carousel-arrow {
+      flex-shrink: 0; width: 46px; height: 46px; font-size: 1.4rem; color: #fff;
+      background: linear-gradient(135deg, rgba(30,80,130,0.82), rgba(10,35,70,0.92));
+      border: 1px solid rgba(135,206,250,0.4); border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .carousel-arrow:hover {
+      background: linear-gradient(135deg, rgba(55,130,200,0.9), rgba(20,65,120,0.96));
+      box-shadow: 0 0 18px rgba(135,206,250,0.55); transform: scale(1.12);
+    }
+    .carousel-arrow:active { transform: scale(0.93); }
+
+    .carousel-stage {
+      position: relative; width: 320px; height: 400px; border-radius: 16px;
+    }
+
+    .carousel-card {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+    }
+    .carousel-card.visible {
+      opacity: 1; pointer-events: auto;
+      animation: cardIn 0.85s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .carousel-card.leaving { animation: cardOut 0.55s ease forwards; }
+
+    .carousel-card img {
+      width: 300px; height: 390px;
+      object-fit: contain; border-radius: 14px;
+      border: 2px solid #a8d8ea;
+      outline: 1px solid rgba(168,216,234,0.28); outline-offset: 3px;
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.7), 0 0 0 6px rgba(168,216,234,0.25),
+        0 10px 28px rgba(0,0,0,0.7), inset 0 0 14px rgba(168,216,234,0.08);
+      cursor: pointer; background: rgba(5,15,35,0.6);
+      transition: box-shadow 0.3s, filter 0.3s;
+      filter: brightness(0.96) saturate(0.97);
+    }
+    .carousel-card img:hover {
+      box-shadow:
+        0 0 0 4px rgba(10,30,60,0.8), 0 0 0 7px rgba(168,216,234,0.6),
+        0 0 36px rgba(168,216,234,0.45), 0 12px 32px rgba(0,0,0,0.75);
+      filter: brightness(1.06) saturate(1.08);
+    }
+
+    .carousel-caption {
+      margin-top: 14px; min-height: 48px; max-width: 340px; text-align: center;
+      font-family: 'Lora', Georgia, serif; font-style: normal;
+      font-size: 1rem; font-weight: 700; color: #e8f6ff;
+      text-shadow: 0 1px 6px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.8);
+      line-height: 1.45; padding: 0 8px; letter-spacing: 0.01em;
+    }
+
+    .carousel-dots {
+      display: flex; justify-content: center; gap: 9px; margin-top: 14px;
+    }
+    .dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: rgba(135,206,250,0.28); border: 1px solid rgba(135,206,250,0.4);
+      cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+    }
+    .dot.active {
+      background: rgba(135,206,250,0.92); transform: scale(1.35);
+      box-shadow: 0 0 8px rgba(135,206,250,0.8);
+    }
+
+    .hidden { display: none; }
+
+    .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #87cefa; border: 1px solid rgba(135,206,250,.45); background: rgba(135,206,250,.08); white-space: nowrap; }
+    .info-card { display: grid; gap: 5px; margin-top: 6px; }
+    .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(135,206,250,.1); padding-bottom: 5px; font-size: .85rem; }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-label { font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px; color: #87cefa; white-space: nowrap; flex-shrink: 0; }
+    .info-value { color: rgba(255,255,255,.85); line-height: 1.4; }
+
+    /* ══════════════ RESPONSIVE ══════════════ */
+    @media (max-width: 1024px) {
+      .container { padding: 20px 230px; }
+      .info-box { width: 190px; font-size: .82rem; }
+      .left-box  { left: 12px; }
+      .right-box { right: 12px; }
+    }
+
+    @media (max-width: 860px) {
+      .info-box { display: none; }
+      .info-boxes-inline { display: flex; }
+      .container { padding: 20px 16px; }
+      h1 { font-size: clamp(1.8rem, 6vw, 3rem); letter-spacing: 1px; }
+      .bio { padding: 18px 16px; font-size: 1rem; }
+      .carousel-stage { width: 280px; height: 360px; }
+      .carousel-card img { width: 260px; height: 350px; }
+      .carousel-arrow { width: 38px; height: 38px; font-size: 1.1rem; }
+      .carousel-section { max-width: 100%; }
+    }
+
+    @media (max-width: 540px) {
+      .fixed-back-button { font-size: .75rem; padding: .35rem .7rem; }
+      h1 { font-size: clamp(1.4rem, 7vw, 2.2rem); padding-top: 60px; }
+      .character-image { width: 160px; height: 240px; }
+      .carousel-stage { width: 240px; height: 310px; }
+      .carousel-card img { width: 220px; height: 300px; }
+      .carousel-row { gap: 8px; }
+      .carousel-arrow { width: 34px; height: 34px; font-size: 1rem; }
+      .carousel-caption { font-size: .88rem; }
+      .carousel-tab { padding: 7px 12px; font-size: .82rem; }
+      .modal-arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+      .modal-content { max-width: 90vw; max-height: 70vh; }
+      .modal-caption { font-size: .9rem; }
+      .back-link { padding: .5rem 1rem; font-size: .88rem; }
+    }
+
+    @media (max-width: 380px) {
+      h1 { font-size: 1.2rem; }
+      .carousel-stage { width: 200px; height: 270px; }
+      .carousel-card img { width: 185px; height: 260px; }
+    }
+  
+    /* ══════════════════════════════════
+       MUSIC PLAYER
+    ══════════════════════════════════ */
+    @keyframes playerSlideIn {
+      from{opacity:0;transform:translateY(-12px) scale(0.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes progressPulse {
+      0%,100%{box-shadow:0 0 4px rgba(135,206,250,0.35)}
+      50%{box-shadow:0 0 10px rgba(135,206,250,0.6)}
+    }
+    @keyframes trackReveal {
+      from{opacity:0;transform:translateX(-6px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @keyframes vinylSpin {
+      from{transform:rotate(0deg)} to{transform:rotate(360deg)}
+    }
+
+    #music-widget { display: block; }
+
+    /* Toggle button — fixed top right */
+    .player-toggle {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 900;
+      background: rgba(6,16,32,0.93);
+      border: 1px solid rgba(135,206,250,0.35);
+      color: #87cefa;
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; letter-spacing: 2px;
+      padding: .6rem 1.1rem;
+      cursor: pointer;
+      transition: all .25s ease;
+      display: flex; align-items: center; gap: 7px;
+      backdrop-filter: blur(8px);
+    }
+    .player-toggle:hover { border-color: #87cefa; background: rgba(135,206,250,0.1); }
+    .player-toggle-icon { font-size: .85rem; line-height: 1; }
+    .player-toggle-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #a8d8ea;
+      transition: background .3s;
+    }
+    .player-toggle-dot.playing { background: #cfefff; animation: progressPulse 1.5s ease-in-out infinite; }
+
+    /* Player panel */
+    .player-panel {
+      position: fixed;
+      top: 58px; right: 18px;
+      z-index: 800;
+      width: 320px;
+      background: rgba(6,16,32,0.96);
+      border: 1px solid rgba(135,206,250,0.28);
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      animation: playerSlideIn .3s ease both;
+    }
+    .player-panel.open { display: flex; }
+
+    /* Panel header */
+    .player-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem .9rem;
+      border-bottom: 1px solid rgba(135,206,250,0.12);
+      background: rgba(135,206,250,0.04);
+    }
+    .player-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: .68rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(135,206,250,0.5);
+    }
+    .player-header-archive {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 2px;
+      color: rgba(135,206,250,0.28);
+    }
+
+    /* Now playing section */
+    .player-now {
+      padding: .9rem .9rem .7rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .player-now-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(135,206,250,0.32); margin-bottom: .5rem;
+    }
+    .player-now-info {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    /* Vinyl disc */
+    .player-vinyl {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid rgba(135,206,250,0.25);
+      overflow: hidden; flex-shrink: 0;
+      position: relative;
+      background: rgba(4,10,20,1);
+    }
+    .player-vinyl img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.7);
+      border-radius: 50%;
+    }
+    .player-vinyl::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+        rgba(4,11,24,0.72) 28%, transparent 30%,
+        transparent 80%, rgba(135,206,250,0.1) 100%);
+      pointer-events: none;
+    }
+    .player-vinyl.spinning img { animation: vinylSpin 4s linear infinite; }
+
+    .player-track-info { flex: 1; min-width: 0; }
+    .player-track-name {
+      font-family: 'Cinzel', serif;
+      font-size: .8rem; font-weight: 700;
+      color: #cfefff; letter-spacing: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .player-track-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 2px;
+      color: rgba(135,206,250,0.38); margin-top: 2px;
+    }
+
+    /* Progress bar */
+    .player-progress-wrap {
+      padding: .6rem .9rem .4rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .player-progress-bar {
+      position: relative; height: 3px;
+      background: rgba(135,206,250,0.1);
+      cursor: pointer; margin-bottom: .35rem;
+    }
+    .player-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a8d8ea, #cfefff);
+      width: 0%;
+      pointer-events: none;
+      transition: width .1s linear;
+    }
+    .player-progress-bar:hover .player-progress-fill { filter: brightness(1.2); }
+    .player-time-row {
+      display: flex; justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.4);
+    }
+
+    /* Controls */
+    .player-controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; padding: .65rem .9rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .ctrl-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(135,206,250,0.55);
+      font-size: 1rem; line-height: 1;
+      padding: .3rem;
+      transition: color .2s, transform .15s;
+      display: flex; align-items: center;
+    }
+    .ctrl-btn:hover { color: #cfefff; }
+    .ctrl-btn.active { color: #cfefff; }
+    .ctrl-btn.play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(135,206,250,0.4);
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(135,206,250,0.06);
+    }
+    .ctrl-btn.play-btn:hover { background: rgba(135,206,250,0.15); border-color: #87cefa; transform: scale(1.05); }
+    .ctrl-btn.loop-btn { font-size: .8rem; }
+
+    /* Volume */
+    .player-volume {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .9rem .6rem;
+      border-bottom: 1px solid rgba(135,206,250,0.1);
+    }
+    .vol-icon {
+      font-size: .8rem; color: rgba(135,206,250,0.45); flex-shrink: 0;
+    }
+    .vol-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 3px;
+      background: linear-gradient(90deg, #a8d8ea 70%, rgba(135,206,250,0.12) 70%);
+      outline: none; cursor: pointer;
+      border-radius: 2px;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #87cefa; cursor: pointer;
+      box-shadow: 0 0 6px rgba(135,206,250,0.5);
+    }
+    .vol-slider::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #87cefa; cursor: pointer; border: none;
+    }
+    .vol-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.38); width: 26px; text-align: right;
+    }
+
+    /* Track list */
+    .player-tracklist {
+      max-height: 200px; overflow-y: auto;
+    }
+    .player-tracklist::-webkit-scrollbar { width: 3px; }
+    .player-tracklist::-webkit-scrollbar-thumb { background: rgba(135,206,250,0.2); border-radius: 2px; }
+
+    .track-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem .9rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(135,206,250,0.06);
+      transition: background .2s;
+      animation: trackReveal .3s ease both;
+    }
+    .track-item:hover { background: rgba(135,206,250,0.05); }
+    .track-item.active { background: rgba(135,206,250,0.08); }
+    .track-item:last-child { border-bottom: none; }
+
+    .track-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(135,206,250,0.28); width: 16px; flex-shrink: 0;
+    }
+    .track-item.active .track-num { color: #87cefa; }
+
+    .track-thumb {
+      width: 32px; height: 32px; border-radius: 2px;
+      overflow: hidden; flex-shrink: 0;
+      border: 1px solid rgba(135,206,250,0.15);
+      background: rgba(4,10,20,1);
+    }
+    .track-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.6);
+    }
+
+    .track-label { flex: 1; min-width: 0; }
+    .track-title {
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; font-weight: 700; letter-spacing: .8px;
+      color: rgba(226,240,252,0.74);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-item.active .track-title { color: #cfefff; }
+    .track-dur {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; color: rgba(135,206,250,0.28);
+      flex-shrink: 0;
+    }
+    .track-playing-icon {
+      font-size: .7rem; color: #87cefa;
+      display: none; flex-shrink: 0;
+    }
+    .track-item.active .track-playing-icon { display: block; }
+    .track-item.active .track-dur { display: none; }
+
+    @media (max-width: 540px) {
+      .player-panel { width: calc(100vw - 36px); }
+      .player-toggle { font-size: .64rem; padding: .5rem .8rem; letter-spacing: 1.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
+
+  <div id="music-widget">
+    <!-- ── MUSIC PLAYER ── -->
+    <button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
+      <span class="player-toggle-icon">♪</span>
+      <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">KARAKTER MÜZİĞİ</span>
+      <span class="player-toggle-dot" id="playerDot"></span>
+    </button>
+
+    <div class="player-panel" id="playerPanel">
+      <div class="player-header">
+        <span class="player-header-title">Karakter Müziği</span>
+        <span class="player-header-archive">CV-MÜZ · Campaign V</span>
+      </div>
+      <div class="player-now">
+        <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
+        <div class="player-now-info">
+          <div class="player-vinyl" id="playerVinyl">
+            <img id="playerVinylImg" src="" alt="">
+          </div>
+          <div class="player-track-info">
+            <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
+            <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
+          </div>
+        </div>
+      </div>
+      <div class="player-progress-wrap">
+        <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
+          <div class="player-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="player-time-row">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeDuration">0:00</span>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
+        <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
+        <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
+        <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
+      </div>
+      <div class="player-volume">
+        <span class="vol-icon" id="volIcon">🔊</span>
+        <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="10" oninput="setVolume(this.value)">
+        <span class="vol-val" id="volVal">10</span>
+      </div>
+      <div class="player-tracklist" id="trackList"></div>
+    </div>
+
+    <audio id="audioEl"></audio>
+  </div>
+
+  <div class="container">
+    <h1>Ilyndar Zyn'aere Faen Tlabbar</h1>
+    <img src="Ilyndar Zyn'aere Faen Tlabbar.jpg" alt="Ilyndar Zyn'aere Faen Tlabbar" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Faen Tlabbar Mühür Üstadı Ilyndar</div>
+
+    <div class="bio">
+      <p><strong>Tuğberk GÖKTEPE</strong> tarafından canlandırılmış ve oynanmıştır. Tuğberk'in üçüncü karakteridir.</p>
+
+      <h3 class="bio-book">BİRİNCİ KİTAP — AŞAĞISI</h3>
+
+      <h3>1. İsimsiz</h3>
+
+      <p>Faen Tlabbar konağının Dördüncü Taş Katı, konağın en soğuk yeridir. Isı oradan aşağı, kasaların bulunduğu derinliğe doğru çekilir; koridorun taşına avucunu koyarsan, elinin altındaki soğuğun bir yerde kesildiğini, birkaç parmak ötede yeniden başladığını fark edersin. Konakta bunu fark eden dokuz kişi vardır. Dokuzu da yetişkindir ve dokuzu da büyücüdür. Onuncusu, o kış, dört yaşındaydı ve hâlâ bir adı yoktu.</p>
+
+      <p>Bu, Syfelin'de kimsenin tuhaf bulduğu bir durum değildi. Erkek doğan bir çocuk eve bir masraftır. Masrafın bir gün kâra dönüp dönmeyeceği beklemeyle anlaşılır, isimle değil. Matron Jhaelolin Zilva Orlyervs Faen Tlabbar'ın on yedi kızı vardı ve on yedisinin de doğduğu gün adı konmuştu. Oğullarının sayısı hiçbir deftere geçmemişti.</p>
+
+      <p>Kieran Faen Tlabbar onu batı koridorunda buldu.</p>
+
+      <p>Çocuk duvara dokunuyordu. Tam olarak dokunmuyordu — parmağını taşın üzerinde, görünmeyen bir çizgi boyunca yürütüyor, belli bir noktada duruyor, geri dönüyor, aynı hattı baştan çiziyordu. Mantar lambalarının yeşil ışığı ince kolunun üzerinde titriyordu. Koridorda ne bir işaret vardı ne bir oyuk. Sadece kuru taş ve taşın içine gömülü, kırk yıl önce Kieran'ın kendi elleriyle ördüğü batı sargısı.</p>
+
+      <p>Çocuk hattı yedi kez çizdi. Hepsinde aynı yerde durdu. Üçüncü düğümde. Kieran öksürdü. Çocuk elini indirdi, gözünü yere dikti, bekledi. Dört yaşında öğrenilmiş bir refleksti bu ve Kieran onu gördüğünde, bu evde bir asırdır hissetmediği bir şey hissetti.</p>
+
+      <p>"Ne yapıyordun?"</p>
+
+      <p>"Duvarın soğuğu burada değişiyor."</p>
+
+      <p>O akşam Baş Büyücü, Matron'un huzuruna çıktı ve kırk yıldır yapmadığı bir şey yaptı: bir şey istedi.</p>
+
+      <p>"O çocuğa isim verin. Ben kullanacağım."</p>
+
+      <p>Matron başını kaldırmadı. Önündeki kayda bir rakam yazdı.</p>
+
+      <p>"Faydasız çıkarsa masrafı sana yazarım, Kieran."</p>
+
+      <p>Ilyndar adını böyle aldı. Bir yetenek ödülü değil, bir kefalet olarak.</p>
+
+      <hr>
+
+      <h3>2. Sekiz Kural</h3>
+
+      <p>Faen Tlabbar konağında erkek çocuklar dokuz yaşına kadar Alt Avlu'da tutulur. Alt Avlu bir avlu değildir; konağın en derin kesitinde, tavanı kaya olan, duvarları rutubetten yeşile çalan geniş bir salondur. Orada bir mürebbiye vardır — rahibe değil, evin yaşlı bir kadın hizmetkârı — ve onun tek görevi çocuklara Sekiz Kural'ı ezberletmektir.</p>
+
+      <p>Kurallar yazılı değildir. Yazılı olsa bir belge olurdu, belge ise bir gün birinin eline geçerdi.</p>
+
+      <p>Bir: Rahibeye bakma. İki: Rahibe seninle konuşursa dur. Üç: Dur derken ayakta dur, oturuyorsan kalk. Dört: Adını sormadan söyleme. Beş: Bir kadının önünden geçme. Altı: Hiçbir şeyi "benim" deme. Yedi: Bir şey kırdıysan kırdığını söyle, çünkü sakladığın kırık iki ceza eder. Sekiz: Ağabeyin ölürse ağlama, sıra sana geldi demektir. Ilyndar sekizinci kuralı altı yaşındayken ezberledi ve ne anlama geldiğini otuz yıl sonra anladı.</p>
+
+      <p>Alt Avlu'da onunla birlikte dört erkek çocuk daha vardı. Kimse onların kim olduğunu, hangi kadından doğduğunu söylemedi; drow evlerinde bu bilgi kadınların meselesidir. Dördünden ikisi dokuz yaşını görmedi. Biri hastalandı ve bir sabah yatağı boştu. Diğeri bir rahibenin önünden geçti. Ilyndar bunları o yaşta üzüntü olarak kaydetmedi. Kayıt olarak kaydetti. Zihninde bir liste vardı ve listenin adı kaybolanlardı. Kırk yıl sonra o listeye kendi adının yakın olduğunu hesaplayacaktı. Alt Avlu'da öğrendiği tek güzel şey şuydu: tavandaki kaya, belli bir saatte damlar. Damlanın sesi düzenlidir ve o sesi saymak bekleyişi katlanılır kılar. Ilyndar sayarak uyudu. Ömrü boyunca saymayı alışkanlık edindi.</p>
+
+      <hr>
+
+      <h3>3. Mendil ve Mürekkep</h3>
+
+      <p>Dokuz yaşında Alt Avlu'dan çıkarıldı ve Kieran'ın alt kat odalarına verildi. İlk ders büyü değildi. Kieran ona bir mürekkep şişesi, bir kalem ve boş bir defter verdi.</p>
+
+      <p>"Yaz."</p>
+
+      <p>"Ne yazayım Üstat?"</p>
+
+      <p>"Bugün ne yaptığını. Yarın da yazacaksın. Öbür gün de. Elli yıl sonra da."</p>
+
+      <p>Ilyndar sordu: "Neden?"</p>
+
+      <p>Kieran, bu evde bir erkeğin nadiren duyduğu bir şey yaptı: cevap verdi.</p>
+
+      <p>"Çünkü bir büyücü hatırladığı kadar değil, yazdığı kadar yaşar, Zyn. Hafıza bir tanıktır ve tanıklar satın alınabilir. Kayıt satın alınamaz. Ancak yakılabilir, ki o da başka bir konudur."</p>
+
+      <p>İlk cantrip'i o yıl öğrendi ve seçim Kieran'ındı: Mending. Kırık olanı onarmak adına Ilyndar'a bu cantripi öğretti. Yıllar sonra bunun bir şaka mı yoksa bir kehanet mi olduğunu düşünecek, ve belki de Kieran öldükten sonra bile cevabını alamayacaktı... İkinci yıl Prestidigitation, üçüncü yıl Message. Dördüncü yıl ilk gerçek büyüsünü öğrenme zamanı gelmişti ve Ilyndar hayatının geri kalanında onu bırakmadı: Shield.</p>
+
+      <p>Kieran ona büyüyü öğretirken bir kez bile "kendini koru" demedi. Şöyle dedi:</p>
+
+      <p>"Bu büyü sana birkaç saniye kazandırır. Bu kadar az zaman yeterli değildir. Ama bu saniyeleri kullanmayı bilen bir adam, bir saniyeyi iki saniye yapar, iki saniyeyi dört yapar ve kendine avantaj devşirebilecek zamanı yaratabilir." Ilyndar o gece defterine ilk teknik notunu yazdı. On üç yaşındaydı.</p>
+
+      <hr>
+
+      <h3>4. Duvar</h3>
+
+      <p>Chardalyn Elpragh Faen Tlabbar, ailenin Kamçı Rahibesi olarak bilinen figürüydü. Makamı evin erkeklerinin disiplininden, cezalarından ve sadakat sorgularından sorumludur. Chardalyn'in erkeklere çektirdiği tüm eziyet sayılacak şeyler, hem kişisel bir kin hem de resmî bir görevdir; Chardalyn bu ikisi arasındaki çizgiyi bulanık tutmayı sever, çünkü bulanık çizgi ona keyfini görev gibi yaşama imkânı verir.</p>
+
+      <p>Ilyndar on beş yaşındaydı. Bir rahibe koridordan geçerken gözünü yere indirmekte yarım saniye geç kaldı — İki Numaralı Kural. Cezası üç gündü: Dördüncü Taş Kat'ın koridorunda, diz üstü, hareketsiz duracaktı. İkinci günün sonunda dizlerinden taşa sızan şeyin kan mı buz mu olduğunu ayırt edemiyordu. Üçüncü günün sonunda Chardalyn geldi. Elindeki kamçıyı kullanmadı; hiç kullanmazdı. Kamçı bir alet değil, bir unvandı.</p>
+
+      <p>Karşısına çömeldi.</p>
+
+      <p>"Kieran senin zeki olduğunu söylüyor." Sesi yumuşaktı. Her zaman yumuşaktı. "Bunu bir iltifat sandın mı?"</p>
+
+      <p>Ilyndar cevap vermedi.</p>
+
+      <p>"Bu evde zeki erkek, keskin bıçak demektir. Keskin bıçağı sapından tutarsın. Sapı gevşerse ne yaparsın?"</p>
+
+      <p>Bekledi. Gerçekten bekledi; cevabı duymak istiyordu.</p>
+
+      <p>"Sıkarsınız abla."</p>
+
+      <p>"Evet Ilyndar, Sıkarım." diyerek gülümsedi. "Bak, yavaş da olsa öğreniyorsun. Peki neden ağlamıyorsun? Zayıf vücudun bu acıyı kaldırabiliyor mu?"</p>
+
+      <p>"Ağlamak cezayı kısaltmıyor abla."</p>
+
+      <p>Chardalyn'in gülümsemesi kaybolmadı; sadece durdu. Sonra ayağa kalktı, eteğini düzeltti.</p>
+
+      <p>"İki gün daha. Bundan sonra sen bir duvarsın. Bunu hayatın boyunca unutma!"</p>
+
+      <p>Ilyndar bir daha hiçbir soruya cevap vermedi. Beşinci sabah ayağa kalkmayı denedi ve kalkamadı, duvara tutundu. Avucunun altındaki taşın soğuğu bir yerde kesiliyordu — batı sargısının üçüncü düğümü, çocukluğundan beri bildiği çizgi. Alnını taşa dayadı. Bu duvar benden önce buradaydı, ben gidince de burada olacak diye düşündü zihninden. Bunu bir teselli olarak düşünmedi. Bir hedef olarak düşündü.</p>
+
+      <p>Abjuration büyüsünü bu şekilde seçti. Öfkeden değil, korkudan da değil: bu evde bir erkeğin hayatta kalma formülü tekti. Vazgeçilmez olması gerekiyordu. Bir ev, korumalarını tutan eli kolay kesmez. Ve dayanabildiğin sınır büyütülebilir bir şeydi; bir kas gibi, bir sargı gibi. Acının ölçüsü değişmiyordu ama taşıyabildiğin yük değişiyordu. Yıllar sonra birileri ona "nasıl dayandın" diye sorduğunda cevabı hep aynı olacaktı ve hepsi de yanlış anlayacaktı:</p>
+
+      <p>"Duvar tartışmaz. Duvar durur."</p>
+
+      <hr>
+
+      <h3>5. Yasara'nın Hesabı</h3>
+
+      <p>Arkan İşler Gözetmeni mevkisi ve makamı, belki de Ilyndar'ı hayatı boyunca en çok ilgilendirecek makamın ismiydi. Amir Yasara Zauval Faen Tlabbar, erkek büyücülerin bağlı olduğu rahibedir. Ilyndar'ı asla kardeşi gibi görmedi; göremezdi de. Ama ona çöp gibi de davranmayan belki de tek kadın drowdu.</p>
+
+      <p>Mantığını bir kez, Chardalyn'in karşısında, Ilyndar'ın duyabileceği bir mesafede açıkça söylemiştir:</p>
+
+      <p>"Üstadın parmakları titrerse örgü gevşer. Örgü gevşerse kasa açılır. Kasa açılırsa evin borcunu sen mi ödeyeceksin abla?"</p>
+
+      <p>Chardalyn, Yasara ile yaptığı bu tartışmanın ardından, o gün cezayı kesti. Ilyndar odasına döndü, oturdu ve içinde hissettiği rahatlamadan utandı.</p>
+
+      <p>Yasara'nın ona hiç yapmadığı şey de şudur: adını kullanmak. Onu her zaman unvanıyla çağırdı. Ilyndar bunu başlangıçta bir mesafe sandı. Aslında Yasara'nın kendine kurduğu bir korumaydı, Ilyndar'a değer yüklemiyordu çünkü o değerin başına bir şey gelirse bir vicdan azabı yaşamak istemiyordu. Genç yaşına rağmen keskin zekası sayesinde Ilyndar bunun farkına varmıştı.</p>
+
+      <hr>
+
+      <h3>6. Syfelin</h3>
+
+      <p>Syfelin'i ilk kez otuz bir yaşında, Vel'Zharn'a kaydı yapılırken gördü. Vel'Zharn Ilyndar'ın büyü eğitimi alacağı Drow Büyü Akademisi'nin ismiydi. Doğduğu şehri otuz bir yıl sonra bu vesile ile gördü, çünkü bir ev erkeği konağın dışına ancak bir görevle çıkar.</p>
+
+      <p>Şehir bir mağara değil, bir oyulmuş katedral gibidir. Tavan o kadar yüksektir ki karanlığın kendisi, aslında olmayan bir gökyüzü gibi durur. Aşağıdan yukarıya doğru, sarkıtların içi boşaltılarak yapılmış konaklar asılıdır; her biri bir evin adını taşır, her birinin cephesinde o evin işareti soğuk ışıkla parlar. Örümcek ipine benzeyen köprüler konakları birbirine bağlar ve o köprülerde yürüme hakkı, doğduğun eve göre değişir. Sokaklarda üç tür ses vardır: kölelerin ayak sesleri, tüccarların pazarlığı, ve rahibelerin geçerken susan kalabalık.</p>
+
+      <p>Ilyndar ilk gün üç şeyi saydı. Ana köprülerin sayısını, konağın cephesinden şehir meydanına kaç kademe indiğini, ve Faen Tlabbar'ın Aile simgesinin diğer üç evin işaretinden kaç kademe yukarıda durduğunu. Baenre en yukarıda. Sonra Xorlarrin. Sonra Vandree. Sonra onlar.</p>
+
+      <p>Sonra da — buna dikkat etti — Teken'duis ve Umrae'olin, tam altlarında. Şehri seyrederken aklından geçen ilk cümle bir hayranlık değildi. Bir tespitti: Buranın her taşı, kimin kimden üstte olduğunu söylemek için dizilmişti.</p>
+
+      <hr>
+
+      <h3>7. Vel'Zharn</h3>
+
+      <p>Vel'Zharn, Syfelin'in büyü mektebidir. Siyah bazalttan bir salon, içinde sekiz kat, her katta on iki hücre, hücrelerin hiçbirinde pencere yok — çünkü pencere, konsantrasyonu bozar ve konsantrasyonunu bozan büyücü ölürdü... Mektebe kadınlar da alınır, ama nadiren gelirler; bir rahibe için büyü, tanrıçasının verdiği güce göre ikinci sınıf bir araçtır. Böylece Vel'Zharn, Syfelin'de erkeklerin çoğunlukta olduğu tek yerdir. Ve tam da bu yüzden, şehrin en tehlikeli binasıdır.</p>
+
+      <p>Ilyndar otuz birinde girdi, elli sekizinde çıktı. Yirmi yedi yıl. O yirmi yedi yılda öğrendiği şeyler şunlardı:</p>
+
+      <p>Birincisi: Erkeklerin çoğunlukta olduğu bir yerde erkekler birbirine daha acımasız davranır. Dışarıda hepsi ezilmiştir; içeride ezilmişliğin hiyerarşisi kurulur. Kimin evi kaçıncı sıradaysa, kimin konağı kaç kademe yukarıdaysa, koridorda kimin önce yürüyeceği ona göre belirlenir. Ilyndar dördüncü evdendi. Bu ona, hayatında ilk kez, birilerinin üstünde olma imkânı verdi. Fakat bu fırsatı hiç kullanmadı. Kullanmadığı için de hep hor görülüp zayıf sayıldı.</p>
+
+      <p>İkincisi: Mektepte büyü teorik olarak öğretilmez. Sınavla öğretilir. Bir öğretmen sana bir büyü anlatır, sonra seni bir odaya kapatır ve o büyünün işe yaraması gereken durumu yaratır. İşe yaramazsa yaralanırsın. İki kez yaramazsa hücreden çıkarılırsın. Mektebin duvarlarında, taşa kazınmış, üç yüz kırk altı isim vardır: bu isimler çıkarılanların değil, çıkamayanlara aittir.</p>
+
+      <p>Üçüncüsü: Ilyndar'ın orada kazandığı asıl şey büyü değil, bir dosttu.</p>
+
+      <hr>
+
+      <h3>8. Sorn</h3>
+
+      <p>Sorn Teken'duis, beşinci evin erkeğiydi. Kısa boylu, kalın sesli, aşırı konuşkan; Vel'Zharn'ın en kötü öğrencilerinden biri ve en hızlı hayatta kalanı. Evocation okuyordu, çünkü kendi deyimiyle "bir şeyi patlatmak, bir şeyi anlamaktan on yıl kısa sürüyordu."</p>
+
+      <p>Ilyndar'la tanışmaları şöyle oldu: ikinci yılın bir sınavında Sorn'un hücresinden duman çıktı ve kapı kilitlendi — mektepte bu normaldir, öğrenci kendi yangınını kendi söndürür. Ilyndar koridordan geçiyordu. Durdu. Bir süre dumanların geçmesini bekledi. Kapının kilidine baksa da kilidi çözmedi; kilidi çözmek gibi bir dışarıdan müdahale yasaktı. Lakin kayıtsız kalmamayı tercih ederek kapının altındaki boşluğa ince bir sargı ördü ve dumanı koridora çekti. Hücrenin içine hava girdi. Sorn öksürerek hayatta kaldı ve Ilyndar yürümeye devam etti. Bu olaydan sonra ise Sorn onu üç gün sonra Ilyndar'ı buldu.</p>
+
+      <p>"Sen! Sen kapıyı açmadın."</p>
+
+      <p>"Açmak yasak."</p>
+
+      <p>"Ama gene de beni ölüme terk etmedin."</p>
+
+      <p>"Ölümüne terk etmek veya etmemek ile alakalı yasak bir kural yok," dedi Ilyndar. "Lakin heba olmak gereksiz."</p>
+
+      <p>Sorn güldü. O günden sonra yirmi beş yıl boyunca Ilyndar'ın yanından ayrılmadı ve Ilyndar bunun neden olduğunu hiçbir zaman tam olarak anlamadı. Dostluk, öğrenmediği bir dildi; Sorn onunla o dili konuşmakta ısrar etti ve sonunda Ilyndar birkaç kelime öğrendi.</p>
+
+      <p>Sorn ona üç şey öğretti:</p>
+
+      <p>Bir: bir şeyi sevmek için ondan fayda beklemek zorunda değilsin.<br>
+        İki: bir kadeh mantar rakısı, bir gecelik sıkıntıyı bir gecelik baş ağrısıyla değiştirir ve bu bazen iyi bir takastır.<br>
+        Üç: gülmeyi.</p>
+
+      <p class="bio-note">Dipnot: Sorn bugün hâlâ hayatta. Syfelin'de, Teken'duis konağının üçüncü kat kayıt odasında çalışıyor, evinin arşivini tutuyor, ve Ilyndar'a yılda bir kez kendi mürekkebiyle yazılmış bir not gönderiyor. Notlar hiçbir zaman duygusal değildir. Hep aynı biçimdedir: "Yaşıyorum. Sen?"</p>
+
+      <hr>
+
+      <h3>9. Kırılma Sınavı</h3>
+
+      <p>Vel'Zharn'ın drow özgün eğitim müfredatına göre on beşinci yılında, büyü okullarının kollarının en meşhur sınavları gelir: Bu sınav Abjuration okulu için "Kırılma" olarak geçer. Öğrenci bir odaya alınır. Odanın ortasında bir kalkan vardır — mektebin bir öğretmeni tarafından örülmüş, canlı, direnen bir koruma. Öğrencinin görevi kağıt üzerinde basit gözükür, görevi o korumayı kırmaktır. Lakin basit gözükse de bu sınavın ikonik olmasının sebepleri vardır. Ilyndar altı saat uğraşmasına karşın kalkanı kıramadı. Yedinci saatte oturdu ve kalkana baktı. Bu işi körlemesine deneyerek yapamayacağını fark ettiğinde ise gözlemlemeye karar verdi, ve kalkanı incelerken şunu fark etti: kalkan direniyordu. Direnmek bir tepkidir, tepki veren bir şey, bir düzen izler. Ve bir düzeni izleyen şey tahmin edilebilir.</p>
+
+      <p>Ilyndar gözleminden sonra kalkanı kırmadı. Kalkanın bir sonraki hamlesini tahmin etti ve tam o anda kendi büyüsünü onun boşluğuna yerleştirdi. Kalkan kendi hamlesiyle çarpıştı ve küçük çaplı reaktif bir büyü dalgalanması sonucunda dağıldı.</p>
+
+      <p>Öğretmen — Vel'Zharn'ın yaşlı abjuration üstadı, adı Rilaun'du, bir Vandree erkeğiydi — uzun süre sessiz kaldı. Ilyndar'ın yaptığı şeyin gayet farkındaydı.</p>
+
+      <p>"Bu bir kırma değil."</p>
+
+      <p>"Hayır hocam."</p>
+
+      <p>"Bu ne peki?"</p>
+
+      <p>Ilyndar cevabını on beş yıl boyunca, koridorlarda diz çökerek, Chardalyn'in önünde susarak hazırlamıştı ve bunu bilmiyordu:</p>
+
+      <p>"Bu, beklemek hocam."</p>
+
+      <p>Rilaun o gün ona Counterspell'i öğretti ve sınav kaydına tek kelime yazdı: yeterli. Rilaun'un beklediği şey büyünün açığını beklemekten ziyade onu nötralize etmekti, fakat Ilyndar'ın yaklaşımını beğendiği için ona yapması gereken şeyi öğretti. Vel'Zharn'ın kayıtlarında "yeterli" en yüksek nottur; mektebin kurucusu, "iyi" diye bir şeyin var olmadığına inanıyordu.</p>
+
+      <p>Aynı yıl Ilyndar iki büyü daha yazdı: Absorb Elements ve Mage Armor. Defterinde o sayfanın kenarında tek bir not var: "Sorn içeride kalsaydı bunu daha erken yazmam gerekirdi."</p>
+
+      <hr>
+
+      <h3>10. Nym</h3>
+
+      <p>Vel'Zharn'ın on altıncı yılında Ilyndar bir düşman edindi ve bunu istemedi.</p>
+
+      <p>Nym Umrae'olin, altıncı evin oğluydu. Uzun, ince, yumuşak sesli; yüzünde her zaman bir gülümseme, gülümsemenin arkasında her zaman bir hesap. Evi altıncı sıradaydı ve Umrae'olin evi yüz yıldır dördüncü sıraya bakıyordu. Nym, Ilyndar'ı ilk gördüğü gün ona "Duvar" dedi.</p>
+
+      <p>Kelimeyi nereden duyduğu belliydi — Chardalyn'in taktığı ad, konağın hizmetkârlarından şehre, şehirden mektebe sızmıştı. Mektepte lakabın bir sınıf değiştirmesi vardır: konakta bir aşağılamaydı, Vel'Zharn'da bir unvana dönüştü. İki yıl içinde bütün kat ona öyle seslenmeye başladı. Nym bunu bir iyilik olarak yapmadı. Bir aşağılamayı, sahibinin elinden almanın en zarif yolu, onu bir övgüye çevirip herkesin diline dolamaktır; böylece o kelime artık kimsenin silahı olmaz, sadece bir gürültü olur.</p>
+
+      <p>Ilyndar bunu anladığında Nym'e karşı hissettiği şey öfke değildi. Saygıya benzer, fakat saygı kadar olumlu olmayan, tehlikeli bir hissiyattı. Zekasını olumsuz bir açıdan onaylıyor ve kabul ediyordu.</p>
+
+      <p>Yirmi birinci yılda ikisi aynı sınava girdi: iki öğrenci, bir oda, biri saldırır biri korur, otuz dakika. Nym Conjuration okulunun öğrencisiydi; odaya bir şey çağırdı ve o çağırdığı bozunuma uğramış şeyin adı kayıtlara geçmedi. Ilyndar yirmi dokuz dakika dayandı. Son dakikada kalkanı çöktü ve çağrılan şey sol kolunu omuzdan dirseğe kadar açtı.</p>
+
+      <p>Nym büyüsünü sonlandırdı, yanına geldi, eğildi ve kanayan kolun üzerine baktı. Sonra fısıldadı — o kadar alçak sesle ki öğretmen duymadı:</p>
+
+      <p>"Yirmi dokuz dakika. İleride koruyacağın evin bu kadar dayanır mı sence?"</p>
+
+      <p>Ilyndar kaşlarını çatsa da karşısındaki ile çatışmaya girmedi ve cevap vermedi.</p>
+
+      <p>Ilyndar'ın o kolunda hâlâ bir iz var: omuzdan dirseğe inen, ince, mat bir çizgi. Uzun kollu cübbe giymesinin sebeplerinden birisi de içten içe bu. Diğer sebebi ise şu: bir Faen Tlabbar erkeğinin kolunda iz görürsen, ona bunu kimin yaptığını sorarsın; ve o soru her zaman yanlış bir sorudur.</p>
+
+      <p class="bio-note">Dipnot: Nym Umrae'olin bugün kendi evinin Baş Büyücüsü. Kırk bir gün süren mühür savaşında Ilyndar'ın karşısındaki el onunkiydi. Ve Syfelin'de Ilyndar'ın yukarı çıktığını bilen üç kişiden biri o.</p>
+
+      <hr>
+
+      <h3>11. Örümcek Gecesi</h3>
+
+      <p>Vel'Zharn'ın son yılında, Ilyndar elli yedi yaşındayken, eve çağrıldı. Sebebi mezuniyet değildi. Örümcek Gecesi, Lolth'un adına yılda bir yapılan büyük ayinidir. Konağın alt tapınağında, Divan'ın tamamı ve şehirden gelen rahibeler huzurunda yapılır. Ayinin kendisi kadınlara aittir; erkeklerin oraya girmesi yasaktır. Lakin bir istisna mevcuttur: mühür.</p>
+
+      <p>Tapınağın kapısı ayin süresince mühürlenir. İçeriden dışarıya hiçbir şey sızmamalıdır — ne ses, ne ışık, ne de ayinde çağrılan şeyin kendisi. Mührü ören kişi kapının dışında durur, elini taşa koyar ve ayin bitene kadar onu tutar. O yıl Zaeril hastaydı. Kieran'ın elleri o dönem ilk kez titremeye başlamıştı ve bunu kimseye söylemiyordu. Geriye Ilyndar kalmıştı. Kieran Matron'a Ilyndar'ın bir sınavı olacak şekilde bu fikri sunmuştu ve bu fikir kabul görmüştü.</p>
+
+      <p>Ilyndar altı saat kapının dışında durdu. Avucu taşa yapışıktı. İçeriden gelen şeyi duymaması gerekiyordu ve duymadı — mühür işini doğru yaptı. Ama mühür sesi kesse de basıncı kesmez. Bir üstadın eli, mührün öbür tarafındaki şeyin ağırlığını hisseder. O altı saatte, kapının arkasında bir şeyin yürüdüğünü hissetti. Ağır değildi. Çok hafifti. Ve mührün üzerinde, bir kez, bir yerde durup beklediğini hissetti. Sanki dışarıda kimin durduğunu merak etmiş gibi.</p>
+
+      <p>Sabaha karşı ayin bitti, kapı açıldı, rahibeler çıktı. Chardalyn geçerken ona baktı ve o bakışta, ilk kez, kinden başka bir şey vardı.</p>
+
+      <p>Belarlia Sszal — Birinci Kız, varis — en son çıkanlardandı. Ilyndar'ın önünde durdu. Hayatında onunla ilk kez konuşuyordu.</p>
+
+      <p>"Elin nasıl?"</p>
+
+      <p>"İyi Leydim."</p>
+
+      <p>"Yalan söyleme."</p>
+
+      <p>Ilyndar avucunu açtı. Deri kavrulmuş gibiydi, parmak uçları beyazdı.</p>
+
+      <p>Belarlia baktı, başını salladı ve tek bir şey söyledi: "İyi tuttun."</p>
+
+      <p>Sonra yürüdü gitti. Ilyndar o iki kelimeyi kırk yıl boyunca aklından çıkaramadı ve bundan kendi kendine utandı; çünkü iki kelimeyle satın alınabilen bir adam olduğunu fark etmişti.</p>
+
+      <p>O gece defterine tek satır yazdı: "Gerçek Mühür sesi keser, ama ağırlığınu kesemez. Bunu bir yere yaz, içgüdülerim bunun bir gün gerekeceğini söylüyor."</p>
+
+      <p>İçgüdüleri ileride Ilyndar'ı yanıltmayacaktı...</p>
+
+      <hr>
+
+      <h3>12. Mezuniyet Olmayan Mezuniyet</h3>
+
+      <p>Vel'Zharn'dan elli sekiz yaşında çıktı. Çıkış töreni yoktur; Rilaun sadece kaydını kapatır ve sana bir cümle söyler. Rilaun ona şunu söyledi:</p>
+
+      <p>"Sen iyi bir Abjuration büyücüsü değilsin Ilyndar. Bu diyeceklerimi ömrün boyunca hatırla."</p>
+
+      <p>Ilyndar bekledi.</p>
+
+      <p>"İyi Abjuration büyücüleri, doğaları gereği korkak olurlar. Korkak olanlar uzun yaşarlar. Sen korkak değilsin, sen sabırlısın. Onlarca yıl seni eğitmem doğrultusunda sabrını her daim gözlemledim. Lakin sabır seni uzun yaşatmaz, sadece geç öldürür. Bir gün önüne sabrının gerçekten dayanamayacağı bir olgu çıkacak, seni hiç keşfetmediğin bir şekilde sınayacak ve sen yine duracaksın. Çünkü durmayı biliyorsun, kaçmayı bilmiyorsun."</p>
+
+      <p>Ilyndar teşekkür etti.</p>
+
+      <p>Rilaun ekledi: "Bu bir iltifat değildi aptal..."</p>
+
+      <p>"Biliyorum Üstat."</p>
+
+      <p>Konağa döndüğünde onu kimse karşılamadı. Odası yirmi yedi yıl boyunca bir depo olarak kullanılmıştı; eşyalarını dışarı çıkardılar, tozunu aldılar, ve kapıya eski bir isim levhası astılar. Levhada adı yanlış yazılmıştı: Ilyandar.</p>
+
+      <p>Düzeltmedi. Üç yıl o levhayla yaşadı. Düzelten kişi ironik bir biçimde Sorn oldu — levhayı bir ziyaretinde gördü, hiçbir şey söylemeden patavatsızca kendi bıçağıyla harfi kazıdı, doğrusunu yazdı, sonraysa sanki hiçbir şey olmamış gibi konuyu değiştirdi.</p>
+
+      <hr>
+
+      <h3>13. Relonor</h3>
+
+      <p>Relonor Mytyl Faen Tlabbar, Ilyndar'dan on yedi yıl sonra doğdu ve doğduğu gün adını aldı. Fark buydu. Kimse açıklamadı, herkes biliyordu: Relonor, Matron'un istediği zamanda, istediği şartlarda doğmuş bir çocuktu. Ilyndar ise sadece doğmuştu.</p>
+
+      <p>Ilyndar mektepteyken Relonor Alt Avlu'daydı. Döndüğünde kardeşi kırkındaydı ve ilk kez uzun uzun konuştular. Nefret etmeyi denedi. İki yıl denedi ve beceremedi, çünkü Relonor peşine takıldı ve peşinden gittiği tek kişi oydu; çünkü ilk büyü dersini ondan istedi; çünkü "abi" kelimesini bu evde kimsenin kullanmadığı bir tonla söylüyordu. İlk dersi Alt Avlu'nun damlayan tavanının altında verdi. Ona Mending'i öğretti ve Relonor bunu aptalca buldu.</p>
+
+      <p>"Kırık bir şeyi tamir etmek ne işe yarar? Bununla uğraşmak çok saçma değil mi? Kimse bakmıyor ki kırık şeylere zaten."</p>
+
+      <p>Ilyndar cevap verdi: "Kırık şeyleri tamir eden adam, bir gün kırılmayacak şeyler yapabilir Relonor."</p>
+
+      <p>Relonor kırk yaşındaydı ve bu cümleyi beğenmedi. Yüz dört yaşında, Kieran'ın alt kat odalarında, aynı cümleyi kendi çırağına söyleyecek ve nereden geldiğini hatırlamayacak. Yirmi altısındayken — o sırada Ilyndar altmış üçündeydi — Relonor ilk kez Divan'ın önüne çıkarıldı. Kütüphanenin alt katından izinsiz bir cilt almıştı. Ilyndar salonun kenarında duruyordu. Konuşma sırası onda değildi, hiç olmamıştı. Yine de bir adım öne çıktı ve cildi kendisinin çıkardığını, çocuğa taşıttığını söyledi.</p>
+
+      <p>Chardalyn ona uzun uzun baktı. Yalanı anladı — Ilyndar bunu yüzünden okudu — ve tam bu yüzden kabul etti, çünkü kabul etmek daha tatlıydı. Ceza on gün sürdü. Relonor bunu hiç öğrenmedi; ona sadece "hata sende değilmiş" dendi. Ve bir şey daha oldu: diz çökerken Ilyndar kardeşinin yüzüne baktı, orada korkuyu gördü ve korkunun altındaki cümleyi de gördü. "Ben böyle olmayacağım!.."</p>
+
+      <p class="bio-note">Dipnot: Bugün Relonor Kieran'ın çırakları arasında. Hevesli, hırslı, yüksek sesli; kendini kanıtlamaya çalışıyor — ağabeyinin hiç denemediği bir yoldan: sessiz kalmayarak, görünerek.</p>
+
+      <hr>
+
+      <h3>14. Sessiz Ülke Seferi</h3>
+
+      <p>Yetmiş dört yaşındaydı. Faen Tlabbar bir kervan yolunu kaybetmişti: üç haftadır Sessiz Ülke sınırından dönen kimse yoktu.</p>
+
+      <p>Sessiz Ülke, Syfelin'in kuzeydoğusunda, hiçbir evin hak iddia etmediği bir tünel kuşağıydı o zamanlar. Adı, orada konuşmanın tehlikeli olmasından geliyordu. Mind Flayer kolonilerinin sınırı oradan geçiyordu ve bir illithid'in avlanma biçimi sesi duymak değil, düşünceleri duymaktır.</p>
+
+      <p>Sefere on bir kişi çıktı: bir kaptan, altı asker, iki köle, bir rahibe ve bir büyücü. Büyücü olarak Ilyndar gönderildi, çünkü Zaeril yaşlıydı ve Kieran'ın mevkisinde mütevellit gitmesi düşünülemezdi.</p>
+
+      <p>Yol boyunca rahibe — adı Xull'ath'tı, yan kol soyluluğundan, Yasara'nın altında çalışan genç bir rahibe — ona iki kez konuştu. Birincisinde emir verdi. İkincisinde soru sordu: "Kaç kişi geri dönecek sence?"</p>
+
+      <p>Ilyndar cevap verdi: "Bu, ne kadar sessiz durabildiğimize bağlı Leydim."</p>
+
+      <p>Kervanı sekizinci günde buldular. Yirmi altı kişiydiler. Hepsi oradaydı, hepsi ayaktaydı, hiçbiri hareket etmiyordu. Yüzleri sakindi. Gözleri açıktı. Kaptan onlara seslendi. Bu bir hataydı.</p>
+
+      <p>Sonraki iki saat Ilyndar'ın hayatında ilk kez gerçek bir savaşa girdiği zamandı. Ayrıntıları defterine hiç yazmadı; tek yazdığı şu satırdır: "Zihni koruyan bir büyü, zihnin kendisini koruyamıyor. Yeni bir yol lazım." Sağ dönen üç kişi vardı: Ilyndar, iki asker.</p>
+
+      <p>Xull'ath geri dönmedi. Ilyndar onun üzerine bir sargı örmüştü ve sargı tuttu — ama sargı sadece bedeni korudu. Rahibe, kendi ayaklarıyla, kendi isteğiyle, kendi sargısının içinden çıkıp karanlığa doğru yürüdü ve Ilyndar onu durduramadı, çünkü Ilyndar'ın bildiği koruma büyüsü birini dışarıdan gelene karşı korurdu, içeriden gelene karşı değil.</p>
+
+      <p>Bu, yaşadığı dönemde onun hayatındaki en büyük mesleki yenilgisi olmuştu. Ve karakterinin oturmasını sağlayacak temel sorusunu ilk kez o gün sordu:</p>
+
+      <p>"Bir insanı kendisinden nasıl korursun?"</p>
+
+      <p>Ilyndar için bu sorunun bir cevabı yoktu o anda.</p>
+
+      <p class="bio-note">Dipnot: Yüz yetmiş yıl sonra, yukarıda, uyuyamayan bir adamın başında aynı soruyu tekrar soracaktı.</p>
+
+      <p>Seferden döndüğünde Divan'a rapor verdi. Rapor kısaydı. Kaybın sorumlusu olarak kaptanın adı yazıldı — kaptan zaten ölmüştü, dolayısıyla ucuz bir suçluydu. Ilyndar'ın adı kayda "sağ dönenler" başlığı altında geçti ve o kadar.</p>
+
+      <p>O yıl iki büyüyü ekleme niyetiyle büyü kitabına yazdı: Protection from Evil and Good ve Detect Thoughts. İkincisini bir Abjuration büyücüsünün öğrenmesi tuhaf karşılanabilir belki de. Ilyndar bunu şöyle gerekçelendirdi ve gerekçe defterinde duruyor: "Neyin geldiğini bilmeden ne örüleceğini bilemezsin."</p>
+
+      <hr>
+
+      <h3>15. Zaeril'in Yanında</h3>
+
+      <p>Doksan beşinde, resmî olarak Mühür Üstadı'nın yardımcısı oldu. On iki yıl sürmüştü. Zaeril yaşlıydı, sessizdi, parmaklarındaki mürekkep lekeleri hiç çıkmazdı. Gün içinde neredeyse hiç konuşmazdı; konuştuğunda da tek bir konu vardı: iş! Ilyndar ondan üç şey öğrendi.</p>
+
+      <p>Bir: Sabır. Örgünün bakımı büyüyle değil, sabırla yapılır. Bir düğümü hızlı tamir edersen düğüm tutar ama komşu düğümler gerilir; üç ay sonra iki düğüm birden gider. Zaeril'in tek öğüdü şuydu: "Örgüye acele eden adam, ona yalan söylemiş olur. Örgü yalanı hatırlar."</p>
+
+      <p>İki: Kayıt. Zaeril'in defterleri Kieran'ınkinden bile düzenliydi. Her düğümün tarihçesi, her tamirin tarihi, her gevşemenin sebebi. Ilyndar bu disiplini ondan aldı.</p>
+
+      <p>Üç: Zaeril'in hiç anlatmadığı şeydi...</p>
+
+      <p>Yılda iki kez, belirsiz bir takvimle, Zaeril konaktan çıkardı. Bir gün, bazen nadir de olsa iki gün olurdu. Dönüşünde yorgun olurdu, ellerinde toz olurdu, ve o günlerde defterine hiçbir şey yazmazdı. Ilyndar bunu on iki yıl boyunca gördü ve bir kez sordu.</p>
+
+      <p>"Nereye gidiyorsunuz Üstat?"</p>
+
+      <p>Zaeril ona baktı. Uzun uzun baktı. Sonra çok tuhaf bir şey söyledi:</p>
+
+      <p>"Sen benim yaşıma geldiğinde, sana da soracaklar. Cevap vermezsen daha iyi olur."</p>
+
+      <p>Ilyndar bir daha sormadı ve bu, belki de hayatının en büyük ihmalkarlığı olacaktı...</p>
+
+      <p>Altıncı katmanı ilk kez onun yanında gördü. Yüz yaşındaydı. Zaeril onu konağın en alt bakım galerisine indirdi, bir duvarın önünde durdu ve elini taşa koydurdu.</p>
+
+      <p>"Ne hissediyorsun?"</p>
+
+      <p>"Bir sargı. Ama bizim sargımız değil."</p>
+
+      <p>"Doğru."</p>
+
+      <p>"Kimin?"</p>
+
+      <p>Zaeril elini çekti. "Sorulmayacak sorulardan biri bu."</p>
+
+      <p>"Neden Üstat?"</p>
+
+      <p>Yaşlı adam bir süre sustu. Sonra verdiği cevap, Ilyndar'ın kırk yıllık araştırmasının tohumu oldu:</p>
+
+      <p>"Çünkü cevabı bilen kadınlar, bilen erkekleri sevmezler Ilyndar."</p>
+
+      <p>O on iki yılda Ilyndar şu büyüleri yazdı: Dispel Magic, Glyph of Warding, Nondetection, Arcane Lock, Leomund's Tiny Hut. Sonuncusunu Zaeril'in ısrarıyla öğrendi ve sebebini yıllar sonra anladı — bir mühürcünün yolda kaldığında, sırtını dayayabileceği bir duvarı kendi kurabilmesi gerekir.</p>
+
+      <hr>
+
+      <h3>16. Boşalan Koltuk</h3>
+
+      <p>Ilyndar yüz yedi yaşındayken Zaeril bir gün konaktan çıktı ve dönmedi. Divan'ın kaydına iki kelime yazıldı: görev başında... Mezarı yoktu. Eşyaları üç günde toplandı. Ilyndar defterlerini istedi; verilmedi, çünkü defterler evin malıydı. Odası temizlendi, bir ay sonra oraya bir çırak yerleştirildi. Bir hafta sonra Kieran, Matron'un huzurunda Ilyndar'ın adını verdi. Makam kabul edildi. Evin erkek kolundaki en genç atamalardan biriydi.</p>
+
+      <p>Tören kısa sürdü. Matron unvanı verdi, Divan dağıldı, salon boşaldı. Ilyndar odasına döndü ve haberi verecek kimse olmadığını fark etti; Kieran o gün konakta değildi, Sorn şehrin öbür ucundaydı, Relonor henüz çırak bile değildi. Yatağına oturdu, ellerini dizine koydu, ve hayatının en büyük başarısının hiçbir sesi olmadığını anladı.</p>
+
+      <p>O gün kendine sorması gereken çok önemli bir soru vardı ve sormadı: Zaeril hangi görevdeydi? Bu soruyu sormadı, çünkü sorulmayacak soruların varlığını biliyordu ve o bunu çocukken öğrenmişti. Sormadı, çünkü boşalan koltuğa bakan bir adam, koltuğun neden boşaldığını yeniden görmek istemezdi.</p>
+
+      <p>Ertesi hafta Sorn'dan bir not geldi: "Duydum. Yaşıyorum. Sen?"</p>
+
+      <p>Ilyndar cevap yazdı ve hayatında ilk kez iki kelimeden uzun bir not gönderdi: "Yaşıyorum, ama devraldığım koltuk, düşündüğümden daha yalnız ve soğuk Sorn..."</p>
+
+      <hr>
+
+      <h3>17. İzin</h3>
+
+      <p>Yüz on iki yaşındaydı. Mühür Üstadı olalı beş yıl olmuştu ve o beş yılda evin bütün örgülerini baştan kaydetmişti — yedi yüz kırk iki düğümün tarihçesi, Zaeril'in defterleri alındığı için sıfırdan yazılmıştı. Ilyndar işini iyi yaptığını düşünse de çalışmanın bir yerinde tıkandı. Konağın en eski kayıtları kütüphanenin alt katındaydı ve alt kat erişimi rahibelere ait bir ayrıcalıktı.</p>
+
+      <p>Gerekçesini rahibelere sunabilecek bir dökümantasyona çevirmek için üç gün boyunca bir izin kağıdı hazırladı.</p>
+
+      <p>Dört madde yazdı: (1) alt kat kayıtlarında altı düğümün ilk örülme tarihi bulunuyordu ve tarih bilinmeden bakım aralığı hesaplanamıyordu; (2) Z.G.Ö. (Zafer Gününden Önce yani milat olarak düşün, drowların da bu gün zafer günü olarak geçiyor ama onlar gerçek zaferi kazandıkları için böyle söylüyorlar.) 1194 yılındaki kasa tamirinin yöntemi kayıttaydı ve aynı tamir tekrar gerekebilirdi; (3) evin dış kalkanlarının ilk tabakası başka bir el tarafından örülmüştü ve o elin usulü bilinmeden tabaka yenilenemezdi; (4) bütün bunlar evin güvenliğine dair kalemlerdi, kişisel merak değildi.</p>
+
+      <p>Dördüncü maddeyi iki kez kaleme aldı, çünkü ilk hali fazla savunmacı durmuştu.</p>
+
+      <p>Huzura çıktı. Matron'un karşısında hayatında ilk kez tek başına duruyordu. İlk maddeyi anlattı. İkinci maddeye geçti. İkinci maddenin ortasında Matron gözlerini kaldırdı.</p>
+
+      <p>"Bitti mi?"</p>
+
+      <p>Ilyndar durdu. Bitmemişti. İki madde daha vardı ve o iki madde en güçlü olanlardı.</p>
+
+      <p>"Bitti," dedi.</p>
+
+      <p>Matron cevap vermedi. Yanındaki rahibeye döndü ve tamamen başka bir konu hakkında bir talimat verdi — bir kervanın gecikmesi hakkındaydı. Ilyndar bir süre orada durdu. Kimse ona git demedi; kimse ona kal da demedi. Salonun içinde, konuşulan başka bir konunun ortasında, bir eşya gibi durdu. Sonra eğildi ve çıktı. O gün bir ders aldı ve belkide de yanlış dersi aldı: istemek işe yaramaz, eyleme geçmek, yapmak ve faydalı olmak ile yarar şeklinde düşündü.</p>
+
+      <p>Doğru ders belki de şu olabilirdi: bir kere susturuldun diye ömrün boyunca susmak zorunda değilsin. Ama o dersi Ilyndar'a verecek kimse yoktu... Altı düğümün ilk örülme tarihini asla öğrenemedi. Bakım aralığını tahminle hesapladı ve otuz beş yıl boyunca o tahmin tuttu. Bu, hayatının en sessiz gururlarından biri — ve aynı zamanda bir yarasının üstüne konmuş bir yama.</p>
+
+      <hr>
+
+      <h3>18. Yedi Yüz Kırk İki Düğüm</h3>
+
+      <p>Bir Mühür Üstadının işi asla romantik değildir, lakin bir gece işidir, çünkü örgüler gündüz kalabalıktan, ayak seslerinden, kapı çarpmalarından ırak olmalıdır. Konağın alt katlarında elinde kandil olmadan yürür — ışık örgüyü bozar. Karanlıkta parmak uçlarıyla değil, basınçla ilerler: bir sargıya yaklaşınca kulaklarda hafif bir dolgunluk olur, sağlam bir düğümün üstünde dişler karıncalanır, gevşemiş bir hatta ise hiçbir şey hissedilmez, ve o hiçlik bir üstat için çığlıktan daha yüksektir.</p>
+
+      <p>Yedi yüz kırk iki düğüm. Her birinin kendi kaydı, kendi tarihi, kendi ritmi. Sıralama şöyledir: Önce Matron'un dairesinin üçlü sargısı — her gece, istisnasız. Sonra kasa mühürleri: evin hazinesi, evin kayıtları, ve adı konmamış üçüncü bir oda. Sonra koridor sargıları, aşağıdan yukarı. Sonra dış kalkanlar — cepheye gerilmiş üç tabaka, komşu evlerin gözüne karşı. En son, ayda bir, alt bakım galerisi ve altıncı katman. Bu rutin kırk yıl sürdü. Kırk yılda üç kez hastalandı ve üçünde de bakımı aksatmadı; bir keresinde ateşle yürürken bir düğümü iki kez kontrol ettiğini fark etti ve o geceyi baştan aldı.</p>
+
+      <p>Konakta Ilyndar'ın dokunmadığı bir duvar yok. Ve konakta onunla göz göze gelen çok az kişi var. Uyku meselesine gelince: drowlar uyumaz, trans'a girer, ama Ilyndar'ın trans'ı yıllar içinde bozuldu. Aynı sayfayı sekiz kez temize çektiği geceler oluyor. Bir düğümü kontrol edip odasına dönüyor, on dakika sonra geri gidip aynı düğümü yeniden kontrol ediyor. Bunun bir belirti olduğunu biliyor; neyin belirtisi olduğunu düşünmüyor. Öfkesinin nereye gittiğini soran olsa "öfkelenmiyorum" derdi ve yalan söylemiş olmazdı. Öfke onda ses olmuyor; düzen oluyor.</p>
+
+      <hr>
+
+      <h3>19. Kırk Bir Gün</h3>
+
+      <p>Yüz on beş yaşındaydı. O yıl, Umrae'olin evi, Faen Tlabbar'ın kayıt kasasına girmeye çalıştı. Bir drow evinin hazinesini çalmak kaba bir iştir; kayıtlarını çalmak ise bir savaş açmaktır. Kayıtlarda kimin kime borçlu olduğu, hangi rahibenin hangi ayinde ne yaptığı, Konsey'de hangi oyun hangi bedelle alındığı yazar.</p>
+
+      <p>Saldırı bir gecede olmadı. Kırk bir gün sürdü. Bir mühür savaşı şöyle işler: karşı taraf her gece senin örgünün bir noktasını yoklar. Kırmaya çalışmaz — kırmak gürültülüdür. Yorar. Bir düğümü aynı saatte, aynı biçimde, altı gece üst üste yoklar; düğüm o ritme alışır; yedinci gece ritmi bozar ve alışkanlık bir boşluk bırakır.</p>
+
+      <p>Karşıdaki "El" Nym Umrae'olin'indi. Ilyndar bunu üçüncü gecede anladı, çünkü yoklama biçimi mektepteki sınavının aynısıydı: sabırlı, kibar, ve her seferinde bir soru sorar gibiydi. Kırk bir gece boyunca Ilyndar uyumadı. Trans'da minimum süre geçirdi. Konağın alt katlarında, karanlıkta, elinde kandil olmadan durdu.</p>
+
+      <p>Yedinci gece düğümü kaydırdı. On dördüncü gece iki düğümü yer değiştirdi. Yirmi ikinci gece, karşı tarafın ritmini taklit eden sahte bir düğüm ördü ve Nym üç gece boyunca var olmayan bir kilidi yokladı. Otuz üçüncü gece Nym bunu fark etti ve ilk kez sabırsızlandı; sabırsızlık, bir mühür savaşında kaybetmenin başlangıcıydı. Kırk birinci gece Nym geri çekildi.</p>
+
+      <p>Ertesi sabah Divan toplandı. Yasara raporu okudu. Matron dinledi. Sonuç kayda şöyle geçti: "Kasa mühürleri aksamamıştır." Ilyndar'ın adı geçmedi. Geçmesi gerekmiyordu; kayıt, işlerin yolunda gittiğini söylüyordu ve zaten bunun için bir Mühür Üstadı vardı. O sabah kırk bir gecelik uykusuzlukla odasına döndü ve kapıda Relonor'u buldu. Kardeşi seksen bir yaşındaydı ve elinde bir kâse sıcak bir şey vardı.</p>
+
+      <p>"Ne bu?"</p>
+
+      <p>"Bilmiyorum. Mutfaktan aldım. Sıcak."</p>
+
+      <p>Ilyndar kâseyi aldı. İçindekini içmedi; sadece avuçlarının arasında tuttu ve kırk bir gecedir ilk kez oturdu.</p>
+
+      <p>Relonor kapıda bekledi, sonra sordu: "Kazandın mı?"</p>
+
+      <p>"Kaybetmedim."</p>
+
+      <p>"Fark ne?"</p>
+
+      <p>Ilyndar cevap verdi:</p>
+
+      <p>"Fark şu: kazanan biter. Kaybetmeyen devam eder."</p>
+
+      <p>O yıl bu savaş içerisinde Globe of Invulnerability'nin temellerini kavradı ve Counterspell'in geliştirilmiş kullanımını defterine yazmıştı. Sayfanın kenarında tek not: "N. altı gece aynı saatte geldi. Bir daha gelirse yedincide orada olma."</p>
+
+      <hr>
+
+      <h3>20. Suikast Gecesi</h3>
+
+      <p>Ilyndar artık Yüz yirmi bir yaşındaydı. Batı sargısı bir gecede üç kez delinmişti. Bu bir mühür savaşı değildi — bu bir suikasttı. Kimin gönderdiği hiçbir zaman resmen açıklanmadı; konağın içindeki tahmin Vandree'ydi, Ilyndar'ın tahmini ise bugüne kadar başkaydı, lakin bugün değişmişti.</p>
+
+      <p>Birinci delik gece yarısından hemen sonra açıldı. Ilyndar o sırada üçüncü kat koridorundaydı; deliği kulağındaki basınç düşüşünden anladı ve yirmi saniye içinde oradaydı ve direkt müdahale ederek deliği kapattı. İkinci delik, ilkinden yarım saat sonra, aynı katın öbür ucunda açıldı. Bu bir dikkat dağıtmaydı ve işe yaradı: Ilyndar oraya koştu, kapattı, ve tam kapatırken üçüncü delik açıldı — Matron'un dairesine bakan sargıda açılmıştı.</p>
+
+      <p>O anda bir seçim yapması gerekti ve seçim şuydu: batı sargısını bırakıp Matron'un sargısına koşmak, ya da ikisini birden tutmaya çalışmak.</p>
+
+      <p>İkisini birden tuttu.</p>
+
+      <p>İki sargıyı aynı anda ayakta tutmak, bir kişinin iki ayrı ipi iki eliyle gerdiği bir iş değildir; iki ayrı ipi tek bir nefesle germektir. Yedi dakika sürdü. Yedinci dakikada burnundan kan gelmeye başladı. Dokuzuncuda kulaklarından. On birincide gözünün önündeki karanlık, drow karanlığı olmaktan çıkıp başka bir karanlık oldu. On üçüncü dakikada saldırganlar geri çekildi ve salonun içinde iki ceset kaldı; ikisini de Ilyndar öldürmedi, ev muhafızları öldürdü. Ama o gece ev, onun iki eliyle sağ çıktı.</p>
+
+      <p>Sabah raporunda Divan'a şu yazıldı: "Gece olağandı."</p>
+
+      <p>Saldırının kayda geçmesi, evin zayıf göründüğü anlamına gelirdi. Kayıtlar Konsey'e sunulur. Konsey'de zayıf görünen ev, sıralamada aşağı iner. Ilyndar bunu anladı. Anlamak, katlanmayı kolaylaştırmadı.</p>
+
+      <p>Yasara o sabah, rapordan sonra, koridorda onu durdurdu. Elini uzattı ve — hayatında bir kez, sadece bir kez — Ilyndar'ın yüzündeki kanı kendi mendiliyle sildi. Sonra mendili yere attı ve yürüdü gitti; çünkü bir rahibenin bir erkeğin kanını taşıyan bir bezi cebine koyması düşünülemezdi. Ilyndar mendili aldı. Bu mendili hâlâ saklıyor. Kimseye göstermediği üçüncü defterin arasında.</p>
+
+      <p>O yıl öğrendiği çaresizlik sonucunda bunun çözümü için yeni bir yola başvurmayı öğrendi. Büyü kitabına Contingency'yi yazdı ve gerekçesi şuydu: "Bir gece iki yerde olmam gerekti. Bir dahakine iki yerde olacağım."</p>
+
+      <hr>
+
+      <h3>21. Kieran'ın Elleri</h3>
+
+      <p>Ilyndar yüz otuz dokuz yaşındaydı. Bir kış — aşağıda mevsim yoktur ama yüzeyin kışı tünellerin havasını değiştirir — Kieran'ın odasına bir rapor bırakmaya gitti. Yaşlı adam masasında oturuyordu ve bir sayfayı temize çekiyordu. Ilyndar kapıda durdu, çünkü bir üstadın çalışmasını bölmek yasaktır. Kieran'ın kalemi sayfanın ortasında durdu. Uzun sürdü. Sonra devam etti, sonra yine durdu.</p>
+
+      <p>Ilyndar kapı aralığından gördü: yaşlı adamın sağ eli, kalemi tutan eli, ince ince titriyordu. Titreme büyük değildi. Bir harfi bozacak kadardı, o kadar. Kieran sayfayı buruşturdu ve yenisini aldı. Ilyndar geri çekildi, koridorda yirmi sayı saydı, sonra ayak sesini duyuracak şekilde geri geldi ve kapıyı tıklattı.</p>
+
+      <p>İçeri girdiğinde masada buruşuk sayfa yoktu. Kieran raporu aldı, teşekkür etti, ve konuşurken elini masanın altında tuttu. O geceden sonra Ilyndar bir kaç şey yaptı ve hiçbirini kimseye söylemedi. Önce Baş Büyücü'nün haftalık bakım paylarından en ince el işi gerektiren üçünü sessizce kendi listesine aldı. Kieran fark etti lakin hiçbir şey söylemedi. Ardından Kieran'ın kayıtlarının temize çekilmesi işini bir çırağa devretmesini önerdi — "eğitim açısından faydalı olur" diyerek. Kieran öneriyi kabul etti ve bunu bir ders gibi anlattı. İkisi de yalanın farkındaydı ve ikisi de yalanı bozmadı. Bu, aralarındaki en yakın şeydi. Ayrıca kendi defterine hatırlatıcı olması adına tek bir satır yazdı ve o satır, bugüne kadar yazdığı en çıplak ve samimi oluşu olabilirdi kendine karşı:</p>
+
+      <p>"Onun gibi olacağım. Ve benim elimi tutacak kimse olmayacak."</p>
+
+      <p>Bir yıl sonra o çırağın Relonor olduğunu öğrendi. O zaman bir şey hissetmedi — ya da hissettiği şeyin adını koyamadı.</p>
+
+      <hr>
+
+      <h3>22. Kaybolanlar Yılı</h3>
+
+      <p>Yüz on yedi yaşındaydı — hayır, yüz on yedi değil; bu yıl onun için tarihsizdir, çünkü o yıla ait defter sayfalarını sonradan kendisi çıkardı. O yıl konakta iki erkek "kayboldu". Biri savaş büyücüsü Vhaeril, biri silah ustasının yardımcısı. İkisinin de suçu belirsizdi. İkisinin de yeri bir ay içinde dolduruldu.</p>
+
+      <p>Vhaeril'i tanıyordu. Çok değil — konakta kimse kimseyi çok tanımazdı — ama onu yeterince tanıyordu. Adam bir gece ona bir soru sormuştu ve soru şuydu: "Sen hiç merak etmiyor musun, biz burada ne için duruyoruz?" Ilyndar cevap vermemişti. Üç hafta sonraysa Vhaeril artık yoktu.</p>
+
+      <p>Kayboluştan sonra Chardalyn bir sadakat sorgusu açtı. Bu, evin erkeklerinin tek tek odaya alındığı, saatlerce aynı soruların farklı sıralarla sorulduğu bir usuldür. Ilyndar'ın sırası geldiğinde onun sorgusu altı saat sürdü.</p>
+
+      <p>"Vhaeril seninle konuştu mu?"</p>
+
+      <p>"Evet abla."</p>
+
+      <p>"Ne konuştunuz?"</p>
+
+      <p>"Sargı bakımının gece yapılmasını sordu."</p>
+
+      <p>"Başka? Herhangi başka bir konu hakkında konuştunuz mu?"</p>
+
+      <p>"Hayır abla."</p>
+
+      <p>Chardalyn aynı soruyu, o altı saatte, on dokuz kez sordu. On dokuzunda da aynı cevabı aldı. Cevabın aynı kalması bir insanı temize çıkarmaz; sadece, yalan söylüyorsa iyi bir yalancı olduğunu gösterir. Chardalyn bunu biliyordu.</p>
+
+      <p>Beşinci saatin sonunda soruyu değiştirdi:</p>
+
+      <p>"Sen hiç merak ediyor musun, bu evde ne için duruyorsun?"</p>
+
+      <p>Ilyndar'ın içinde bir şey durdu. Soru Vhaeril'in sorusuydu. Kelimesi kelimesine aynıydı... Ve o an anladı: Chardalyn ya Vhaeril'in son konuşmasını biliyordu, ya da bu, bu evde erkeklerin birbirine sorduğu tek soruydu ve hepsi aynı sebeple kayboluyordu.</p>
+
+      <p>"Yalnızca duruyorum abla," dedi. "Ama hayır, merak etmiyorum."</p>
+
+      <p>Sorgudan çıktığı gece, bir liste yaptı. Zihnindeki eski listeydi — kaybolanlar — bu sefer kâğıda döküldü, sayıldı, ve kendi adının sırası hesaplandı. O geceden başlayarak, yedi yüz kırk iki düğümün her birine, yıllara yayılan bir yavaşlıkla, kimsenin fark edemeyeceği bir madde işledi: sadece kendi elinin tetikleyebileceği bir gevşeme noktası. Bunu yaparken rahatsız olsa da, bu eylem zihninde ihanet olarak kurgulamadı, hâlâ da görmüyor. Kendine söylediği cümle şuydu:</p>
+
+      <p>"Beni bir gün harcarlarsa, ev de benimle birlikte çıplak kalır. Böylece beni harcamak onlar için pahalı olur."</p>
+
+      <p>Bir erkeğin bu evde kendi hayatına biçebildiği tek fiyat buydu. Yıllar içinde bu, bir alışkanlığa dönüştü: bir odaya girdiğinde çıkışları sayması, bir yola çıkmadan önce dönüş için bir şey bırakması, bir büyüyü bugün için değil, olmasını istemediği bir gün için hazırlaması. Meslektaşları buna tedbir derlerdi. Onunki tedbirden fazlaydı: hayatını önceden koyulmuş sigortalar üzerine kurmuş bir adamdı Ilyndar.</p>
+
+      <hr>
+
+      <h3>23. Kölelerin Demlemesi</h3>
+
+      <p>Faen Tlabbar konağının alt kademelerinde köleler çalışır: goblinler, kuo-toalar, yüzeyden kaçırılan insalar, halflingler, elfler ve cüceler. Köle ölürse yerine yenisi alınırdı, ama yenisi pahalıdır. Bu yüzden konakta yüzyıllardır bir demleme yapılır: derin mantarlardan, üç gün bekletilmiş bir karışım. İşçiyi uyutmaz. Dinlenmeyi taklit ettirir ve içteki habislikle birlikte hastalığın kusulmasına sebebiyet verirdi. Sabah kalktığında bedeni bir gece geçmiş sayar, kasları çözülür, gözü açılır, kazmayı yeniden kaldırabilir.</p>
+
+      <p>Demlemeyi rahibeler yapmaz; rahibeler böyle işlere el sürmezler. Konakta bunu yapan kişi yıllardır Üstatlardır: ölçü işidir, sabır işidir, kimsenin istemediği iştir. Ilyndar kırk yıl boyunca haftada iki gece bu kazanın başında durdu. Kazan odası alt galerinin yanındadır ve orada kölelerin sesi duyulur. Ilyndar bu sesi bir ritim olarak kaydetti zihnine: kazma, kazma, nefes, kazma. Sayarak beklerdi. Çocukluğundaki damlanın sesi gibiydi, ama bunu düşünmedi. Düşünmemeyi seçmedi bile; hiç düşünmedi. Bir işti, listedeydi, yapıldı.</p>
+
+      <p>Karışımın bir özelliğini yıllar içinde fark etti ve kimseye söylemedi, çünkü kimse sormadı: demleme bedeni dinlendirir, zihni değil. İçen kişi rüya görmez. Konakta bu bir kusur sayılmaz; tersine, rüya görmeyen köle daha sessiz, daha itaatkâr, daha az sorun çıkarandır.</p>
+
+      <p>Bir gece, kazanın başında beklerken, galerinin ucundan sayıklayan bir ses duydu. Cüce bir köleydi; yaşlıydı, son demlemesini üç gün önce içmişti ve artık onun üzerinde bu dem işe yaramıyordu. Adam kendi dilinde konuşuyordu. Ilyndar cüce dilini yeterince biliyordu — bir mühürcü, düşman runiklerini de okumak zorundadır. Adam iki kelime tekrarlıyordu: "Habis Kapı..."</p>
+
+      <p>Ilyndar adamın delirdiğinin farkında olsa da, bu deliliğin arkasında yatan bağlamı merak etmişti. Cüce ile iletişim kurmasa da ona kulak kesilde, daha sonrasında ise bir cümle daha söyledi bu cüce ve Ilyndar bunu defterine yazdı: "Kapıyı açtılar ve içerideki dışarı çıkmadı. Biz içeri girdik."</p>
+
+      <p>Sabaha karşı adam öldü. Ilyndar bu cücenin adını hiç öğrenmedi.</p>
+
+      <p class="bio-note">Dipnot: Bu, Ilyndar'ın hayatının en büyük suçluluk anıdır — ama o zamanlar öyle görmedi. Bir kelime kaydetti; bir insanı kaydetmedi. Belki yukarıda, Orv'un yüzüne ilk baktığı an bunu hatırlayabilir.</p>
+
+      <hr>
+
+      <h3>24. Yirmi Numara</h3>
+
+      <p>Konakta kölelerin adı olmaz, numarası vardır. Alt galeride çalışan cücelerin numaraları on beşten otuz ikiye kadar giderdi; sayı sabit tutulur, ölen olursa yerine gelen aynı numarayı alırdı. Zalimce ama verimli bir yöntemdi. Ilyndar yüz kırk üç yaşındayken Yirmi Numara üç ay içinde iki kez değişti. Bunu fark etmesinin sebebi insani değildi: demleme ölçüsü kişi başına hesaplanırdı ve yeni gelen bir köle ilk üç hafta farklı ölçü ister. Kayıt tutan kişi olarak bunu görmesi gerekiyordu ve gördü.</p>
+
+      <p>Üçüncü Yirmi Numara genç bir cüceydi. Genç bir cücenin alt galeride ne işi olduğunu Ilyndar merak etmedi — merak etmek çıkarına olan bir durum yaratmazdı. Bir gece, kazan başında, bu genç cüce ona bir şey söyledi. Cüce dilinde değil, kırık bir Undercommon dille: "Sen bunu bize niye veriyorsun?"</p>
+
+      <p>Ilyndar cevap verdi: "Çalışabilmen için."</p>
+
+      <p>"Hayır. Sen niye veriyorsun? Senin işin bu değil."</p>
+
+      <p>Soru basitti ve Ilyndar'ın kırk yılda ilk kez duyduğu bir sorudu: bu senin işin değil, o zaman neden yapıyorsun?</p>
+
+      <p>Cevabı biliyordu. Cevap şuydu: çünkü listede vardı, çünkü kimse istemiyordu, çünkü yapmazsa bir eksiklik olurdu ve eksiklikler bir gün birinin hesabına yazılırdı.</p>
+
+      <p>Ama bunların hiçbirini söylemedi. Şöyle dedi:</p>
+
+      <p>"Çünkü yapmazsam yerime biri yapar ve o daha kötü yapar."</p>
+
+      <p>Çocuk baktı. Sonra kâsesini aldı ve içti.</p>
+
+      <p class="bio-note">Dipnot: O cümle, Ilyndar'ın kendi hayatı hakkında kurduğu belki de en dürüst savunmadır ve aynı zamanda bir sistemin nasıl ayakta kaldığının en kısa açıklamasıdır: herkes, yerine gelecek olandan daha az kötü olduğuna inanarak devam eder.</p>
+
+      <p>Üçüncü Yirmi Numara altı ay sonra öldü. Dördüncüsü geldi ve aynı numarayı aldı. Ilyndar bu sefer adını sordu. Yeni dwarf genç adını söyledi. Ilyndar defterine yazmadı — yazması yasaktı, kölelerin adı kayda geçmez — ama ezberledi.</p>
+
+      <p class="bio-note">Dipnot: Bugün hâlâ hatırlıyor. Yukarıda, bir cücenin karşısında, o adı söyleyip söylememek onun ilk büyük sınavı olacak. Cücenin ismi Bradmoun Parlakçekiç'ti. Orv'un soy ismi ile aynı.</p>
+
+      <hr>
+
+      <h3>25. Üç Buçuk Sayfa</h3>
+
+      <p>Ilyndar'ın yeni makamıyla kırk yılın içinde zihninde bir şey netleşti, altıncı katman Faen Tlabbar Ailesi'nin işi değildi. Ev sanki orada var olmuş bir şeyin üstüne kurulmuştu. Notasyon farklıydı, mantık farklıydı, düğüm atma biçimi farklıydı: başka bir aklın, çok daha eski bir aklın işiydi. Ve o katman konağın altında bitmiyordu.</p>
+
+      <p>Bunu bir kez, çok dikkatli bir cümleyle Yasara'ya sordu. Yasara bir an duraksadı ve o duraksamada cehalet yoktu. O günden sonra sessizce çalıştı. Kendi mürekkebiyle, kendi gecelerinde, kimseye rapor vermeden.</p>
+
+      <p>Sorn Teken'duis, kendi evinin arşivinde çalıştığı için şehirde kimin ne sattığını bilirdi. Bir ziyarette, mantar rakısının ikinci kadehinden sonra, Ilyndar ona ne aradığını söyledi — lakin dikkatliydi, aradığını tam olarak değil, kenarından çıtlatmıştı. Sorn Ilyndar'ı dinledikten sonra uzun süre baktı. Sonra tek bir şey söyledi:</p>
+
+      <p>"Sen bu işten ölürsün."</p>
+
+      <p>"Muhtemelen."</p>
+
+      <p>"Tamam." Kadehini kaldırdı. "O zaman doğru adamı bulayım."</p>
+
+      <p>Aracıyı Ilyndar için Sorn buldu. Yüzü örtülü, cinsiyeti belirsiz, adı olmayan biri. Syfelin'in kenar pazarında, üç kademe aşağıda, kimsenin isim sormadığı bir sıra. Kendisine Muğlak Tüccar diyordu bu aracı. Ilyndar ondan üç buçuk sayfa satın aldı: yüzeyde, Dun-Morak'ta, kendilerine Gri Ustalar diyen bir topluluğun elinden çıkmış sayfalar.</p>
+
+      <p>Birincisi ucuzdu. İkincisi pahalıydı. Üçüncüsü için Zaeril'den kalan tek eşyayı verdi — yaşlı adamın odasından, temizlenirken, bir çırak tarafından yürütülmüş ve yıllar sonra pazarda ortaya çıkmış bir mürekkep hokkası. Ilyndar onu satın almış, sonra bir sayfa için geri satmıştı. Kalan yarım sayfa için ise gelecek altı yılın payını verdi ve yarım sayfa, üçünün toplamından daha değerli çıktı.</p>
+
+      <p>O geceyi hâlâ hatırlıyor. Paketi açmadan önce ellerini yıkadı, mumu değiştirdi, oturuşunu düzeltti. Kâğıda dokunduğu an içinde olan şeyi başka hiçbir yerde, hiçbir zaman hissetmedi. Sayfalarda gördüğü şey uykusunu bozdu: Gri Ustalar'ın perçin notasyonu, altıncı katmanın notasyonuyla akrabaydı. Aynı dil değildi; lakin aynı dilden türemiş iki lehçeydi. İki ayrı dünyanın altında, birbirini hiç görmemiş iki topluluk, aynı şeyi aynı yöntemle kapatmaya çalışmıştı.</p>
+
+      <p>Ve notasyonlarda yazanlara göre Gri Ustalar kapattıkları şeyi açmışlardı. Dun-Morak'ta ne olduğunu aşağıdan öğrendi: tünellerde günlerce süren bir uğultu, üç karakolda herkesin birbirini öldürmesi, rahibelerin kayda geçirip açıklamadığı bir "yankı". Vardığı sonuç kısaydı: Bir mühür açıldığında, ağdaki bütün mühürler bunu hissediyordu.</p>
+
+      <p>Sayfalardan çıkardığı iki ad daha var ve ikisi de onu kuzeye bakmasına sebep oluyordu:</p>
+
+      <p>Kırık Geçit (Fractured Passage): Kenara düşülmüş bir notta, tanrıların tepesinin gölgesinde bir yer. Nota göre orası bir kapı değil, bir kapının kırılmış hali: kapatılmış bir şeyin mührü değil, mührün kendisindeki yara gibi algılanıyordu. Muğlak Tüccar'ın verdiği son yarım sayfada yazanlara göre Gri Üstadlar oraya gitmeyi planlamıştı. Gidip gitmedikleriyse elindeki bilgi ile belli değildi.</p>
+
+      <p>Barbara: Üç ayrı kaynakta, birbiriyle hiçbir ilgisi olmayan üç ayrı elden, aynı kelime.</p>
+
+      <p>Kelime esasında akıllara gelen herhangi bir dile benzemiyordu. Drowca değil, Undercommonca değil, Cüce runiği değildi. Bir isim gibi yazılmış ama üçünde de bir yer, bir makam ya da bir izin gibi kullanılmış:</p>
+
+      <ul class="bio-list">
+        <li>Gri Ustalar'ın sayfasında: "Barbara'ya sorulmadan geçilmez."</li>
+        <li>Altıncı katmanın kenar işaretinde, tek başına, bir uyarı gibi kazınmış.</li>
+        <li>Ve onu en çok tedirgin eden yerde: Zincirdarlar'a atfedilen bir kalıntı yazıtındaydı.</li>
+      </ul>
+
+      <p>Zincirdarlar kıtadan silinmişlerdi, yüzey insanları onların adlarını küle döndürmüştü. Ama silinmiş bir düzenin işaretiyle bir drow konağının temeli aynı kelimeyi taşıyorsa, o kelime ikisinden de eskidir.</p>
+
+      <p>Ilyndar, Barbara'nın ne olduğunu bilmiyor ve anlayamıyordu. Fakat bildiği bir şey vardı ki o da: Barbara kelimesi nerede geçiyorsa, cümlenin öbür yarısında bir geçme, sorma ya da izin vardı.</p>
+
+      <p>Bir gece, sayfaları okurken, Örümcek Gecesi'nde kapının arkasında duran şeyi hatırladı. O şey de bir kez durmuş ve beklemişti. Defterine yazdı: "Mühürlü olan her şey, mührün öbür tarafında kimin durduğunu merak eder mi?" Sonra o satırı çizdi. Ama silmedi. Hâlâ okunuyor.</p>
+
+      <hr>
+
+      <h3>26. Altıncı Katmandaki Sessizlik</h3>
+
+      <p>Dun-Morak'tan gelen bir sarsıntıyı saptadıktan sonra, rutin bir bakım gecesinde, Ilyndar altıncı katmanın üzerinden geçti ve hiçbir şey hissetmedi. Kulaklarında dolgunluk yoktu. Dişlerinde karıncalanma yoktu. Katman duruyordu, ama bir ip gibi gevşemişti. Ardından geri dönüp aynı hattan bir daha geçti, ve bir daha geçti. Sekizinci geçişte elleri titriyordu ve sebebi soğuk değildi.</p>
+
+      <p>O gece sabaha kadar aynı sayfayı sekiz kez temize çekti. Sekizinde de aynı sonuca vardı ve sekizinde de yanlış olsun diye kontrol etti. Ömrünü verdiği duvar, kendisinden çok daha eski bir şeyin duvarıydı. Ve o şey hâlâ oradaydı. O gün bu hipotezini kesinleştirmişti. Dun-Morak ile öğrendiği şeylerin ardından oranın kabaca yerini büyü ile tespit etmiş, harabeleri uzaktan da olsa gözlemleyebilmek için bir sensör bırakmıştı. O sensör sayesinde Dun-Morak'ta bir şeyin yanlış gittiğini anlamıştı, bir dışarıdan müdahale olmuştu. Ve bu müdahale, altıncı katmandaki habisliği tetiklemişti...</p>
+
+      <hr>
+
+      <h3>27. Huzur</h3>
+
+      <p>Raporu Yasara'ya verdi. Yasara okudu, yüzü değişmedi, raporu Divan'a değil doğrudan Matron'a götürdü. Ilyndar üç gün bekletildi. Üç gün boyunca hiçbir görev verilmedi, hiçbir soru sorulmadı, hiçbir kapı yüzüne kapanmadı. En kötü ceza biçimidir bu: ona unutulmuş gibi davranıyorlardı. Üçüncü günün sonunda huzura çağrıldı — hayatında Matron'un karşısında tek başına ikinci kez çıkıyordu ve bu sefer duruşu farklıydı. Birincisi kütüphane izni istediği gündü, yüz yıl önceydi. Salon karanlıktı. Jhaelolin oturmasını söylemedi; söylemez. Yaşlı bir kadındı ve yaşlılığı bir zayıflık değil, bir birikim gibi duruyordu; odadaki her şeyin fiyatını bilen birinin duruşuydu.</p>
+
+      <p>Anlattıkları eksiksiz ve fazlasızdı. Altıncı katman evin eseri değil, evin emanetidir. Lolth'un lütfudur ve Faen Tlabbar'ın Konsey'deki dördüncü koltuğunun asıl bedeli budur.</p>
+
+      <p>Faen Tlabbar'ın Drow geçitleri hattı kuzeye kadar uzanırdı. Kuzeyde, bir grup cücenin inşa ettikleri kalelerin yanına açtığı bir maden, hattın yüzeye en yakın geçtiği noktalardan birine yaklaşmaktaydı. Matron Ilyndar'a bunları bizzat kendi ağzından söylüyordu. Ondan bir beklentisi var gibi konuşuyordu. Bu olanağın düşüncesi bile Ilyndar'ı heyecanlandırmaya yetmişti.</p>
+
+      <p>Cüceler oraya varırsa emanetin varlığı yüzeye çıkacaktı ve Engizisyon'un ve cücelerin bunu öğrenmemesi lazımdı. Ev bir akın hazırlığına bürünmüştü, kampanyanın amacı: madeni çökertmek, tanıkları susturmaktı. Lakin akınlar pahalıdır ve dikkat çekerlerdi. Dolayısıyla Divan Konseyi'nde bir soru doğmuştu.</p>
+
+      <p>Matron bunları Ilyndar'a anlattıktan sonra ona bizzat bir emri verdi:</p>
+
+      <p>"Yukarı çıkacaksın. Cücelerin ne kadar indiğini ve ne gördüklerini tartacaksın. Ayrıca çatlağı bulacaksın, perçinleyebiliyorsan perçinleyeceksin. Perçinlersen akına gerek kalmaz."</p>
+
+      <p>Daha sonrasında Matron bir an durdu.</p>
+
+      <p>"On beş günde bir rapor vereceksin. İki rapor gelmezse ev susmayı bir cevap sayar ve akın başlar. Üç rapor gelmezse seni de akının içinde sayarız."</p>
+
+      <p>Ilyndar tek bir soru sordu: "Cüceler oraya varmadan perçinlemek mümkün mü?"</p>
+
+      <p>"Onu bana sen söyleyeceksin."</p>
+
+      <p>Görev resmîdir. Evin nişanı buyruğun üzerindedir. Syfelin'de herkes onun evin işinde olduğunu bilir. Ilyndar bir kaçak değil, esasında Faen Tlabbar ailesine ait bir memurdur. Salondan çıkarken, hayatında ilk kez bir emirle bir arzunun aynı yöne baktığını fark etti. Kırk yıldır kâğıt üstünde kovaladığı hatta eliyle dokunacaktı.</p>
+
+      <p class="bio-note">Dipnot: Hesabında bir kalem eksikti ve onu görmedi bir denklem mevcuttu: emanete dokunmuş bir erkek, evin en değerli aleti olur; evin en değerli aleti ise konağın dışında dolaşmasına izin verilmeyen şeydir. Başarırsa geri çağrılacaktı. Geri çağrılırsa bir daha yukarı çıkamayacaktı.</p>
+
+      <p>O gece "emredersiniz" dedi ve sesi, hayatında ilk kez, kendisinin duyabileceği kadar hızlı çıktı.</p>
+
+      <hr>
+
+      <h3>28. Mühürlü Emir</h3>
+
+      <p>Hazırlık on bir gün sürdü. Yol için üç şey gerekiyordu: erzak, geçiş hakkı ve büyü. Erzak kolaydı. Geçiş hakkı — Faen Tlabbar'ın nişanı, dört evin kontrol ettiği tünellerde geçerlidir, ama Vandree ve Baenre hattında bir memurun ayrıca kaydı yapılır. Kayıtlar yapıldı.</p>
+
+      <p>Büyü ise ironik şekilde Ilyndar için bir sorundu. Bir Mühür Üstadı, teorik olarak, kuzeye kırk günde değil bir günde bile ulaşabilirdi. Ilyndar Teleportation Circle'ı yıllar önce çalışmıştı ve Syfelin'in dört sabit halkasını biliyordu. Ama hattın üstünde teleport tutmuyordu.</p>
+
+      <p>Bunu ilk kez yüz on dokuz yaşında, bir bakım denemesinde fark etmişti: altıncı katmanın uzandığı koridorda hiçbir mekânsal büyü bir sebepten mütevellit düzgün çalışmıyordu. Sıçrama bir sebepten ötürü ya kayıyor ya da ters yöne açılıyordu. Ağ, kendi hattı boyunca mekânı kilitliyor — çünkü kapattığı şeyin geçmesini istemiyor ve bir kapı, hem içeriyi hem dışarıyı aynı anda kilitliyordu.</p>
+
+      <p>Bu sebepten ötürü bir büyücü bile olsa, kuzeye gitmek isteyen bir kişi, tünelleri kullanarak yolculuk etmek zorundadır. Hattın yanında, hattın kilidinin içinde, adım adım. Ilyndar bunu bir engel olarak değil, bir kanıt olarak gördü. Ağ çalışıyordu ve bu ona biraz da olsa bir rahatlama sağlıyordu. Çalışan bir şey, tamir edilebilir bir şeydi çünkü.</p>
+
+      <p>Son gün Yasara ona küçük bir tüp uzattı. Kurşun mühürlüydü ve mühürde Matron'un işareti vardı.</p>
+
+      <p>"Bu ne?"</p>
+
+      <p>"Çatlağı bulduğunda açacaksın."</p>
+
+      <p>"Perçinleme yöntemi bunun içinde mi?"</p>
+
+      <p>"Çatlağı bulduğunda açacaksın."</p>
+
+      <p>"Şimdi açsam?"</p>
+
+      <p>Yasara ona baktı. Bakışında tehdit yoktu; bir hesap makinesinin bakışı vardı.</p>
+
+      <p>"Dediklerimi duymuyorsun galiba. Çatlağı bulduğunda açacaksın! Eğer şimdi açarsan, o zaman içindeki talimat geçersiz olur ve sen görevini bilmeden bir ahmak gibi yola çıkmış olursun. Bunun nasıl bittiğini ikimiz de biliyoruz, Üstat!.."</p>
+
+      <p>Ilyndar hata ettiğinin farkına vardı ve utanarak tüpü aldı. Kırk gün boyunca göğsünde taşıdı ve her gece, trans'a girmeden önce mühre parmağını değdirdi. Sadece değdirdi. Bir mühürcü için kapalı bir mühür, kapalı bir kapıdan daha ağır bir şeydir.</p>
+
+      <hr>
+
+      <h3>29. Koltuk Bir Tane</h3>
+
+      <p>Syfelin'den ayrılmadan iki gece önce Ilyndar, Sorn'u ziyarete gitti. Teken'duis konağının üçüncü kat kayıt odası, tozlu, alçak tavanlı, iki yüz yıllık mürekkep kokan bir yerde duruyordu Sorn. Sorn Ilyndar'ı görünce hiçbir şey sormadı. İki kadeh koydu.</p>
+
+      <p>"Uzun mu gidiyorsun?"</p>
+
+      <p>"Bilmiyorum."</p>
+
+      <p>"Yukarı mı?"</p>
+
+      <p>Ilyndar cevap vermedi. Sorn da ısrar etmedi; bir arşivci, cevaplanmayan sorunun da bir kayıt olduğunu bilir.</p>
+
+      <p>Bir süre sessiz oturdular. Sonra Sorn dedi ki:</p>
+
+      <p>"Bir şey bırak bende. Ne zaman geleceğini bilmiyorum, hatta gelip gelmeyeceğini bile bilmiyorum. Bir şey olsun."</p>
+
+      <p>"Ne bırakayım?"</p>
+
+      <p>"Bilmem. Bir şey olsun işte. Sen seç. Dönmezsen diye elimde bir şey olsun. Yoksa seni hatırlayan tek şey evin kaydı olur, o da senin adını yanlış yazar. Sen yokken eve gidip tekrardan levhaları kazıyabileceğimi zannetmiyorum."</p>
+
+      <p>Ilyndar güldü. Hayatında sayılı kez güldü ve bunlardan biriydi.</p>
+
+      <p>Ona kimseye göstermediği üçüncü defterin ilk cildini bıraktı. İçinde teknik hiçbir şey yoktur; sadece kırk yıllık cümleler vardır, çoğu yarım, bazıları çizik.</p>
+
+      <p>Sorn defteri aldı, kapağına baktı, sonra çekmeceye koydu.</p>
+
+      <p>"Yaşıyorum," dedi. "Peki ya sen?"</p>
+
+      <p>"Şimdilik."</p>
+
+      <hr class="bio-break">
+
+      <p>Ayrılmadan önceki gece Kieran onu çağırdı. Yaşlı adam masasında oturuyordu ve önünde açık bir defter vardı; sayfa boştu. Ilyndar içeri girdiğinde kalemi bıraktı — biraz fazla hızlı bıraktı — ve elini masanın altına aldı. Ilyndar bunu gördü. Son üç yıldır Kieran'ın kayıtlarını çırakları yazıyordu ve bu bir ders diye anlatılıyordu. Ders değildi.</p>
+
+      <p>"Otur, Zyn."</p>
+
+      <p>Evde onu ikinci adıyla çağıran tek kişiydi. İkinci ad kişiye aittir, eve değil. Kieran bir şey söyleyecekmiş gibi başladı, vazgeçti, sonra defterlerinden birini uzattı: altmış yıllık bakım kayıtları, kendi el yazısıyla.</p>
+
+      <p>"Yukarıda kimseye kim olduğunu söyleme. Ama ne olduğunu unutma."</p>
+
+      <p>Ilyndar defteri aldı, teşekkür etti. Kapıdan çıkarken Kieran bir şey daha söyledi ve bu, yaşlı adamın kırk yıllık sessizliğinde açtığı tek delikti:</p>
+
+      <p>"Zaeril de son gece bu odadan çıktı."</p>
+
+      <p>Ilyndar durdu. Sormadı. Sormayı yine beceremedi. O hafta bir şey daha gördü — kimse göstermedi, kendi gördü. Relonor artık Kieran'ın alt kat bakım odalarına giriyordu. Kardeşi mühür işi öğreniyordu.</p>
+
+      <p>Kimse ona tehdit savurmadı. Savurmaya gerek yoktu. Bir Faen Tlabbar erkeği için aritmetik bellidir:</p>
+
+      <p>Koltuk bir tanedir. Aday iki olursa, birinin fazlalık olduğu gün gelir. Ve bu evde fazlalıkların nereye gittiği yazılmaz.</p>
+
+      <p>Kaçmak da bir çözüm değildir — ve bunun sebebi kaçamayacak olması değil. Sebep şu: gittiği her yerde bir drow olarak kalır. Yukarıda kimliksizdir, aşağıda evsizdir; bir isim taşımayan drow, kimsenin hesabına yazılmayan bir şeydir ve hesaba yazılmayan şeyler kaybolur.</p>
+
+      <p>Geriye tek bir yol kalır: kimsenin yapamadığı şeyi yapmak.</p>
+
+      <hr>
+
+      <h3>30. Son Bakım</h3>
+
+      <p>Yola çıkacağı gecenin öncesinde, son kez bakıma indi. Kırk yıldır aynı sıra: Matron'un dairesinin üçlü sargısı, kasa mühürleri, koridor sargıları aşağıdan yukarı, dış kalkanlar, ve en sonda alt bakım galerisi. O gece sırayı bozdu.</p>
+
+      <p>En aşağıdan başladı. Altıncı katmanın önünde durdu, elini gevşemiş taşa koydu ve uzun süre bekledi — hiçbir şey hissetmedi, zaten hissetmeyeceğini biliyordu, yine de bekledi. Bir doktorun ölmüş bir hastanın nabzını son bir kez yoklaması gibi. Sonra yukarı doğru çıktı. Yedi yüz kırk iki düğümün her birine tek tek dokundu. Bazılarında bir saniye, bazılarında bir dakika kaldı.</p>
+
+      <p>Kırk yıl, bir adamın parmak uçlarında böyle birikiyordu: bu düğüm yüz on beşinde kaydırılmıştı, bu ikisi kırk bir gecelik savaşta yer değiştirmişti, bu üçü suikast gecesinde yeniden örülmüştü ve o gece burnundan gelen kan hâlâ taşın gözeneklerinde bir yerdeydi — kimse görmez, bir mühürcü bilir. Batı sargısının üçüncü düğümüne geldiğinde durdu. Dört yaşında parmağını burada gezdirmişti. On beşinde alnını buraya dayamıştı. Yüz yedisinde bu düğümün kaydını kendi eliyle yeniden yazmıştı, çünkü Zaeril'in defterleri alınmıştı.</p>
+
+      <p>Elini koydu. Kulağında dolgunluk oldu, dişleri karıncalandı. Sağlamdı.</p>
+
+      <p>"İyi tut," dedi. Sesli söyledi. Konakta kimse yoktu.</p>
+
+      <p>Sonra yukarı çıktı, odasına gitti, tüpü göğsüne koydu ve sabahı oturarak bekledi. Bir adamın kırk yıl boyunca gece gece dokunduğu bir duvardan ayrılırken hissettiği şeyin adı yok. Ilyndar da aramadı. Sadece bir şeyi fark etti ve bunu defterine yazmadı:</p>
+
+      <p>Konaktaki hiç kimseye veda etmemişti. Duvara etmişti.</p>
+    </div>
+
+    <!-- Inline info-boxes: only shown on narrow screens -->
+    <div class="info-boxes-inline">
+      <div class="info-box-inline">
+        <h2>Unvanlar ve Lore</h2>
+        <strong>Unvanlar:</strong>
+        <div class="badges">
+          <span class="badge">Faen Tlabbar Mühür Üstadı</span>
+          <span class="badge">Duvar</span>
+          <span class="badge">Zyn</span>
+          <span class="badge">Tünel Konuğu</span>
+          <span class="badge">Yüzeydeki Drow</span>
+        </div>
+        <strong>Lore Etkisi:</strong><br>
+        Faen Tlabbar hanesinin soyundan gelen bir erkek drow olan Ilyndar, ailesinin Mühür Üstadı olarak hane büyücülerinden birisi haline gelmiştir. Matron'unun verdiği bir buyruk neticesinde bir anomali olarak nitelendirilebilecek Arcane Çatlağın izini sürmek ve onu kapatmak ile görevlendirilmiştir. Lakin yolculuğunda izini süreceği kendi bireysel emelleri de mevcuttur.<br><br>
+        <a href="ılyndar zyn'aere faen tlabbar.pdf" target="_blank" class="character-link">⚔️ Ilyndar Olarak En Son Char Sheeti</a>
+      </div>
+      <div class="info-box-inline">
+        <h2>Karakter Bilgileri</h2>
+        <div class="info-card">
+          <div class="info-row"><span class="info-label">Class</span><span class="info-value">Abjurer Wizard</span></div>
+          <div class="info-row"><span class="info-label">Level</span><span class="info-value">12 (Yaşıyor)</span></div>
+          <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Elf (Drow)</span></div>
+          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">147</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ CAROUSEL ══════════════ -->
+    <div class="carousel-section">
+      <div class="carousel-tabs">
+        <button class="carousel-tab active" onclick="switchTab(0)">🤝 Dostları</button>
+        <button class="carousel-tab"        onclick="switchTab(1)">⚔️ Düşmanları</button>
+        <button class="carousel-tab"        onclick="switchTab(2)">🗡️ Formları ve Eşyaları</button>
+      </div>
+
+      <div class="carousel-wrapper">
+
+        <!-- Panel 0: Dostlar -->
+        <div class="carousel-panel active" id="panel-0">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Steel Saint Zephyr.png" alt="Steel Saint Zephyr" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Orv Bezmadan Parlakçekiç.jpg" alt="Orv Bezmadan Parlakçekiç" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Cecilia.jpeg" alt="Cecilia" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="3">
+                <img src="Rin Stormbringer.png" alt="Rin Stormbringer" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="4">
+                <img src="Eldrin Varos.jpg" alt="Eldrin Varos" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-0">Ilyndar'ın Yol Arkadaşı Olan Son Kıvılcım'ın Çelik Azizi Ejderdoğan Zephyr</div>
+          <div class="carousel-dots" id="dots-0">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+        <!-- Panel 1: Düşmanlar -->
+        <div class="carousel-panel" id="panel-1">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src=".sergey-glushakov-leyline-of-the-void-sergey-glushakov-mtg.jpg" alt="Drow Düşmanları" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-1">Ilyndar'ın Drow Kökenleri Neticesinde Edindiği, Underdark'ın Derinliklerindeki Drow Düşmanları</div>
+          <div class="carousel-dots" id="dots-1">
+            <span class="dot active"></span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Formlar & Eşyalar -->
+        <div class="carousel-panel" id="panel-2">
+          <div class="carousel-row">
+            <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
+            <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Ilyndar Elf Disguise.png" alt="Ilyndar Elf Disguise" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Staff of Power.jpeg" alt="Staff of Power" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="2">
+                <img src="Mizzium Apparatus (Ilyndar).png" alt="Mizzium Apparatus" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="3">
+                <img src="Cloak of Protection.jpeg" alt="Cloak of Protection" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="4">
+                <img src="Elven Chain Shirt.jpeg" alt="Elven Chain Shirt" onclick="openModal(this)">
+              </div>
+            </div>
+            <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
+          </div>
+          <div class="carousel-caption" id="caption-2">Ilyndar'ın Yüzeyde Drow Kimliğini Gizlemek İçin Büründüğü Elf Kılığı</div>
+          <div class="carousel-dots" id="dots-2">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /.carousel-section -->
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding-bottom:40px;">
+      <a class="back-link" href="../index.html">← Geri Dön</a>
+      <a class="back-link" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑ Yukarıya Dön</a>
+    </div>
+  </div>
+
+  <!-- Fixed info-boxes (desktop only) -->
+  <div class="info-box left-box">
+    <h2>Unvanlar ve Lore</h2>
+    <strong>Unvanlar:</strong>
+    <div class="badges">
+      <span class="badge">Faen Tlabbar Mühür Üstadı</span>
+      <span class="badge">Duvar</span>
+      <span class="badge">Zyn</span>
+      <span class="badge">Tünel Konuğu</span>
+      <span class="badge">Yüzeydeki Drow</span>
+    </div>
+    <strong>Lore Etkisi:</strong><br>
+    Faen Tlabbar hanesinin soyundan gelen bir erkek drow olan Ilyndar, ailesinin Mühür Üstadı olarak hane büyücülerinden birisi haline gelmiştir. Matron'unun verdiği bir buyruk neticesinde bir anomali olarak nitelendirilebilecek Arcane Çatlağın izini sürmek ve onu kapatmak ile görevlendirilmiştir. Lakin yolculuğunda izini süreceği kendi bireysel emelleri de mevcuttur.<br><br>
+    <a href="ılyndar zyn'aere faen tlabbar.pdf" target="_blank" class="character-link">⚔️ Ilyndar Olarak En Son Char Sheeti</a>
+  </div>
+
+  <div class="info-box right-box">
+    <h2>Karakter Bilgileri</h2>
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Class</span><span class="info-value">Abjurer Wizard</span></div>
+      <div class="info-row"><span class="info-label">Level</span><span class="info-value">12 (Yaşıyor)</span></div>
+      <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Elf (Drow)</span></div>
+      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">147</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
+    </div>
+  </div>
+
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-counter" id="modal-counter"></div>
+    <div class="modal-inner">
+      <button class="modal-arrow" id="modal-prev" onclick="modalNav(-1)">&#10094;</button>
+      <div class="modal-stage">
+        <img class="modal-content" id="img01" />
+        <div class="modal-caption" id="modal-caption"></div>
+      </div>
+      <button class="modal-arrow" id="modal-next" onclick="modalNav(1)">&#10095;</button>
+    </div>
+  </div>
+
+  <script>
+    /* ══════════════ MUSIC PLAYER ══════════════ */
+    const tracks = [
+      { name: "Ilyndar Theme", file: "Ilyndar Theme.mp3", img: "Ilyndar Zyn\'aere Faen Tlabbar.jpg" },
+    ];
+
+    let currentTrack = 0;
+    let isLooping    = false;
+    let playerOpen   = false;
+
+    const audio        = document.getElementById('audioEl');
+    const playBtn      = document.getElementById('playBtn');
+    const playerDot    = document.getElementById('playerDot');
+    const vinylEl      = document.getElementById('playerVinyl');
+    const vinylImg     = document.getElementById('playerVinylImg');
+    const trackNameEl  = document.getElementById('playerTrackName');
+    const trackSubEl   = document.getElementById('playerTrackSub');
+    const progressFill = document.getElementById('progressFill');
+    const timeElapsed  = document.getElementById('timeElapsed');
+    const timeDuration = document.getElementById('timeDuration');
+    const volSlider    = document.getElementById('volSlider');
+    const volVal       = document.getElementById('volVal');
+    const volIcon      = document.getElementById('volIcon');
+
+    audio.volume = 0.10;
+
+    function buildTrackList() {
+      const tl = document.getElementById('trackList');
+      tl.innerHTML = '';
+      tracks.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = 'track-item' + (i === currentTrack ? ' active' : '');
+        item.id = `track-${i}`;
+        item.onclick = () => { loadTrack(i); audio.play(); };
+        item.innerHTML = `
+          <span class="track-num">${String(i+1).padStart(2,'0')}</span>
+          <div class="track-thumb"><img src="${t.img}" alt="${t.name}" onerror="this.style.opacity='.2'"></div>
+          <div class="track-label"><div class="track-title">${t.name}</div></div>
+          <span class="track-playing-icon">▶</span>
+          <span class="track-dur" id="dur-${i}">--:--</span>`;
+        tl.appendChild(item);
+      });
+      tracks.forEach((t, i) => {
+        const tmp = new Audio(t.file);
+        tmp.addEventListener('loadedmetadata', () => {
+          const el = document.getElementById(`dur-${i}`);
+          if (el) el.textContent = fmtTime(tmp.duration);
+        });
+      });
+    }
+
+    function fmtTime(s) {
+      if (!s || isNaN(s)) return '0:00';
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${m}:${sec.toString().padStart(2,'0')}`;
+    }
+
+    function loadTrack(idx) {
+      currentTrack = idx;
+      const t = tracks[idx];
+      audio.src = t.file;
+      audio.loop = isLooping;
+      trackNameEl.textContent = t.name;
+      vinylImg.src = t.img;
+      progressFill.style.width = '0%';
+      timeElapsed.textContent  = '0:00';
+      timeDuration.textContent = '0:00';
+      document.querySelectorAll('.track-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    function togglePlayer() {
+      playerOpen = !playerOpen;
+      document.getElementById('playerPanel').classList.toggle('open', playerOpen);
+    }
+
+    function togglePlay() {
+      if (!audio.src || audio.src === window.location.href) { loadTrack(currentTrack); audio.play(); return; }
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); audio.play(); }
+    function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); audio.play(); }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      audio.loop = isLooping;
+      document.getElementById('loopBtn').classList.toggle('active', isLooping);
+    }
+
+    function setVolume(v) {
+      audio.volume = v / 100;
+      volVal.textContent = v;
+      updateVolSliderBg(v);
+      volIcon.textContent = v == 0 ? '🔇' : v < 40 ? '🔉' : '🔊';
+    }
+
+    function updateVolSliderBg(v) {
+      volSlider.style.background = `linear-gradient(90deg, #87cefa ${v}%, rgba(135,206,250,0.12) ${v}%)`;
+    }
+
+    function seekAudio(e) {
+      const bar  = document.getElementById('progressBar');
+      const rect = bar.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (audio.duration) audio.currentTime = pct * audio.duration;
+    }
+
+    audio.addEventListener('play', () => {
+      playBtn.textContent = '⏸';
+      vinylEl.classList.add('spinning');
+      playerDot.classList.add('playing');
+    });
+    audio.addEventListener('pause', () => {
+      playBtn.textContent = '▶';
+      vinylEl.classList.remove('spinning');
+      playerDot.classList.remove('playing');
+    });
+    audio.addEventListener('ended', () => {
+      if (!isLooping) { nextTrack(); audio.play(); }
+    });
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      timeElapsed.textContent  = fmtTime(audio.currentTime);
+      timeDuration.textContent = fmtTime(audio.duration);
+    });
+
+    buildTrackList();
+    loadTrack(0);
+    updateVolSliderBg(10);
+    audio.play().catch(() => {});
+
+    window.onbeforeunload = () => audio.pause();
+
+    /* ── Info-box scroll tracking ── */
+    const leftBox  = document.querySelector('.left-box');
+    const rightBox = document.querySelector('.right-box');
+
+    function updateInfoBoxes() {
+      const top = Math.max(70, 100 - window.scrollY);
+      if (leftBox)  leftBox.style.top  = top + 'px';
+      if (rightBox) rightBox.style.top = top + 'px';
+    }
+    window.addEventListener('scroll', updateInfoBoxes, { passive: true });
+    updateInfoBoxes();
+
+    /* ══════════════ CAROUSEL ══════════════ */
+    const CAROUSEL_AUTO_MS = 5000;
+
+    const captions = [
+      [
+        'Ilyndar\'ın Yol Arkadaşı Olan Son Kıvılcım\'ın Çelik Azizi Ejderdoğan Zephyr',
+        'Ilyndar\'ın Yol Arkadaşı Olan Son Kıvılcım\'ın Demirci Ruhban Cücesi Orv Bezmadan Parlakçekiç',
+        'Ilyndar\'ın Yol Arkadaşı Olan Son Kıvılcım\'ın Gölge Büyücüsü Cecilia',
+        'Ilyndar\'ın Yol Arkadaşı Olan Son Kıvılcım\'ın Wano\'lu Oni Rün Savaşçısı Rin Stormbringer',
+        'Ilyndar\'ın Dostu Olan Simyacı Eldrin Varos',
+      ],
+      [
+        'Ilyndar\'ın Drow Kökenleri Neticesinde Edindiği, Underdark\'ın Derinliklerindeki Drow Düşmanları',
+      ],
+      [
+        'Ilyndar\'ın Yüzeyde Drow Kimliğini Gizlemek İçin Büründüğü Elf Kılığı',
+        'Ilyndar\'ın Büyülü Eşyası Staff of Power',
+        'Ilyndar\'ın Büyülü Eşyası Mizzium Apparatus',
+        'Ilyndar\'ın Büyülü Eşyası Cloak of Protection',
+        'Ilyndar\'ın Büyülü Eşyası Elven Chain Shirt',
+      ],
+    ];
+
+    const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
+    let activeTab  = 0;
+    let autoTimer  = null;
+    let isPaused   = false;
+
+    function getCards(panelIdx) {
+      return Array.from(document.querySelectorAll(`.carousel-card[data-panel="${panelIdx}"]`));
+    }
+
+    function showCard(panelIdx, newIdx) {
+      const cards  = getCards(panelIdx);
+      const oldIdx = state[panelIdx].idx;
+      if (oldIdx === newIdx) return;
+
+      const oldCard = cards[oldIdx];
+      oldCard.classList.remove('visible');
+      oldCard.classList.add('leaving');
+      oldCard.addEventListener('animationend', () => oldCard.classList.remove('leaving'), { once: true });
+
+      cards[newIdx].classList.add('visible');
+      state[panelIdx].idx = newIdx;
+      document.getElementById(`caption-${panelIdx}`).textContent = captions[panelIdx][newIdx];
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
+        .forEach((d, i) => d.classList.toggle('active', i === newIdx));
+    }
+
+    function carouselShift(panelIdx, dir) {
+      const total  = getCards(panelIdx).length;
+      showCard(panelIdx, (state[panelIdx].idx + dir + total) % total);
+      resetAutoTimer();
+    }
+
+    function switchTab(idx) {
+      document.getElementById(`panel-${activeTab}`).classList.remove('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.remove('active');
+      activeTab = idx;
+      document.getElementById(`panel-${activeTab}`).classList.add('active');
+      document.querySelectorAll('.carousel-tab')[activeTab].classList.add('active');
+      resetAutoTimer();
+    }
+
+    function autoAdvance() {
+      if (isPaused) return;
+      const total  = getCards(activeTab).length;
+      showCard(activeTab, (state[activeTab].idx + 1) % total);
+    }
+
+    function startAutoTimer() { clearInterval(autoTimer); autoTimer = setInterval(autoAdvance, CAROUSEL_AUTO_MS); }
+    function resetAutoTimer() { startAutoTimer(); }
+    function pauseCarousel()  { isPaused = true; }
+    function resumeCarousel() { isPaused = false; resetAutoTimer(); }
+
+    document.querySelector('.carousel-section').addEventListener('mouseenter', pauseCarousel);
+    document.querySelector('.carousel-section').addEventListener('mouseleave', resumeCarousel);
+    startAutoTimer();
+
+    [0, 1, 2].forEach(panelIdx => {
+      document.getElementById(`dots-${panelIdx}`).querySelectorAll('.dot')
+        .forEach((dot, idx) => {
+          dot.addEventListener('click', () => { showCard(panelIdx, idx); resetAutoTimer(); });
+        });
+    });
+
+    /* ── Modal ── */
+    const modal      = document.getElementById('myModal');
+    const modalImg   = document.getElementById('img01');
+    const modalCap   = document.getElementById('modal-caption');
+    const modalCount = document.getElementById('modal-counter');
+
+    let modalImages = [], modalIdx = 0, modalAnimating = false, modalPanel = -1;
+
+    function buildModalImages(panelIdx) {
+      modalImages = [];
+      getCards(panelIdx).forEach((card, i) => {
+        modalImages.push({ src: card.querySelector('img').src, caption: captions[panelIdx][i] || '' });
+      });
+    }
+
+    function setModalImage(idx, dir) {
+      if (modalAnimating) return;
+      modalAnimating = true;
+      const outClass = dir > 0 ? 'slide-out-left'  : 'slide-out-right';
+      const inClass  = dir > 0 ? 'slide-in-right'   : 'slide-in-left';
+      modalImg.classList.add(outClass);
+      modalImg.addEventListener('animationend', () => {
+        modalImg.classList.remove(outClass);
+        modalIdx = (idx + modalImages.length) % modalImages.length;
+        modalImg.src = modalImages[modalIdx].src;
+        modalCap.textContent   = modalImages[modalIdx].caption;
+        modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+        modalImg.classList.add(inClass);
+        modalImg.addEventListener('animationend', () => {
+          modalImg.classList.remove(inClass);
+          modalAnimating = false;
+        }, { once: true });
+      }, { once: true });
+    }
+
+    function openModal(el) {
+      const card = el.closest('.carousel-card');
+      if (card) {
+        modalPanel = parseInt(card.dataset.panel);
+        buildModalImages(modalPanel);
+        modalIdx = modalImages.findIndex(m => m.src === el.src);
+        if (modalIdx < 0) modalIdx = 0;
+      } else {
+        modalPanel = -1;
+        modalImages = [{ src: el.src, caption: el.alt || '' }];
+        modalIdx = 0;
+      }
+      modalImg.src           = modalImages[modalIdx].src;
+      modalCap.textContent   = modalImages[modalIdx].caption;
+      modalCount.textContent = `${modalIdx + 1} / ${modalImages.length}`;
+      modalAnimating = false;
+      modal.classList.add('open');
+      document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display = 'none';
+      document.body.style.overflow = 'hidden';
+      pauseCarousel();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.getElementById('back-button').classList.remove('hidden');
+      document.getElementById('music-widget').style.display = 'flex';
+      document.body.style.overflow = '';
+      resumeCarousel();
+    }
+
+    function modalNav(dir) { setModalImage(modalIdx + dir, dir); }
+
+    modal.addEventListener('click', e => {
+      const allowed = [
+        document.getElementById('img01'), document.getElementById('modal-caption'),
+        document.getElementById('modal-prev'), document.getElementById('modal-next'),
+      ];
+      if (!allowed.some(el => el && (el === e.target || el.contains(e.target)))) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'ArrowRight') modalNav(1);
+      if (e.key === 'ArrowLeft')  modalNav(-1);
+      if (e.key === 'Escape')     closeModal();
+    });
+  </script>
+<script src="../../../../splash-cursor.js"></script>
+</body>
+</html>
