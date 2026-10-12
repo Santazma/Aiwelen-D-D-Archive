@@ -762,9 +762,80 @@
       .player-panel { width: calc(100vw - 36px); }
       .player-toggle { font-size: .64rem; padding: .5rem .8rem; letter-spacing: 1.5px; }
     }
+
+    /* ══════════════════════════════════
+       UNDERDARK ATMOSFERİ — sis, ipek iplikler, örümcekler
+    ══════════════════════════════════ */
+    #drow-mist, #silk-threads {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #spider-layer {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 11;
+    }
+    .drow-spider {
+      position: absolute; left: 0; top: 0;
+      will-change: transform;
+      filter: drop-shadow(0 0 5px rgba(150,90,255,.4)) drop-shadow(0 3px 4px rgba(0,0,0,.9));
+    }
+    .drow-spider.giant {
+      filter: drop-shadow(0 0 14px rgba(150,90,255,.45)) drop-shadow(0 10px 14px rgba(0,0,0,.95));
+    }
+    .drow-spider svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .drow-spider .femur { fill: none; stroke: #120a1b; stroke-width: 4.4; stroke-linecap: round; }
+    .drow-spider .tibia { fill: none; stroke: #0d0714; stroke-width: 3; stroke-linecap: round; }
+    .drow-spider .tarsus { fill: none; stroke: #07040b; stroke-width: 1.8; stroke-linecap: round; }
+    .drow-spider .leg-sheen { fill: none; stroke: rgba(186,150,255,.32); stroke-width: .7; stroke-linecap: round; }
+    .drow-spider .knee { fill: #2b1840; stroke: rgba(186,150,255,.35); stroke-width: .5; }
+    .drow-spider .bristle { stroke: #0b0612; stroke-width: .8; stroke-linecap: round; }
+    .drow-spider .spider-eyes { fill: #f3c8ff; filter: drop-shadow(0 0 1.6px #d07bff); animation: spiderEyes 2.6s ease-in-out infinite; }
+    .drow-spider .spider-mark { fill: #8f5ce6; filter: drop-shadow(0 0 2.5px #7a3dff); animation: spiderMark 3.8s ease-in-out infinite; }
+    .drow-spider .abdomen { transform-box: fill-box; transform-origin: 50% 20%; animation: spiderBreath 2.2s ease-in-out infinite; }
+
+    @keyframes spiderEyes {
+      0%, 100% { opacity: .7; }
+      50%      { opacity: 1; }
+    }
+    @keyframes spiderMark {
+      0%, 100% { opacity: .25; }
+      50%      { opacity: .7; }
+    }
+    @keyframes spiderBreath {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.035, 1.05); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #spider-layer { display: none; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Underdark atmosferi: sis + ipek iplikler + örümcekler -->
+  <canvas id="drow-mist" aria-hidden="true"></canvas>
+  <canvas id="silk-threads" aria-hidden="true"></canvas>
+  <div id="spider-layer" aria-hidden="true">
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <radialGradient id="spiderAbdomen" cx="40%" cy="30%" r="75%">
+          <stop offset="0%"   stop-color="#4b2f6e"/>
+          <stop offset="45%"  stop-color="#1d1030"/>
+          <stop offset="100%" stop-color="#050208"/>
+        </radialGradient>
+        <radialGradient id="spiderHead" cx="45%" cy="30%" r="75%">
+          <stop offset="0%"   stop-color="#40285e"/>
+          <stop offset="100%" stop-color="#08040e"/>
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
 
   <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
 
@@ -2052,6 +2123,754 @@
       if (e.key === 'ArrowLeft')  modalNav(-1);
       if (e.key === 'Escape')     closeModal();
     });
+  </script>
+
+  <script>
+    /* ══════════════ UNDERDARK ATMOSFERİ ══════════════ */
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Sis (mantle) ──
+       21st.dev "Realistic Fog Background" (ashishrajwaniai01) WebGL fbm shader'ından
+       uyarlandı: opak zinc paleti yerine şeffaf açık mor sis; alt kısımda yoğun,
+       yukarı çıktıkça incelen bir örtü. Sis bulanık olduğu için düşük çözünürlükte
+       çizilip CSS ile büyütülür. */
+    (function initDrowMist() {
+      const canvas = document.getElementById('drow-mist');
+      const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false });
+      if (!gl) { canvas.remove(); return; }
+
+      const vsSource = `
+        attribute vec2 position;
+        void main() { gl_Position = vec4(position, 0.0, 1.0); }
+      `;
+      const fsSource = `
+        precision highp float;
+        uniform float u_time;
+        uniform vec2 u_resolution;
+        uniform vec2 u_mouse;
+
+        float hash(vec2 p) {
+          p = fract(p * vec2(123.34, 456.21));
+          p += dot(p, p + 45.32);
+          return fract(p.x * p.y);
+        }
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          vec2 u = f * f * (3.0 - 2.0 * f);
+          return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+        }
+        float fbm(vec2 p) {
+          float v = 0.0;
+          float a = 0.5;
+          for (int i = 0; i < 6; i++) {
+            v += a * noise(p);
+            p *= 2.0;
+            a *= 0.5;
+          }
+          return v;
+        }
+
+        void main() {
+          vec2 frag = gl_FragCoord.xy / u_resolution.xy;
+          vec2 uv = frag * 1.4;
+          uv.x *= u_resolution.x / u_resolution.y;
+
+          vec2 mPos = u_mouse / u_resolution.xy * 1.4;
+          mPos.x *= u_resolution.x / u_resolution.y;
+          float dist = distance(uv, mPos);
+
+          vec2 q = vec2(0.0);
+          q.x = fbm(uv + 0.05 * u_time);
+          q.y = fbm(uv + vec2(1.0, 1.0));
+
+          vec2 r = vec2(0.0);
+          r.x = fbm(uv + 1.0 * q + vec2(1.7, 9.2) + 0.11 * u_time);
+          r.y = fbm(uv + 1.0 * q + vec2(8.3, 2.8) + 0.09 * u_time);
+
+          float f = fbm(uv + r);
+
+          // Açık mor sis paleti: derin leylak gölgeler, ipeksi lavanta tepeler
+          vec3 deepColor = vec3(0.45, 0.33, 0.72);
+          vec3 silkColor = vec3(0.87, 0.80, 1.00);
+          vec3 color = mix(deepColor, silkColor, clamp(f * 1.15 + dot(q, r) * 0.35, 0.0, 1.0));
+
+          // Yoğunluk: sis tutamları × zemine yakınlık (mantle)
+          float density = smoothstep(0.28, 0.88, f);
+          float ground  = smoothstep(0.65, 0.0, frag.y);
+          float alpha   = density * (0.12 + 0.58 * ground);
+
+          // İmlecin etrafında hafif aydınlanma
+          alpha += smoothstep(0.35, 0.0, dist) * 0.05 * density;
+
+          alpha = clamp(alpha, 0.0, 0.7);
+          gl_FragColor = vec4(color * alpha, alpha);
+        }
+      `;
+
+      const compile = (type, src) => {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      };
+      const program = gl.createProgram();
+      gl.attachShader(program, compile(gl.VERTEX_SHADER, vsSource));
+      gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fsSource));
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { canvas.remove(); return; }
+      gl.useProgram(program);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+      const posAttrib = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(posAttrib);
+      gl.vertexAttribPointer(posAttrib, 2, gl.FLOAT, false, 0, 0);
+
+      const timeLoc  = gl.getUniformLocation(program, 'u_time');
+      const resLoc   = gl.getUniformLocation(program, 'u_resolution');
+      const mouseLoc = gl.getUniformLocation(program, 'u_mouse');
+
+      let scale = 0.45;
+      const mouse = { x: -9999, y: -9999 };
+      window.addEventListener('pointermove', e => {
+        mouse.x = e.clientX;
+        mouse.y = window.innerHeight - e.clientY;
+      }, { passive: true });
+
+      const fit = () => {
+        scale = window.innerWidth < 860 ? 0.35 : 0.45;
+        const w = Math.max(1, Math.round(window.innerWidth * scale));
+        const h = Math.max(1, Math.round(window.innerHeight * scale));
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w; canvas.height = h;
+          gl.viewport(0, 0, w, h);
+        }
+      };
+
+      const draw = time => {
+        fit();
+        gl.uniform1f(timeLoc, time * 0.001);
+        gl.uniform2f(resLoc, canvas.width, canvas.height);
+        gl.uniform2f(mouseLoc, mouse.x * scale, mouse.y * scale);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      };
+
+      if (REDUCED_MOTION) {
+        draw(12000);
+        window.addEventListener('resize', () => draw(12000));
+        return;
+      }
+      const loop = time => { draw(time); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    })();
+
+    /* ── İpek iplikler + faerzress zerreleri ──
+       21st.dev "Gravity Stars" (educalvolpz) canvas yıldız alanından uyarlandı:
+       zerreler açık mor/inci ipek tonlarında; aralarındaki bağlar düz çizgi değil,
+       ağırlığıyla sarkan örümcek ipliği eğrileri. İpliklerin üzerinde yavaşça gezen
+       bir parıltı dalgası ipek parlaklığı verir. İmleç zerreleri hafifçe çeker. */
+    (function initSilkThreads() {
+      const canvas = document.getElementById('silk-threads');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { canvas.remove(); return; }
+
+      const TAU = Math.PI * 2;
+      const MAX_COUNT = 120;
+      const LINK_DIST = 170;
+      const DRAG = 0.03;
+      const GLOW = 5;
+      const GRAVITY = 0.45;
+      const SPEED = 0.7;
+      const STAR_SIZE = 1.5;
+      const TWINKLE = 0.6;
+
+      const POINTER_RANGE = 260;
+      const POINTER_ACCEL = 4000000;
+      const SOFTENING_SQ = 676;
+      const MAX_ACCEL = 5000;
+      const MAX_SPEED = 1200;
+      const SWIRL = 0.85;
+      const DRIFT_SPEED = 12;
+      const LINE_LEVELS = 6;
+
+      // Lavantadan inci beyazına ipek tonları
+      const PALETTE = [[196, 178, 255], [212, 196, 255], [228, 216, 255], [242, 232, 255], [255, 238, 250]];
+      const THREAD_FROM = [188, 168, 255];
+      const THREAD_TO   = [255, 246, 255];
+
+      const SPRITE_PX = 96;
+      const sprites = PALETTE.map(([r, g, b]) => {
+        const sprite = document.createElement('canvas');
+        sprite.width = sprite.height = SPRITE_PX;
+        const sc = sprite.getContext('2d');
+        const c = SPRITE_PX / 2;
+        const grad = sc.createRadialGradient(c, c, 0, c, c, c);
+        grad.addColorStop(0,    `rgba(${r},${g},${b},1)`);
+        grad.addColorStop(0.07, `rgba(${r},${g},${b},0.9)`);
+        grad.addColorStop(0.16, `rgba(${r},${g},${b},0.45)`);
+        grad.addColorStop(0.32, `rgba(${r},${g},${b},0.12)`);
+        grad.addColorStop(0.6,  `rgba(${r},${g},${b},0.03)`);
+        grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+        sc.fillStyle = grad;
+        sc.fillRect(0, 0, SPRITE_PX, SPRITE_PX);
+        return sprite;
+      });
+
+      const posX = new Float32Array(MAX_COUNT), posY = new Float32Array(MAX_COUNT);
+      const velX = new Float32Array(MAX_COUNT), velY = new Float32Array(MAX_COUNT);
+      const driftX = new Float32Array(MAX_COUNT), driftY = new Float32Array(MAX_COUNT);
+      const depth = new Float32Array(MAX_COUNT), phase = new Float32Array(MAX_COUNT);
+      const rate = new Float32Array(MAX_COUNT), jitter = new Float32Array(MAX_COUNT);
+      const tintLevel = new Uint8Array(MAX_COUNT);
+
+      for (let i = 0; i < MAX_COUNT; i++) {
+        const z = Math.random() ** 1.7;
+        depth[i] = z;
+        phase[i] = Math.random() * TAU;
+        rate[i] = 1.15 * (1 + (Math.random() - 0.5) * 0.8);
+        jitter[i] = 1 + (Math.random() - 0.5) * 0.5;
+        tintLevel[i] = Math.min(PALETTE.length - 1, Math.floor(((Math.random() + Math.random()) / 2) * PALETTE.length));
+        const angle = Math.random() * TAU;
+        const mag = DRIFT_SPEED * (0.15 + z);
+        driftX[i] = Math.cos(angle) * mag;
+        driftY[i] = Math.sin(angle) * mag;
+      }
+
+      let width = 1, height = 1, count = 0;
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const prevW = width, prevH = height;
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const next = width < 640 ? Math.round(MAX_COUNT * 0.55) : MAX_COUNT;
+        if (next !== count) {
+          for (let i = 0; i < next; i++) {
+            posX[i] = Math.random() * width;
+            posY[i] = Math.random() * height;
+            velX[i] = velY[i] = 0;
+          }
+          count = next;
+        } else {
+          for (let i = 0; i < count; i++) { posX[i] *= width / prevW; posY[i] *= height / prevH; }
+        }
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      let pointerX = 0, pointerY = 0, pointerActive = false;
+      if (!REDUCED_MOTION) {
+        window.addEventListener('pointermove', e => { pointerX = e.clientX; pointerY = e.clientY; pointerActive = true; }, { passive: true });
+        document.addEventListener('pointerleave', () => { pointerActive = false; });
+        window.addEventListener('blur', () => { pointerActive = false; });
+      }
+
+      const step = delta => {
+        const damping = (1 - DRAG) ** (delta * 60);
+        for (let i = 0; i < count; i++) {
+          let ax = 0, ay = 0;
+          if (pointerActive) {
+            const z = depth[i];
+            const reach = POINTER_RANGE * (0.6 + z * 0.8);
+            const dx = pointerX - posX[i], dy = pointerY - posY[i];
+            const d2 = dx * dx + dy * dy;
+            if (d2 < reach * reach) {
+              const dist = Math.sqrt(d2);
+              const soft = Math.sqrt(d2 + SOFTENING_SQ);
+              const fade = 1 - dist / reach;
+              const strength = Math.min((GRAVITY * POINTER_ACCEL * (0.35 + z)) / (soft * soft), MAX_ACCEL) * fade * fade;
+              const nx = dx / soft, ny = dy / soft;
+              ax = nx * strength - ny * strength * SWIRL;
+              ay = ny * strength + nx * strength * SWIRL;
+            }
+          }
+          let vx = (velX[i] + ax * delta) * damping;
+          let vy = (velY[i] + ay * delta) * damping;
+          const sp2 = vx * vx + vy * vy;
+          if (sp2 > MAX_SPEED * MAX_SPEED) { const s = MAX_SPEED / Math.sqrt(sp2); vx *= s; vy *= s; }
+          velX[i] = vx; velY[i] = vy;
+          posX[i] += (vx + driftX[i] * SPEED) * delta;
+          posY[i] += (vy + driftY[i] * SPEED) * delta;
+          if (posX[i] < 0) posX[i] += width; else if (posX[i] > width) posX[i] -= width;
+          if (posY[i] < 0) posY[i] += height; else if (posY[i] > height) posY[i] -= height;
+        }
+      };
+
+      // Her parlaklık seviyesi için tek bir path — iplikler toplu çizilir
+      const buckets = Array.from({ length: LINE_LEVELS }, () => []);
+      const threadStyles = Array.from({ length: LINE_LEVELS }, (_, level) => {
+        const t = level / (LINE_LEVELS - 1);
+        const c = THREAD_FROM.map((v, k) => Math.round(v + (THREAD_TO[k] - v) * t));
+        return {
+          stroke: `rgba(${c[0]},${c[1]},${c[2]},${(0.62 * (level + 1) / LINE_LEVELS).toFixed(3)})`,
+          width: 0.45 + level * 0.16,
+        };
+      });
+
+      const drawThreads = elapsed => {
+        for (const b of buckets) b.length = 0;
+        const limitSq = LINK_DIST * LINK_DIST;
+        for (let a = 0; a < count; a++) {
+          for (let b = a + 1; b < count; b++) {
+            const dx = posX[b] - posX[a], dy = posY[b] - posY[a];
+            const d2 = dx * dx + dy * dy;
+            if (d2 > limitSq || d2 === 0) continue;
+            const d = Math.sqrt(d2);
+            const avgDepth = (depth[a] + depth[b]) / 2;
+            const closeness = (1 - d / LINK_DIST) ** 1.5;
+            const depthWeight = 0.25 + avgDepth * 0.75;
+            const mx = (posX[a] + posX[b]) / 2, my = (posY[a] + posY[b]) / 2;
+            // İpek parıltısı: iplikler boyunca kayan yumuşak bir ışık dalgası
+            const sheen = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(elapsed * 0.9 - mx * 0.006 - my * 0.004));
+            const level = Math.min(LINE_LEVELS - 1, Math.floor(closeness * depthWeight * sheen * LINE_LEVELS * 1.8));
+            // Sarkma: iplik kendi ağırlığıyla aşağı bükülür (kontrol noktası = orta + 2×sarkma)
+            const sag = d * 0.16 * (0.5 + avgDepth * 0.5);
+            buckets[level].push(posX[a], posY[a], mx, my + sag * 2, posX[b], posY[b]);
+          }
+        }
+        ctx.lineCap = 'round';
+        for (let level = 0; level < LINE_LEVELS; level++) {
+          const segs = buckets[level];
+          if (!segs.length) continue;
+          ctx.strokeStyle = threadStyles[level].stroke;
+          ctx.lineWidth = threadStyles[level].width;
+          ctx.beginPath();
+          for (let s = 0; s < segs.length; s += 6) {
+            ctx.moveTo(segs[s], segs[s + 1]);
+            ctx.quadraticCurveTo(segs[s + 2], segs[s + 3], segs[s + 4], segs[s + 5]);
+          }
+          ctx.stroke();
+        }
+      };
+
+      const drawMotes = (elapsed, still) => {
+        for (let i = 0; i < count; i++) {
+          const z = depth[i];
+          const wave = still ? Math.sin(phase[i]) : Math.sin(elapsed * rate[i] + phase[i]);
+          const alpha = Math.max(0, Math.min(1, (0.18 + z * 0.82) * (1 - TWINKLE * 0.5 * (1 - wave))));
+          if (alpha <= 0.01) continue;
+          const core = STAR_SIZE * (0.42 + z * 1.9) * jitter[i];
+          const halo = core * GLOW * (0.6 + z * 0.7);
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(sprites[tintLevel[i]], posX[i] - halo, posY[i] - halo, halo * 2, halo * 2);
+        }
+        ctx.globalAlpha = 1;
+      };
+
+      const startedAt = performance.now();
+      const render = still => {
+        const elapsed = (performance.now() - startedAt) / 1000;
+        ctx.clearRect(0, 0, width, height);
+        drawThreads(still ? 0 : elapsed);
+        drawMotes(elapsed, still);
+      };
+
+      if (REDUCED_MOTION) {
+        render(true);
+        window.addEventListener('resize', () => render(true));
+        return;
+      }
+      let last = performance.now();
+      const tick = now => {
+        const delta = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        step(delta);
+        render(false);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    })();
+
+    /* ── Örümcekler ──
+       Ekranın sağ ve sol kenarlarında, ortadaki metin sütununa girmeden yürüyen drow
+       örümcekleri. Bacaklar prosedürel: her ayak yere basılı kalır, gövde ilerledikçe
+       geride kalan ayak öne adım atar (dörtlü alternatif yürüyüş, iki eklemli bacaklar).
+       Ara sıra dev bir örümcek kenardan hızla geçer. */
+    (function initDrowSpiders() {
+      if (REDUCED_MOTION) return;
+      const layer = document.getElementById('spider-layer');
+      const bio = document.querySelector('.bio');
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+      const rand = (a, b) => a + Math.random() * (b - a);
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+      const MAX_SPIDERS = 3;
+      const GIANT_CHANCE = 0.2;
+      const FEMUR = 24;
+      const TIBIA = 27;
+      const STRIDE = 24;   // SVG birimi; adım atma eşiği
+
+      // Gövde -y yönüne bakar. [kalçaX, kalçaY, ayakX, ayakY, grup, dizBükümX, dizBükümY]
+      // Grup 0: Sol1-Sol3-Sağ2-Sağ4, grup 1: Sol2-Sol4-Sağ1-Sağ3 (alternatif dörtlü yürüyüş)
+      const LEG_LAYOUT = [
+        [-5,   -13, -27, -44, 0, -1,   -0.5 ],
+        [-6.5,  -9, -41, -22, 1, -1,   -0.15],
+        [-6.5,  -5, -41,  10, 0, -1,    0.15],
+        [-5.5,  -1, -30,  38, 1, -1,    0.5 ],
+        [ 5,   -13,  27, -44, 1,  1,   -0.5 ],
+        [ 6.5,  -9,  41, -22, 0,  1,   -0.15],
+        [ 6.5,  -5,  41,  10, 1,  1,    0.15],
+        [ 5.5,  -1,  30,  38, 0,  1,    0.5 ],
+      ];
+
+      // Karın kenarındaki kıllar
+      let bristles = '';
+      for (let i = 0; i < 30; i++) {
+        const a = (i / 30) * Math.PI * 2;
+        const ex = Math.cos(a) * 14.5, ey = 17 + Math.sin(a) * 19.5;
+        bristles += `<line class="bristle" x1="${ex.toFixed(1)}" y1="${ey.toFixed(1)}" x2="${(ex * 1.16).toFixed(1)}" y2="${(17 + (ey - 17) * 1.1).toFixed(1)}"/>`;
+      }
+
+      const BODY_SVG = `
+        <g class="spider-body">
+          <path d="M-3,-18 Q-8,-22 -5.5,-28 M3,-18 Q8,-22 5.5,-28" fill="none" stroke="#120a1b" stroke-width="2.4" stroke-linecap="round"/>
+          <g class="abdomen">
+            ${bristles}
+            <ellipse cx="0" cy="17" rx="14.5" ry="19.5" fill="url(#spiderAbdomen)"/>
+            <path d="M-9,8 Q0,4 9,8 M-11.5,16 Q0,11.5 11.5,16 M-10.5,25 Q0,21 10.5,25" fill="none" stroke="rgba(0,0,0,.6)" stroke-width="1"/>
+            <path class="spider-mark" d="M0,4.5 L4.2,12 L0,19.5 L-4.2,12 Z M0,21.5 L3,26.5 L0,32 L-3,26.5 Z M-8,9.5 L-5,13 L-8,16.5 Z M8,9.5 L5,13 L8,16.5 Z"/>
+          </g>
+          <ellipse cx="0" cy="-1.5" rx="3.2" ry="3" fill="#0b0612"/>
+          <path d="M0,-19 C6,-19 9.5,-13 9.5,-7.5 C9.5,-1.5 5.5,1.5 0,1.5 C-5.5,1.5 -9.5,-1.5 -9.5,-7.5 C-9.5,-13 -6,-19 0,-19 Z" fill="url(#spiderHead)"/>
+          <path d="M0,-14 L0,-3" stroke="rgba(186,150,255,.2)" stroke-width=".8"/>
+          <ellipse cx="-2.4" cy="-19" rx="2" ry="2.6" fill="#0b0612"/>
+          <ellipse cx="2.4" cy="-19" rx="2" ry="2.6" fill="#0b0612"/>
+          <path d="M-3.2,-19 C-4.8,-22 -3.6,-24.6 -1.2,-25.2 M3.2,-19 C4.8,-22 3.6,-24.6 1.2,-25.2" fill="none" stroke="#e7d0ff" stroke-width="1.3" stroke-linecap="round"/>
+          <g class="spider-eyes">
+            <circle cx="-2.3" cy="-15.6" r="1.55"/><circle cx="2.3" cy="-15.6" r="1.55"/>
+            <circle cx="-5" cy="-14.4" r="1"/><circle cx="5" cy="-14.4" r="1"/>
+            <circle cx="-1.3" cy="-12.8" r=".75"/><circle cx="1.3" cy="-12.8" r=".75"/>
+            <circle cx="-6.4" cy="-12" r=".7"/><circle cx="6.4" cy="-12" r=".7"/>
+          </g>
+        </g>`;
+
+      // Yürüme şeridi (kenardan uzaklık olarak): bilgi kutusu ile metin sütunu
+      // arasındaki boşluk. Boşluk dar ise ekranın en dış kenarı kullanılır.
+      const laneFor = (left, size) => {
+        const vw = window.innerWidth;
+        const box = document.querySelector(left ? '.left-box' : '.right-box');
+        const boxRect = box && getComputedStyle(box).display !== 'none' ? box.getBoundingClientRect() : null;
+        const bioRect = bio.getBoundingClientRect();
+        const start = boxRect ? (left ? boxRect.right : vw - boxRect.left) + 10 : 0;
+        const end = (left ? bioRect.left : vw - bioRect.right) - 10;
+        if (end - start >= size * 1.6) {
+          return { min: start + size * 0.6, max: end - size * 0.6 };
+        }
+        return { min: size * 0.6, max: Math.max(size * 0.6 + 1, Math.min(38, end)) };
+      };
+
+      /* ── Dev örümcek sesi ──
+         "Tarantula Walk.mp3" (müzik çalardan bağımsız, Web Audio ile çalınır).
+         Dosyanın baştaki ve sondaki sessiz kısımları atlanır, 1.3–7.0 sn arası döngüye
+         alınır; her dev örümcek rastgele bir noktadan başlar. Çalma hızı örümceğin
+         hızına göre ayarlanır, derin uğultu kesilip tiz tıkırtılar hafifçe öne çıkarılır,
+         ses örümceğin konumuna göre sağ/sol kulağa ve ekrana girme oranına göre ayarlanır.
+         Tarayıcılar sesi ancak bir kullanıcı etkileşiminden sonra açtığı için ilk
+         tıklama/dokunma/tuş ile etkinleşir. Sekme gizlenince bütün sesler kesilir. */
+      const SpiderAudio = (() => {
+        const SRC = 'Tarantula Walk.mp3';
+        const LOOP_START = 1.3;
+        const LOOP_END = 7.0;
+        let ctx = null, master = null, buffer = null;
+        const voices = new Set();
+
+        const unlock = () => {
+          if (!ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            ctx = new AC();
+            const comp = ctx.createDynamicsCompressor();
+            master = ctx.createGain();
+            master.gain.value = 0.9;
+            master.connect(comp);
+            comp.connect(ctx.destination);
+            fetch(SRC)
+              .then(r => r.arrayBuffer())
+              .then(data => new Promise((ok, fail) => ctx.decodeAudioData(data, ok, fail)))
+              .then(decoded => { buffer = decoded; })
+              .catch(() => {});
+          }
+          if (ctx.state === 'suspended' && !document.hidden) ctx.resume();
+        };
+        ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, unlock, { passive: true }));
+
+        // Sekme değişince takılı kalan ses olmasın: tüm sesler kesilir, bağlam askıya alınır
+        document.addEventListener('visibilitychange', () => {
+          if (!ctx) return;
+          if (document.hidden) {
+            voices.forEach(v => v.kill());
+            ctx.suspend();
+          } else {
+            ctx.resume();
+          }
+        });
+
+        const start = speed => {
+          if (!ctx || !buffer || ctx.state !== 'running' || document.hidden) return null;
+          const src = ctx.createBufferSource();
+          src.buffer = buffer;
+          src.loop = true;
+          src.loopStart = LOOP_START;
+          src.loopEnd = LOOP_END;
+          src.playbackRate.value = clamp(speed / 380, 0.85, 1.25) * rand(0.96, 1.04);
+
+          const hp = ctx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.value = 140;
+          const shelf = ctx.createBiquadFilter();
+          shelf.type = 'highshelf';
+          shelf.frequency.value = 3500;
+          shelf.gain.value = 4;
+          const g = ctx.createGain();
+          g.gain.value = 0.0001;
+          const p = ctx.createStereoPanner ? ctx.createStereoPanner() : ctx.createGain();
+
+          src.connect(hp); hp.connect(shelf); shelf.connect(g); g.connect(p); p.connect(master);
+          src.start(0, rand(LOOP_START, LOOP_END - 1));
+
+          const voice = {
+            dead: false,
+            set(pan, level) {
+              if (voice.dead) return;
+              const t = ctx.currentTime;
+              g.gain.setTargetAtTime(Math.max(0.0001, level * 0.344), t, 0.06);
+              if (p.pan) p.pan.setTargetAtTime(pan, t, 0.06);
+            },
+            stop() {
+              if (voice.dead) return;
+              voice.dead = true;
+              voices.delete(voice);
+              const t = ctx.currentTime;
+              g.gain.cancelScheduledValues(t);
+              g.gain.setTargetAtTime(0.0001, t, 0.08);
+              try { src.stop(t + 0.5); } catch (e) {}
+            },
+            kill() {
+              if (voice.dead) return;
+              voice.dead = true;
+              voices.delete(voice);
+              try { src.stop(); } catch (e) {}
+              src.disconnect();
+              g.disconnect();
+            },
+          };
+          voices.add(voice);
+          return voice;
+        };
+
+        return { start };
+      })();
+
+      // Ses için: örümceğin ekrana ne kadar girdiği (0–1) ve sağ/sol konumu
+      const audibility = s => {
+        const vh = window.innerHeight;
+        const outside = s.y < 0 ? -s.y : s.y > vh ? s.y - vh : 0;
+        return clamp(1 - outside / s.size, 0, 1);
+      };
+      const panOf = s => clamp((s.x / window.innerWidth) * 2 - 1, -1, 1) * 0.85;
+
+      const buildSpider = (size, giant) => {
+        const el = document.createElement('div');
+        el.className = 'drow-spider' + (giant ? ' giant' : '');
+        el.style.width = el.style.height = size + 'px';
+        const svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('viewBox', '-50 -50 100 100');
+        const legsG = document.createElementNS(SVG_NS, 'g');
+        const legs = LEG_LAYOUT.map(([hx, hy, rx, ry, group, bx, by]) => {
+          const g = document.createElementNS(SVG_NS, 'g');
+          const part = (tag, cls) => {
+            const node = document.createElementNS(SVG_NS, tag);
+            node.setAttribute('class', cls);
+            g.appendChild(node);
+            return node;
+          };
+          const leg = {
+            hx, hy, rx, ry, group, bx, by,
+            femur: part('path', 'femur'), tibia: part('path', 'tibia'), tarsus: part('path', 'tarsus'),
+            sheen: part('path', 'leg-sheen'), knee: part('circle', 'knee'),
+            fx: 0, fy: 0, sx: 0, sy: 0, tx: 0, ty: 0, t: 1, dur: 0.1,
+          };
+          leg.knee.setAttribute('r', '1.8');
+          legsG.appendChild(g);
+          return leg;
+        });
+        svg.appendChild(legsG);
+        svg.insertAdjacentHTML('beforeend', BODY_SVG);
+        el.appendChild(svg);
+        layer.appendChild(el);
+        return { el, legs };
+      };
+
+      // Gövde koordinatı ↔ ekran koordinatı
+      const toWorld = (s, lx, ly) => {
+        const c = Math.cos(s.angle), n = Math.sin(s.angle);
+        return [s.x + (lx * c - ly * n) * s.k, s.y + (lx * n + ly * c) * s.k];
+      };
+      const toLocal = (s, wx, wy) => {
+        const c = Math.cos(s.angle), n = Math.sin(s.angle);
+        const dx = (wx - s.x) / s.k, dy = (wy - s.y) / s.k;
+        return [dx * c + dy * n, -dx * n + dy * c];
+      };
+
+      const updateLegs = (s, dt) => {
+        const moving = s.state === 'walk';
+        const lead = moving ? STRIDE * 0.5 : 0;
+        const threshold = moving ? STRIDE : 5;
+        const stepping = [false, false];
+        for (const leg of s.legs) if (leg.t < 1) stepping[leg.group] = true;
+
+        for (const leg of s.legs) {
+          if (leg.t < 1) {
+            leg.t = Math.min(1, leg.t + dt / leg.dur);
+            const e = leg.t < 0.5 ? 2 * leg.t * leg.t : 1 - ((-2 * leg.t + 2) ** 2) / 2;
+            leg.fx = leg.sx + (leg.tx - leg.sx) * e;
+            leg.fy = leg.sy + (leg.ty - leg.sy) * e;
+          } else {
+            const [tx, ty] = toWorld(s, leg.rx, leg.ry - lead);
+            const dist = Math.hypot(tx - leg.fx, ty - leg.fy) / s.k;
+            if (dist > threshold * 1.7 || (dist > threshold && !stepping[1 - leg.group])) {
+              leg.sx = leg.fx; leg.sy = leg.fy;
+              leg.tx = tx; leg.ty = ty;
+              leg.t = 0;
+              leg.dur = moving ? clamp((STRIDE * s.k / s.speed) * 0.45, 0.04, 0.15) : 0.12;
+              stepping[leg.group] = true;
+            }
+          }
+
+          // Ayak gövde koordinatına çevrilir, iki eklemli bacak çözülür
+          let [lx, ly] = toLocal(s, leg.fx, leg.fy);
+          const lift = leg.t < 1 ? Math.sin(Math.PI * leg.t) : 0;
+          lx += (leg.hx - lx) * 0.14 * lift;
+          ly += (leg.hy - ly) * 0.14 * lift;
+          let dx = lx - leg.hx, dy = ly - leg.hy;
+          let d = Math.hypot(dx, dy);
+          const reach = (FEMUR + TIBIA) * 0.985;
+          if (d > reach) {
+            lx = leg.hx + dx / d * reach; ly = leg.hy + dy / d * reach;
+            dx = lx - leg.hx; dy = ly - leg.hy; d = reach;
+          }
+          d = Math.max(d, 6);
+          const along = (FEMUR * FEMUR - TIBIA * TIBIA + d * d) / (2 * d);
+          const rise = Math.sqrt(Math.max(0, FEMUR * FEMUR - along * along)) * (0.42 + 0.4 * lift);
+          const ux = dx / d, uy = dy / d;
+          let px = -uy, py = ux;
+          if (px * leg.bx + py * leg.by < 0) { px = -px; py = -py; }
+          const kx = leg.hx + ux * along + px * rise;
+          const ky = leg.hy + uy * along + py * rise;
+          const tl = Math.hypot(lx - kx, ly - ky) || 1;
+          const cx = lx + (lx - kx) / tl * 5, cy = ly + (ly - ky) / tl * 5;
+
+          const H = `${leg.hx} ${leg.hy}`, K = `${kx.toFixed(1)} ${ky.toFixed(1)}`, F = `${lx.toFixed(1)} ${ly.toFixed(1)}`;
+          leg.femur.setAttribute('d', `M${H}L${K}`);
+          leg.sheen.setAttribute('d', `M${H}L${K}`);
+          leg.tibia.setAttribute('d', `M${K}L${F}`);
+          leg.tarsus.setAttribute('d', `M${F}L${cx.toFixed(1)} ${cy.toFixed(1)}`);
+          leg.knee.setAttribute('cx', kx.toFixed(1));
+          leg.knee.setAttribute('cy', ky.toFixed(1));
+        }
+      };
+
+      const spiders = [];
+      let raf = 0, last = 0;
+
+      const spawn = () => {
+        if (!document.hidden && spiders.length < MAX_SPIDERS) {
+          const vw = window.innerWidth, vh = window.innerHeight;
+          const small = vw < 860;
+          const giant = Math.random() < GIANT_CHANCE && !spiders.some(o => o.giant);
+          const size = giant ? (small ? rand(70, 95) : rand(130, 190))
+                             : (small ? rand(22, 30) : rand(34, 52));
+          const left = Math.random() < 0.5;
+          const lane = laneFor(left, giant ? size * 0.45 : size);
+          const goingUp = Math.random() < 0.5;
+          const speed = giant ? rand(320, 440) * (small ? 0.7 : 1)
+                              : rand(85, 140) * (small ? 0.75 : 1);
+          const { el, legs } = buildSpider(size, giant);
+
+          const s = {
+            el, legs, size, giant, left, speed,
+            k: size / 100,
+            laneMin: lane.min, laneMax: lane.max,
+            off: rand(lane.min, lane.max),
+            y: goingUp ? vh + size * 0.7 : -size * 0.7,
+            dir: goingUp ? -1 : 1,
+            heading: 0, turn: rand(-1, 1),
+            angle: goingUp ? 0 : Math.PI,
+            state: 'walk', timer: rand(1.2, 3.5),
+          };
+          s.x = left ? s.off : vw - s.off;
+          // Gruplar yarım adım faz farkıyla başlar ki yürüyüş baştan düzenli olsun
+          for (const leg of legs) {
+            [leg.fx, leg.fy] = toWorld(s, leg.rx, leg.ry - (leg.group === 0 ? STRIDE * 0.5 : 0));
+          }
+          spiders.push(s);
+          if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); }
+        }
+        setTimeout(spawn, rand(3500, 8000));
+      };
+
+      const tick = now => {
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        const vw = window.innerWidth, vh = window.innerHeight;
+
+        for (let i = spiders.length - 1; i >= 0; i--) {
+          const s = spiders[i];
+          s.timer -= dt;
+
+          if (s.state === 'walk') {
+            const maxHeading = s.giant ? 0.12 : 0.35;
+            s.turn = clamp(s.turn + rand(-1, 1) * dt * 2, -1, 1);
+            s.heading = clamp(s.heading + s.turn * dt * (s.giant ? 0.3 : 0.8), -maxHeading, maxHeading);
+            const vx = Math.sin(s.heading) * s.speed;
+            const vy = s.dir * Math.cos(s.heading) * s.speed;
+            s.y += vy * dt;
+            s.off += (s.left ? vx : -vx) * dt;
+            if (s.off < s.laneMin || s.off > s.laneMax) {
+              s.off = clamp(s.off, s.laneMin, s.laneMax);
+              s.turn = -s.turn; s.heading *= 0.5;
+            }
+            const target = Math.atan2(vx, -vy);
+            const diff = ((target - s.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+            s.angle += diff * Math.min(1, dt * 8);
+
+            if (!s.giant && s.timer <= 0) {
+              if (Math.random() < 0.4) { s.state = 'rest'; s.timer = rand(0.25, 1); }
+              else s.timer = rand(1.2, 3.5);
+            }
+          } else if (s.timer <= 0) {
+            s.state = 'walk'; s.timer = rand(1.2, 3.5);
+            if (Math.random() < 0.1) s.dir *= -1;
+          }
+
+          s.x = s.left ? s.off : vw - s.off;
+          updateLegs(s, dt);
+          if (s.giant) {
+            // Ses yoksa (sekmeye geri dönüldü, ses sonradan açıldı) yeniden başlatılır
+            if (!s.voice || s.voice.dead) s.voice = SpiderAudio.start(s.speed);
+            if (s.voice) s.voice.set(panOf(s), audibility(s));
+          }
+          s.el.style.transform = `translate(${(s.x - s.size / 2).toFixed(1)}px, ${(s.y - s.size / 2).toFixed(1)}px) rotate(${s.angle.toFixed(3)}rad)`;
+
+          if ((s.dir < 0 && s.y < -s.size) || (s.dir > 0 && s.y > vh + s.size)) {
+            if (s.voice) s.voice.stop();
+            s.el.remove();
+            spiders.splice(i, 1);
+          }
+        }
+        raf = spiders.length ? requestAnimationFrame(tick) : 0;
+      };
+
+      setTimeout(spawn, rand(1500, 3000));
+    })();
   </script>
 <script src="../../../../splash-cursor.js"></script>
 </body>
