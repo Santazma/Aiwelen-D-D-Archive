@@ -206,6 +206,13 @@
     .npc-card:nth-child(7){animation-delay:1.5s}
     .npc-card:nth-child(8){animation-delay:1.6s}
     .npc-card:nth-child(9){animation-delay:1.7s}
+    .npc-card:nth-child(10){animation-delay:1.8s}
+    .npc-card:nth-child(11){animation-delay:1.9s}
+    .npc-card:nth-child(12){animation-delay:2.0s}
+    .npc-card:nth-child(13){animation-delay:2.1s}
+    .npc-card:nth-child(14){animation-delay:2.2s}
+    .npc-card:nth-child(15){animation-delay:2.3s}
+    .npc-card:nth-child(16){animation-delay:2.4s}
 
     /* Engizisyon frame — corner brackets */
     .card-frame {
@@ -1283,6 +1290,132 @@ const npcs = [
     password: null,
     classified: 'Magnus, Ölüm Rahipleri içinde sıradan bir üye değildir. Tarikat hiyerarşisindeki konumu ve sahip olduğu bilgiler onu son derece değerli kılmaktadır. Son Kıvılcım\'a verdiği haritanın kaynağı ve bu hareketin arkasındaki gerçek motivasyon hâlâ araştırılmaktadır.',
     pdf: 'pdf/magnus.pdf'
+  },
+  {
+    id: 'thartharn',
+    file: 'CV-NPC-010',
+    name: 'Thartharn Külgetiren',
+    title: 'Moradin Paladini · Külgetiren Soyu',
+    classification: 'limited',
+    classLabel: 'SINIRLI',
+    img: 'img/Thartharn Külgetiren.jpg',
+    info: {
+      'DURUM': 'Bağımsız — Son Kıvılcım ile Dost',
+      'KÖKENİ': 'Cüce — Külgetiren Soyu',
+      'ÖZEL NOT': 'Engizisyon Birlikleriyle Doğrudan Çatışmadan Kaçınılmalı'
+    },
+    desc: 'Thartharn Külgetiren, muhtaç cücelerin yanında saf tutmasıyla bilinen efsanevi bir Moradin Paladini\'dir. Kuzey yamaçlarında altı Engizisyoncu\'nun infaz etmek üzere olduğu Orv Bezmadan\'ın yanında yaveri Gerdus ile belirdi; birlik, onu tanıdığı anda geri çekildi. Ardından Son Kıvılcım ile aynı ocağı paylaştı ve gruba adını bulduran soruyu soran kişi oldu.',
+    password: null,
+    classified: 'Thartharn\'ın Son Kıvılcım ile kurduğu bağın tek bir geceyle sınırlı kalıp kalmadığı bilinmemektedir. Cüce toplulukları arasındaki itibarı, ona karşı açılacak bir davanın bölgedeki cüceleri Engizisyon\'a karşı birleştirme riskini taşımaktadır. Gruptan ayrıldıktan sonraki güzergâhı kayıt altında değildir.',
+    pdf: null
+  },
+  {
+    id: 'gerdus',
+    file: 'CV-NPC-011',
+    name: 'Gerdus Baltaucu',
+    title: 'Thartharn Külgetiren\'in Yaveri · Baltaucu Soyu',
+    classification: 'limited',
+    classLabel: 'SINIRLI',
+    img: 'img/Gerdus Baltaucu.jpg',
+    info: {
+      'DURUM': 'Thartharn Külgetiren\'in Yanında',
+      'KÖKENİ': 'Cüce — Baltaucu Soyu',
+      'ÖZEL NOT': 'Orv Bezmadan ile Dostluk Bağı'
+    },
+    desc: 'Gerdus Baltaucu, Thartharn Külgetiren\'in sadık yaveridir. Orv\'un Engizisyoncular tarafından kıstırıldığı gün efendisinin yanında yer aldı ve ardından Son Kıvılcım\'ın mağarasında grupla aynı ateşi paylaştı. Kendi başına bir tehdit olarak değerlendirilmemektedir.',
+    password: null,
+    classified: 'Gerdus\'un Baltaucu soyunun zanaat çevrelerindeki bağlantıları, Thartharn\'ın hareketlerini takip etmek için kullanılabilecek bir iz sunmaktadır. Orv Bezmadan ile kurduğu dostluğun Son Kıvılcım\'a ileride lojistik destek olarak dönüp dönmeyeceği izlenmektedir.',
+    pdf: null
+  },
+  {
+    id: 'taint',
+    file: 'CV-NPC-012',
+    name: 'Taint',
+    title: 'Kızıl Sükût · Kan Büyücüsü Engizisyoncu',
+    classification: 'restricted',
+    classLabel: 'KISITLI',
+    img: 'img/Taint, Kızıl Sükût.jpg',
+    info: {
+      'DURUM': 'Engizisyon Bünyesinde Aktif',
+      'KÖKENİ': 'Beyaz Şehir — İmparatorluk Engizisyonu',
+      'ÖZEL NOT': 'Zihinsel Durumu Dengesiz — Cecilia\'ya Saplantılı'
+    },
+    desc: 'Kızıl Sükût lakabıyla bilinen Taint, kan büyüsü kullanan bir Engizisyoncu\'dur. Karlı Matem Katedrali yolunda, beraberindeki jeagerlarla Son Kıvılcım\'ın karşısına çıktı ve Cecilia\'yı Beyaz Şehir\'e götürmek istedi. Kısa süren çatışmanın sonunda Cecilia\'ya hazırladığı Disintegrate büyüsünü fırlatmadan bir spell scroll ile geri çekildi.',
+    password: null,
+    classified: 'Taint\'in Engizisyon saflarında kan büyüsü kullanmasına göz yumulması, bu bilginin dışarı sızması halinde tarikatın sapkınlık söylemini doğrudan çürütecek niteliktedir. Cecilia\'ya olan saplantısının kaynağı ve ikili arasındaki geçmiş belirsizliğini korumaktadır. Cecilia\'yı yeniden bulup götürmeye hazır olduğunu açıkça beyan etmiştir.',
+    pdf: null
+  },
+  {
+    id: 'martha',
+    file: 'CV-NPC-013',
+    name: 'Martha',
+    title: 'Orv Bezmadan\'ın Geçmişi · Kayıp Bağ',
+    classification: 'restricted',
+    classLabel: 'KISITLI',
+    img: 'img/Martha Gençlik.jpg',
+    info: {
+      'DURUM': 'Bilinmiyor',
+      'KÖKENİ': 'Tespit Edilemedi',
+      'ÖZEL NOT': 'Orv Bezmadan ile Geçmişe Dayalı Bağ'
+    },
+    desc: 'Martha hakkındaki bilgiler, neredeyse tamamen Orv Bezmadan\'ın tanıklığına dayanmaktadır. Orv, lanetli bir kitapla yaşanan olayın ardından gördüğü kabuslardan onun adını haykırarak uyandı. Eldritch ayların etkisi altındaki yolculuğu sırasında onu yeniden görmeye başladığı kaydedilmiştir.',
+    password: null,
+    classified: 'Martha\'nın gerçekten var olup olmadığı ya da Orv\'un zihnindeki bir yansıma olup olmadığı netleşmemiştir. Orv\'un hayatının kadını olarak gördüğü bu figür, Orv üzerinde kullanılabilecek en güçlü duygusal kaldıraç olarak değerlendirilmektedir. Eldritch ayların bu görüntülerle bağlantısı araştırılmaktadır.',
+    pdf: null
+  },
+  {
+    id: 'eldrin',
+    file: 'CV-NPC-014',
+    name: 'Eldrin Varos',
+    title: 'Simyacı Elf · Kurt İni Esnafı',
+    classification: 'limited',
+    classLabel: 'SINIRLI',
+    img: 'img/Eldrin Varos.jpg',
+    info: {
+      'DURUM': 'Son Kıvılcım Bastionu\'nda',
+      'KÖKENİ': 'Elf — Kurt İni',
+      'ÖZEL NOT': 'Orv Bezmadan\'ın Eski Dostu'
+    },
+    desc: 'Eldrin Varos, Kurt İni\'nde simya dükkânı işleten bir elftir. Orv Bezmadan ile aynı şehirde uzun yıllar esnaflık yapmış, iki ırk arasındaki bilinen soğukluğa rağmen onunla köklü bir dostluk kurmuştur. Son Kıvılcım\'ın bastionunda revir görevi gören çadırda yaralı cücelerin tedavisine yardım ettiği görülmüştür.',
+    password: null,
+    classified: 'Orv\'un Eldrin\'e bir kurt adam iksiri ve şırıngası teslim ettiği kaydedilmiştir. Eldrin\'in bu iksiri incelemesi ve Grendor\'un iyileşmesindeki payı, simya bilgisinin kurt adam lanetine karşı kullanılabildiğini göstermektedir. Son Kıvılcım\'a sağladığı tıbbi destek izlenmektedir.',
+    pdf: null
+  },
+  {
+    id: 'waldron',
+    file: 'CV-NPC-015',
+    name: 'Waldron',
+    title: 'Saf Kandan Vampir · Sanguis Velathri',
+    classification: 'classified',
+    classLabel: 'SINIFLANDIRILMIŞ',
+    img: 'img/Waldron.jpg',
+    info: {
+      'DURUM': 'Sanguis Velathri\'de Aktif',
+      'KÖKENİ': 'Bilinmiyor — Guru Vampir Avcılarıyla Bağlantılı',
+      'ÖZEL NOT': 'Yüksek Öncelikli Dosya'
+    },
+    desc: 'Waldron, Neryssa\'nın karşısına önce bir yarasa olarak çıkan, ardından gerçek suretine bürünen kadim bir vampirdir. Leydi Ursula ve Lord Vendrell\'e hizmet etmektedir. Mortarossa\'nın katliamının ardından Neryssa ile yaptığı anlaşmayla Son Kıvılcım\'ın düşmüş üyelerini hayata döndürdü ve Neryssa\'yı yanına alarak ortadan kayboldu.',
+    password: null,
+    classified: 'Waldron\'un Lord Vendrell\'in kan büyüsünü taşıyabilmesi, Sanguis Velathri hiyerarşisindeki konumunun sanıldığından çok daha yüksek olduğuna işaret etmektedir. Geçmişinin Guru adıyla anılan vampir avcılarına dayandığı değerlendirilmektedir. Engizisyon\'un bu hisar hakkındaki bilgilerinin dışarı sızması, yürütülen tüm takip faaliyetlerini tehlikeye atacaktır.',
+    pdf: null
+  },
+  {
+    id: 'blackthorne',
+    file: 'CV-NPC-016',
+    name: 'Mordain Blackthorne',
+    title: 'Yüksek Engizitör · İmparatorluk Mührü Taşıyıcısı',
+    classification: 'classified',
+    classLabel: 'SINIFLANDIRILMIŞ',
+    img: 'img/Inquisitor Mordain Blackthorne.jpg',
+    info: {
+      'DURUM': 'Aktif — Saha Komutanı',
+      'KÖKENİ': 'İmparatorluk Engizisyonu',
+      'ÖZEL NOT': 'Yüksek Öncelikli Dosya'
+    },
+    desc: 'Mordain Blackthorne, İmparatorluk Engizisyonu\'nun yüksek rütbeli engizitörlerindendir. Kuzey\'de yürütülen büyücü avlarının başında yer almış, Glimmering Moonbow\'un peşine düşmüştür. Theron Nightgale ile arasında kişisel bir hesap bulunmaktadır.',
+    password: null,
+    classified: 'Blackthorne\'un imzaladığı ve İmparator\'un mührünü taşıyan ferman, Eldritch Mutasyonlu Ay gününde Karlı Matem Katedrali yakınlarında Son Kıvılcım\'a kurulacak pusunun direktiflerini içermektedir. Fermanın bir nüshası grubun eline geçmiştir. Frosty Passage üzerindeki köye yapılan baskın da dahil olmak üzere geçmiş operasyonlarına ait kayıtlar mühürlüdür.',
+    pdf: null
   }
 ];
 
@@ -1338,7 +1471,7 @@ function openModal(idx) {
   document.getElementById('modalImg').alt                = npc.name;
   document.getElementById('modalDesc').textContent       = npc.desc;
   document.getElementById('classifiedText').textContent  = npc.classified;
-  document.getElementById('pdfBtn').href                 = npc.pdf;
+  document.getElementById('pdfBtn').href                 = npc.pdf || '#';
 
   // Info grid
   const ig = document.getElementById('modalInfoGrid');
