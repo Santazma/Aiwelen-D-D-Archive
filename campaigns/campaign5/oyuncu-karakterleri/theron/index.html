@@ -517,14 +517,6 @@
     }
     #shadow-canvas.on { opacity: 1; }
 
-    #curse-ambient {
-      position: fixed; inset: 0;
-      z-index: 8400; pointer-events: none;
-      opacity: 0; transition: opacity 2.6s ease;
-      background: radial-gradient(ellipse at 50% 42%,
-        rgba(0,0,0,0) 26%, rgba(8,6,16,.5) 68%, rgba(3,2,8,.88) 100%);
-    }
-    #curse-ambient.on { opacity: 1; }
 
     /* Lanet kalıcı olarak sayfanın rengini emer */
     body.cursed .container,
@@ -536,125 +528,42 @@
       transition: filter 2.6s ease;
     }
 
-    /* ── Sinematik katman ── */
+    /* ── Sinematik katman ──
+       Sahnenin tamamı #curse-gl içinde tek bir WebGL shader ile çizilir
+       (duman, Blackthorne'un silueti, gölge elleri, yazı, film
+       greni, sinematik bantlar). Burada yalnızca kapsayıcı ve WebGL
+       olmayan tarayıcılar için basit yazı yedeği var. */
     #curse-overlay {
       position: fixed; inset: 0; z-index: 9000;
       pointer-events: none; opacity: 0; overflow: hidden;
       transition: opacity 1.8s ease;
     }
     #curse-overlay.on { opacity: 1; }
+    #curse-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-    .curse-stage { position: absolute; inset: -8%; }
-    #curse-overlay.shake .curse-stage { animation: curseShake .3s linear infinite; }
-    @keyframes curseShake {
-      0%   { transform: translate(0,0) }
-      25%  { transform: translate(-6px,3px) }
-      50%  { transform: translate(5px,-4px) }
-      75%  { transform: translate(-3px,-6px) }
-      100% { transform: translate(0,0) }
-    }
-
-    .curse-smoke {
-      position: absolute; border-radius: 50%;
-      filter: blur(70px); will-change: transform, opacity;
-      background: radial-gradient(circle at 50% 50%,
-        rgba(24,20,34,.9) 0%, rgba(14,11,22,.68) 40%, rgba(0,0,0,0) 72%);
-      animation: smokeDrift 14s ease-in-out infinite;
-    }
-    .curse-smoke.s1 { width: 92vmax;  height: 92vmax;  left:-28vmax; top:-24vmax;    animation-duration:15s; }
-    .curse-smoke.s2 { width: 78vmax;  height: 78vmax;  right:-26vmax; top: 4vmax;    animation-duration:12s; animation-delay:-4s; }
-    .curse-smoke.s3 { width:104vmax;  height:104vmax;  left: 4vmax;  bottom:-42vmax; animation-duration:18s; animation-delay:-7s; }
-    .curse-smoke.s6 { width: 58vmax;  height: 58vmax;  left:-14vmax; bottom: 2vmax;  animation-duration:16s; animation-delay:-5s; }
-    .curse-smoke.s7 { width: 86vmax;  height: 86vmax;  right:-30vmax; bottom:-30vmax; animation-duration:20s; animation-delay:-12s; }
-    .curse-smoke.s4 {
-      width: 64vmax; height: 64vmax; right: 2vmax; bottom:-16vmax;
-      animation-duration:10s; animation-delay:-2s;
-      background: radial-gradient(circle at 50% 50%,
-        rgba(62,46,84,.85) 0%, rgba(22,16,34,.65) 45%, rgba(0,0,0,0) 74%);
-    }
-    .curse-smoke.s5 {
-      width: 70vmax; height: 70vmax; left: 22vmax; top:-20vmax;
-      animation-duration:13s; animation-delay:-9s;
-      background: radial-gradient(circle at 50% 50%,
-        rgba(40,30,58,.8) 0%, rgba(12,9,20,.6) 48%, rgba(0,0,0,0) 76%);
-    }
-    @keyframes smokeDrift {
-      0%   { opacity:.5;  transform: translate3d(0,0,0) scale(1) rotate(0deg); }
-      50%  { opacity:.96; transform: translate3d(5vw,-4vh,0) scale(1.24) rotate(12deg); }
-      100% { opacity:.5;  transform: translate3d(0,0,0) scale(1) rotate(0deg); }
-    }
-
-    /* Aşağıdan yukarı uzanan gölge kolları */
-    .curse-tendril {
-      position: absolute; bottom: -12vh;
-      width: 15vmax; height: 82vh;
-      filter: blur(28px); transform-origin: 50% 100%;
-      background: linear-gradient(to top,
-        rgba(10,7,18,.95), rgba(18,13,30,.5) 45%, rgba(0,0,0,0) 88%);
-      animation: tendrilRise 9s ease-in-out infinite;
-    }
-    .curse-tendril.t1 { left:  4%; animation-duration: 8s;  animation-delay:-1s; }
-    .curse-tendril.t2 { left: 27%; animation-duration:11s;  animation-delay:-4s; }
-    .curse-tendril.t3 { left: 52%; animation-duration: 9.5s; animation-delay:-7s; }
-    .curse-tendril.t4 { left: 74%; animation-duration:12s;  animation-delay:-2s; }
-    @keyframes tendrilRise {
-      0%,100% { transform: translateY(16vh) scaleY(.72) skewX(-5deg); opacity:.45; }
-      50%     { transform: translateY(-8vh) scaleY(1.18) skewX(6deg); opacity:.95; }
-    }
-
-    .curse-vignette {
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 45%,
-        rgba(0,0,0,0) 18%, rgba(0,0,0,.66) 58%, rgba(0,0,0,.94) 100%);
-      animation: vignettePulse 5s ease-in-out infinite;
-    }
-    @keyframes vignettePulse { 0%,100%{opacity:.85} 50%{opacity:1} }
-
-    /* Karanlığın kısa kesintileri */
-    .curse-flicker {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,.6); opacity: 0;
-      animation: curseFlicker 7s steps(1,end) infinite;
-    }
-    @keyframes curseFlicker {
-      0%,6.9%,7.4%,18.9%,19.3%,40.9%,41.5%,67.9%,68.2%,100% { opacity:0 }
-      7.1%,19.1%,41.2%,68.05% { opacity:.85 }
-    }
-
-    /* ── Sinematik yazı ── */
     .curse-text {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      flex-wrap: wrap; gap: .12em .32em;
-      padding: 0 7vw; text-align: center;
+      position: absolute; inset: 0; display: none;
+      align-items: center; justify-content: center;
+      padding: 0 7vw; text-align: center; background: rgba(4,2,8,.9);
       font-family: 'Pirata One', 'UnifrakturMaguntia', 'Cinzel', Georgia, serif;
-      font-size: clamp(1.9rem, 6.4vw, 4.6rem);
-      letter-spacing: .03em; line-height: 1.16;
+      font-size: clamp(1.9rem, 6.4vw, 4.6rem); line-height: 1.16; color: #ded8ea;
+      text-shadow: 0 0 10px rgba(160,140,205,.92), 0 0 32px rgba(96,74,150,.78);
     }
-    .curse-word {
-      display: inline-block; opacity: 0; color: #ded8ea;
-      text-shadow:
-        0 0 10px rgba(160,140,205,.92),
-        0 0 32px rgba(96,74,150,.78),
-        0 0 74px rgba(52,36,94,.62),
-        0 3px 6px #000;
-      /* Tek eğri, ara duraksama yok: dumandan yoğunlaşarak belirir */
-      animation: curseWordIn 3.2s cubic-bezier(.16,.72,.22,1) forwards;
-    }
-    @keyframes curseWordIn {
-      from { opacity:0; filter: blur(30px); transform: translateY(-18px) scale(1.16); letter-spacing:.32em; }
-      to   { opacity:1; filter: blur(0);    transform: translateY(0)     scale(1);    letter-spacing:.03em; }
-    }
+    .curse-text.fallback { display: flex; animation: curseFallbackIn 2.4s ease forwards; }
+    @keyframes curseFallbackIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* Kayboluş: kelimeler tek tek değil, yazı tek bir duman kütlesi olarak dağılır */
-    .curse-text.dissolving {
-      animation: curseTextSmoke 4.4s cubic-bezier(.36,0,.66,1) forwards;
+    /* İmleç feneri: sisi net bir daireyle açar ve altını hafifçe aydınlatır */
+    #curse-lantern {
+      position: fixed; left: 0; top: 0;
+      width: 440px; height: 440px; margin: -220px 0 0 -220px;
+      z-index: 8600; pointer-events: none;
+      opacity: 0; transition: opacity .6s ease;
+      mix-blend-mode: screen; will-change: transform;
+      background: radial-gradient(circle,
+        rgba(222,210,255,.3) 0%, rgba(176,148,244,.16) 26%,
+        rgba(112,82,196,.06) 46%, rgba(0,0,0,0) 60%);
     }
-    @keyframes curseTextSmoke {
-      0%   { opacity:1;  filter: blur(0);    transform: translateY(0)    scale(1); }
-      35%  { opacity:.82; filter: blur(8px);  transform: translateY(-16px) scale(1.04); }
-      100% { opacity:0;  filter: blur(38px); transform: translateY(-78px) scale(1.2); }
-    }
+    #curse-lantern.on { opacity: 1; }
 
     body.curse-active .container,
     body.curse-active .info-box,
@@ -673,11 +582,6 @@
     body.curse-fading .player-panel {
       filter: grayscale(.6) contrast(1.14) brightness(.7);
       transition: filter 2.6s ease;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .curse-smoke, .curse-tendril, .curse-vignette, .curse-flicker { animation: none; }
-      #curse-overlay.shake .curse-stage { animation: none; }
     }
 
 /* ══════════════════════════════════
@@ -1235,25 +1139,11 @@
 
   <!-- ══ Blackthorne Laneti — kalıcı gölge sisi ══ -->
   <canvas id="shadow-canvas" aria-hidden="true"></canvas>
-  <div id="curse-ambient" aria-hidden="true"></div>
+  <div id="curse-lantern" aria-hidden="true"></div>
 
-  <!-- ══ Blackthorne Laneti — sinematik ══ -->
+  <!-- ══ Blackthorne Laneti — sinematik (WebGL) ══ -->
   <div id="curse-overlay" aria-hidden="true">
-    <div class="curse-stage">
-      <div class="curse-smoke s1"></div>
-      <div class="curse-smoke s2"></div>
-      <div class="curse-smoke s3"></div>
-      <div class="curse-smoke s4"></div>
-      <div class="curse-smoke s5"></div>
-      <div class="curse-smoke s6"></div>
-      <div class="curse-smoke s7"></div>
-      <div class="curse-tendril t1"></div>
-      <div class="curse-tendril t2"></div>
-      <div class="curse-tendril t3"></div>
-      <div class="curse-tendril t4"></div>
-    </div>
-    <div class="curse-vignette"></div>
-    <div class="curse-flicker"></div>
+    <canvas id="curse-gl"></canvas>
     <div class="curse-text" id="curse-text"></div>
   </div>
 
@@ -1539,8 +1429,11 @@
       const cv  = document.getElementById('shadow-canvas');
       const ctx = cv.getContext('2d');
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const lantern = document.getElementById('curse-lantern');
       let blobs = [], raf = 0, running = false, t0 = 0;
-      let mx = -1e4, my = -1e4;
+      let mx = -1e4, my = -1e4;   /* imlecin gerçek konumu */
+      let lx = -1e4, ly = -1e4;   /* fenerin yumuşatılmış konumu */
+      let vignette = null;        /* kenar karartması; fener onu da açabilsin diye canvas'a çizilir */
 
       const S = 256;
       const sprite = document.createElement('canvas');
@@ -1580,17 +1473,39 @@
         cv.style.width  = innerWidth  + 'px';
         cv.style.height = innerHeight + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        vignette = document.createElement('canvas');
+        vignette.width = innerWidth; vignette.height = innerHeight;
+        const v = vignette.getContext('2d');
+        const R = Math.hypot(innerWidth, innerHeight) / 2;
+        const g = v.createRadialGradient(innerWidth / 2, innerHeight * .42, 0, innerWidth / 2, innerHeight * .42, R);
+        g.addColorStop(.26, 'rgba(0,0,0,0)');
+        g.addColorStop(.68, 'rgba(8,6,16,.5)');
+        g.addColorStop(1,   'rgba(3,2,8,.88)');
+        v.fillStyle = g;
+        v.fillRect(0, 0, innerWidth, innerHeight);
+
         seed();
       }
 
       /* İtme yarıçapı/gücü ile yay ve sönüm katsayıları: imleç sisi ~120px
          dağıtır, sis ~3.6 saniyede geri sekmeden yuvasına oturur. */
       const REPEL_R = 230, REPEL_F = 1.6, SPRING = 0.0018, DAMP = 0.88;
+      /* Fener: LANTERN_R içinde sis ve karartma net bir daireyle açılır */
+      const LANTERN_R = 165;
 
       function frame(now) {
         if (!t0) t0 = now;
         const t = (now - t0) / 1000;
         ctx.clearRect(0, 0, innerWidth, innerHeight);
+        ctx.drawImage(vignette, 0, 0, innerWidth, innerHeight);
+
+        /* Fener imleci hafif gecikmeyle, süzülerek izler */
+        if (mx > -1e3) {
+          if (lx < -1e3) { lx = mx; ly = my; }
+          lx += (mx - lx) * .24;
+          ly += (my - ly) * .24;
+        }
 
         for (const b of blobs) {
           /* Sisin kendi yavaş salınımı */
@@ -1617,12 +1532,34 @@
           ctx.drawImage(sprite, b.x - b.r, b.y - b.r, b.r * 2, b.r * 2);
         }
         ctx.globalAlpha = 1;
+
+        /* Fenerin altındaki sis ve karartma silinir: içi tamamen açık,
+           kenarı kısa bir geçişle net bir daire */
+        if (lx > -1e3) {
+          const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, LANTERN_R);
+          g.addColorStop(0,   'rgba(0,0,0,1)');
+          g.addColorStop(.55, 'rgba(0,0,0,.97)');
+          g.addColorStop(.82, 'rgba(0,0,0,.42)');
+          g.addColorStop(1,   'rgba(0,0,0,0)');
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.fillStyle = g;
+          ctx.fillRect(lx - LANTERN_R, ly - LANTERN_R, LANTERN_R * 2, LANTERN_R * 2);
+          ctx.globalCompositeOperation = 'source-over';
+          lantern.style.transform = `translate3d(${lx.toFixed(1)}px,${ly.toFixed(1)}px,0)`;
+        }
         raf = requestAnimationFrame(frame);
       }
 
       function onMove(e) {
         const p = e.touches ? e.touches[0] : e;
         mx = p.clientX; my = p.clientY;
+        lantern.classList.add('on');
+      }
+      /* İmleç pencereden çıkınca fener söner */
+      function onLeave(e) {
+        if (e.relatedTarget) return;
+        mx = my = lx = ly = -1e4;
+        lantern.classList.remove('on');
       }
 
       return {
@@ -1633,8 +1570,8 @@
           addEventListener('resize', resize);
           addEventListener('mousemove', onMove, { passive: true });
           addEventListener('touchmove', onMove, { passive: true });
+          document.addEventListener('mouseout', onLeave);
           cv.classList.add('on');
-          document.getElementById('curse-ambient').classList.add('on');
           raf = requestAnimationFrame(frame);
         }
       };
@@ -1652,7 +1589,7 @@
       const t0 = performance.now();
       const FADE_IN = 900;
       let raf = requestAnimationFrame(function up(now) {
-        const k = Math.min(1, (now - t0) / FADE_IN);
+        const k = Math.min(1, Math.max(0, (now - t0) / FADE_IN));
         el.volume = k;
         if (k < 1) raf = requestAnimationFrame(up);
       });
@@ -1689,7 +1626,483 @@
       audio.play().catch(() => {});
     }
 
-    /* ── 4) Sinematik ── */
+    /* ── 4a) Gölge kolları (zaman çizelgesi) ────────────────
+       Ekranın kenarlarından altı kol uzanır. Kolların görüntüsü
+       gerçek bir mürekkep çekiminden ("VFX Ink.mp4": suya yayılan
+       siyah mürekkep) gelir; burada yalnızca her kolun başlangıç
+       noktası, yönü, boyu, kalınlığı ve o anki uzanma oranı hesaplanır.
+       Kol ucunda pençe gibi dört dala ayrılır; dallar uzanırken açılır,
+       varınca kapanıp sıkar. t: sahne saniyesi.                   */
+    const shadowArms = (() => {
+      const rnd = (a, b) => a + Math.random() * (b - a);
+      const clamp01 = k => k < 0 ? 0 : k > 1 ? 1 : k;
+      const easeOut = k => 1 - Math.pow(1 - clamp01(k), 3);
+      const easeIn  = k => Math.pow(clamp01(k), 2);
+      let arms = [], retreatAt = Infinity;
+      const A = new Float32Array(24), B = new Float32Array(24);
+
+      function make(W, H) {
+        const L  = Math.min(W * .36, 560);
+        const LB = Math.min(H * .44, 440);
+        const defs = [
+          { bx: -30,    by: H * rnd(.2, .32),  ang: rnd(-.12, .12),               len: L },
+          { bx: -30,    by: H * rnd(.6, .74),  ang: rnd(-.32, -.08),              len: L * .92 },
+          { bx: W + 30, by: H * rnd(.2, .32),  ang: Math.PI + rnd(-.12, .12),     len: L },
+          { bx: W + 30, by: H * rnd(.58, .72), ang: Math.PI + rnd(.08, .32),      len: L * .92 },
+          { bx: W * rnd(.12, .2), by: H + 30,  ang: -Math.PI / 2 + rnd(.25, .45), len: LB },
+          { bx: W * rnd(.8, .88), by: H + 30,  ang: -Math.PI / 2 - rnd(.25, .45), len: LB },
+        ];
+        arms = defs.map((d, i) => Object.assign(d, {
+          delay: .6 + i * .24 + rnd(0, .3), dur: rnd(2.4, 3.2),
+          w: rnd(20, 26), ph: rnd(0, Math.PI * 2), grip: .2,
+        }));
+        retreatAt = Infinity;
+      }
+      function retreat(t) { retreatAt = Math.min(retreatAt, t); }
+
+      /* A: (bx, by, açı, boy)  B: (uzanma, yarı kalınlık, faz, kavrama) */
+      function update(t) {
+        const back = easeIn((t - retreatAt) / 1.4);
+        arms.forEach((a, i) => {
+          const arrive = (t - a.delay) / a.dur;
+          /* Sürünme: kısa hamlelerle çekilerek ilerler */
+          const crawl = Math.max(0, Math.sin(t * 3.4 + a.ph)) * .035 * (1 - clamp01(arrive));
+          const reach = easeOut(arrive) * (1 - back) * (1 + Math.sin(t * 1.1 + a.ph) * .025) + crawl;
+          const target = back > 0 ? .1 : arrive < .9 ? .15 + Math.sin(t * 3 + a.ph) * .1 : .8 + Math.sin(t * 1.4 + a.ph) * .12;
+          a.grip += (target - a.grip) * .06;
+          A.set([a.bx, a.by, a.ang, a.len], i * 4);
+          B.set([reach, a.w, a.ph, a.grip], i * 4);
+        });
+        return t < retreatAt + 1.6;
+      }
+      return { make, retreat, update, A, B };
+    })();
+
+    /* ── 4b) Sinematik sahne (WebGL) ─────────────────────────
+       Her şey tek bir tam ekran shader'da çizilir:
+       • Duman: alan bükmeli (domain warp) fbm gürültüsü, yazının
+         arkasındaki mor ışıkla aydınlanır, yukarı doğru akar.
+       • Blackthorne: portre gri tona çevrilip soğuk mora boyanır,
+         dumanın içinden gürültülü bir aşınmayla belirir/kaybolur;
+         kenarlarında hafif renk sapması var.
+       • Gölge kolları: gerçek mürekkep çekimi her kolun kendi
+         koordinatlarında örneklenir (ikinci kopyası ince lif katmanı).
+         Sürünen ölü elleri: sıska mor kollar, uzun ince kemik boğumlu
+         parmaklar, kıvrık tırnaklar; parmaklar tek tek tırmalar. Üstüne gerçek duman
+         çekimi tutam olarak biner.
+       • Yazı: üç kanallı doku (net / yakın hâle / geniş hâle).
+         Soldan sağa, gürültülü ve parlak kenarlı bir cepheyle
+         dumandan yoğunlaşır; sonunda akış alanında sürüklenip
+         aşınarak dumana karışır.
+       • Kamera: yavaş yakınlaşma, sarsıntı, karanlık nabızları,
+         sinematik siyah bantlar, ton eşleme, vinyet ve film greni. */
+    const curseScene = (() => {
+      const cv = document.getElementById('curse-gl');
+      const gl = cv.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+      if (!gl) return null;
+
+      const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+      const FS = `
+        precision highp float;
+        uniform vec2 uRes, uShake;
+        uniform vec4 uFigRect, uTextBox;
+        uniform float uScale, uTime, uZoom, uIntro, uBars, uDark, uFigAmt,
+                      uArms, uTextReveal, uTextDissolve;
+        uniform vec4 uArmA[6], uArmB[6];
+        uniform sampler2D uText, uFig, uInk, uSmokeV, uInk2;
+
+        float hash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+        float noise(vec2 p) {
+          vec2 i = floor(p), f = fract(p), u = f * f * (3. - 2. * f);
+          return mix(mix(hash(i), hash(i + vec2(1., 0.)), u.x),
+                     mix(hash(i + vec2(0., 1.)), hash(i + vec2(1., 1.)), u.x), u.y);
+        }
+        const mat2 R = mat2(1.6, 1.2, -1.2, 1.6);
+        float fbm(vec2 p)  { float v = 0., a = .5; for (int i = 0; i < 5; i++) { v += a * noise(p); p = R * p; a *= .5; } return v; }
+        float fbm3(vec2 p) { float v = 0., a = .5; for (int i = 0; i < 3; i++) { v += a * noise(p); p = R * p; a *= .5; } return v; }
+
+        void main() {
+          vec2 S  = uRes / uScale;
+          vec2 sq = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) / uScale;
+          vec2 q  = (sq - S * .5) / uZoom + S * .5 + uShake;
+          vec2 n  = q / S.y;
+          vec2 sp = sq / S;
+          float t = uTime;
+
+          /* Duman */
+          vec2 w = vec2(fbm3(n * 1.8 + vec2(0., t * .05)), fbm3(n * 1.8 + vec2(4.7, 1.3) - vec2(0., t * .04)));
+          float d1 = fbm(n * 2.6 + w * 1.8 + vec2(t * .02, t * .1));
+          float d2 = fbm3(n * 1.2 + w * .8 + vec2(-t * .015, t * .05) + 9.);
+          float r  = length((q / S - vec2(.5, .47)) * vec2(S.x / S.y * .85, 1.));
+          float dens = smoothstep(.18, .86, d1 * .8 + d2 * .45 + r * .6 - .34) * uIntro;
+          /* Yazının arkasında yanan soğuk ışık; ince duman onu saçar, kalın duman yutar */
+          float L = exp(-r * r * 6.) * .6 + exp(-r * r * 1.6) * .13;
+          vec3 col = vec3(.3, .19, .52) * L * (1. - dens * .92);
+          col += vec3(.2, .12, .36) * L * dens * (1. - dens) * 2.4;
+          col += vec3(.06, .04, .1) * d1 * dens * (.4 + L);
+          col += vec3(.02, .014, .035) * (1. - dens);
+          /* Duman kıvrımlarına alttan vuran soluk kenar ışığı: hacim hissi verir */
+          float d1b = fbm(n * 2.6 + w * 1.8 + vec2(t * .02, t * .1) + vec2(0., .02));
+          col += vec3(.16, .1, .3) * clamp((d1 - d1b) * 9., 0., 1.) * dens * (.35 + L * 1.2);
+
+          /* Blackthorne */
+          vec2 fu = (q - uFigRect.xy) / uFigRect.zw;
+          if (uFigAmt > 0. && fu.x > 0. && fu.x < 1. && fu.y > 0. && fu.y < 1.) {
+            vec3 Y = vec3(.3, .59, .11);
+            float ca = .0022 + .002 * length(fu - .5);
+            vec3 lum = vec3(dot(texture2D(uFig, fu + vec2(ca, 0.)).rgb, Y),
+                            dot(texture2D(uFig, fu).rgb, Y),
+                            dot(texture2D(uFig, fu - vec2(ca, 0.)).rgb, Y));
+            float m  = smoothstep(.64, .18, length((fu - vec2(.5, .36)) * vec2(1.05, .8)));
+            float er = fbm(fu * vec2(5., 7.) + vec2(0., t * .15));
+            float th = uFigAmt * 1.25 - .45 + m * .3;
+            float a  = m * smoothstep(er - .08, er + .08, th);
+            vec3 fc = pow(lum, vec3(1.65)) * vec3(.62, .56, .92) * .95;
+            col = mix(col, fc, a * (1. - dens * .65));
+            col += vec3(.55, .35, 1.) * smoothstep(.07, 0., abs(th - er)) * m * .7;
+          }
+
+          /* Gölge kolları: sürünen ölü elleri. Gövde gerçek mürekkep çekiminden
+             dokulanır; uzun, ince, kemik boğumlu parmaklar ve kıvrık tırnaklar
+             yerde tırmalar gibi tek tek kıvrılıp açılır. Ten mordur. */
+          float armD = 0., armRim = 0., armVein = 0., armLit = 0., armBone = 0., armNail = 0.;
+          if (uArms > 0.) {
+            vec2 lightC = S * vec2(.5, .47);
+            for (int i = 0; i < 6; i++) {
+              vec4 A = uArmA[i], B = uArmB[i];
+              if (B.x < .01) continue;
+              vec2 dir = vec2(cos(A.z), sin(A.z));
+              vec2 nrm = vec2(-dir.y, dir.x);
+              vec2 d = q - A.xy;
+              float u = dot(d, dir) / A.w;
+              if (u < -.05 || u > B.x + .14) continue;
+              float v = dot(d, nrm);
+              v -= sin(u * 3. - t * 1.2 + B.z) * B.y * .6 * u + sin(t * .7 + B.z) * B.y * .5 * u * u;
+              float palmU = B.x - .3;
+              /* Sıska kol: omuzdan bileğe incelir, avuç biraz genişler */
+              float taper = 1. - u * .45 + smoothstep(palmU - .06, palmU + .03, u) * .35;
+              float vn = v / (B.y * taper);
+              if (abs(vn) > 4.6) continue;
+              float tipN = fbm3(vec2(u * 6., vn * 2.) + t * .3);
+              float ink  = 1. - texture2D(uInk,  vec2(.42 + u * .5, .5 + vn * .19)).r;
+              float ink2 = 1. - texture2D(uInk2, vec2(.4 + u * .55, .5 + vn * .17)).r;
+              float m = max(ink, ink2 * .8) * smoothstep(1.9, 1.15, abs(vn))
+                      * smoothstep(palmU + .05, palmU - .06, u + (tipN - .5) * .08);
+              /* Kolda iki kemik sırtı ve kıvrımlı damarlar */
+              float ridge = exp(-pow((vn - .45) / .16, 2.)) + exp(-pow((vn + .4) / .14, 2.)) * .7;
+              float bone = ridge * m * .5;
+              float vein = abs(fbm3(vec2(u * A.w / 90., vn * 1.6 + B.z)) - .5);
+              float sinewL = smoothstep(.03, 0., vein) * smoothstep(1.1, .3, abs(vn));
+              float nail = 0.;
+
+              /* El: dört uzun parmak + başparmak */
+              if (u > palmU - .06) {
+                float span = B.x - palmU + .06;
+                float fu = clamp((u - palmU + .06) / span, 0., 1.3);
+                for (int k = 0; k < 5; k++) {
+                  float fk = float(k) - 1.5;
+                  /* Her parmak kendi ritminde kıvrılıp açılır: yeri tırmalar */
+                  float ck = clamp(B.w * .55 + .45 * (.5 + .5 * sin(t * 3.4 + fk * 1.3 + B.z * 2.)), 0., 1.);
+                  float center, w, lenK;
+                  if (k < 4) {
+                    center = fk * 1.05 * (.35 + fu * 1.5) * (1. - ck * .35) - fk * ck * fu * fu * .6
+                           + sin(t * 2.1 + fk * 1.9 + B.z) * .12 * fu;
+                    lenK = (1. - abs(fk) * .12 + sin(B.z + fk * 2.1) * .06) * (1. - ck * .22);
+                    w = .2 * (1. - fu * .45);
+                  } else {
+                    center = 1.5 + fu * 1.3 * (1. - ck * .6) - ck * fu * fu * 1.2;
+                    lenK = .5 * (1. - ck * .2);
+                    w = .22 * (1. - fu * .5);
+                  }
+                  /* Kemik boğumlar: iki eklemde belirgin şişlik ve açık renkli kemik */
+                  float kn = fu / lenK;
+                  float j1 = exp(-pow((kn - .34) / .05, 2.)), j2 = exp(-pow((kn - .67) / .045, 2.));
+                  w *= 1. + .7 * j1 + .55 * j2;
+                  float dv = (vn - center) / max(w, .04);
+                  float fi = 1. - texture2D(uInk, vec2(.5 + u * .35 + float(k) * .05, .5 + dv * .08)).r;
+                  float along = smoothstep(lenK + .015, lenK - .06, fu);
+                  float fm = smoothstep(1.25, .5, abs(dv)) * (.78 + .22 * fi) * along;
+                  bone = max(bone, fm * (j1 + j2) * smoothstep(1., .2, abs(dv)));
+                  /* Uzun, kıvrık, sivri tırnak */
+                  float cu = (fu - lenK + .03) / .2;
+                  if (cu > 0. && cu < 1.) {
+                    float bend = k == 4 ? -1. : -sign(fk + .001) * (abs(fk) / 1.5 + .3);
+                    float cc = center + bend * cu * cu * (.4 + ck * .5);
+                    float cw = .16 * (1. - cu) + .015;
+                    float na = smoothstep(1., .3, abs(vn - cc) / cw);
+                    fm = max(fm, na);
+                    nail = max(nail, na);
+                  }
+                  m = max(m, fm);
+                }
+              }
+              armD = max(armD, m);
+              armRim = max(armRim, m * (1. - m));
+              float side = sign(vn) * dot(nrm, normalize(lightC - q));
+              armLit = max(armLit, m * clamp(side, 0., 1.) * smoothstep(.2, 1.2, abs(vn) + .3));
+              armVein = max(armVein, m * sinewL);
+              armBone = max(armBone, bone);
+              armNail = max(armNail, nail);
+            }
+            /* Mor ten: girintilerde koyu, ışığa bakan yanda ve kemiklerde lavanta */
+            float tex = fbm3(n * 18. + t * .15);
+            vec3 skin = mix(vec3(.07, .03, .13), vec3(.22, .1, .36), tex);
+            skin += vec3(.32, .2, .55) * armLit * .7;
+            skin = mix(skin, vec3(.5, .38, .68), armBone * .6);
+            skin = mix(skin, vec3(.05, .02, .07), armNail * .8);
+            skin *= .55 + .9 * L + .25;
+            col = mix(col, skin, armD * .96);
+            /* İnce lifler arkadaki mor ışığı geçirir */
+            col += vec3(.36, .22, .7) * armRim * 1.8 * (.45 + L * 1.4);
+            /* Derinin altında soluk, nabız gibi atan damarlar */
+            col += vec3(.45, .2, .75) * armVein * (.2 + .18 * sin(t * 2.2));
+          }
+
+          /* Gerçek duman çekimi: sahneye mor tonlu tutamlar olarak biner */
+          float smk = texture2D(uSmokeV, vec2(sp.x, sp.y)).r;
+          col += vec3(.32, .22, .58) * smk * smk * (.5 + armD * .8 + L * .8) * uIntro;
+
+          /* Yazı */
+          float tA = 0.;
+          if (q.x > uTextBox.x - 160. && q.x < uTextBox.x + uTextBox.z + 160. &&
+              q.y > uTextBox.y - 200. && q.y < uTextBox.y + uTextBox.w + 120.) {
+            float xr = (q.x - uTextBox.x) / max(uTextBox.z, 1.);
+            float nz = fbm(n * 6.5);
+            float fr = uTextReveal * 1.45 - xr * .45;
+            float vis = smoothstep(nz - .06, nz + .06, fr);
+            float edge = smoothstep(.09, 0., abs(fr - nz)) * step(uTextReveal, .999);
+            float gather = 1. - clamp(fr * 1.2, 0., 1.);
+            float dz = clamp(uTextDissolve * 1.5 - xr * .5, 0., 1.);
+            /* Akış: geniş kıvrımlar + harfleri yırtan ince türbülans + yukarı-sağa sürüklenme */
+            vec2 fl1 = vec2(fbm3(n * 3. + vec2(t * .2, 0.)), fbm3(n * 3. + vec2(3., t * .3))) - .5;
+            vec2 fl2 = vec2(noise(n * 18. + t * .8), noise(n * 18. + vec2(7., -t * .8))) - .5;
+            vec2 flow = fl1 * .6 + fl2 * .9 + vec2(.15, -.55);
+            vec2 disp = flow * (gather * gather * 46. + dz * dz * S.y * .2);
+            vec4 tx = texture2D(uText, (q - disp) / S);
+            float ero = smoothstep(dz * 1.15 - .1, dz * 1.15 + .05, fbm(n * 14. + vec2(0., t * .5)));
+            /* Dağılırken arkada kalan duman izleri: akış yönünde birkaç örnek */
+            float wisp = 0.;
+            for (int k = 1; k <= 3; k++) {
+              float fk = float(k);
+              wisp += texture2D(uText, (q - disp * (1. + fk * .45)) / S).g * (1. - fk * .25);
+            }
+            float A = vis * ero;
+            float breath = .88 + .12 * sin(t * 1.8);
+            col += (vec3(.55, .42, .95) * tx.g * .9 + vec3(.25, .15, .55) * tx.b * .85) * A * breath;
+            col = mix(col, vec3(.88, .85, .94), tx.r * A);
+            col += vec3(.85, .7, 1.) * edge * tx.g * 1.7;
+            col += vec3(.42, .3, .72) * (tx.g * (1. - ero) + wisp * .45) * dz * (1. - uTextDissolve) * .9;
+            tA = max(tx.r * A, tx.g * A * .6);
+          }
+
+          /* Havada süzülen zerreler */
+          for (int k = 0; k < 2; k++) {
+            float sc = k == 0 ? 70. : 38.;
+            vec2 p = q / sc + vec2(float(k) * 7.3, t * (k == 0 ? .25 : .45));
+            vec2 c = floor(p), f = fract(p) - .5;
+            float hh = hash(c + float(k) * 13.);
+            vec2 o = vec2(hash(c + 3.1), hash(c + 7.7)) - .5;
+            float md = length(f - o * .7);
+            col += vec3(.65, .55, 1.) * smoothstep(.07 * (.5 + hh), 0., md) * step(.8, hh) * (k == 0 ? .5 : .25) * uIntro;
+          }
+
+          col *= 1. - uDark * .55;
+          float vg = smoothstep(1.25, .3, length((sp - .5) * vec2(1., .9)) * 1.4);
+          col *= mix(.32, 1., vg);
+          col = 1. - exp(-col * 1.6);
+          col += (hash(sq + fract(t * 7.) * 91.) - .5) * .045;
+
+          float bh = uBars * S.y * .095;
+          float bar = clamp(step(sq.y, bh) + step(S.y - bh, sq.y), 0., 1.);
+          col = mix(col, vec3(0.), bar);
+          float alpha = clamp(.93 + dens * .07 + tA + bar, 0., 1.);
+          gl_FragColor = vec4(col * alpha, alpha);
+        }`;
+
+      function shader(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src); gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn(gl.getShaderInfoLog(s)); return null; }
+        return s;
+      }
+      const vs = shader(gl.VERTEX_SHADER, VS), fs = shader(gl.FRAGMENT_SHADER, FS);
+      if (!vs || !fs) return null;
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn(gl.getProgramInfoLog(prog)); return null; }
+      gl.useProgram(prog);
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'p');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const U = {};
+      ['uRes', 'uShake', 'uFigRect', 'uTextBox', 'uScale', 'uTime', 'uZoom', 'uIntro',
+       'uBars', 'uDark', 'uFigAmt', 'uArms', 'uTextReveal', 'uTextDissolve',
+       'uArmA', 'uArmB', 'uText', 'uFig', 'uInk', 'uSmokeV', 'uInk2'].forEach(k => { U[k] = gl.getUniformLocation(prog, k); });
+
+      function texture(unit) {
+        const tx = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tx);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+        return tx;
+      }
+      function upload(unit, tx, src) {
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tx);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+      }
+      const texText = texture(0), texFig = texture(1), texInk = texture(2), texSmoke = texture(3), texInk2 = texture(4);
+      gl.uniform1i(U.uText, 0); gl.uniform1i(U.uFig, 1); gl.uniform1i(U.uInk, 2); gl.uniform1i(U.uSmokeV, 3); gl.uniform1i(U.uInk2, 4);
+
+      /* Gerçek VFX çekimleri (Mixkit, gri tona çevrilip küçültüldü) */
+      function clip(src) {
+        const v = document.createElement('video');
+        v.src = src; v.muted = true; v.playsInline = true; v.preload = 'auto';
+        v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+        return v;
+      }
+      /* Aynı mürekkep çekiminin 4 sn ileriden oynayan ikinci kopyası ince lif katmanıdır */
+      const inkVid = clip('VFX Ink.mp4'), inkVid2 = clip('VFX Ink.mp4'), smokeVid = clip('VFX Smoke.mp4');
+      smokeVid.loop = true;
+      const fresh = v => v.readyState >= 2 && v.videoWidth > 0;
+
+      /* Portre bir kez yüklenir */
+      const FIG_W = 896, FIG_H = 1344;
+      const figImg = new Image();
+      figImg.onload = () => upload(1, texFig, figImg);
+      figImg.src = 'Inquisitor Mordain Blackthorne.jpg';
+
+      const textCv  = document.createElement('canvas');
+      const tc      = textCv.getContext('2d');
+      let W = 0, H = 0, scale = 1, textBox = [0, 0, 0, 0], line = '';
+
+      function resize() {
+        W = innerWidth; H = innerHeight;
+        cv.width  = Math.floor(W * scale);
+        cv.height = Math.floor(H * scale);
+        gl.viewport(0, 0, cv.width, cv.height);
+        textCv.width = W; textCv.height = H;
+        if (line) drawText();
+      }
+
+      /* Yazı dokusu: mavi = geniş hâle, yeşil = yakın hâle, kırmızı = net yazı.
+         Hâleler "gölge hilesi" ile çizilir: yazı ekran dışına, gölgesi yerine düşer. */
+      function drawText() {
+        const fs = Math.min(Math.max(30.4, W * .064), 73.6);
+        tc.setTransform(1, 0, 0, 1, 0, 0);
+        tc.globalCompositeOperation = 'source-over';
+        tc.fillStyle = '#000'; tc.fillRect(0, 0, W, H);
+        tc.font = `400 ${fs}px "Pirata One", "UnifrakturMaguntia", Cinzel, Georgia, serif`;
+        tc.textAlign = 'center'; tc.textBaseline = 'middle';
+        const maxW = W * .86, words = line.split(' '), rows = [];
+        let cur = '';
+        words.forEach(wd => {
+          const tryLine = cur ? cur + ' ' + wd : wd;
+          if (tc.measureText(tryLine).width > maxW && cur) { rows.push(cur); cur = wd; } else cur = tryLine;
+        });
+        rows.push(cur);
+        const lh = fs * 1.16, top = H * .5 - (rows.length - 1) * lh / 2;
+        let bw = 0;
+        rows.forEach(r => { bw = Math.max(bw, tc.measureText(r).width); });
+        textBox = [W / 2 - bw / 2, top - lh / 2, bw, rows.length * lh];
+        tc.globalCompositeOperation = 'lighter';
+        const SH = 10000;
+        [['#0000ff', 30], ['#00ff00', 9]].forEach(([c, b]) => {
+          tc.shadowColor = c; tc.shadowBlur = b; tc.shadowOffsetX = SH; tc.fillStyle = c;
+          rows.forEach((r, i) => tc.fillText(r, W / 2 - SH, top + i * lh));
+        });
+        tc.shadowColor = 'transparent'; tc.shadowBlur = 0; tc.shadowOffsetX = 0;
+        tc.fillStyle = '#ff0000';
+        rows.forEach((r, i) => tc.fillText(r, W / 2, top + i * lh));
+        upload(0, texText, textCv);
+      }
+
+      /* Zaman çizelgesi yardımcıları */
+      const clamp01 = k => k < 0 ? 0 : k > 1 ? 1 : k;
+      const sm = (a, b, x) => { const k = clamp01((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+      const bump = (c, w, x) => Math.exp(-Math.pow((x - c) / w, 2));
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const ph = Array.from({ length: 5 }, () => Math.random() * Math.PI * 2);
+
+      let raf = 0, t0 = 0, slow = 0, frames = 0, last = 0, armsOn = false;
+
+      function frame(now) {
+        if (!t0) t0 = last = now;
+        const t = (now - t0) / 1000;
+        const dtMs = now - last; last = now;
+
+        /* Kare süresi uzun kalırsa çözünürlük düşürülür */
+        if (++frames > 20 && dtMs > 24) { if (++slow > 25 && scale > .6) { scale = Math.max(.6, scale * .8); resize(); slow = 0; } }
+        else slow = Math.max(0, slow - 1);
+
+        if (armsOn) armsOn = shadowArms.update(t);
+        if (fresh(inkVid))   upload(2, texInk, inkVid);
+        if (fresh(smokeVid)) upload(3, texSmoke, smokeVid);
+        if (fresh(inkVid2))  upload(4, texInk2, inkVid2);
+
+        const amp = reduced ? 0 : sm(0, 1.2, t) * (1 - sm(8, 8.8, t));
+        /* Hafif sallantı: düşük genlik, yavaş salınım */
+        const shx = amp * 1.8 * (Math.sin(t * 7.1 + ph[0]) * .6 + Math.sin(t * 11.3 + ph[1]) * .4);
+        const shy = amp * 1.8 * (Math.sin(t * 6.2 + ph[2]) * .6 + Math.sin(t * 9.7 + ph[3]) * .4);
+
+        /* Portre ekrana boy olarak oturur */
+        const fh = H * 1.06, fw = fh * FIG_W / FIG_H, fx = W / 2 - fw / 2, fy = -H * .03;
+
+        gl.uniform2f(U.uRes, cv.width, cv.height);
+        gl.uniform1f(U.uScale, scale);
+        gl.uniform1f(U.uTime, t);
+        gl.uniform2f(U.uShake, shx, shy);
+        gl.uniform1f(U.uZoom, reduced ? 1 : 1 + .05 * sm(0, 10, t));
+        gl.uniform1f(U.uIntro, sm(0, 1.4, t));
+        gl.uniform1f(U.uBars, sm(0, .9, t) * (1 - sm(9.4, 10.4, t)));
+        gl.uniform1f(U.uDark, [2.1, 3.9, 5.7, 7.3].reduce((s, c) => s + bump(c, .07, t), 0));
+        gl.uniform4f(U.uFigRect, fx, fy, fw, fh);
+        gl.uniform1f(U.uFigAmt, sm(.6, 3.4, t) * (1 - sm(8, 9.8, t)));
+        gl.uniform1f(U.uArms, armsOn ? 1 : 0);
+        gl.uniform4fv(U.uArmA, shadowArms.A);
+        gl.uniform4fv(U.uArmB, shadowArms.B);
+        gl.uniform4f(U.uTextBox, textBox[0], textBox[1], textBox[2], textBox[3]);
+        gl.uniform1f(U.uTextReveal, clamp01((t - .4) / 3.6));
+        gl.uniform1f(U.uTextDissolve, clamp01((t - 8) / 2.2));
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        raf = requestAnimationFrame(frame);
+      }
+
+      return {
+        start(text) {
+          line = text;
+          scale = Math.min(window.devicePixelRatio || 1, 1);
+          resize();
+          addEventListener('resize', resize);
+          if (document.fonts && document.fonts.load) document.fonts.load('1em "Pirata One"', line).then(drawText).catch(() => {});
+          armsOn = !reduced;
+          shadowArms.make(W, H);
+          [inkVid, smokeVid].forEach(v => { try { v.currentTime = 0; } catch (e) {} v.play().catch(() => {}); });
+          try { inkVid2.currentTime = 4; } catch (e) {}
+          inkVid2.play().catch(() => {});
+          t0 = 0; frames = 0; slow = 0;
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(frame);
+        },
+        /* 8. saniye: eller geri çekilir (yazı ve portre zaman çizelgesiyle dağılır) */
+        dissolve() { if (t0) shadowArms.retreat((performance.now() - t0) / 1000); },
+        stop() {
+          cancelAnimationFrame(raf); raf = 0;
+          removeEventListener('resize', resize);
+          inkVid.pause(); inkVid2.pause(); smokeVid.pause();
+          gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        },
+      };
+    })();
+
+    /* ── 4c) Sinematik ── */
     function triggerBlackthorneCurse() {
       if (curseRunning || cursed) return;
       curseRunning = true;
@@ -1697,18 +2110,10 @@
       const overlay = document.getElementById('curse-overlay');
       const textEl  = document.getElementById('curse-text');
 
-      textEl.innerHTML = '';
-      const words = CURSE_LINE.split(' ');
-      words.forEach((w, i) => {
-        const s = document.createElement('span');
-        s.className   = 'curse-word';
-        s.textContent = w;
-        s.style.animationDelay = (0.4 + i * 0.5) + 's';
-        textEl.appendChild(s);
-      });
-
       document.body.classList.add('curse-active');
-      overlay.classList.add('on', 'shake');
+      overlay.classList.add('on');
+      if (curseScene) curseScene.start(CURSE_LINE);
+      else { textEl.textContent = CURSE_LINE; textEl.classList.add('fallback'); }
       const sfx = playWhisperSfx();
 
       /* Son 1 saniye: ses efekti sönümlenirken müzik devreye girer */
@@ -1717,11 +2122,8 @@
         unlockBlackthorneTrack();
       }, CURSE_SFX_MS - CURSE_DECAY_MS);
 
-      /* 8. saniye: yazı tek parça hâlinde duman olup dağılır */
-      setTimeout(() => {
-        overlay.classList.remove('shake');
-        textEl.classList.add('dissolving');
-      }, CURSE_SFX_MS);
+      /* 8. saniye: yazı ve Blackthorne dumana karışır, eller çekilir */
+      setTimeout(() => { if (curseScene) curseScene.dissolve(); }, CURSE_SFX_MS);
 
       /* Kalıcı sis devralır */
       setTimeout(() => shadowFog.start(), CURSE_SFX_MS + 500);
@@ -1735,8 +2137,9 @@
 
       setTimeout(() => {
         document.body.classList.remove('curse-fading');
-        textEl.classList.remove('dissolving');
-        textEl.innerHTML = '';
+        textEl.classList.remove('fallback');
+        textEl.textContent = '';
+        if (curseScene) curseScene.stop();
         curseRunning = false;
       }, CURSE_SFX_MS + 5400);
     }
