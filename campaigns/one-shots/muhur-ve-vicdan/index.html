@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mühür ve Vicdan — One Shot | Aiwelen D&D</title>
+  <link rel="stylesheet" href="../../../theme.css">
+  <style>
+    /* ── Mühür ve Vicdan: fırtına grisi taş + kızıl mühür mumu + altın ── */
+    :root {
+      --wax: #8e1b1b;
+      --wax-bright: #c43a2c;
+      --wax-glow: rgba(196,58,44,0.45);
+      --bone: #e6dcc6;
+    }
+
+    body {
+      background-image: url('https://cdna.artstation.com/p/assets/images/images/085/229/340/large/edouard-noisette-cathedral-01-overcast.jpg?1740304394');
+    }
+
+    /* theme.css'in sıcak kahverengi karartmasını soğuk taş grisi + kızıl alt ışıkla ezer */
+    body::before {
+      background:
+        radial-gradient(ellipse at 50% 110%, rgba(110,18,14,0.38) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 0%, rgba(40,40,46,0.4) 0%, transparent 60%),
+        linear-gradient(180deg,
+          rgba(6,6,8,0.93) 0%,
+          rgba(10,10,12,0.78) 35%,
+          rgba(10,9,10,0.82) 70%,
+          rgba(6,4,4,0.96) 100%
+        );
+    }
+
+    /* ── Mühür emblemi: gerçek mum mühür görseli ──
+       Sayfa açılırken mühür kâğıda basılır gibi iner, sonra mum ışığında
+       nefes alır; parlak bir ışık şeridi mumun yüzeyinde ara sıra gezinir
+       (şerit, mask-image ile yalnızca mührün kendi silüetine çizilir). */
+    .emblem-wrap {
+      position: relative;
+      width: 150px; height: 150px;
+      margin-bottom: 1.8rem;
+      animation: sealStamp 1.1s cubic-bezier(.2,1.4,.4,1) 0.1s both;
+    }
+    .emblem-wrap::before {               /* mührün oturduğu yerdeki temas gölgesi (havada durmasın) */
+      content: '';
+      position: absolute; left: 4%; right: 4%; top: 14%; bottom: -8%;
+      background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 45%, transparent 70%);
+      filter: blur(6px);
+      pointer-events: none;
+    }
+    .emblem-seal {
+      position: relative;
+      width: 100%; height: 100%;
+      display: block;
+      object-fit: contain;               /* mask katmanlarıyla aynı yerleşim */
+      /* sıkı temas gölgesi + geniş ortam gölgesi; kırmızı parıltı yok */
+      filter: drop-shadow(0 2px 1.5px rgba(0,0,0,0.95)) drop-shadow(0 8px 14px rgba(0,0,0,0.55))
+              brightness(0.84) contrast(1.06) saturate(0.8);
+    }
+    /* Sahne ışığına uydurma katmanları — üçü de mask ile yalnızca mührün silüetine çizilir.
+       Arkaplan soğuk, sisli ve tepeden aydınlık; mühür de aynı ışığı alsın. */
+    .emblem-shade, .emblem-haze, .emblem-sheen {
+      position: absolute; inset: 0;
+      -webkit-mask: url('img/muhur.webp') center / contain no-repeat;
+              mask: url('img/muhur.webp') center / contain no-repeat;
+      pointer-events: none;
+    }
+    .emblem-shade {                      /* hacim gölgesi: sol üstten ışık, sağ alta doğru kararma */
+      background:
+        radial-gradient(ellipse 75% 70% at 38% 30%, transparent 35%, rgba(10,4,4,0.55) 100%),
+        linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.38) 100%);
+      mix-blend-mode: multiply;
+    }
+    .emblem-haze {                       /* katedral sisinin mührün üstüne de düşmesi */
+      background: linear-gradient(180deg, rgba(130,134,142,0.15) 0%, rgba(130,134,142,0.05) 55%, transparent 85%);
+      mix-blend-mode: screen;
+    }
+    .emblem-wrap::after {                /* önünden yavaşça geçen ince sis tülü */
+      content: '';
+      position: absolute; top: 30%; bottom: 10%; left: -60%; width: 120%;
+      background: radial-gradient(ellipse at center, rgba(150,152,160,0.16) 0%, transparent 65%);
+      filter: blur(10px);
+      animation: fogDrift 16s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes fogDrift {
+      from { transform: translateX(0); }
+      to   { transform: translateX(100%); }
+    }
+    .emblem-sheen {                      /* kuru mumda zayıf, yavaş gezinen mum ışığı */
+      background: linear-gradient(115deg, transparent 36%, rgba(255,214,160,0.14) 48%, rgba(255,214,160,0.05) 54%, transparent 64%);
+      background-size: 300% 100%;
+      mix-blend-mode: soft-light;
+      animation: sealSheen 9s ease-in-out 1.4s infinite;
+    }
+    @keyframes sealStamp {
+      0%   { opacity: 0; transform: scale(1.35) rotate(-8deg); filter: blur(4px); }
+      60%  { opacity: 1; transform: scale(0.96) rotate(1deg);  filter: blur(0); }
+      100% { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    @keyframes sealSheen {
+      0%   { background-position: 100% 0; }
+      45%  { background-position: 0% 0; }
+      100% { background-position: 0% 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .emblem-wrap, .emblem-wrap::after, .emblem-sheen { animation: none; }
+    }
+
+    .archive-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.4rem;
+      animation: subtitleFade 1s ease 0.3s both;
+    }
+    .campaign-num {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(196,58,44,0.7);
+      margin-bottom: 0.5rem;
+      animation: subtitleFade 1s ease 0.38s both;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5.5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin: 0 0 0.4rem;
+      line-height: 1.1;
+      text-shadow:
+        0 0 30px rgba(196,58,44,0.35),
+        0 0 70px rgba(201,168,76,0.12),
+        3px 3px 10px rgba(0,0,0,0.98);
+      animation: titleDrop 1.4s cubic-bezier(.22,1,.36,1) 0.1s both;
+    }
+    /* "ve": mührün kurumuş mum kırmızısı; koyu zeminde okunsun diye hafif ışıklı kenar */
+    h1 .amp {
+      color: #7f1d18;
+      text-shadow:
+        0 0 18px rgba(127,29,24,0.45),
+        0 -1px 0 rgba(255,190,170,0.10),
+        3px 3px 10px rgba(0,0,0,0.98);
+    }
+
+    .page-tagline { color: rgba(230,220,198,0.5); }
+    .divider-rune { color: var(--wax-bright); }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.35);
+      margin-bottom: 1.4rem;
+      animation: subtitleFade 1s ease 0.8s both;
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+      padding: 0 0.95rem;
+      flex-shrink: 0;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      line-height: 1;
+    }
+    .nav-btn:hover .btn-icon { opacity: 0.9; }
+    .nav-btn:not(.disabled) .btn-accent { background: linear-gradient(180deg, var(--wax-bright), var(--wax)); }
+
+    @media (max-width: 540px) {
+      .emblem-wrap { width: 116px; height: 116px; }
+      h1 { letter-spacing: 3px; }
+    }
+
+    /* Hub'daki mühre tıklayınca giriş yeniden oynar */
+    .emblem-wrap.replayable { cursor: pointer; }
+    .emblem-wrap.restamp { animation: sealStamp 1.1s cubic-bezier(.2,1.4,.4,1) both; }
+
+    /* ══════════════ GİRİŞ: MÜHÜRLÜ DOSYA ══════════════
+       Parşömen + yazı + damga tek bir WebGL sahnesinde çizilir (gerçek doku).
+       Mühür kırılınca kâğıt çatlak hattından yırtılıp iki yana açılır, hub ortaya çıkar.
+       Sayfa her açıldığında gösterilir; hub mührüne tıklayınca tekrar oynar. */
+    #mv-intro {
+      position: fixed; inset: 0; z-index: 3000;
+      background: #070505;                 /* WebGL hazır olana kadar hub görünmesin */
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #mv-intro.gl-ready { background: transparent; }
+    #mv-intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .mv-seal {
+      position: absolute; left: 0; top: 0;
+      will-change: transform;
+      pointer-events: none;
+    }
+    .mv-seal img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,.85)) drop-shadow(0 10px 16px rgba(0,0,0,.5)) brightness(.9) saturate(.85);
+    }
+    .mv-seal .half, .mv-seal .crumbs { opacity: 0; }
+    .mv-seal.broken .whole { opacity: 0; }
+    .mv-seal.broken .half, .mv-seal.broken .crumbs { opacity: 1; }
+    .mv-hint {
+      position: absolute; left: 0; right: 0;
+      text-align: center;
+      font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: 5px; text-transform: uppercase;
+      color: rgba(230,220,198,.6);
+      text-shadow: 0 1px 6px rgba(0,0,0,.9);
+      opacity: 0;                          /* kâğıt yerine oturunca belirir */
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    #mv-intro.ready .mv-hint { animation: mvHint 2.6s ease-in-out infinite; }
+    @keyframes mvHint { 0%,100% { opacity: .35; } 50% { opacity: .85; } }
+    .mv-skip {
+      position: absolute; top: 18px; right: 22px;
+      font-family: 'Cinzel', serif; font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(230,220,198,.45); background: none; border: 1px solid rgba(230,220,198,.18);
+      padding: .45rem .9rem; cursor: pointer; transition: color .2s, border-color .2s, opacity .3s;
+    }
+    .mv-skip:hover { color: rgba(230,220,198,.9); border-color: rgba(196,58,44,.6); }
+    #mv-intro.opening .mv-hint, #mv-intro.opening .mv-skip { opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+<!-- ── GİRİŞ: MÜHÜRLÜ DOSYA ── -->
+<div id="mv-intro" role="dialog" aria-label="Mühürlü dosya — mührü kırmak için tıklayın" tabindex="0">
+  <div class="mv-seal" id="mv-seal">
+    <img class="whole" src="img/muhur.webp" alt="">
+    <img class="half left" src="img/kirik-sol.webp" alt="">
+    <img class="half right" src="img/kirik-sag.webp" alt="">
+    <img class="crumbs" src="img/kirik-kirinti.webp" alt="">
+  </div>
+  <div class="mv-hint" id="mv-hint">Mührü kırmak için dokun</div>
+  <button class="mv-skip" id="mv-skip" type="button">Geç ›</button>
+</div>
+<script>
+  /* Hareketi azalt ayarı açıksa girişi ilk karede gizle */
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches)
+      document.getElementById('mv-intro').style.display = 'none';
+  })();
+</script>
+<main>
+
+  <!-- ── EMBLEM: ENGİZİSYON MÜHRÜ ── -->
+  <div class="emblem-wrap">
+    <img class="emblem-seal" src="img/muhur.webp" alt="Mühür ve Vicdan mührü: kılıçtan terazi">
+    <div class="emblem-shade"></div>
+    <div class="emblem-haze"></div>
+    <div class="emblem-sheen"></div>
+  </div>
+
+  <!-- ── BAŞLIK ── -->
+  <div class="archive-label">İmparatorluk Engizisyonu — Mühürlü Dosya</div>
+  <div class="campaign-num">One Shot &nbsp;·&nbsp; Yalnızca Görevliler İçin</div>
+  <h1>Mühür <span class="amp">ve</span> Vicdan</h1>
+  <div class="page-tagline">Mühür emri verir, vicdan hesabını sorar</div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-ornament">
+      <div class="divider-dot"></div>
+      <div class="divider-rune">✠</div>
+      <div class="divider-dot"></div>
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="section-label">Dosya Bölümleri</div>
+
+  <!-- ── BÖLÜMLER ── -->
+  <nav class="nav-list" aria-label="Bölümler">
+
+    <a class="nav-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">📜</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">One Shot'ın Hikayesi</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn" href="oyuncu-karakterleri/index.html">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">🛡️</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Oyuncu Karakterleri</div>
+        <div class="btn-subtitle">Görevli Engizisyoncuların sicilleri</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">👁</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Önemli NPC'ler</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a class="nav-btn disabled" href="#">
+      <div class="btn-accent"></div>
+      <span class="btn-icon">🐉</span>
+      <div class="btn-sep"></div>
+      <div class="btn-body">
+        <div class="btn-title">Bestiary</div>
+        <div class="btn-subtitle">Yakında</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+  </nav>
+
+  <a class="back-link" href="../index.html">← One Shots</a>
+
+  <div class="footer-divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot" style="width:4px;height:4px;background:rgba(196,58,44,0.4);transform:rotate(45deg);flex-shrink:0;"></div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="footer-text">Aiwelen Arşivleri &mdash; Mühür ve Vicdan Dosyası</div>
+
+</main>
+<script>
+/* ══════════════ GİRİŞ: MÜHÜRLÜ DOSYA (WebGL) ══════════════
+   Akış:
+   1) GELİŞ   (0–1.6 sn)  kâğıt yukarıdan sallanarak iner, sönümlü salınımla oturur, mum ışığı yanar
+   2) BEKLEME             hafif nefes alan salınım; tıklanmayı bekler
+   3) TİTREME (0.7 sn)    kâğıt + mühür birlikte giderek şiddetlenen sarsıntıyla titrer
+   4) YIRTILMA            mühür çatlar, kâğıt "cart" diye bir anda ayrılır; ekrana kan damlaları sıçrar,
+                          kâğıdın uçları tutuşur ve yanma cephesi içeri ilerler
+   5) GİDİŞ               yanan parçalar dönerek ekran dışına savrulur, oda kararır, hub ortaya çıkar
+   Sesler Web Audio ile çalınır; yırtılma ve yanma ses/ klasöründeki kayıtlardır, diğerleri sentezdir. Tıklama kullanıcı etkileşimi olduğu için çalabilir. */
+(function () {
+  const intro  = document.getElementById('mv-intro');
+  const sealEl = document.getElementById('mv-seal');
+  const hint   = document.getElementById('mv-hint');
+  const skip   = document.getElementById('mv-skip');
+  const halfL  = sealEl.querySelector('.half.left');
+  const halfR  = sealEl.querySelector('.half.right');
+  const crumbs = sealEl.querySelector('.crumbs');
+  const emblem = document.querySelector('.emblem-wrap');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const PAPER_ASPECT = 0.74;
+  const T_SHAKE = 0.7;                 // titreme süresi
+  const T_END   = 2.25;                // yırtılmadan sonra girişin bitişi
+  const MAX_DROPS = 14;
+  let gl, prog, canvas, U = {}, raf = 0, running = false;
+  let phase = 'in', tPhase = 0, t0 = 0;
+  let layout = { cx: 0, cy: 0, pw: 0, ph: 0, seal: 0 };
+  let drops = new Float32Array(MAX_DROPS * 4);
+
+  function restampEmblem() { emblem.classList.remove('restamp'); void emblem.offsetWidth; emblem.classList.add('restamp'); }
+
+  /* ══════════════ SES (Web Audio, sentez) ══════════════ */
+  let ac = null, master = null, noiseBuf = null;
+  // kayıtlar: sayfa açılınca indirilir, ses bağlamı ilk tıklamada kurulunca çözülür
+  const SAMPLE_URLS = { rip: 'ses/Ripping%20Paper.mp3', fire: 'ses/Flame%20Strike.mp3' };
+  const sampleData = {}, samples = {};
+  for (const k in SAMPLE_URLS)
+    sampleData[k] = fetch(SAMPLE_URLS[k]).then(r => r.ok ? r.arrayBuffer() : null).catch(() => null);
+  const playing = new Set();
+  function playSample(name, gain = 1) {
+    if (!audio() || !samples[name]) return;
+    samples[name].then(buf => {
+      if (!buf) return;
+      const src = ac.createBufferSource(); src.buffer = buf;
+      const g = ac.createGain(); g.gain.value = gain;
+      src.connect(g); g.connect(master);
+      src.start(ac.currentTime + 0.005);
+      const item = { src, g }; playing.add(item);
+      src.onended = () => playing.delete(item);
+    });
+  }
+  // giriş erken kapanırsa (Geç / Esc) çalan kayıtları kısa bir sönümle kes
+  function stopSamples() {
+    if (!ac) return;
+    const t = ac.currentTime;
+    playing.forEach(({ src, g }) => { g.gain.setTargetAtTime(0, t, 0.04); try { src.stop(t + 0.2); } catch (e) {} });
+    playing.clear();
+  }
+  function audio() {
+    if (!ac) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ac = new AC();
+      master = ac.createGain(); master.gain.value = 0.55;
+      const comp = ac.createDynamicsCompressor();
+      master.connect(comp); comp.connect(ac.destination);
+      noiseBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      for (const k in sampleData)
+        samples[k] = sampleData[k].then(ab => ab ? ac.decodeAudioData(ab) : null).catch(() => null);
+    }
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function noise(t, dur, { type = 'bandpass', f = 1000, q = 1, gain = 1, a = 0.005, rel = null, f2 = null } = {}) {
+    const s = ac.createBufferSource(); s.buffer = noiseBuf;
+    s.playbackRate.value = 0.8 + Math.random() * 0.4;
+    const fl = ac.createBiquadFilter(); fl.type = type; fl.frequency.setValueAtTime(f, t); fl.Q.value = q;
+    if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + (rel ?? dur));
+    s.connect(fl); fl.connect(g); g.connect(master);
+    s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    return g;
+  }
+  function tone(t, dur, f1, f2, gain, type = 'sine') {
+    const o = ac.createOscillator(); o.type = type;
+    o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const SFX = {
+    // kâğıdın gelişi: havada savrulan kâğıt hışırtısı
+    arrive() {
+      if (!audio()) return; const t = ac.currentTime;
+      noise(t, 0.9, { f: 900, f2: 2400, q: 0.7, gain: 0.25, a: 0.25 });
+      for (let i = 0; i < 6; i++) noise(t + 0.55 + i * 0.07, 0.05, { f: 3000, q: 2, gain: 0.12 });
+      noise(t + 1.0, 0.25, { type: 'lowpass', f: 400, gain: 0.35, a: 0.01 });     // masaya oturuş
+    },
+    // titreme: derin uğultu + kâğıt hışırtısı + mumun gerilerek çıtırdaması
+    shake() {
+      if (!audio()) return; const t = ac.currentTime;
+      noise(t, T_SHAKE + 0.15, { type: 'lowpass', f: 140, gain: 0.9, a: T_SHAKE * 0.8 });
+      tone(t, T_SHAKE + 0.1, 48, 40, 0.35, 'sine');
+      for (let i = 0; i < 22; i++) {
+        const k = i / 22, tt = t + k * T_SHAKE;
+        noise(tt, 0.03, { f: 2500 + Math.random() * 3000, q: 3, gain: 0.05 + k * 0.18 });
+      }
+      for (let i = 0; i < 7; i++) noise(t + 0.25 + Math.random() * 0.4, 0.012, { type: 'highpass', f: 4000, gain: 0.12 + i * 0.03 });
+    },
+    // mühür çatlar + parşömen yırtılır: kayıt "Ripping Paper" (en keskin yırtılma anı, 0.4 sn)
+    tear() {
+      if (!audio()) return; const t = ac.currentTime;
+      noise(t, 0.04, { type: 'highpass', f: 1800, gain: 0.6, a: 0.001 });          // mum mühür çatırtısı
+      tone(t, 0.12, 120, 50, 0.45);                                                  // kısa gövde darbesi
+      playSample('rip', 1.0);
+    },
+    // kan damlaları: ıslak, küçük şapırtılar
+    blood(delays) {
+      if (!audio()) return; const t = ac.currentTime;
+      delays.forEach(d => {
+        tone(t + d, 0.05, 420 + Math.random() * 200, 90, 0.18);
+        noise(t + d, 0.06, { type: 'lowpass', f: 900, gain: 0.22, a: 0.002 });
+      });
+    },
+    // yanma: kayıt "Flame Strike" (baştaki 0.5 sn kesildi; 2.2 sn, kâğıt animasyonu bitince sönmüş olur)
+    fire() { playSample('fire', 0.9); }
+  };
+
+  /* ══════════════ KÂĞIT DOKUSU ══════════════ */
+  function loadImg(src) {
+    return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  }
+  async function buildPaperCanvas() {
+    const [parch, stamp] = await Promise.all([loadImg('img/parsomen.jpg'), loadImg('img/damga.webp')]);
+    try {
+      await Promise.race([
+        Promise.all([document.fonts.load('700 60px Cinzel'), document.fonts.load('900 60px Cinzel'), document.fonts.load('italic 30px Lora')]),
+        new Promise(r => setTimeout(r, 1500))
+      ]);
+    } catch (e) {}
+    const W = 1024, H = Math.round(W / PAPER_ASPECT);
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d');
+    const s = Math.max(W / parch.width, H / parch.height);
+    x.drawImage(parch, (W - parch.width * s) / 2, (H - parch.height * s) / 2, parch.width * s, parch.height * s);
+    x.globalCompositeOperation = 'multiply';
+    x.fillStyle = '#3b1d12'; x.strokeStyle = '#3b1d12';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    const sp = (px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; };
+    x.globalAlpha = 0.82; sp(10); x.font = '700 30px Cinzel, serif';
+    x.fillText('İMPARATORLUK ENGİZİSYONU', W / 2, H * 0.115);
+    x.globalAlpha = 0.5; x.lineWidth = 2;
+    x.beginPath(); x.moveTo(W * 0.3, H * 0.145); x.lineTo(W * 0.7, H * 0.145); x.stroke();
+    x.globalAlpha = 0.88; sp(14); x.font = '900 72px Cinzel, serif';
+    x.fillText('MÜHÜRLÜ DOSYA', W / 2, H * 0.205);
+    sp(2); x.font = 'italic 30px Lora, serif'; x.globalAlpha = 0.72;
+    x.fillText('Yalnızca görevliler içindir', W / 2, H * 0.26);
+    x.globalAlpha = 0.86; sp(8); x.font = '900 58px Cinzel, serif';
+    x.fillText('MÜHÜR VE VİCDAN', W / 2, H * 0.83);
+    sp(8); x.font = '700 24px Cinzel, serif'; x.globalAlpha = 0.62;
+    x.fillText('ONE SHOT  ·  GÖREV KAYDI', W / 2, H * 0.875);
+    x.save(); x.globalAlpha = 0.5;
+    x.translate(W * 0.79, H * 0.67); x.rotate(-0.24);
+    const sw = W * 0.22; x.drawImage(stamp, -sw / 2, -sw / 2, sw, sw * stamp.height / stamp.width);
+    x.restore();
+    x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+    return c;
+  }
+
+  /* ══════════════ SHADER ══════════════ */
+  const VS = `attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+  const FS = `
+precision highp float;
+uniform vec2 uRes; uniform vec4 uPaper; uniform vec4 uWhole;   // whole: offx, offy, açı, ölçek
+uniform float uSplit, uFade, uTime, uDpr, uBurn, uBloodT, uLight;
+uniform vec4 uDrops[${MAX_DROPS}];
+uniform sampler2D uTex;
+float h(float n){ return fract(sin(n*127.1)*43758.5453); }
+float h2(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float n1(float x){ float i=floor(x), f=fract(x); return mix(h(i),h(i+1.),f*f*(3.-2.*f)); }
+float n2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h2(i),h2(i+vec2(1,0)),f.x), mix(h2(i+vec2(0,1)),h2(i+vec2(1,1)),f.x), f.y); }
+float fbm(float x){ float a=.5, s=0.; for(int i=0;i<5;i++){ s+=a*n1(x); x*=2.07; a*=.5; } return s; }
+float fbm2(vec2 p){ float a=.5, s=0.; for(int i=0;i<4;i++){ s+=a*n2(p); p*=2.03; a*=.5; } return s; }
+mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+float seamX(float v){ return .5 + (fbm(v*5.+3.)-.5)*.07 + (n1(v*90.)-.5)*.006; }
+
+// ekran pikselini kâğıdın yerel uv'sine çevir (önce parça dönüşümü, sonra bütün kâğıt dönüşümü)
+vec2 toUV(vec2 p, float side, float s){
+  vec2 C  = uPaper.xy;
+  vec2 C2 = C + uWhole.xy;
+  vec2 off = vec2(side*(s*.66*uRes.x + s*s*.15*uRes.x), s*s*.45*uRes.y - s*.06*uRes.y);
+  float ang = side*(s*.55 + s*s*.5);
+  vec2 q1 = rot(-ang)*(p - C2 - off) + C2;
+  vec2 q  = rot(-uWhole.z)*(q1 - C2)/uWhole.w + C;
+  return (q - (C - uPaper.zw*.5))/uPaper.zw;
+}
+
+// ── KAN DAMLALARI: parşömene sıçramış, kâğıda işlemiş koyu kan.
+// Konumlar kâğıdın kendi uv'sinde tutulur; damlalar kâğıtla birlikte yırtılır, savrulur ve yanar.
+float bloodField(vec2 uv){
+  vec2 q0 = uv*uPaper.zw;                                  // kâğıt pikseli
+  float k = uPaper.z/600.;                                 // yarıçap ölçeği (kâğıt genişliğine göre)
+  float f = 0.;
+  for (int i=0;i<${MAX_DROPS};i++){
+    vec4 D = uDrops[i];
+    float t = uBloodT - D.w;
+    if (D.z <= 0. || t <= 0.) continue;
+    float ap = clamp(t/.05, 0., 1.);
+    vec2 c = D.xy*uPaper.zw;
+    float r = D.z*k*ap;
+    float drip = max(0., t - .3);
+    float run = drip*drip*D.z*.35*k;                        // kâğıt üstünde aşağı doğru hafif süzülme
+    vec2 q = q0 - c;
+    if (q.y > 0.) q.y = q.y/(1. + run/max(r,1.));
+    q *= 1. + (n2(q0*.18 + float(i)*13.) - .5)*.35;          // kâğıt lifine emilen düzensiz kenar
+    f += r*r/(dot(q,q) + 1.);
+    for (int j=0;j<4;j++){
+      float fj = float(j);
+      float ang = h(float(i)*7.+fj)*6.2831;
+      float dist = r*(1.6 + h(float(i)*3.+fj*5.)*2.2);
+      float rr = r*(.12 + h(float(i)+fj*11.)*.22);
+      vec2 qj = q0 - c - vec2(cos(ang), sin(ang))*dist*ap;
+      f += rr*rr/(dot(qj,qj) + 1.);
+    }
+  }
+  return f;
+}
+
+// kanı kâğıt rengine uygula (parça içinde, yanma ve alfa öncesi)
+vec3 applyBlood(vec3 c, vec2 uv, float L){
+  if (uBloodT <= 0.) return c;
+  float f = bloodField(uv);
+  float a = smoothstep(.85, 1.2, f);
+  if (a <= 0.) return c;
+  vec2 e = vec2(1.5*uDpr)/uPaper.zw;
+  vec2 g = vec2(bloodField(uv+vec2(e.x,0.)) - f, bloodField(uv+vec2(0.,e.y)) - f);
+  vec3 n = normalize(vec3(-g*5., 1.));
+  float spec = pow(max(dot(n, normalize(vec3(-.4,-.6,1.))), 0.), 50.);
+  float thick = smoothstep(1., 4., f);
+  // koyu, pıhtılaşmaya yüz tutmuş kan; kâğıda emildiği kenarda kahverengimsi hale
+  vec3 bc = mix(vec3(.30,.015,.02), vec3(.13,.0,.01), thick) * L;
+  float halo = smoothstep(.55, .9, f) * (1. - a);
+  c = mix(c, c*vec3(.62,.38,.32), halo*.6);
+  c = mix(c, bc, a*.95);
+  c += spec*.28*L*a;
+  return c;
+}
+
+vec4 piece(vec2 p, float side, float s, out float sh){
+  vec2 uv = toUV(p, side, s);
+  // gölge: aynı dönüşüm, biraz aşağıda, yumuşak
+  vec2 suv = toUV(p - vec2(0., (12. + 40.*s)*uDpr), side, s);
+  vec2 dd = max(max(-suv, suv-1.), 0.)*uPaper.zw;
+  sh = (1. - smoothstep(0., (40. + 60.*s)*uDpr, length(dd))) * .62 * (1.-smoothstep(.04,.3,s)) * uLight;  // açılınca dikdörtgen gölge kalmasın
+  if (uv.x<-.02||uv.x>1.02||uv.y<-.02||uv.y>1.02) return vec4(0.);
+  float px = uPaper.z;
+  vec2 dEdge = min(uv, 1.-uv)*uPaper.zw;
+  float e = min(dEdge.x, dEdge.y) + (fbm2(uv*vec2(30.,40.)+side)-.5)*6.*uDpr;
+  float tear = min(1., s*14.);
+  float d = (uv.x - seamX(uv.y))*px*side;
+  float fib = (n1(uv.y*260.+side*7.)-.5)*6.*uDpr*tear;
+  float aSeam = smoothstep(-.6, .6, d - fib - 1.5*tear*uDpr);
+  if (s <= 0. && side < 0.) aSeam = 1.;
+  float a = smoothstep(0., 1.5*uDpr, e) * aSeam;
+
+  vec3 c = texture2D(uTex, uv).rgb;
+  float fl = 1. + .035*sin(uTime*7.1) + .02*sin(uTime*13.3+1.);
+  float L = (.52 + .62*exp(-length(p - vec2(uRes.x*.5, uRes.y*.08))/(uRes.y*.75))) * fl;
+  c *= vec3(.94,.86,.76)*L*mix(.25, 1., uLight);
+  for (int i=1;i<3;i++){
+    float f = float(i)/3.; float y = (uv.y - f)*uPaper.w;
+    c *= 1. - .13*exp(-pow(y/(5.*uDpr),2.));
+    c *= 1. + .06*exp(-pow((y-7.*uDpr)/(5.*uDpr),2.));
+  }
+  c *= mix(.42, 1., smoothstep(0., 55.*uDpr, e + (fbm2(uv*12.)-.5)*40.*uDpr));
+  float edgeL = exp(-max(d,0.)/(2.5*uDpr)) * tear;
+  c = mix(c, vec3(.86,.78,.62)*L, edgeL*.55);
+  c = applyBlood(c, uv, L);
+
+  // ── YANMA: uçlardan (köşeler en hızlı) ve yırtık hattından içeri ilerleyen cephe ──
+  vec3 glow = vec3(0.);
+  if (uBurn > 0.) {
+    float eAll = min(e, d*1.7 + 30.*uDpr);
+    float bn = fbm2(uv*vec2(5.,7.) + side*3.1 + uTime*.15);
+    float bd = eAll + (bn-.5)*90.*uDpr;
+    float front = uBurn * .36 * uPaper.z;
+    a *= smoothstep(front - 2.5*uDpr, front + 1.*uDpr, bd);                      // yanıp giden kısım
+    float charW = 26.*uDpr;
+    c *= mix(.06, 1., smoothstep(front, front + charW, bd));                      // kömürleşmiş bant
+    c *= mix(.7, 1., smoothstep(front, front + charW*3., bd));                    // ısıdan kahverengileşme
+    float fl2 = .65 + .55*n2(uv*90. + uTime*6.);
+    float g = exp(-abs(bd - front - 1.5*uDpr)/(3.2*uDpr)) * fl2;
+    glow = (vec3(1.,.38,.06)*g*1.7 + vec3(1.,.85,.5)*pow(g,3.)*1.2) * smoothstep(0., .04, uBurn);
+  }
+  a *= 1. - smoothstep(.82, 1., s);
+  return vec4(c*a + glow*a, a);
+}
+
+void main(){
+  vec2 p = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);
+  float s = uSplit;
+  vec2 r = (p - uRes*.5)/uRes.y;
+  vec3 bg = vec3(.035,.028,.027) + vec3(.07,.05,.04)*exp(-dot(r,r)*2.2)*uLight;
+  bg += (h2(p+fract(uTime)*91.)-.5)*.018;
+  // kâğıt yanarken odaya turuncu ışık vurur
+  bg += vec3(.16,.05,.01)*uBurn*(1.-uBurn)*2.*exp(-dot(r,r)*1.5);
+  float bgA = uFade;
+  vec4 col = vec4(bg*bgA, bgA);
+  float shL, shR;
+  vec4 L = piece(p, -1., s, shL);
+  vec4 R = piece(p,  1., s, shR);
+  float sh = max(shL, shR);
+  col = col*(1.-sh) + vec4(0.,0.,0.,sh);
+  col = L + col*(1.-L.a);
+  col = R + col*(1.-R.a);
+
+  gl_FragColor = col;
+}`;
+
+  function compile(type, src) {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  async function initGL() {
+    if (gl) return true;
+    canvas = document.createElement('canvas');
+    intro.insertBefore(canvas, intro.firstChild);
+    gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+    if (!gl) return false;
+    prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    ['uRes','uPaper','uWhole','uSplit','uFade','uTime','uDpr','uBurn','uBloodT','uLight','uDrops','uTex']
+      .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+    const paper = await buildPaperCanvas();
+    const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, paper);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(U.uTex, 0);
+    return true;
+  }
+
+  function doLayout() {
+    const vw = innerWidth, vh = innerHeight;
+    let ph = Math.min(vh * 0.8, 900), pw = ph * PAPER_ASPECT;
+    if (pw > vw * 0.9) { pw = vw * 0.9; ph = pw / PAPER_ASPECT; }
+    layout = { cx: vw / 2, cy: vh / 2, pw, ph, seal: pw * 0.36 };
+    sealEl.style.width = sealEl.style.height = layout.seal + 'px';
+    hint.style.top = (layout.cy + ph / 2 + 18) + 'px';
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const W = Math.round(vw * dpr), H = Math.round(vh * dpr);
+    if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+    return dpr;
+  }
+
+  const clamp01 = v => Math.max(0, Math.min(1, v));
+  // 1D değer gürültüsü (titreme için pürüzsüz rastgele)
+  const jit = (x, seed) => { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f);
+    const r = n => { const s = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453; return (s - Math.floor(s)) * 2 - 1; };
+    return r(i) * (1 - u) + r(i + 1) * u; };
+
+  function spawnBlood() {
+    // damlalar mührün (kâğıt ortası) çevresinden dışa doğru kâğıda sıçrar
+    drops = new Float32Array(MAX_DROPS * 4);
+    const delays = [];
+    const n = 10 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < n; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const far = Math.random() < 0.35;
+      const dist = far ? 0.24 + Math.random() * 0.18 : 0.13 + Math.random() * 0.12;   // mührün dışında kalsın
+      const x = 0.5 + Math.cos(ang) * dist;
+      const y = 0.5 + Math.sin(ang) * dist * PAPER_ASPECT;
+      const big = Math.random() < 0.3;
+      const rad = big ? 13 + Math.random() * 10 : 3.5 + Math.random() * 6;
+      const del = Math.random() * 0.12;
+      drops.set([x, y, rad, del], i * 4);
+      delays.push(del);
+    }
+    SFX.blood(delays.filter((_, i) => i % 3 === 0));
+  }
+
+  function frame(now) {
+    if (!running) return;
+    const dpr = doLayout();
+    const t = (now - t0) / 1000;
+    const tp = (now - tPhase) / 1000;
+    let wx = 0, wy = 0, wa = 0, ws = 1, s = 0, fade = 1, burn = 0, bloodT = 0, light = 1;
+
+    if (phase === 'in') {
+      // yukarıdan sallanarak düşen kâğıt: sönümlü yay
+      const k = tp;
+      const y = 1 - Math.exp(-5.2 * k) * Math.cos(7.5 * k);
+      wy = -(1 - y) * innerHeight * 1.05;
+      wa = -0.32 * Math.exp(-3.4 * k) * Math.cos(6.3 * k + 0.4);
+      wx = 40 * Math.exp(-3 * k) * Math.sin(5 * k);
+      ws = 0.9 + 0.1 * (1 - Math.exp(-5 * k));
+      light = clamp01(k / 0.9);
+      if (k > 1.6) { phase = 'idle'; tPhase = now; intro.classList.add('ready'); }
+    } else if (phase === 'idle') {
+      wa = 0.006 * Math.sin(t * 0.9);
+      wy = 3 * Math.sin(t * 1.3);
+    } else if (phase === 'shake') {
+      const k = clamp01(tp / T_SHAKE);
+      const amp = Math.pow(k, 1.6);
+      const f = 38;
+      wx = jit(tp * f, 1) * 11 * amp + jit(tp * 9, 4) * 4 * amp;
+      wy = jit(tp * f, 2) * 8 * amp;
+      wa = jit(tp * f * 0.8, 3) * 0.035 * amp;
+      ws = 1 + 0.015 * amp;
+      if (tp >= T_SHAKE) {
+        phase = 'tear'; tPhase = now;
+        sealEl.classList.add('broken');
+        SFX.tear(); spawnBlood(); SFX.fire();
+      }
+    } else if (phase === 'tear') {
+      const k = tp;
+      // "cart": ilk 90 ms'de ani açılma, sonra savrulma
+      const snap = 0.075 * (1 - Math.exp(-k * 45));
+      const fly = Math.pow(clamp01((k - 0.22) / 1.5), 2.1);
+      s = Math.min(1, snap + fly);
+      // yırtılma anında kısa bir geri tepme sarsıntısı
+      const kick = Math.exp(-k * 9);
+      wx = jit(k * 50, 7) * 9 * kick; wy = jit(k * 50, 8) * 7 * kick;
+      burn = clamp01((k - 0.12) / 1.7);
+      bloodT = k;
+      fade = 1 - clamp01((k - 0.7) / 1.2);
+      if (k > T_END) { finish(); return; }
+    }
+
+    // mühür (ve yarımları) kâğıtla birlikte hareket eder
+    const { cx, cy, seal } = layout;
+    sealEl.style.transform =
+      `translate(${cx - seal / 2 + wx}px, ${cy - seal / 2 + wy}px) rotate(${wa}rad) scale(${ws})`;
+    if (phase === 'tear') {
+      const ox = s * 0.66 * innerWidth + s * s * 0.15 * innerWidth;
+      const oy = s * s * 0.45 * innerHeight - s * 0.06 * innerHeight;
+      const ang = s * 0.55 + s * s * 0.5;
+      const fall = Math.max(0, tp - 0.05);
+      const g = 700 * fall * fall;
+      halfL.style.transform = `translate(${-ox - 40 * fall}px, ${oy + g}px) rotate(${-(ang + 1.2 * fall)}rad)`;
+      halfR.style.transform = `translate(${ox + 40 * fall}px, ${oy + g}px) rotate(${ang + 1.2 * fall}rad)`;
+      crumbs.style.transform = `translate(0, ${1300 * fall * fall}px)`;
+      crumbs.style.opacity = String(1 - clamp01(fall / 0.8));
+    }
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.uniform2f(U.uRes, canvas.width, canvas.height);
+    gl.uniform4f(U.uPaper, cx * dpr, cy * dpr, layout.pw * dpr, layout.ph * dpr);
+    gl.uniform4f(U.uWhole, wx * dpr, wy * dpr, wa, ws);
+    gl.uniform1f(U.uSplit, s);
+    gl.uniform1f(U.uFade, fade);
+    gl.uniform1f(U.uTime, t);
+    gl.uniform1f(U.uDpr, dpr);
+    gl.uniform1f(U.uBurn, burn);
+    gl.uniform1f(U.uBloodT, bloodT);
+    gl.uniform1f(U.uLight, light);
+    gl.uniform4fv(U.uDrops, drops);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function breakSeal() {
+    if (phase !== 'idle' && phase !== 'in') return;
+    audio();
+    phase = 'shake'; tPhase = performance.now();
+    intro.classList.add('opening');
+    SFX.shake();
+  }
+
+  function finish() {
+    running = false; cancelAnimationFrame(raf);
+    stopSamples();
+    intro.style.display = 'none';
+    document.body.style.overflow = '';
+    restampEmblem();
+  }
+
+  function reset() {
+    phase = 'in';
+    drops = new Float32Array(MAX_DROPS * 4);
+    intro.classList.remove('opening', 'ready');
+    sealEl.classList.remove('broken');
+    [halfL, halfR, crumbs].forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
+  }
+
+  async function show(fromClick) {
+    reset();
+    intro.style.display = '';
+    document.body.style.overflow = 'hidden';
+    try {
+      if (!(await initGL())) throw new Error('webgl yok');
+    } catch (err) {
+      console.warn('Mühür girişi açılamadı:', err);
+      intro.style.display = 'none'; document.body.style.overflow = '';
+      return;
+    }
+    intro.classList.add('gl-ready');
+    running = true; t0 = tPhase = performance.now();
+    if (fromClick === true) SFX.arrive();
+    raf = requestAnimationFrame(frame);
+    intro.focus({ preventScroll: true });
+  }
+
+  intro.addEventListener('click', e => { if (e.target !== skip) breakSeal(); });
+  intro.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); breakSeal(); }
+    if (e.key === 'Escape') finish();
+  });
+  skip.addEventListener('click', e => { e.stopPropagation(); finish(); });
+
+  if (!reduce) {
+    emblem.classList.add('replayable');
+    emblem.title = 'Mührü yeniden kır';
+    emblem.addEventListener('click', () => show(true));
+  }
+
+  if (intro.style.display !== 'none') show(false);
+})();
+</script>
+<script>
+  window.SPLASH_CURSOR_CONFIG = {
+    RAINBOW_MODE: false,
+    COLOR: '#8e1b1b',
+    COLOR_PALETTE: ['#8e1b1b', '#c43a2c', '#c9a84c', '#2a2626']
+  };
+</script>
+<script src="../../../splash-cursor.js"></script>
+</body>
+</html>

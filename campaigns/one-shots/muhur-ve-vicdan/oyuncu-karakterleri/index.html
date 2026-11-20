@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oyuncu Karakterleri - Mühür ve Vicdan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f5d080;
+      --gold-dim: #7a6030;
+      --wax: #8e1b1b;
+      --wax-bright: #c43a2c;
+      --bone: #e6dcc6;
+      --parchment: #f2e8d0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes titleReveal {
+      from { opacity: 0; letter-spacing: 18px; transform: translateY(-16px); }
+      to   { opacity: 1; letter-spacing: 6px;  transform: translateY(0); }
+    }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 10px rgba(142,27,27,0.5), 0 0 30px rgba(196,58,44,0.08); }
+      50%      { box-shadow: 0 0 22px rgba(196,58,44,0.6), 0 0 50px rgba(196,58,44,0.18); }
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.94); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes sealBreath {
+      0%,100% { opacity: .82; }
+      50%     { opacity: .95; }
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Lora', Georgia, serif;
+      background: url('https://cdna.artstation.com/p/assets/images/images/085/229/340/large/edouard-noisette-cathedral-01-overcast.jpg?1740304394') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--parchment);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 110%, rgba(110,18,14,0.35) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(6,6,8,0.88) 0%, rgba(10,10,12,0.74) 40%, rgba(10,9,10,0.8) 80%, rgba(6,4,4,0.94) 100%);
+      z-index: 0;
+    }
+    body::after {
+      content: "";
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative; z-index: 1;
+      padding: 3rem 1.5rem 5rem;
+      text-align: center;
+    }
+
+    /* ── HEADER ── */
+    .header { margin-bottom: 3.5rem; animation: pageFadeIn 1.2s ease both; }
+
+    .inquisition-seal { width: 96px; height: 96px; margin: 0 auto 1.4rem; }
+    .inquisition-seal img {
+      width: 100%; height: 100%; display: block;
+      filter: drop-shadow(0 2px 1.5px rgba(0,0,0,.95)) drop-shadow(0 6px 10px rgba(0,0,0,.55)) brightness(.84) contrast(1.06) saturate(.8);
+    }
+
+    .subtitle-pre {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: 0.6rem; opacity: 0.85;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 5vw, 3.2rem);
+      font-weight: 900; letter-spacing: 6px; text-transform: uppercase;
+      color: var(--bone);
+      margin: 0 0 0.5rem;
+      text-shadow: 0 0 30px rgba(196,58,44,0.35), 0 0 60px rgba(201,168,76,0.12), 2px 2px 8px rgba(0,0,0,0.9);
+      animation: titleReveal 1.4s cubic-bezier(.22,1,.36,1) .2s both;
+    }
+
+    .divider {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; margin: 1.2rem auto; max-width: 500px;
+    }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
+    .divider-diamond {
+      width: 7px; height: 7px; background: var(--wax-bright);
+      transform: rotate(45deg); box-shadow: 0 0 8px rgba(196,58,44,0.6);
+    }
+
+    .subtitle-post {
+      font-style: italic; font-size: 0.9rem;
+      color: rgba(242,232,208,0.55); letter-spacing: 1px; margin-top: 0.6rem;
+    }
+
+    /* ── GRID ── */
+    .character-grid {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 2.4rem; max-width: 1400px; margin: 0 auto 4rem;
+    }
+
+    /* ── SİCİL DOSYASI KARTLARI ──
+       Her kart eskimiş bir parşömen dosya: üstte sicil numarası, köşe takozlarına
+       oturtulmuş fotoğraf, daktilo ile yazılmış ad ve kâğıda basılmış kırmızı damga.
+       Fotoğraf varsayılan olarak kâğıda basılmış sepya mürekkep gibidir; üzerine
+       gelince imleçten başlayıp mürekkep yayılır gibi renklenir (WebGL, aşağıdaki script). */
+    .dossier {
+      --tilt: -1.2deg;
+      width: 190px;                       /* Campaign 5 kartlarıyla aynı genişlik */
+      position: relative; display: block;
+      text-decoration: none; color: inherit;
+      transform: rotate(var(--tilt));
+      transition: transform .35s cubic-bezier(.2,.8,.3,1), filter .35s;
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,.7)) drop-shadow(0 14px 22px rgba(0,0,0,.55));
+      animation: cardIn 0.7s ease both;
+    }
+    .dossier:nth-child(2n) { --tilt: 1.1deg; }
+    .dossier:nth-child(3n) { --tilt: -0.5deg; }
+    .dossier:nth-child(1) { animation-delay: 0.05s; }
+    .dossier:nth-child(2) { animation-delay: 0.12s; }
+    .dossier:nth-child(3) { animation-delay: 0.19s; }
+    .dossier:nth-child(4) { animation-delay: 0.26s; }
+    .dossier:nth-child(5) { animation-delay: 0.33s; }
+    .dossier:nth-child(6) { animation-delay: 0.40s; }
+    .dossier:hover, .dossier:focus-visible {
+      transform: rotate(0deg) translateY(-6px) scale(1.04);
+      filter: drop-shadow(0 4px 3px rgba(0,0,0,.75)) drop-shadow(0 22px 30px rgba(0,0,0,.6));
+      outline: none;
+    }
+
+    .dossier-paper {
+      position: relative;
+      padding: 14px 14px 16px;
+      background: url('../img/parsomen.jpg') center / 260% auto;
+      color: #3b1d12;
+      /* yanık/kirli kenarlar + kâğıt hacmi */
+      box-shadow:
+        inset 0 0 22px rgba(70,35,10,.55),
+        inset 0 0 4px rgba(50,25,8,.6);
+      border-radius: 2px;
+    }
+    .dossier:nth-child(2) .dossier-paper { background-position: 20% 30%; }
+    .dossier:nth-child(3) .dossier-paper { background-position: 80% 60%; }
+    .dossier:nth-child(4) .dossier-paper { background-position: 40% 90%; }
+    .dossier-paper::after {               /* ortadan bir kez katlanmış iz */
+      content: ''; position: absolute; left: 0; right: 0; top: 58%; height: 10px;
+      background: linear-gradient(180deg, rgba(60,30,10,.16), rgba(255,240,210,.12) 55%, transparent);
+      pointer-events: none;
+    }
+
+    .dossier-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: 'Cinzel', serif; font-size: .52rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(59,29,18,.75);
+      border-bottom: 1px solid rgba(59,29,18,.35);
+      padding-bottom: 6px; margin-bottom: 10px;
+    }
+
+    .dossier-photo {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      background: #2a1d14;
+      box-shadow: 0 1px 2px rgba(0,0,0,.55), 0 0 0 3px rgba(240,228,200,.55);
+    }
+    .dossier-photo img.portrait, .dossier-photo canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; display: block;
+    }
+    /* WebGL yoksa yedek görünüm: sepya baskı, üstüne gelince renk */
+    .dossier-photo img.portrait { filter: sepia(.85) contrast(1.05) brightness(.85); transition: filter .5s; }
+    .dossier:hover .dossier-photo img.portrait { filter: none; }
+    .dossier-photo.gl img.portrait { visibility: hidden; }
+
+    /* fotoğraf köşe takozları */
+    .photo-corner {
+      position: absolute; width: 18px; height: 18px; z-index: 2;
+      background: linear-gradient(135deg, #2b1a10 50%, transparent 50%);
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,.5));
+    }
+    .photo-corner.tl { top: -3px; left: -3px; }
+    .photo-corner.tr { top: -3px; right: -3px; transform: rotate(90deg); }
+    .photo-corner.br { bottom: -3px; right: -3px; transform: rotate(180deg); }
+    .photo-corner.bl { bottom: -3px; left: -3px; transform: rotate(270deg); }
+
+    /* portresi olmayan dosya: boş, mühürlenmiş fotoğraf yeri */
+    .dossier-photo.empty {
+      display: flex; align-items: center; justify-content: center;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgba(110,70,40,.25), transparent 70%),
+        rgba(59,29,18,.12);
+      box-shadow: inset 0 0 0 1px rgba(59,29,18,.35), inset 0 0 18px rgba(59,29,18,.25);
+    }
+    .dossier-photo.empty .photo-seal {
+      width: 46%; margin-bottom: 22%;
+      filter: drop-shadow(0 2px 1.5px rgba(0,0,0,.8)) drop-shadow(0 6px 8px rgba(0,0,0,.4)) brightness(.86) saturate(.8);
+    }
+
+    .dossier-name {
+      margin-top: 12px;
+      font-family: 'Cinzel', serif; font-size: .74rem; font-weight: 900;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: #2e150c;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .dossier-role {
+      margin-top: 3px;
+      font-family: 'Lora', serif; font-style: italic; font-size: .66rem;
+      color: rgba(59,29,18,.7); text-align: left;
+    }
+
+    /* kâğıda basılmış kırmızı mürekkep damgası */
+    .dossier-stamp {
+      position: absolute; width: 74px; right: 8px; bottom: 30px;
+      transform: rotate(-16deg);
+      mix-blend-mode: multiply; opacity: .62;
+      pointer-events: none;
+    }
+    /* mühürlü dosyada çapraz "MÜHÜRLÜ" ibaresi, damga mürekkebinin dokusuyla */
+    .dossier-sealed-mark {
+      position: absolute; left: 50%; top: 66%;
+      transform: translate(-50%, -50%) rotate(-14deg);
+      padding: 4px 12px;
+      font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 900; letter-spacing: 4px;
+      color: #9a1616;
+      border: 3px double #9a1616;
+      mix-blend-mode: multiply; opacity: .92;
+      -webkit-mask: url('../img/murekkep-doku.png') 0 0 / 128px 128px repeat;
+              mask: url('../img/murekkep-doku.png') 0 0 / 128px 128px repeat;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ── BACK BUTTON ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--bone); text-decoration: none;
+      border: 1px solid rgba(196,58,44,0.45);
+      padding: 0.65rem 1.6rem; border-radius: 4px;
+      background: rgba(10,8,6,0.7);
+      transition: all 0.25s ease;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+    .back-link:hover {
+      background: rgba(142,27,27,0.18);
+      border-color: var(--wax-bright);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 900px) {
+      .dossier { width: 160px; }
+      .character-grid { gap: 1.6rem; }
+    }
+    @media (max-width: 540px) {
+      main { padding: 2rem 1rem 4rem; }
+      h1 { letter-spacing: 3px; }
+      .character-grid { gap: 1.2rem .9rem; }
+      .dossier { width: calc(50% - 0.5rem); }
+      .dossier-paper { padding: 10px 10px 12px; }
+      .dossier-name { font-size: .64rem; }
+      .dossier-stamp { width: 56px; bottom: 26px; }
+      .dossier-sealed-mark { font-size: .8rem; letter-spacing: 3px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="header">
+      <div class="inquisition-seal">
+        <img src="../img/muhur.webp" alt="Mühür ve Vicdan mührü">
+      </div>
+
+      <div class="subtitle-pre">İmparatorluk Engizisyonu — Görevli Sicilleri</div>
+      <h1>Oyuncu Karakterleri</h1>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-diamond"></div>
+        <div class="divider-line"></div>
+      </div>
+      <div class="subtitle-post">One Shot &mdash; Mühür ve Vicdan</div>
+    </div>
+
+    <div class="character-grid">
+
+      <a class="dossier" href="ceren/index.html">
+        <div class="dossier-paper">
+          <div class="dossier-head"><span>Sicil</span><span>№ I</span></div>
+          <div class="dossier-photo empty">
+            <img class="photo-seal" src="../img/muhur-kucuk.webp" alt="">
+          </div>
+          <div class="dossier-name">Ceren'in Karakteri</div>
+          <div class="dossier-role">Görevli · Engizisyon</div>
+          <div class="dossier-sealed-mark">Mühürlü</div>
+        </div>
+      </a>
+
+      <a class="dossier" href="egze/index.html">
+        <div class="dossier-paper">
+          <div class="dossier-head"><span>Sicil</span><span>№ II</span></div>
+          <div class="dossier-photo">
+            <img class="portrait" src="egze/Egze Çar.png" alt="Egze'nin Karakteri">
+            <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
+            <span class="photo-corner br"></span><span class="photo-corner bl"></span>
+          </div>
+          <div class="dossier-name">Egze'nin Karakteri</div>
+          <div class="dossier-role">Görevli · Engizisyon</div>
+          <img class="dossier-stamp" src="../img/damga.webp" alt="">
+        </div>
+      </a>
+
+      <a class="dossier" href="kubra/index.html">
+        <div class="dossier-paper">
+          <div class="dossier-head"><span>Sicil</span><span>№ III</span></div>
+          <div class="dossier-photo empty">
+            <img class="photo-seal" src="../img/muhur-kucuk.webp" alt="">
+          </div>
+          <div class="dossier-name">Kübra'nın Karakteri</div>
+          <div class="dossier-role">Görevli · Engizisyon</div>
+          <div class="dossier-sealed-mark">Mühürlü</div>
+        </div>
+      </a>
+
+      <a class="dossier" href="vespera/index.html">
+        <div class="dossier-paper">
+          <div class="dossier-head"><span>Sicil</span><span>№ IV</span></div>
+          <div class="dossier-photo">
+            <img class="portrait" src="vespera/Vespera.png" alt="Vespera">
+            <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
+            <span class="photo-corner br"></span><span class="photo-corner bl"></span>
+          </div>
+          <div class="dossier-name">Vespera</div>
+          <div class="dossier-role">Görevli · Engizisyon</div>
+          <img class="dossier-stamp" src="../img/damga.webp" alt="">
+        </div>
+      </a>
+
+    </div>
+
+    <a class="back-link" href="../index.html">← Geri Dön</a>
+  </main>
+<script>
+/* ══════════════ SİCİL FOTOĞRAFLARI: MÜREKKEP AÇILIMI (WebGL) ══════════════
+   Fotoğraf kâğıda basılmış sepya mürekkep gibi durur. Üzerine gelince imlecin
+   olduğu yerden başlayıp düzensiz, lif lif yayılan bir mürekkep lekesiyle asıl
+   renklerine döner; ayrılınca aynı noktaya geri çekilir. Her fotoğraf kendi
+   küçük WebGL bağlamını kullanır (sayfada en fazla birkaç tane). */
+(function () {
+  const VS = 'attribute vec2 p; varying vec2 v; void main(){ v = p*.5+.5; v.y = 1.-v.y; gl_Position = vec4(p,0.,1.); }';
+  const FS = `
+precision mediump float;
+varying vec2 v;
+uniform sampler2D uTex; uniform vec4 uCrop; uniform vec2 uMouse; uniform float uR, uT, uAsp;
+float h(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=.5,s=0.; for(int i=0;i<5;i++){ s+=a*n(p); p*=2.1; a*=.5; } return s; }
+void main(){
+  vec2 uv = uCrop.xy + v*uCrop.zw;                  // object-fit: cover, üstten hizalı
+  vec3 c = texture2D(uTex, uv).rgb;
+  float l = dot(c, vec3(.299,.587,.114));
+  // kâğıda basılmış sepya mürekkep: koyu kahve gölgeler, parşömen açıkları
+  vec3 ink = mix(vec3(.17,.09,.05), vec3(.86,.76,.58), smoothstep(.04,.92,l));
+  ink *= .92 + .16*fbm(v*vec2(9.,12.));             // baskının eşitsiz mürekkebi
+  // açılım lekesi: imleçten uzaklık + kâğıt lifi gürültüsü
+  vec2 d = (v - uMouse)*vec2(uAsp,1.);
+  float dist = length(d) + (fbm(v*5. + uT*.05) - .5)*.38 + (n(v*60.) - .5)*.04;
+  float m = smoothstep(uR, uR - .1, dist);
+  float rim = smoothstep(.09, 0., abs(dist - uR + .02)) * step(.001, uR);
+  vec3 col = mix(ink, c*vec3(1.,.97,.92), m);
+  col *= 1. - rim*.45;                              // lekenin kenarında koyu mürekkep birikintisi
+  gl_FragColor = vec4(col, 1.);
+}`;
+
+  function setup(photo) {
+    const img = photo.querySelector('img.portrait');
+    const card = photo.closest('.dossier');
+    const cv = document.createElement('canvas');
+    const gl = cv.getContext('webgl', { antialias: false, premultipliedAlpha: false });
+    if (!gl) return;
+    const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o);
+      if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+    const pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(pr); gl.useProgram(pr);
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {}; ['uTex','uCrop','uMouse','uR','uT','uAsp'].forEach(k => U[k] = gl.getUniformLocation(pr, k));
+    const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    photo.insertBefore(cv, img.nextSibling);
+    photo.classList.add('gl');
+
+    let r = 0, target = 0, mx = .5, my = .4, raf = 0, hover = false;
+    const t0 = performance.now();
+    function size() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const w = Math.round(photo.clientWidth * dpr), h = Math.round(photo.clientHeight * dpr);
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+      // cover kırpması (üstten hizalı)
+      const ia = img.naturalWidth / img.naturalHeight, ba = w / h;
+      let cw = 1, ch = 1, cx = 0, cy = 0;
+      if (ia > ba) { cw = ba / ia; cx = (1 - cw) / 2; } else { ch = ia / ba; cy = 0; }
+      gl.uniform4f(U.uCrop, cx, cy, cw, ch);
+      gl.uniform1f(U.uAsp, ba);
+      gl.viewport(0, 0, w, h);
+    }
+    function draw(now) {
+      r += (target - r) * (hover ? .045 : .07);
+      size();
+      gl.uniform2f(U.uMouse, mx, my);
+      gl.uniform1f(U.uR, r);
+      gl.uniform1f(U.uT, (now - t0) / 1000);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      if (Math.abs(target - r) > .002 || hover) raf = requestAnimationFrame(draw); else raf = 0;
+    }
+    const kick = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    const pos = e => { const b = photo.getBoundingClientRect(); mx = (e.clientX - b.left) / b.width; my = (e.clientY - b.top) / b.height; };
+    card.addEventListener('pointerenter', e => { hover = true; target = 1.7; pos(e); kick(); });
+    card.addEventListener('pointermove', e => { if (r < .6) pos(e); });
+    card.addEventListener('pointerleave', () => { hover = false; target = 0; kick(); });
+    card.addEventListener('focus', () => { hover = true; mx = .5; my = .4; target = 1.7; kick(); });
+    card.addEventListener('blur', () => { hover = false; target = 0; kick(); });
+    addEventListener('resize', kick);
+    // dokunmatik ekranda üzerine gelme yok: fotoğraf ekrana girince ortadan açılır
+    if (matchMedia('(hover: none)').matches && 'IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(en => {
+        if (en.isIntersecting) { mx = .5; my = .35; target = 1.7; setTimeout(kick, 350); }
+      }), { threshold: .6 }).observe(photo);
+    }
+    kick();
+  }
+
+  document.querySelectorAll('.dossier-photo:not(.empty)').forEach(photo => {
+    const img = photo.querySelector('img.portrait');
+    const go = () => { try { setup(photo); } catch (e) { console.warn('Mürekkep açılımı kurulamadı:', e); } };
+    if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, { once: true });
+  });
+})();
+</script>
+<script>
+  window.SPLASH_CURSOR_CONFIG = {
+    RAINBOW_MODE: false,
+    COLOR: '#8e1b1b',
+    COLOR_PALETTE: ['#8e1b1b', '#c43a2c', '#c9a84c', '#2a2626']
+  };
+</script>
+<script src="../../../../splash-cursor.js"></script>
+</body>
+</html>
