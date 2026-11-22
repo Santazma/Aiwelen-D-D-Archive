@@ -217,6 +217,7 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
      ona eşitlenir ve oradan akmaya devam eder; null dönerse kendi saatiyle sürer. */
   function loop(canvas, g, baseScale, onFrame, clock) {
     let raf = 0, t0 = 0, last = 0, slow = 0, frames = 0, scale = baseScale, running = false, W = 0, H = 0;
+    const minScale = baseScale * .35;
     function resize() {
       W = innerWidth; H = innerHeight;
       const w = Math.max(1, Math.floor(W * scale)), hh = Math.max(1, Math.floor(H * scale));
@@ -228,8 +229,14 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
       if (t0 && now - last < 12.5) { if (!document.hidden) raf = requestAnimationFrame(frame); return; }
       if (!t0) t0 = last = now;
       const dt = now - last; last = now;
-      // kare süresi uzun kalırsa çözünürlük düşer
-      if (++frames > 20 && dt > 22) { if (++slow > 15 && scale > baseScale * .45) { scale *= .8; slow = 0; } } else slow = Math.max(0, slow - 1);
+      // zayıf ekran kartında çözünürlük hızla düşer: üst üste 4 yavaş karede, kare süresine göre
+      // (maliyet ~ piksel sayısı ~ ölçek²). Düşürmeden sonra GPU kuyruğu boşalsın diye 8 kare beklenir.
+      // İlk 8 kare (yükleme takılmaları) ve sekme dönüşü gibi uzun boşluklar sayılmaz.
+      if (++frames > 8 && dt < 250) {
+        if (dt > 24) {
+          if (++slow >= 4 && scale > minScale) { scale = Math.max(minScale, scale * Math.max(.6, Math.sqrt(15 / dt))); slow = -8; }
+        } else if (slow > 0) slow = 0; else if (slow < 0) slow++;
+      }
       resize();
       let t = (now - t0) / 1000;
       if (clock) { const c = clock(t); if (c != null && isFinite(c)) { t0 = now - c * 1000; t = c; } }
