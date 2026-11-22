@@ -1599,23 +1599,24 @@ vec3 portraitShot(vec2 px, vec2 px0, float t){
   // darbenin hava dalgası: izden dışa yayılan halka görüntüyü iter
   if (act > .5) off += nrm * sign(sd) * 16. * sc * exp(-pow((abs(sd) - age * 1600. * sc) / (40. * sc), 2.)) * (1. - smoothstep(.05, .35, age));
   vec2 uv = pUV(px + off);
-  vec3 c;
-  if (act > .5 && age < .16) {
-    float mb = 34. * sc * exp(-age * 10.);
-    c = vec3(0.);
-    for (int i = 0; i < 4; i++) c += baelorAt(uImg, uImgSize, pUV(px + off + tg * mb * float(i) / 3.), t, 1.);
-    c *= .25;
-  } else c = baelorAt(uImg, uImgSize, uv, t, 0.);
-  if (act > .5 && age < .2) {
-    float ch = 7. * sc * exp(-age * 12.);
-    c.r = baelorAt(uImg, uImgSize, pUV(px + off + nrm * ch), t, 1.).r;
-    c.b = baelorAt(uImg, uImgSize, pUV(px + off - nrm * ch), t, 1.).b;
+  // hızlı okumalar tek döngüde, tek çağrı noktasında (derleyici her çağrıyı ayrı kopyalamasın):
+  // 0–3 hareket bulanıklığı, 4–5 renk ayrışması, 6–11 iz bandı
+  bool mbOn = act > .5 && age < .16, chOn = act > .5 && age < .2, smOn = band > .004;
+  float mb = 34. * sc * exp(-age * 10.), ch = 7. * sc * exp(-age * 12.);
+  vec3 cM = vec3(0.), cS = vec3(0.); float cRk = 0., cBm = 0.;
+  for (int i = 0; i < 12; i++) {
+    vec2 q;
+    if (i < 4) { if (!mbOn) continue; q = px + off + tg * mb * float(i) / 3.; }
+    else if (i < 6) { if (!chOn) continue; q = px + off + nrm * (i == 4 ? ch : -ch); }
+    else { if (!smOn) break; q = px + off - tng * 70. * sc * float(i - 6) / 5.; }
+    vec3 s = baelorAt(uImg, uImgSize, pUV(q), t, 1.);
+    if (i < 4) cM += s; else if (i == 4) cRk = s.r; else if (i == 5) cBm = s.b; else cS += s;
   }
+  vec3 c = mbOn ? cM * .25 : baelorAt(uImg, uImgSize, uv, t, 0.);
+  if (chOn) { c.r = cRk; c.b = cBm; }
   // iz bandı sahnenin kendisiyle dolar: geriye sürüklenmiş, parlatılmış, çeliğe çekilmiş kopya
-  if (band > .004) {
-    vec3 sm_ = vec3(0.);
-    for (int i = 0; i < 6; i++) sm_ += baelorAt(uImg, uImgSize, pUV(px + off - tng * 70. * sc * float(i) / 5.), t, 1.);
-    sm_ /= 6.;
+  if (smOn) {
+    vec3 sm_ = cS / 6.;
     float sl = dot(sm_, vec3(.3, .55, .15));
     sm_ = mix(sm_, vec3(sl) * vec3(.75, .8, .9) / .8, .6);
     vec3 steel = vec3(.85, .9, 1.);
@@ -1681,13 +1682,19 @@ void main(){
   vec2 px = px0 + uShake;
   vec3 col;
   if (uShot < .5 || (uShot > 2.5 && uShot < 3.5)) {
-    col = mapScene(px, t, uCamA, uFocA, uAncA);
-    if (uCamB.z > 0.) col = mix(col, mapScene(px, t, uCamB, uFocB, uAncB), uCamB.z);
-    if (uRad > 0.) {
-      // dalışın son anında radyal bulanıklık
-      for (int i = 1; i < 4; i++) col += mapScene(uAncA + (px - uAncA) * (1. - uRad * float(i) / 3.), t, uCamA, uFocA, uAncA);
-      col *= .25;
+    // mapScene tek çağrı noktasında (0: A kamerası, 1: geçişteki B kamerası, 2–4: dalışın radyal bulanıklığı).
+    // Ayrı ayrı çağrılınca derleyici her birini kopyalıyor, ilk açılışta derleme ~2 kat uzun sürüyordu.
+    vec3 cA = vec3(0.), cB = vec3(0.), cR = vec3(0.);
+    for (int i = 0; i < 5; i++) {
+      if (i == 1 && uCamB.z <= 0.) continue;
+      if (i >= 2 && uRad <= 0.) break;
+      bool b = i == 1;
+      vec2 pp = i >= 2 ? uAncA + (px - uAncA) * (1. - uRad * float(i - 1) / 3.) : px;
+      vec3 c = mapScene(pp, t, b ? uCamB : uCamA, b ? uFocB : uFocA, b ? uAncB : uAncA);
+      if (i == 0) cA = c; else if (b) cB = c; else cR += c;
     }
+    col = uCamB.z > 0. ? mix(cA, cB, uCamB.z) : cA;
+    if (uRad > 0.) col = (col + cR) * .25;
     col = 1. - exp(-col * 1.5);
   } else if (uShot < 1.5) col = portraitShot(px, px0, t);
   else col = heroCard(px, px0, t);
@@ -1851,7 +1858,8 @@ void main(){
       if (audio) {
         const hizala = () => { if (audio.currentTime < 1 && simdiT > 1 && simdiT < 33) audio.currentTime = simdiT; };
         audio.addEventListener('play', hizala, { once: true });
-        if (!audio.paused && audio.currentTime < 1) audio.currentTime = 0;
+        // sahne hazırlanırken (ilk açılışta derleme) müzik çalmaya başladıysa trailer'ın başına sar
+        if (!audio.paused && audio.currentTime < 33) audio.currentTime = 0;
       }
     },
   });

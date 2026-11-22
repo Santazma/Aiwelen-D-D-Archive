@@ -118,6 +118,11 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
       color: rgba(230,220,198,.45); background: none; border: 1px solid rgba(230,220,198,.18);
       padding: .45rem .9rem; cursor: pointer; transition: color .2s, border-color .2s; }
     .mv-sin-gec:hover { color: rgba(230,220,198,.9); border-color: rgba(196,58,44,.6); }
+    .mv-sin-yuk { position: absolute; left: 0; right: 0; bottom: 14%; text-align: center; pointer-events: none;
+      font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(230,220,198,.5); opacity: 0; transition: opacity .6s; }
+    .mv-sin-yuk.on { opacity: 1; animation: mvYuk 1.8s ease-in-out infinite; }
+    @keyframes mvYuk { 50% { color: rgba(230,220,198,.22); } }
     .mv-tetik { cursor: pointer; }
     body.mv-sin-acik #fluid { opacity: 0; }   /* sıvı imleç sahnenin üstüne binmesin */
   `;
@@ -131,24 +136,37 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
   function build(canvas, fs, textures) {
     const gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
     if (!gl) return null;
-    const sh = (type, src) => {
-      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
-      return s;
-    };
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const vs = sh(gl.VERTEX_SHADER, VS), fsh = sh(gl.FRAGMENT_SHADER, PRE + fs);
     const pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS));
-    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, PRE + fs));
+    gl.attachShader(pr, vs); gl.attachShader(pr, fsh);
     gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr));
-    gl.useProgram(pr);
-    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    /* Büyük sahne shader'ları Windows'ta (ANGLE/D3D) ilk açılışta saniyelerce derlenir. Derleme durumunu hemen
+       sormak sayfayı o süre boyunca dondurur. KHR_parallel_shader_compile varsa derleme arka planda biter,
+       sayfa bu sırada akmaya devam eder; program ancak bittikten sonra kullanılır. */
+    const par = gl.getExtension('KHR_parallel_shader_compile');
+    const derlendi = new Promise(res => {
+      if (!par) return res();
+      const bak = () => (gl.getProgramParameter(pr, par.COMPLETION_STATUS_KHR) ? res() : setTimeout(bak, 40));
+      bak();
+    });
+    let hazir = false;
+    const kur = derlendi.then(() => {
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS))
+        throw new Error(gl.getShaderInfoLog(fsh) || gl.getShaderInfoLog(vs) || gl.getProgramInfoLog(pr));
+      gl.useProgram(pr);
+      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      hazir = true;
+      gl.uniform1i(U('uText'), 0);
+      birimler.forEach(([name, unit]) => gl.uniform1i(U(name), unit));
+    });
 
-    const L = {};
+    const L = {}, birimler = [];
     const U = name => (name in L ? L[name] : (L[name] = gl.getUniformLocation(pr, name)));
     const set = (name, ...v) => {
+      if (!hazir) return;
       const l = U(name); if (!l) return;
       if (v[0] && v[0].length) { const a = v[0]; (a.length % 4 === 0 ? gl.uniform4fv : gl.uniform2fv).call(gl, l, a); return; }
       [, gl.uniform1f, gl.uniform2f, gl.uniform3f, gl.uniform4f][v.length].call(gl, l, ...v);
@@ -171,17 +189,16 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
     }
 
     const textTx = newTex(0);
-    gl.uniform1i(U('uText'), 0);
     /* .mp4 dokular gerçek VFX çekimidir: sessiz, döngülü <video>; her karede dokuya yüklenir */
     const videos = [];
     const loads = Object.entries(textures || {}).map(([name, src], i) => new Promise(res => {
       const unit = i + 1, tx = newTex(unit);
-      gl.uniform1i(U(name), unit);
+      birimler.push([name, unit]);
       if (/\.mp4$/i.test(src)) {
         const v = document.createElement('video');
         v.src = src; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-        v.addEventListener('loadeddata', () => { set(name + 'Size', v.videoWidth, v.videoHeight); res(true); }, { once: true });
+        v.addEventListener('loadeddata', () => kur.then(() => { set(name + 'Size', v.videoWidth, v.videoHeight); res(true); }, () => res(false)), { once: true });
         v.addEventListener('error', () => { console.warn('Video yüklenemedi:', src); res(false); }, { once: true });
         const o = { v, unit, tx, yeni: true, son: -1 };
         if (v.requestVideoFrameCallback) { const cb = () => { o.yeni = true; v.requestVideoFrameCallback(cb); }; v.requestVideoFrameCallback(cb); }
@@ -189,12 +206,12 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
         return;
       }
       const img = new Image();
-      img.onload = () => { upload(unit, tx, img); set(name + 'Size', img.naturalWidth, img.naturalHeight); res(true); };
+      img.onload = () => kur.then(() => { upload(unit, tx, img); set(name + 'Size', img.naturalWidth, img.naturalHeight); res(true); }, () => res(false));
       img.onerror = () => { console.warn('Doku yüklenemedi:', src); res(false); };
       img.src = src;
     }));
     return {
-      gl, set, ready: Promise.all(loads), uploadText: c => upload(0, textTx, c),
+      gl, set, ready: Promise.all([kur, ...loads]), uploadText: c => upload(0, textTx, c),
       tick() {
         videos.forEach(o => {
           if (o.v.readyState < 2 || !o.v.videoWidth) return;
@@ -276,7 +293,7 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
       return !reduce;
     });
     const api = { pause: lp.pause, resume: lp.resume, ready: g.ready };
-    g.ready.then(() => { cv.classList.add('on'); if (!api.held) lp.start(); });
+    g.ready.then(() => { cv.classList.add('on'); if (!api.held) lp.start(); }, e => { console.warn('Atmosfer kurulamadı:', e); cv.remove(); });
     atmosferler.push(api);
     return api;
   }
@@ -290,7 +307,9 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
     const cv = document.createElement('canvas');
     const gec = document.createElement('button');
     gec.className = 'mv-sin-gec'; gec.type = 'button'; gec.textContent = 'Geç ›';
-    ov.append(cv, gec);
+    const yuk = document.createElement('div');
+    yuk.className = 'mv-sin-yuk'; yuk.textContent = 'Sahne hazırlanıyor';
+    ov.append(cv, yuk, gec);
     document.body.appendChild(ov);
     let g;
     try { g = build(cv, opt.fs, opt.textures); } catch (e) { console.warn('Sinematik kurulamadı:', e); ov.remove(); return null; }
@@ -372,8 +391,14 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
       document.body.classList.add('mv-sin-acik');
       atmosferler.forEach(a => { a.held = true; a.pause(); });
       playing = true;
-      const ok = await Promise.race([g.ready, new Promise(r => setTimeout(() => r('zaman'), 5000))]);
-      if (ok === 'zaman') { console.warn('Sinematik dokuları zamanında yüklenmedi'); end(); return; }
+      // ilk açılışta shader derlemesi zayıf makinede birkaç saniye sürebilir: bu sırada sayfa donmaz,
+      // kısa bir bekleme yazısı görünür; "Geç" ile atlanabilir
+      const yazi = setTimeout(() => yuk.classList.add('on'), 400);
+      const ok = await Promise.race([g.ready.then(() => true, e => { console.warn('Sinematik kurulamadı:', e); return 'hata'; }),
+                                     new Promise(r => setTimeout(() => r('zaman'), 15000))]);
+      clearTimeout(yazi); yuk.classList.remove('on');
+      if (!playing) return;
+      if (ok !== true) { if (ok === 'zaman') console.warn('Sinematik zamanında hazırlanamadı'); end(); return; }
       if (document.fonts && document.fonts.load) { try { await document.fonts.load('900 40px "Cinzel Decorative"'); } catch (e) {} }
       lp.resize(); drawText(...lp.size());
       if (opt.basla) opt.basla();
