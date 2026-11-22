@@ -388,16 +388,345 @@
       .carousel-card img { width: 185px; height: 260px; }
       .carousel-empty { width: 200px; }
     }
+    /* ══════════════════════════════════
+       MUSIC PLAYER
+    ══════════════════════════════════ */
+    @keyframes playerSlideIn {
+      from{opacity:0;transform:translateY(-12px) scale(0.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes progressPulse {
+      0%,100%{box-shadow:0 0 4px rgba(196,58,44,0.35)}
+      50%{box-shadow:0 0 10px rgba(196,58,44,0.6)}
+    }
+    @keyframes trackReveal {
+      from{opacity:0;transform:translateX(-6px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @keyframes vinylSpin {
+      from{transform:rotate(0deg)} to{transform:rotate(360deg)}
+    }
+
+    #music-widget { display: block; }
+
+    /* Toggle button — fixed top right */
+    .player-toggle {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 900;
+      background: rgba(22,8,8,0.93);
+      border: 1px solid rgba(196,58,44,0.35);
+      color: #e87a68;
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; letter-spacing: 2px;
+      padding: .6rem 1.1rem;
+      cursor: pointer;
+      transition: all .25s ease;
+      display: flex; align-items: center; gap: 7px;
+      backdrop-filter: blur(8px);
+    }
+    .player-toggle:hover { border-color: #e87a68; background: rgba(196,58,44,0.1); }
+    .player-toggle-icon { font-size: .85rem; line-height: 1; }
+    .player-toggle-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #c43a2c;
+      transition: background .3s;
+    }
+    .player-toggle-dot.playing { background: #f3dccb; animation: progressPulse 1.5s ease-in-out infinite; }
+
+    /* Player panel */
+    .player-panel {
+      position: fixed;
+      top: 58px; right: 18px;
+      z-index: 800;
+      width: 320px;
+      background: rgba(22,8,8,0.96);
+      border: 1px solid rgba(196,58,44,0.28);
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      animation: playerSlideIn .3s ease both;
+    }
+    .player-panel.open { display: flex; }
+
+    /* Panel header */
+    .player-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem .9rem;
+      border-bottom: 1px solid rgba(196,58,44,0.12);
+      background: rgba(196,58,44,0.04);
+    }
+    .player-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: .68rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(196,58,44,0.5);
+    }
+    .player-header-archive {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 2px;
+      color: rgba(196,58,44,0.28);
+    }
+
+    /* Now playing section */
+    .player-now {
+      padding: .9rem .9rem .7rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .player-now-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(196,58,44,0.32); margin-bottom: .5rem;
+    }
+    .player-now-info {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    /* Vinyl disc */
+    .player-vinyl {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid rgba(196,58,44,0.25);
+      overflow: hidden; flex-shrink: 0;
+      position: relative;
+      background: rgba(14,6,6,1);
+    }
+    .player-vinyl img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.7);
+      border-radius: 50%;
+    }
+    .player-vinyl::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+        rgba(14,6,6,0.72) 28%, transparent 30%,
+        transparent 80%, rgba(196,58,44,0.1) 100%);
+      pointer-events: none;
+    }
+    .player-vinyl.spinning img { animation: vinylSpin 4s linear infinite; }
+
+    .player-track-info { flex: 1; min-width: 0; }
+    .player-track-name {
+      font-family: 'Cinzel', serif;
+      font-size: .8rem; font-weight: 700;
+      color: #f3dccb; letter-spacing: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .player-track-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 2px;
+      color: rgba(196,58,44,0.38); margin-top: 2px;
+    }
+
+    /* Progress bar */
+    .player-progress-wrap {
+      padding: .6rem .9rem .4rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .player-progress-bar {
+      position: relative; height: 3px;
+      background: rgba(196,58,44,0.1);
+      cursor: pointer; margin-bottom: .35rem;
+    }
+    .player-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #c43a2c, #f3dccb);
+      width: 0%;
+      pointer-events: none;
+      transition: width .1s linear;
+    }
+    .player-progress-bar:hover .player-progress-fill { filter: brightness(1.2); }
+    .player-time-row {
+      display: flex; justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.4);
+    }
+
+    /* Controls */
+    .player-controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; padding: .65rem .9rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .ctrl-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(196,58,44,0.55);
+      font-size: 1rem; line-height: 1;
+      padding: .3rem;
+      transition: color .2s, transform .15s;
+      display: flex; align-items: center;
+    }
+    .ctrl-btn:hover { color: #f3dccb; }
+    .ctrl-btn.active { color: #f3dccb; }
+    .ctrl-btn.play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(196,58,44,0.4);
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(196,58,44,0.06);
+    }
+    .ctrl-btn.play-btn:hover { background: rgba(196,58,44,0.15); border-color: #e87a68; transform: scale(1.05); }
+    .ctrl-btn.loop-btn { font-size: .8rem; }
+
+    /* Volume */
+    .player-volume {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .9rem .6rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .vol-icon {
+      font-size: .8rem; color: rgba(196,58,44,0.45); flex-shrink: 0;
+    }
+    .vol-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 3px;
+      background: linear-gradient(90deg, #c43a2c 70%, rgba(196,58,44,0.12) 70%);
+      outline: none; cursor: pointer;
+      border-radius: 2px;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #e87a68; cursor: pointer;
+      box-shadow: 0 0 6px rgba(196,58,44,0.5);
+    }
+    .vol-slider::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #e87a68; cursor: pointer; border: none;
+    }
+    .vol-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.38); width: 26px; text-align: right;
+    }
+
+    /* Track list */
+    .player-tracklist {
+      max-height: 200px; overflow-y: auto;
+    }
+    .player-tracklist::-webkit-scrollbar { width: 3px; }
+    .player-tracklist::-webkit-scrollbar-thumb { background: rgba(196,58,44,0.2); border-radius: 2px; }
+
+    .track-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem .9rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(196,58,44,0.06);
+      transition: background .2s;
+      animation: trackReveal .3s ease both;
+    }
+    .track-item:hover { background: rgba(196,58,44,0.05); }
+    .track-item.active { background: rgba(196,58,44,0.08); }
+    .track-item:last-child { border-bottom: none; }
+
+    .track-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.28); width: 16px; flex-shrink: 0;
+    }
+    .track-item.active .track-num { color: #e87a68; }
+
+    .track-thumb {
+      width: 32px; height: 32px; border-radius: 2px;
+      overflow: hidden; flex-shrink: 0;
+      border: 1px solid rgba(196,58,44,0.15);
+      background: rgba(14,6,6,1);
+    }
+    .track-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.6);
+    }
+
+    .track-label { flex: 1; min-width: 0; }
+    .track-title {
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; font-weight: 700; letter-spacing: .8px;
+      color: rgba(240,226,212,0.74);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-item.active .track-title { color: #f3dccb; }
+    .track-dur {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; color: rgba(196,58,44,0.28);
+      flex-shrink: 0;
+    }
+    .track-playing-icon {
+      font-size: .7rem; color: #e87a68;
+      display: none; flex-shrink: 0;
+    }
+    .track-item.active .track-playing-icon { display: block; }
+    .track-item.active .track-dur { display: none; }
+
+    @media (max-width: 540px) {
+      .player-panel { width: calc(100vw - 36px); }
+      .player-toggle { font-size: .64rem; padding: .5rem .8rem; letter-spacing: 1.5px; }
+    }
   </style>
 </head>
 <body>
 
   <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
 
+  <div id="music-widget">
+    <!-- ── MUSIC PLAYER ── -->
+    <button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
+      <span class="player-toggle-icon">♪</span>
+      <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">KARAKTER MÜZİĞİ</span>
+      <span class="player-toggle-dot" id="playerDot"></span>
+    </button>
+
+    <div class="player-panel" id="playerPanel">
+      <div class="player-header">
+        <span class="player-header-title">Karakter Müziği</span>
+        <span class="player-header-archive">MV-MÜZ · One Shot</span>
+      </div>
+      <div class="player-now">
+        <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
+        <div class="player-now-info">
+          <div class="player-vinyl" id="playerVinyl">
+            <img id="playerVinylImg" src="" alt="">
+          </div>
+          <div class="player-track-info">
+            <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
+            <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
+          </div>
+        </div>
+      </div>
+      <div class="player-progress-wrap">
+        <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
+          <div class="player-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="player-time-row">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeDuration">0:00</span>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
+        <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
+        <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
+        <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
+      </div>
+      <div class="player-volume">
+        <span class="vol-icon" id="volIcon">🔊</span>
+        <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="10" oninput="setVolume(this.value)">
+        <span class="vol-val" id="volVal">10</span>
+      </div>
+      <div class="player-tracklist" id="trackList"></div>
+    </div>
+
+    <audio id="audioEl"></audio>
+  </div>
+
   <div class="container">
     <h1>Vespera</h1>
-    <img src="Vespera.png" alt="Vespera" class="character-image" onclick="openModal(this)">
-    <div class="image-title">Elif'in Karakteri</div>
+    <img src="Vespera Anime Stilizasyonu.png" alt="Vespera" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Vespera</div>
 
     <div class="bio">
       <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
@@ -417,11 +746,11 @@
         <h2>Karakter Bilgileri</h2>
         <div class="info-card">
           <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Elif</span></div>
-          <div class="info-row"><span class="info-label">Class</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Level</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Irk</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
+          <div class="info-row"><span class="info-label">Class</span><span class="info-value">Life Domain Cleric</span></div>
+          <div class="info-row"><span class="info-label">Level</span><span class="info-value">5</span></div>
+          <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">19</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Kadın</span></div>
         </div>
       </div>
     </div>
@@ -467,7 +796,7 @@
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-2">
               <div class="carousel-card visible" data-panel="2" data-idx="0">
-                <img src="Vespera Anime Stilizasyonu.png" alt="Vespera — Anime Stilizasyonu" onclick="openModal(this)">
+                <img src="Vespera.png" alt="Vespera" onclick="openModal(this)">
               </div>
               <div class="carousel-card" data-panel="2" data-idx="1">
                 <img src="Vespera Dark Atmosphere.png" alt="Vespera — Dark Atmosphere" onclick="openModal(this)">
@@ -501,11 +830,11 @@
     <h2>Karakter Bilgileri</h2>
     <div class="info-card">
       <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Elif</span></div>
-      <div class="info-row"><span class="info-label">Class</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Level</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Irk</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
+      <div class="info-row"><span class="info-label">Class</span><span class="info-value">Life Domain Cleric</span></div>
+      <div class="info-row"><span class="info-label">Level</span><span class="info-value">5</span></div>
+      <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">19</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Kadın</span></div>
     </div>
   </div>
 
@@ -523,6 +852,152 @@
   </div>
 
   <script>
+    /* ══════════════ MUSIC PLAYER ══════════════ */
+    const tracks = [
+      { name: "Vespera Theme", file: "Vespera Theme.mp3", img: "Vespera Anime Stilizasyonu.png" },
+    ];
+
+    let currentTrack = 0;
+    let isLooping    = false;
+    let playerOpen   = false;
+
+    const audio        = document.getElementById('audioEl');
+    const playBtn      = document.getElementById('playBtn');
+    const playerDot    = document.getElementById('playerDot');
+    const vinylEl      = document.getElementById('playerVinyl');
+    const vinylImg     = document.getElementById('playerVinylImg');
+    const trackNameEl  = document.getElementById('playerTrackName');
+    const trackSubEl   = document.getElementById('playerTrackSub');
+    const progressFill = document.getElementById('progressFill');
+    const timeElapsed  = document.getElementById('timeElapsed');
+    const timeDuration = document.getElementById('timeDuration');
+    const volSlider    = document.getElementById('volSlider');
+    const volVal       = document.getElementById('volVal');
+    const volIcon      = document.getElementById('volIcon');
+
+    audio.volume = 0.10;
+
+    function buildTrackList() {
+      const tl = document.getElementById('trackList');
+      tl.innerHTML = '';
+      tracks.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = 'track-item' + (i === currentTrack ? ' active' : '');
+        item.id = `track-${i}`;
+        item.onclick = () => { loadTrack(i); audio.play(); };
+        item.innerHTML = `
+          <span class="track-num">${String(i+1).padStart(2,'0')}</span>
+          <div class="track-thumb"><img src="${t.img}" alt="${t.name}" onerror="this.style.opacity='.2'"></div>
+          <div class="track-label"><div class="track-title">${t.name}</div></div>
+          <span class="track-playing-icon">▶</span>
+          <span class="track-dur" id="dur-${i}">--:--</span>`;
+        tl.appendChild(item);
+      });
+      tracks.forEach((t, i) => {
+        const tmp = new Audio(t.file);
+        tmp.addEventListener('loadedmetadata', () => {
+          const el = document.getElementById(`dur-${i}`);
+          if (el) el.textContent = fmtTime(tmp.duration);
+        });
+      });
+    }
+
+    function fmtTime(s) {
+      if (!s || isNaN(s)) return '0:00';
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${m}:${sec.toString().padStart(2,'0')}`;
+    }
+
+    function loadTrack(idx) {
+      currentTrack = idx;
+      const t = tracks[idx];
+      audio.src = t.file;
+      audio.loop = isLooping;
+      trackNameEl.textContent = t.name;
+      vinylImg.src = t.img;
+      progressFill.style.width = '0%';
+      timeElapsed.textContent  = '0:00';
+      timeDuration.textContent = '0:00';
+      document.querySelectorAll('.track-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    function togglePlayer() {
+      playerOpen = !playerOpen;
+      document.getElementById('playerPanel').classList.toggle('open', playerOpen);
+    }
+
+    function togglePlay() {
+      if (!audio.src || audio.src === window.location.href) { loadTrack(currentTrack); audio.play(); return; }
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); audio.play(); }
+    function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); audio.play(); }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      audio.loop = isLooping;
+      document.getElementById('loopBtn').classList.toggle('active', isLooping);
+    }
+
+    function setVolume(v) {
+      audio.volume = v / 100;
+      volVal.textContent = v;
+      updateVolSliderBg(v);
+      volIcon.textContent = v == 0 ? '🔇' : v < 40 ? '🔉' : '🔊';
+    }
+
+    function updateVolSliderBg(v) {
+      volSlider.style.background = `linear-gradient(90deg, #e87a68 ${v}%, rgba(196,58,44,0.12) ${v}%)`;
+    }
+
+    function seekAudio(e) {
+      const bar  = document.getElementById('progressBar');
+      const rect = bar.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (audio.duration) audio.currentTime = pct * audio.duration;
+    }
+
+    audio.addEventListener('play', () => {
+      playBtn.textContent = '⏸';
+      vinylEl.classList.add('spinning');
+      playerDot.classList.add('playing');
+    });
+    audio.addEventListener('pause', () => {
+      playBtn.textContent = '▶';
+      vinylEl.classList.remove('spinning');
+      playerDot.classList.remove('playing');
+    });
+    audio.addEventListener('ended', () => {
+      if (!isLooping) { nextTrack(); audio.play(); }
+    });
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      timeElapsed.textContent  = fmtTime(audio.currentTime);
+      timeDuration.textContent = fmtTime(audio.duration);
+    });
+
+    buildTrackList();
+    loadTrack(0);
+    updateVolSliderBg(10);
+    /* Tarayıcı sesli otomatik oynatmayı engellerse (ör. sayfa yenilenince) müzik,
+       sayfadaki ilk tıklama / dokunma / tuşla başlar. Kullanıcı çaları kendisi
+       kullandıysa karışmaz. */
+    audio.play().catch(() => {
+      const kick = e => {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(ev => removeEventListener(ev, kick, true));
+        if (e.target.closest && e.target.closest('#music-widget')) return;   // çalara tıklandıysa onun düğmesi karar verir
+        if (audio.paused && audio.currentTime === 0) audio.play().catch(() => {});
+      };
+      ['pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, kick, true));
+    });
+
+    window.onbeforeunload = () => audio.pause();
+
     /* ── Info-box scroll tracking ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
@@ -541,7 +1016,7 @@
       [],
       [],
       [
-        'Vespera — Anime Stilizasyonu',
+        'Vespera',
         'Vespera — Dark Atmosphere',
       ],
     ];
@@ -664,6 +1139,7 @@
       modalAnimating = false;
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display = 'none';
       document.body.style.overflow = 'hidden';
       pauseCarousel();
     }
@@ -671,6 +1147,7 @@
     function closeModal() {
       modal.classList.remove('open');
       document.getElementById('back-button').classList.remove('hidden');
+      document.getElementById('music-widget').style.display = '';
       document.body.style.overflow = '';
       resumeCarousel();
     }
@@ -694,6 +1171,478 @@
     COLOR: '#8e1b1b',
     COLOR_PALETTE: ['#8e1b1b', '#c43a2c', '#c9a84c', '#2a2626']
   };
+</script>
+<script src="../mv-sahne.js"></script>
+<script>
+/* ══════════════ VESPERA — KUTSAL IŞIK ══════════════
+   Atmosfer: altın ışık bokehleri, portrenin arkasında nefes alan şifa halesi ve
+   üstten süzülen kutsal pus (ayrıntı aşağıda).
+   Sinematikteki dönen ışınlar 21st.dev / Paper Shaders "God Rays" shader'ından
+   uyarlandı (Apache-2.0).
+   Sinematik: karanlıkta bir ışık noktası büyür, yaşam tanrıçasının kutsal sembolü
+   huzmelerle belirir, ad altınla yazılır; sonra ışık merkezden çatlar, çatlaklar
+   parlayıp kızıla döner ve her şey karanlığa çöker. */
+(function () {
+  if (!window.MVSahne) return;
+  /* God Rays (Paper Shaders) — shade() çekirdeği: açıya bağlı fbm ile bükülen ışınlar + merkez parlaması */
+  const RAYS = `
+float godRays(vec2 p, float t, float intensity, float bloomK){
+  float angle = atan(p.y, p.x);
+  float radius = length(p);
+  // tam sayı yoğunluk + yöne bağlı gürültü: açının ±π'de atladığı yerde dikiş çizgisi oluşmaz
+  float density = floor(5. + intensity * 18.);
+  float nz = fbm(vec2(cos(angle), sin(angle)) * density * .35 + vec2(1., radius * 1.7 - t * .08));
+  float rays = pow(max(0., sin(angle * density + nz * 5. + t * .16)), 5.);
+  rays *= exp(-radius * 1.15) * (1. - smoothstep(.05, 1.1, radius));
+  float bloom = exp(-radius * (9. - bloomK * 6.));
+  return clamp(rays * (.8 + intensity) + bloom * (.25 + bloomK), 0., 1.);
+}
+vec3 gold(float v){ return mix(mix(vec3(.02,.012,.005), vec3(.42,.22,.06), smoothstep(0.,.45,v)), vec3(1.,.84,.45), smoothstep(.4,1.,v)); }
+vec3 motes(vec2 px, float t){
+  vec3 c = vec3(0.);
+  for (int k = 0; k < 2; k++) {
+    float fk = float(k), sc = 46. + fk * 30.;
+    vec2 q = px + vec2(sin(t * .2 + fk) * 20., -t * (8. + fk * 6.));
+    vec2 id = floor(q / sc), f = fract(q / sc) - .5;
+    float r = h(id + fk * 31.);
+    vec2 o = vec2(h(id + 2.3), h(id + 5.9)) - .5;
+    float d = length(f - o * .6);
+    float tw = .5 + .5 * sin(t * (1.5 + r * 2.) + r * 30.);
+    c += vec3(1., .85, .5) * smoothstep(.06, 0., d) * step(.82, r) * tw;
+  }
+  return c;
+}`;
+
+  /* ── ATMOSFER ──
+     Çizgi huzmeler yerine: kutsal bir sığınağın havası.
+     • Altın ışık bokehleri: üç derinlik katmanı. Yakındakiler büyük, yumuşak, kenarı hafif
+       parlak mercek diskleridir; uzaktakiler küçük ve keskindir. Yavaşça yükselip salınırlar,
+       imlece göre derinlikle orantılı kayarlar (paralaks).
+     • Şifa halesi: portrenin arkasında yavaş nefes alan sıcak bir ışıma; birkaç saniyede bir
+       ondan yumuşak bir şifa dalgası yayılır.
+     • Kutsal pus: üst kenardan süzülen, bulut gibi kıvrılan ince altın sis (çizgi değil). */
+  MVSahne.atmosfer({
+    olcek: .6,
+    fs: `
+vec4 bokeh(vec2 px, float t, float sc, float speed, float rad, float soft, float prob, float seed, vec2 par){
+  vec2 q = px + par;
+  q.y += t * speed;
+  q.x += sin(q.y * .004 + seed) * 30.;
+  vec2 id = floor(q / sc), f = q - (id + .5) * sc;
+  float r = h(id + seed);
+  if (r > prob) return vec4(0.);
+  vec2 o = (vec2(h(id + 3.1 + seed), h(id + 7.7 + seed)) - .5) * sc * .6;
+  float R = rad * (.6 + .8 * h(id + 5.3 + seed));
+  float d = length(f - o);
+  float disc = smoothstep(R, R - soft, d);
+  float ring = smoothstep(soft * 1.2, 0., abs(d - R + soft * .6)) * .35;   // mercek diskinin parlak kenarı
+  float tw = .6 + .4 * sin(t * (.6 + r * .8) + r * 40.);
+  vec3 c = mix(vec3(1., .78, .38), vec3(1., .93, .75), h(id + 9.9 + seed));
+  float a = (disc * .55 + ring) * tw;
+  return vec4(c * a, a);
+}
+void main(){
+  vec2 px = PX(), V = uView; float t = uT;
+  vec2 m = (uMouse - .5) * V;
+  vec3 C = vec3(0.); float A = 0.;
+  // kutsal pus: üstten inen, kıvrılan ince sis
+  float hz = fbm(vec2(px.x * .0025 + t * .015, px.y * .004 - t * .03) + fbm3(px * .002 + t * .01));
+  float haze = smoothstep(.35, .85, hz) * smoothstep(.75, 0., px.y / V.y) * .32;
+  C += vec3(.95, .74, .38) * haze; A = max(A, haze);
+  // şifa halesi: portrenin arkasında nefes alan ışıma + yayılan yumuşak dalga
+  vec2 c = V * vec2(.5, .42);
+  float br = .75 + .25 * sin(t * .8);
+  float d = length((px - c) / V.y);
+  float aura = exp(-d * d * 7.) * .3 * br;
+  float wt = fract(t / 7.);
+  float wave = exp(-pow((d - wt * .9) / .06, 2.)) * (1. - wt) * .22;
+  C += vec3(1., .8, .45) * (aura + wave); A = max(A, aura + wave);
+  // bokehler: uzak → yakın
+  vec4 b1 = bokeh(px, t, 54., 9., 2.6, 1.2, .3, 1., m * -.01);
+  vec4 b2 = bokeh(px, t, 120., 16., 9., 5., .22, 7., m * -.03);
+  vec4 b3 = bokeh(px, t, 260., 26., 30., 22., .16, 13., m * -.07);
+  C += b1.rgb * 1.1 + b2.rgb * .85 + b3.rgb * .55;
+  A = max(A, max(b1.a * 1.1, max(b2.a * .85, b3.a * .55)));
+  gl_FragColor = vec4(min(C, vec3(1.)), clamp(A, 0., 1.));
+}`,
+  });
+
+  /* ── SİNEMATİK ──
+     Altın ışık ve kutsal sembol belirir, ışık çatlar. 4.2'de sahne kararıp kızıla döner; devasa ölüm
+     tırpanı sol alttaki tutuş noktasından ekrana döner, gerilir, mor çatlakları nefes alır gibi yanar.
+     4.86–5.0 arası saat yönünde hızla savrulur (hareket bulanıklığı + dumanlı iz) ve ucu ekranın sağ
+     ortasına saplanır; zaman 3 kare durur, yalnızca çarpma noktası parlar. Ekran ucun çizdiği hilal
+     boyunca kesilir: önce kızgın bir kıl çizgisi, sonra açılır; tırpan geri çekilirken yırtık tamamen
+     açılır. Yarığın içinde mor çekirdek ve akan mürekkep, dışında kara duman akar; bir duman katmanı
+     bıçağın önünden geçer. En sonda duman ekranı yutar.
+     Sahne ve zamanlama, sahneyi inceleyen ikinci bir ajanla birlikte tasarlandı. */
+  const ph = [Math.random() * 6, Math.random() * 6, Math.random() * 6, Math.random() * 6];
+  const IMP = 5.0;
+  const SES = MVSahne.sesler({ tirpan: '../../ses/Scythe Hit.mp3', yirt: '../../ses/Ripping Paper.mp3', buyu: '../../ses/Dark Magic Sesi.mp3' });
+  const sm = (a, b, x) => { const k = Math.max(0, Math.min(1, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
+  MVSahne.sinematik({
+    baslik: 'Vespera',
+    tetik: document.querySelector('.container h1'),
+    sure: 7.9,
+    yaziY: .85,
+    yaziOrani: .075,
+    textures: { uSym: 'Kutsal Sembol.webp', uCrack: 'Işık Çatlakları.webp', uScy: 'Ölüm Tırpanı.webp', uGlow: 'Ölüm Tırpanı Işık.webp', uSmk: 'VFX Smoke.mp4', uInk: 'VFX Ink.mp4' },
+    fs: `
+uniform sampler2D uSym, uCrack; uniform vec2 uSymSize, uCrackSize;
+uniform vec2 uShake;
+uniform sampler2D uScy, uGlow, uSmk, uInk; uniform vec2 uScySize, uGlowSize, uSmkSize, uInkSize;
+uniform float uTs, uRot, uS, uScyA, uEmis, uOmega, uRt, uThA, uThB, uThTip, uOpen, uHot, uCutOn, uSlide,
+              uReach, uTrail, uFront, uFlashL, uTake, uDim, uBleed;
+uniform vec2 uPiv, uImp, uArc, uT0, uT1;
+uniform float uDrag, uBend, uMotes;
+${RAYS}
+vec3 scene(vec2 q){
+  vec2 px0 = q, V = uView; float t = uTs;
+  vec2 px = px0;
+  vec2 ctr = V * vec2(.5, .45);
+  // tanrısal ışık → kızıl çöküş
+  float corrupt = smoothstep(4.2, 4.55, t);
+  float fall = smoothstep(6.7, 7.5, t);
+  // merkezden dönen ışınlar
+  vec2 p = (px - ctr) / min(V.x, V.y) / mix(.25, 1.1, smoothstep(.2, 2.2, t));
+  float a = t * .12; p = mat2(cos(a), -sin(a), sin(a), cos(a)) * p;
+  float v = godRays(p, t * .7, .45, .35) * smoothstep(0., 1., t) * (1. - fall);
+  vec3 col = gold(v) * mix(vec3(1.), vec3(1., .25, .15), corrupt);
+  // kutsal sembol: merkezden dışa belirir
+  float hg = V.y * .6;
+  vec2 uv = placeUV(px, ctr, hg, uSymSize);
+  // belirme: merkezden dairesel (ekran pikseliyle ölçülür, kutu şekli almaz),
+  // kenarı gürültüyle dağınık ve yumuşak; parlama yalnızca sembolün çizgilerinde yanar
+  float r = length(px - ctr) / hg;
+  float rv = smoothstep(.8, 2.6, t) * .62;
+  float nzr = (fbm((px - ctr) / hg * 5. + t * .25) - .5) * .12;
+  float boxFade = smoothstep(0., .06, min(min(uv.x, 1. - uv.x), min(uv.y, 1. - uv.y)));
+  vec3 s = texture2D(uSym, clamp(uv, 0., 1.)).rgb * boxFade;
+  float sl = max(s.r, max(s.g, s.b));
+  float vis = smoothstep(rv + .02, rv - .1, r + nzr);
+  float front = exp(-pow((r + nzr - rv) / .035, 2.)) * (1. - smoothstep(2.4, 3., t));
+  s *= mix(vec3(1.), vec3(.9, .18, .1) * .7, corrupt) * (1. - fall);
+  col += s * vis * 1.1;
+  col += vec3(1., .88, .55) * front * smoothstep(.04, .35, sl) * 1.3;   // çizgilerde yanan ön
+  col += vec3(1., .8, .45) * front * .12 * smoothstep(.75, .0, r);       // yumuşak hâle (kesilmez)
+  // çatlaklar: merkezden yayılır, beyaz-altın parlar, sonra kızıla döner ve söner
+  float cr = smoothstep(3.4, 4.4, t);
+  vec2 cu = coverUV((px - ctr) * .9 + V * .5, uCrackSize);
+  vec3 ck = texture2D(uCrack, cu).rgb;
+  float cl = max(ck.r, max(ck.g, ck.b));
+  float cd = length((px - ctr) / V.y);
+  float crackVis = smoothstep(cr * 1.1, cr * 1.1 - .08, cd + (fbm(px * .01) - .5) * .1) * step(.001, cr);
+  vec3 cc = mix(vec3(1., .95, .8), vec3(1., .2, .08), corrupt) * cl * (1.6 - corrupt * .6) * (1. - fall * .9);
+  col = mix(col, col * .35, crackVis * smoothstep(.05, .0, cl) * corrupt);   // çatlak dışı kararır
+  col += cc * crackVis;
+  // altın zerreler
+  col += motes(px, t) * (.4 + v * 1.4) * (1. - corrupt * .7) * smoothstep(.5, 1.5, t);
+  // ad
+  vec3 tx = textAt(px0);
+  float xr = abs(px0.x - V.x * .5) / max(uTextBox.z * .5, 1.);
+  float trv = smoothstep(2.4, 3.4, t) * 1.3 - xr * .3;
+  float nz = fbm(px0 * .03);
+  float tvis = smoothstep(nz - .07, nz + .07, trv) * (1. - fall);
+  vec3 tg = mix(vec3(1., .82, .42), vec3(.9, .2, .12), corrupt);
+  float hv = smoothstep(0., 1.1, trv) * (1. - fall);
+  col += tg * .55 * tx.b * hv + tg * .6 * tx.g * hv;
+  col = mix(col, mix(vec3(1., .86, .55), vec3(.95, .45, .38), corrupt), tx.r * tvis);
+  // ilk ışık noktası
+  col += vec3(1., .9, .65) * exp(-length(px - ctr) / (6. + t * 30.)) * smoothstep(0., .5, t) * (1. - smoothstep(1., 2., t)) * 1.4;
+  return col;
+}
+
+// ── ÖLÜM TIRPANI ──────────────────────────────────────────────────────────────
+// Tırpan katı bir 2B nesnedir (gerçek alfa): sap ucundan (uPiv, ekran dışı sol alt) tutulur, saat
+// yönünde savrulur. Ucu R yarıçaplı bir hilal çizer; ekran o hilal boyunca yırtılır. Duman: yırtığın
+// arkasında (VFX Smoke, yırtığa dik uzaklık ekseninde dışa akar), savruluş izinde ve bıçağın önünde
+// (VFX Ink, tırpanın kendi uv'sinde, bıçakla birlikte hareket eder).
+const vec2 BUTT = vec2(.025, .971);
+mat2 rot(float a){ float c = cos(a), s = sin(a); return mat2(c, s, -s, c); }
+vec2 sprUV(vec2 x, float ang){ return BUTT + rot(-ang) * (x - uPiv) / uS / uScySize; }
+vec4 spr(vec2 uv){ return inBox(uv) > .5 ? texture2D(uScy, uv) : vec4(0.); }
+float glowAt(vec2 uv){ return inBox(uv) > .5 ? texture2D(uGlow, uv).r : 0.; }
+vec2 mir(vec2 p){ return abs(mod(p, 2.) - 1.); }
+float smk(vec2 p){ return smoothstep(.015, .12, texture2D(uSmk, mir(p)).r); }   // çekim çok koyu: okunur aralığa açılır
+float ink(vec2 p){ return 1. - texture2D(uInk, mir(p)).r; }
+// Kesikten oluk oluk fışkıran kara büyü dumanı. Yırtık boyunca yer yer "fışkırma" sütunları (jet) daha uzağa
+// uzanır; duman dışa doğru hızla akar ve akış yönünde uzamış tutamlar halindedir (alan bükmeli fbm).
+// Gerçek duman çekimi bulanıklaştırılmış doku modülasyonu olarak girer.
+float smokeD(float d, float u, float side, float age, float t){
+  float reach = uReach * uView.y;
+  float jet = .5 + 1.0 * pow(fbm(vec2(u * 7. + side * 5., t * .35)), 1.4);
+  float vj = d / (reach * jet);
+  vec2 p = vec2(u * 9. + side * 1.3, vj * 1.6 - age * 2.2);
+  vec2 w = vec2(fbm(p * .6 + vec2(t * .3, 0.)), fbm(p * .6 - vec2(0., t * .25)));
+  float body = fbm3(p * vec2(1., .55) + 1.8 * w);
+  float dens = smoothstep(.27 + vj * .22, .52 + vj * .22, body);
+  dens = max(dens, exp(-d / (.05 * uView.y)) * .95);             // kesiğin ağzında her zaman yoğun
+  vec2 sp = vec2(u * 3. + side * .37, vj - age * .6);
+  float m = 0.;
+  for (int k = 0; k < 5; k++) {
+    float an = float(k) * 1.2566;
+    m += texture2D(uSmk, mir(sp + vec2(cos(an), sin(an)) * .012)).r;
+  }
+  m = smoothstep(.04, .16, m / 5.);
+  dens *= .75 + .5 * m;
+  return dens * smoothstep(1., .0, vj) * smoothstep(-.05, .05, u) * smoothstep(uDrag + .06, uDrag - .04, u);
+}
+void main(){
+  vec2 V = uView; float t = uT;
+  vec2 raw = PX();
+  vec2 sc = raw + uShake;
+  vec3 VIO = vec3(.62, .22, 1.);
+
+  // savruluş izi için tutuş noktasına göre kutupsal koordinat (sabit savruluş merkezi)
+  vec2 rp = sc - uArc;
+  float r = length(rp), ph = atan(rp.y, rp.x);
+  // ── yırtık geometrisi: tırpan saplandığı yerden (uT0) sol aşağıya (uT1) çekilir; yırtık ucun gerisinde açılır
+  vec2 TD = uT1 - uT0; float TL = max(length(TD), 1.);
+  vec2 rad = vec2(-TD.y, TD.x) / TL, tng = TD / TL;             // rad: yırtığa dik, tng: yırtık boyunca
+  vec2 dp = sc - uT0;
+  float u = dot(dp, tng) / TL;                                   // 0 saplanma noktası, 1 çekilişin sonu
+  float uc = clamp(u, 0., 1.);
+  float inR = smoothstep(-.035, .01, u) * smoothstep(uDrag + .01, uDrag - .04, u) * step(.001, uDrag);
+  float sd = dot(dp, rad) - sin(uc * 3.1416) * uBend - (fbm(vec2(u * 9., 1.7)) - .5) * .02 * V.y;
+  float side = sign(sd + .0001);
+  // saplanma yerinde en geniş, ucun olduğu uca doğru incelir
+  float taper = inR * (1. - pow(uc / max(uDrag, .001), 3.) * .7) * smoothstep(-.02, .015, u);
+  float hw0 = uOpen * taper;
+  // yaka kenarı: her yakanın kendi genişliği ve ince pürüzü
+  float hw = max(hw0 * (.7 + .6 * fbm(vec2(u * 4., side * 7.))) + (fbm(vec2(u * 40., side * 13.)) - .5) * .008 * V.y * step(.5, hw0), 0.);
+  float fallOff = exp(-max(abs(sd) - hw, 0.) / (.25 * V.y)) * 1.5;
+  vec2 q = sc - (side * rad * hw + side * tng * uSlide * taper) * fallOff;   // yakalar ayrılır ve kesik boyunca kayar
+  vec3 col = scene(q);
+  col *= 1. - uDim * .65;                                      // darbeden önce sahne kararır
+
+  // ── yırtığın içi: derin, içinde akan mürekkep, dipte mor çekirdek; çekirdek iç kenarları aydınlatır
+  float inside = smoothstep(hw + 1., hw - 1., abs(sd)) * step(.6, hw) * uCutOn;
+  if (inside > 0.) {
+    float dn = abs(sd) / max(hw, 1.);                           // 0 merkez, 1 kenar
+    // delikten görünen boşluk: doku ekran uzayında, yırtıkla birlikte esnemez
+    vec2 ip = raw / V.y * .8 + t * .03; float ib = 0.;
+    for (int k = 0; k < 4; k++) { float an = float(k) * 1.5708 + .4; ib += ink(ip + vec2(cos(an), sin(an)) * 8. / V.y * .8); }
+    ib /= 4.;
+    vec3 ic = vec3(.003, 0., .006) + VIO * .18 * ib * smoothstep(.95, .3, dn);
+    ic += VIO * .5 * smoothstep(.7, 1., dn) * step(0., sd);      // yalnızca bir yaka içeriden ışık alır
+    ic *= mix(1., smoothstep(1., .7, dn), step(sd, 0.));         // diğer yakada iç gölge
+    // yakanın kalınlığı: kenarın hemen içinde, içe kıvrılmış malzeme şeridi
+    float lip = smoothstep(hw - 8., hw - 5., abs(sd));
+    if (lip > 0.) ic = mix(ic, scene(q + side * rad * 6.) * .45 + VIO * .25, lip);
+    col = mix(col, ic, inside);
+  }
+  // ── kenar: kalınlık için dışta ince koyu bant, üstünde soğuyan kızgın çizgi
+  float onCut = inR * uCutOn;
+  float band = exp(-pow((abs(sd) - hw - 4.) / 3.5, 2.)) * onCut;
+  col *= 1. - .55 * band;
+  float hot = exp(-pow((abs(sd) - hw) / 1.3, 2.)) * onCut * smoothstep(.55, .7, fbm(vec2(u * 12., side * 3.)));
+  vec3 ember = mix(vec3(1., .45, .22), VIO, .5);
+  col += mix(ember * .8, vec3(1., .85, .9), uHot) * hot * (1.2 + uHot * 1.4);
+  // yırtılmadan önce: bıçağın altından sızan mor ışık ve uçta kıvılcımlar
+  if (uBleed > 0.) {
+    col += VIO * .7 * exp(-length(sc - uImp) / 28.) * uBleed;
+    float ag = t - 5.05;
+    for (int k = 0; k < 24; k++) {
+      float fk = float(k);
+      float an = -2.7 + h(vec2(fk, 4.)) * 2.6;
+      vec2 v0 = vec2(cos(an), sin(an)) * (160. + h(vec2(fk, 7.)) * 360.);
+      vec2 p0 = uImp + v0 * ag + vec2(0., 500. * ag * ag);
+      vec2 vn = normalize(v0 + vec2(0., 1000. * ag));
+      vec2 pa = sc - p0, ba = -vn * 12.;
+      float hh = clamp(dot(pa, ba) / dot(ba, ba), 0., 1.);
+      float dd = length(pa - ba * hh);
+      col += vec3(1., .72, 1.) * smoothstep(1.5, .2, dd) * (1. - hh * .7) * 2. * uBleed * step(0., ag) * step(ag, .45);
+    }
+  }
+
+  // ── yırtıktan dışa akan kara duman (tırpanın arkasında): opak kara kütle, yırtığa bakan yüzü mor ışık alır
+  if (uCutOn > 0.) {
+    float d = max(abs(sd) - hw, 0.);
+    float age = t - 5.35;
+    float gate = smoothstep(5.32, 5.42, t) * (1. - inside * .6);   // duman yarığın içinden taşar
+    float d0 = smokeD(d, u, side, age, t) * gate;
+    float dS = smokeD(max(d - 12., 0.), u, side, age, t) * gate;  // yırtığa doğru öz-gölge
+    vec3 behind = col;
+    float T = exp(-d0 * 6.);                                       // Beer–Lambert: yoğun duman gerçekten örter
+    col = col * T + vec3(.004, .001, .006) * (1. - T);
+    col += VIO * .6 * exp(-d / (.06 * V.y)) * clamp((d0 - dS) * 4., 0., 1.);   // yalnızca kabaran biçimler ışık alır
+    col += behind * .6 * d0 * (1. - d0) * 4. * T;                  // silüet kenarında arkadan sızan ışık
+    // dumanın içinde, kesiğe yakın, titreyen mor büyü ışığı (alttan aydınlanan kara büyü)
+    col += VIO * .55 * d0 * exp(-d / (.12 * V.y)) * (.6 + .4 * sin(t * 7. + u * 23.));
+  }
+
+  // ── savruluş izi: ucun arkasında, bıçağın yarıçap bandında kalın, dumanlı hilal
+  if (uTrail > 0.) {
+    float lag = uThTip - ph;                                      // saat yönünde ilerleme: geride kalan açı
+    float bandR = smoothstep(uRt * .8, uRt * .9, r) * smoothstep(uRt * 1.04, uRt * .99, r);
+    float tr = bandR * smoothstep(-.01, .03, lag) * exp(-max(lag, 0.) * 2.4);
+    float st = smk(vec2(lag * 2.5 - t * .4, r / uRt * 3.));
+    float td = tr * (.35 + st * 1.1) * uTrail;
+    col = mix(col, vec3(.008, .002, .014), clamp(td, 0., .9));
+    col += VIO * td * smoothstep(uRt * .95, uRt * 1.01, r) * .7;
+  }
+
+  // ── tırpan: açısal hareket bulanıklığı (16 örnek, alfa ağırlıklı), mor çatlaklar yanar
+  if (uScyA > 0.) {
+    vec4 acc = vec4(0.); float gl = 0.;
+    for (int k = 0; k < 16; k++) {
+      float a = uRot - uOmega * .022 * float(k) / 15.;
+      vec2 uv = sprUV(sc, a);
+      vec4 c = spr(uv);
+      acc += vec4(c.rgb * c.a, c.a);
+      gl += glowAt(uv) * c.a;
+    }
+    float A = acc.a / 16.;
+    vec3 C = acc.rgb / max(acc.a, .001);
+    gl /= 16.;
+    vec2 uv0 = sprUV(sc, uRot);
+    // çatlakların çevresine sızan hafif ışık (dokuda değil, burada)
+    float halo = 0.;
+    for (int k = 0; k < 6; k++) { float an = float(k) * 1.047; halo += glowAt(uv0 + vec2(cos(an), sin(an)) * .006); }
+    halo /= 6.;
+    vec3 lit = C * (.55 + .45 * (1. - uDim * .5)) + VIO * gl * uEmis * 1.4;
+    col = mix(col, lit, A * uScyA);
+    col += VIO * halo * uEmis * .35 * uScyA;
+    // ── bıçağın önünden geçen duman: tırpanın kendi uv'sinde, bıçakla birlikte hareket eder
+    if (uFront > 0.) {
+      float hal = 0.;
+      for (int k = 0; k < 8; k++) {
+        float an = float(k) * .785;
+        hal += spr(uv0 + vec2(cos(an), sin(an)) * (.04 * V.y / uS) / uScySize).a;
+      }
+      hal = clamp(hal / 4., 0., 1.);
+      float blade = smoothstep(.5, .7, uv0.x);                     // en çok bıçağın çevresinde
+      float fi = smk(vec2(uv0.x * 2.4 - t * .25 + uOmega * .02, uv0.y * 1.6 + t * .18));
+      float fd = hal * fi * blade * uFront;
+      col = mix(col, vec3(.008, .002, .012), clamp(fd * .6, 0., .6));
+      col += VIO * fd * (halo * 3. + .15) * uEmis * .5;
+    }
+  }
+
+  // ── yırtıktan fışkıran mor partiküller (kâğıt yanma girişindeki korlar gibi): bol miktarda, yeniden doğarak
+  //    bütün ekrana yayılır. Türbülans ucuz sinüs alanıyla (her partikülde fbm çok pahalı olurdu).
+  if (uMotes > 0.) {
+    vec3 mc = vec3(0.);
+    for (int i = 0; i < 220; i++) {
+      float fi = float(i);
+      float life = 1.0 + h(vec2(fi, 1.3)) * 1.6;
+      float tb = 5.3 + h(vec2(fi, 2.7)) * .6;
+      float ag = t - tb;
+      if (ag < 0.) continue;
+      float cyc = floor(ag / life); ag -= cyc * life;
+      float sd_ = fi * 1.618 + cyc * 37.1;
+      float u0 = h(vec2(sd_, 3.3)) * max(uDrag, .05);
+      vec2 o = uT0 + (uT1 - uT0) * u0 + rad * (sin(u0 * 3.1416) * uBend + (h(vec2(sd_, 3.9)) - .5) * uOpen);   // kesiğin içinden
+      float sg = h(vec2(sd_, 4.1)) < .5 ? -1. : 1.;
+      float sp = 120. + pow(h(vec2(sd_, 5.9)), 1.5) * 700.;
+      vec2 vel = rad * sg * sp + tng * (h(vec2(sd_, 6.2)) - .5) * 420. + vec2(0., -90.);
+      float ph1 = h(vec2(sd_, 9.1)) * 6.283;
+      vec2 tur = vec2(sin(ag * 2.3 + ph1) + sin(ag * 5.1 + ph1 * 2.), cos(ag * 1.9 + ph1) + cos(ag * 4.3 + ph1 * 3.)) * 45. * ag;
+      vec2 pp = o + vel * ag * (1. - ag / life * .5) + tur + vec2(0., -55. * ag * ag);
+      float big = pow(h(vec2(sd_, 7.7)), 4.);
+      float sz = 1.3 + big * 7.;
+      vec2 dv = sc - pp;
+      float cull = sz * 11. + 24.;                                 // bu mesafenin ötesi hesaplanmaz; hâle buraya kadar sıfıra iner
+      if (abs(dv.x) > cull || abs(dv.y) > cull) continue;
+      // hız yönünde uzayan kıvılcım izi (fışkırma hissi), hız düştükçe noktaya döner
+      vec2 vnow = vel * (1. - ag / life) + vec2(0., -110. * ag);
+      float spd = length(vnow);
+      vec2 ba = -vnow / max(spd, 1.) * min(spd * .03, 20.);
+      float hh2 = clamp(dot(dv, ba) / max(dot(ba, ba), 1.), 0., 1.);
+      float dd = length(dv - ba * hh2);
+      float fade = smoothstep(0., .06, ag) * (1. - smoothstep(.5, 1., ag / life));
+      float tw = .65 + .35 * sin(t * (8. + h(vec2(sd_, 8.)) * 14.) + fi);
+      vec3 pc = mix(vec3(.72, .3, 1.), vec3(1., .75, 1.), smoothstep(.8, 1., h(vec2(sd_, 2.2))));
+      mc += pc * (smoothstep(sz, 0., dd) * 1.8 + exp(-dd / (sz * 3.2)) * (.35 + big) * smoothstep(cull, cull * .5, dd)) * fade * tw;
+    }
+    col += mc * uMotes;
+  }
+
+  // ── darbe: yalnızca çarpma noktasında yerel parlama
+  vec2 riI = normalize(uImp - uPiv), tgI = vec2(-riI.y, riI.x), dvI = sc - uImp;
+  float fT = dot(dvI, tgI), fN = dot(dvI, riI);
+  float streak = exp(-(fT * fT / pow(.10 * V.y, 2.) + fN * fN / pow(.010 * V.y, 2.)));
+  float coreF = exp(-dot(dvI, dvI) / pow(.02 * V.y, 2.));
+  col += (vec3(1., .82, 1.) * (streak * 2. + coreF * 2.) + VIO * .3 * exp(-dot(dvI, dvI) / pow(.12 * V.y, 2.))) * uFlashL;
+  // ── son: duman ekranı yutar
+  float tk = smk(vec2(raw.x / V.y * .5, raw.y / V.y * .45 + t * .12)) + ink(vec2(raw.x / V.y * .4 + .3, raw.y / V.y * .3 - t * .05)) * .6;
+  col = mix(col, vec3(.005, .001, .009), clamp(uTake * (.6 + tk), 0., 1.));
+
+  col *= mix(.3, 1., smoothstep(1.25, .3, length((raw / V - .5) * vec2(1., .9)) * 1.4));
+  col = 1. - exp(-col * 1.4);
+  col += grain(raw, t) * .04;
+  float bh = smoothstep(0., .8, t) * V.y * .085;
+  col *= 1. - step(raw.y, bh) - step(V.y - bh, raw.y);
+  gl_FragColor = vec4(max(col, 0.), 1.);
+}`,
+    kare(t, set) {
+      const W = innerWidth, H = innerHeight, D = Math.PI / 180;
+      // ── düzen: tırpan büyük (tamamı görünmek zorunda değil); saplanma noktası I sabit, tutuş noktası ondan hesaplanır
+      const TW = 1672, TH = 941, B = [.025, .971], HD = [.70, .05], TP = [.937, .778];
+      const st = [(HD[0] - B[0]) * TW, (HD[1] - B[1]) * TH], aTex = Math.atan2(st[1], st[0]);
+      const s = 1.05 * W / Math.hypot(st[0], st[1]);                    // sap boyu ≈ 1.05W
+      const to = [(TP[0] - B[0]) * TW, (TP[1] - B[1]) * TH], tipAng = Math.atan2(to[1], to[0]), Rt = Math.hypot(to[0], to[1]) * s;
+      const IMPA = -51.6, hs = t >= IMP && t < IMP + .05;            // hit-stop: 3 kare donma
+      const I = [.88 * W, .17 * H];                                   // sağ üst: yırtığın başı                                    // ucun saplandığı yer
+      const aI = IMPA * D - aTex + tipAng;
+      const arc = [I[0] - Math.cos(aI) * Rt, I[1] - Math.sin(aI) * Rt]; // savruluş merkezi (sap ucu)
+      // ── sapın açısı (derece; ekranda y aşağı, artış = saat yönü)
+      let phi;
+      if (t < 4.4) phi = -100;
+      else if (t < 4.68) phi = -100 + 40 * (1 - Math.pow(1 - (t - 4.4) / .28, 3));        // girer, bıçağın ucu ekrana sarkar
+      else if (t < 4.9) phi = -60 - 2.5 * sm(4.68, 4.9, t);                               // geri gerilir
+      else if (t < IMP) phi = -62.5 + (IMPA + 62.5) * Math.pow((t - 4.9) / (IMP - 4.9), 2); // savruluş (k²)
+      else if (t < IMP + .05) phi = IMPA;
+      else if (t < 5.3) { const a = t - IMP - .05; phi = IMPA + 3 * Math.exp(-a * 9) * Math.sin(a * 38); }
+      else phi = IMPA + 12 * sm(5.3, 5.95, t);                                              // çekerken bıçak biraz daha devrilir
+      // ── çekiş: saplandıktan sonra tırpan ekranı sol aşağıya doğru yırtarak çekilir
+      const E = [.07 * W, .87 * H];                                   // sol alt: yırtığın sonu
+      const kd = Math.pow(sm(5.3, 5.95, t), .8);
+      const rotNow = phi * D - aTex;
+      // uç, çekiş yolunda: tutuş noktasını ucun yola oturacağı şekilde kaydır
+      const tipNow0 = [arc[0] + Math.cos(rotNow + tipAng) * Rt, arc[1] + Math.sin(rotNow + tipAng) * Rt];
+      const tipTarget = t < 5.3 ? tipNow0 : [I[0] + (E[0] - I[0]) * kd, I[1] + (E[1] - I[1]) * kd];
+      const piv = t < 5.3 ? arc : [arc[0] + tipTarget[0] - tipNow0[0], arc[1] + tipTarget[1] - tipNow0[1]];
+      const dt = .016, omega = this._prev != null && t > this._pt ? (rotNow - this._prev) / Math.max(t - this._pt, dt) : 0;
+      this._prev = rotNow; this._pt = t;
+      set('uPiv', piv[0], piv[1]); set('uArc', arc[0], arc[1]); set('uS', s); set('uRot', rotNow);
+      set('uOmega', hs || t > 5.25 ? 0 : Math.max(-30, Math.min(30, omega)));
+      set('uRt', Rt);
+      set('uThA', -84 * D - aTex + tipAng); set('uThB', aI); set('uThTip', rotNow + tipAng);
+      set('uImp', I[0], I[1]);
+      set('uT0', I[0], I[1]); set('uT1', E[0], E[1]); set('uDrag', kd); set('uBend', -.07 * H);
+      set('uMotes', sm(5.32, 5.45, t) * (1 - sm(6.9, 7.2, t)));
+      set('uScyA', t < 4.4 ? 0 : 1 - sm(6.0, 6.55, t));
+      set('uEmis', 1 + 1.5 * sm(4.7, 4.86, t) + (t >= IMP ? 2 * Math.exp(-(t - IMP) * 8) : 0));
+      // ── yırtık: 5.0 kıl çizgisi, 5.05–5.15 %40, 5.35–5.55 tam (yarı genişlik 0.05H)
+      // yırtık çekişle birlikte açılır ve çekiş bitince genişler
+      set('uCutOn', t >= 5.3 ? 1 : 0);
+      set('uOpen', .085 * H * (.4 * sm(5.3, 5.6, t) + .6 * sm(5.7, 6.1, t)));
+      set('uHot', t >= 5.3 ? Math.exp(-(t - 5.3) / .4) : 0);
+      set('uBleed', t >= IMP && t < 5.45 ? 1 - sm(5.25, 5.45, t) : 0);
+      set('uSlide', .012 * H * sm(5.3, 5.9, t));
+      set('uReach', t < 5.6 ? .08 + .27 * sm(5.3, 5.6, t) : t < 6 ? .35 + .45 * sm(5.6, 6, t) : .8 + .6 * sm(6, 6.5, t));
+      set('uTrail', t < 4.86 ? 0 : 1 - sm(5.1, 5.8, t));
+      set('uFront', 0);   // bıçağın önündeki duman katmanı kaldırıldı
+      set('uFlashL', hs ? 1 : t > IMP ? Math.exp(-(t - IMP - .05) * 30) : 0);
+      set('uTake', sm(6.6, 7.0, t));
+      set('uDim', sm(4.2, 4.55, t) + .31 * sm(5.03, 5.06, t) * (1 - sm(5.12, 5.2, t)));   // darbede kısa ek karartma
+      // sahne saati hit-stop'ta durur
+      set('uTs', t < IMP ? t : t < IMP + .05 ? IMP : t - .05);
+      // sarsıntı: çatlamada hafif; darbeden (hit-stop sonrası) sert ve sönümlü, ikinci yırtılmada tekrar
+      const soft = Math.exp(-Math.pow((t - 4) / .6, 2)) * 1.8;
+      const a1 = t - IMP - .05, a2 = t - 5.3;
+      const hard = (a1 > 0 ? 20 * Math.exp(-a1 * 4) : 0) + (a2 > 0 ? 10 * Math.exp(-a2 * 5) : 0);
+      const jx = Math.sin(t * 61 + ph[0]) * .6 + Math.sin(t * 97 + ph[1]) * .4, jy = Math.sin(t * 53 + ph[2]) * .6 + Math.sin(t * 89 + ph[3]) * .4;
+      set('uShake', soft * Math.sin(t * 7.1 + ph[0]) + hard * jx, soft * Math.sin(t * 6.2 + ph[2]) + hard * jy);
+    },
+    basla() {
+      this._prev = null;
+      SES.zamanla([[4.3, 'buyu', .9], [IMP - .45, 'tirpan', 1], [IMP, 'yirt', .8], [5.3, 'yirt', .95], [5.5, 'yirt', .9], [5.7, 'yirt', .85], [5.88, 'yirt', .7]]);
+    },
+    bitis() { SES.durdur(); },
+  });
+})();
 </script>
 <script src="../../../../../splash-cursor.js"></script>
 </body>

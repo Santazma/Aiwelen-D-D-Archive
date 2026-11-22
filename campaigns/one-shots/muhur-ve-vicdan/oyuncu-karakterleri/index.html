@@ -150,17 +150,11 @@
     .dossier-paper {
       position: relative;
       padding: 14px 14px 16px;
-      background: url('../img/parsomen.jpg') center / 260% auto;
+      /* Engizisyon görev kâğıdı: cetvel çizgileri, form kutuları, köşede kan lekesi */
+      background: url('../img/gorev-kagidi.webp') center / 100% 100% no-repeat;
       color: #3b1d12;
-      /* yanık/kirli kenarlar + kâğıt hacmi */
-      box-shadow:
-        inset 0 0 22px rgba(70,35,10,.55),
-        inset 0 0 4px rgba(50,25,8,.6);
       border-radius: 2px;
     }
-    .dossier:nth-child(2) .dossier-paper { background-position: 20% 30%; }
-    .dossier:nth-child(3) .dossier-paper { background-position: 80% 60%; }
-    .dossier:nth-child(4) .dossier-paper { background-position: 40% 90%; }
     .dossier-paper::after {               /* ortadan bir kez katlanmış iz */
       content: ''; position: absolute; left: 0; right: 0; top: 58%; height: 10px;
       background: linear-gradient(180deg, rgba(60,30,10,.16), rgba(255,240,210,.12) 55%, transparent);
@@ -251,6 +245,72 @@
       white-space: nowrap;
     }
 
+    /* ── DERİ DOSYA KAPAĞI ──
+       Dosya kapalı gelir: mühürlü kayışlı kızıl deri kapak. Üzerine gelince (dokunmatikte
+       ekrana girince) sol kenarındaki menteşeden açılır, altındaki görev kâğıdı görünür. */
+    .dossier { perspective: 900px; }
+    .dossier-cover {
+      position: absolute; inset: -3px -4px -3px -3px; z-index: 5;
+      transform-origin: 0 50%;
+      transform: rotateY(0deg);
+      transition: transform .95s cubic-bezier(.55,.06,.25,1);
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+    .dossier-cover .face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 2px 5px 5px 2px;
+    }
+    .dossier-cover .front {
+      background: url('../img/dosya-kapak.webp') center / 100% 100% no-repeat;
+      box-shadow: inset 4px 0 6px rgba(0,0,0,.55), 2px 0 2px rgba(0,0,0,.4);
+    }
+    .dossier-cover .inside {                 /* kapağın iç yüzü: kararmış deri astar */
+      transform: rotateY(180deg);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.65), rgba(0,0,0,.2) 30%, rgba(0,0,0,.5)),
+        url('../img/dosya-kapak.webp') center / 100% 100% no-repeat;
+      filter: brightness(.45) saturate(.7);
+    }
+    /* kapakta altın varak baskı: sicil numarası ve görevlinin adı */
+    .cover-foil {
+      position: absolute; left: 12%; right: 12%;
+      font-family: 'Cinzel', serif; text-transform: uppercase; text-align: center;
+      color: #d9b45e;
+      background: linear-gradient(180deg, #f3d98e 0%, #b88a35 55%, #e8c46e 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.85)) drop-shadow(0 -1px 0 rgba(255,220,150,.18));
+      opacity: .92;
+    }
+    .cover-foil.no   { top: 15%; font-size: .55rem; font-weight: 700; letter-spacing: 3px; }
+    .cover-foil.name { top: 62%; font-size: .78rem; font-weight: 900; letter-spacing: 1.5px; line-height: 1.35; }
+    .cover-foil.rule { top: 23%; height: 1px; background: linear-gradient(90deg, transparent, #b88a35, transparent); filter: none; opacity: .55; }
+    .dossier:hover .dossier-cover, .dossier:focus-visible .dossier-cover, .dossier.open .dossier-cover {
+      transform: rotateY(-128deg);
+    }
+
+    /* ── ONAY DAMGASI ── tıklayınca fotoğrafın üstüne "ONAYLANDI" basılır, sonra dosya açılır */
+    .dossier-approve {
+      position: absolute; left: 50%; top: 42%; width: 96%; z-index: 4;
+      transform: translate(-50%, -50%) rotate(-13deg) scale(2.6);
+      opacity: 0; pointer-events: none;
+      filter: brightness(1.9) saturate(1.3);   /* koyu fotoğraf üstünde de okunur kırmızı mürekkep */
+      -webkit-mask: url('../img/murekkep-doku.png') 0 0 / 140px 140px repeat;
+              mask: url('../img/murekkep-doku.png') 0 0 / 140px 140px repeat;
+    }
+    .dossier.approved .dossier-approve { animation: approveSlam .42s cubic-bezier(.3,1.5,.55,1) both; }
+    .dossier.approved .dossier-paper  { animation: approveThud .38s ease-out .12s; }
+    @keyframes approveSlam {
+      0%   { opacity: 0;   transform: translate(-50%, -50%) rotate(-6deg)  scale(2.6); }
+      55%  { opacity: .95; transform: translate(-50%, -50%) rotate(-14deg) scale(.95); }
+      100% { opacity: .9;  transform: translate(-50%, -50%) rotate(-13deg) scale(1); }
+    }
+    @keyframes approveThud { 25% { transform: translateY(3px) scale(.985); } }
+    @media (prefers-reduced-motion: reduce) {
+      .dossier-cover { transition-duration: .01s; }
+    }
+
     /* ── BACK BUTTON ── */
     .back-link {
       display: inline-flex; align-items: center; gap: 8px;
@@ -304,41 +364,45 @@
 
     <div class="character-grid">
 
-      <a class="dossier" href="ceren/index.html">
+      <a class="dossier" href="yeri/index.html">
         <div class="dossier-paper">
           <div class="dossier-head"><span>Sicil</span><span>№ I</span></div>
-          <div class="dossier-photo empty">
-            <img class="photo-seal" src="../img/muhur-kucuk.webp" alt="">
-          </div>
-          <div class="dossier-name">Ceren'in Karakteri</div>
-          <div class="dossier-role">Görevli · Engizisyon</div>
-          <div class="dossier-sealed-mark">Mühürlü</div>
-        </div>
-      </a>
-
-      <a class="dossier" href="egze/index.html">
-        <div class="dossier-paper">
-          <div class="dossier-head"><span>Sicil</span><span>№ II</span></div>
           <div class="dossier-photo">
-            <img class="portrait" src="egze/Egze Çar.png" alt="Egze'nin Karakteri">
+            <img class="portrait" src="yeri/Yeri Yağmurmızrağı.png" alt="Yeri Yağmurmızrağı">
             <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
             <span class="photo-corner br"></span><span class="photo-corner bl"></span>
           </div>
-          <div class="dossier-name">Egze'nin Karakteri</div>
+          <div class="dossier-name">Yeri Yağmurmızrağı</div>
           <div class="dossier-role">Görevli · Engizisyon</div>
           <img class="dossier-stamp" src="../img/damga.webp" alt="">
         </div>
       </a>
 
-      <a class="dossier" href="kubra/index.html">
+      <a class="dossier" href="baelor/index.html">
+        <div class="dossier-paper">
+          <div class="dossier-head"><span>Sicil</span><span>№ II</span></div>
+          <div class="dossier-photo">
+            <img class="portrait" src="baelor/Baelor.png" alt="Baelor">
+            <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
+            <span class="photo-corner br"></span><span class="photo-corner bl"></span>
+          </div>
+          <div class="dossier-name">Baelor</div>
+          <div class="dossier-role">Görevli · Engizisyon</div>
+          <img class="dossier-stamp" src="../img/damga.webp" alt="">
+        </div>
+      </a>
+
+      <a class="dossier" href="nox/index.html">
         <div class="dossier-paper">
           <div class="dossier-head"><span>Sicil</span><span>№ III</span></div>
-          <div class="dossier-photo empty">
-            <img class="photo-seal" src="../img/muhur-kucuk.webp" alt="">
+          <div class="dossier-photo">
+            <img class="portrait" src="nox/Nox.png" alt="Nox">
+            <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
+            <span class="photo-corner br"></span><span class="photo-corner bl"></span>
           </div>
-          <div class="dossier-name">Kübra'nın Karakteri</div>
+          <div class="dossier-name">Nox</div>
           <div class="dossier-role">Görevli · Engizisyon</div>
-          <div class="dossier-sealed-mark">Mühürlü</div>
+          <img class="dossier-stamp" src="../img/damga.webp" alt="">
         </div>
       </a>
 
@@ -346,7 +410,7 @@
         <div class="dossier-paper">
           <div class="dossier-head"><span>Sicil</span><span>№ IV</span></div>
           <div class="dossier-photo">
-            <img class="portrait" src="vespera/Vespera.png" alt="Vespera">
+            <img class="portrait" src="vespera/Vespera Anime Stilizasyonu.png" alt="Vespera">
             <span class="photo-corner tl"></span><span class="photo-corner tr"></span>
             <span class="photo-corner br"></span><span class="photo-corner bl"></span>
           </div>
@@ -459,6 +523,65 @@ void main(){
     const img = photo.querySelector('img.portrait');
     const go = () => { try { setup(photo); } catch (e) { console.warn('Mürekkep açılımı kurulamadı:', e); } };
     if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, { once: true });
+  });
+})();
+</script>
+<script>
+/* ══════════════ DERİ KAPAK + ONAY DAMGASI ══════════════ */
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touch = matchMedia('(hover: none)').matches;
+  let ac = null;
+  /* Damga sesi: ahşap sapın kâğıda vuruşu — alçak, kısa gövde darbesi + kuru kâğıt tıkırtısı */
+  function thud() {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+      const t = ac.currentTime, out = ac.createGain(); out.gain.value = .55; out.connect(ac.destination);
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(42, t + .14);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + .004); g.gain.exponentialRampToValueAtTime(.001, t + .2);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + .22);
+      const n = ac.createBuffer(1, Math.floor(ac.sampleRate * .06), ac.sampleRate), d = n.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+      const src = ac.createBufferSource(), lp = ac.createBiquadFilter(), ng = ac.createGain();
+      src.buffer = n; lp.type = 'lowpass'; lp.frequency.value = 2400; ng.gain.value = .5;
+      src.connect(lp); lp.connect(ng); ng.connect(out); src.start(t);
+    } catch (e) {}
+  }
+
+  document.querySelectorAll('.dossier').forEach(card => {
+    const no = card.querySelector('.dossier-head span:last-child').textContent;
+    const name = card.querySelector('.dossier-name').textContent;
+    const cover = document.createElement('div');
+    cover.className = 'dossier-cover';
+    cover.setAttribute('aria-hidden', 'true');
+    cover.innerHTML = '<div class="face front"><div class="cover-foil no"></div><div class="cover-foil rule"></div><div class="cover-foil name"></div></div><div class="face inside"></div>';
+    cover.querySelector('.no').textContent = 'Sicil ' + no;
+    cover.querySelector('.name').textContent = name;
+    card.appendChild(cover);
+
+    const stamp = document.createElement('img');
+    stamp.className = 'dossier-approve'; stamp.src = '../img/onaylandi.webp'; stamp.alt = '';
+    card.querySelector('.dossier-photo').appendChild(stamp);
+
+    // dokunmatik ekranda üzerine gelme yok: kart ekrana girince kapak açılır
+    if (touch && 'IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) card.classList.add('open'); }), { threshold: .6 }).observe(card);
+    }
+
+    card.addEventListener('click', e => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0 || card.classList.contains('approved')) return;
+      e.preventDefault();
+      card.classList.add('open', 'approved');
+      setTimeout(thud, reduce ? 0 : 150);
+      setTimeout(() => { location.href = card.href; }, reduce ? 200 : 820);
+    });
+  });
+  // geri tuşuyla dönülürse (bfcache) damga silinir; masaüstünde kapak yeniden kapanır
+  addEventListener('pageshow', e => {
+    if (!e.persisted) return;
+    document.querySelectorAll('.dossier').forEach(c => { c.classList.remove('approved'); if (!touch) c.classList.remove('open'); });
   });
 })();
 </script>

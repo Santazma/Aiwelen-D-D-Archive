@@ -228,7 +228,83 @@
     }
     .mv-skip:hover { color: rgba(230,220,198,.9); border-color: rgba(196,58,44,.6); }
     #mv-intro.opening .mv-hint, #mv-intro.opening .mv-skip { opacity: 0; pointer-events: none; }
+
+    /* ══════════════ KALICI İZ: YANIK KÂĞIT KÜLLERİ ══════════════
+       Mühür kırıldıktan sonra ekranın alt kenarında yanmış parşömen parçaları kalır.
+       Gerçek kül dokusu (img/kul.webp) WebGL'de çizilir: korlar nefes alır gibi
+       için için yanar, sıcak hava parçaları titretir, ince kıvılcım ve duman yükselir. */
+    #mv-kul {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      height: clamp(130px, 24vh, 240px);
+      width: 100%; display: block;
+      pointer-events: none;
+      z-index: 0;                          /* içeriğin altında, arkaplanın üstünde */
+      opacity: 0; transition: opacity 2.4s ease;
+    }
+    #mv-kul.on { opacity: 1; }
+
+    /* ══════════════ ENGİZİSYON FERMANI ══════════════
+       Metin girilince (FERMAN dizisi) görünür: parşömen ekrana girince satırlar
+       sırayla mürekkeple yazılır, en sonda damga basılır. Metin yoksa bölüm gizli kalır. */
+    .ferman {
+      position: relative;
+      width: min(560px, 100%);
+      margin: 0 auto 2.6rem;
+      aspect-ratio: 760 / 1013;
+      background: url('img/ferman.webp') center / 100% 100% no-repeat;
+      color: #2b130b;
+      filter: drop-shadow(0 4px 3px rgba(0,0,0,.7)) drop-shadow(0 18px 28px rgba(0,0,0,.55));
+      text-align: center;
+    }
+    .ferman[hidden] { display: none; }
+    .ferman-inner {                        /* yazı alanı: parşömenin kenar süslerinin içinde */
+      position: absolute; inset: 14% 15% 25%;
+      display: flex; flex-direction: column; justify-content: center;
+      overflow: hidden;
+    }
+    .ferman-title {
+      font-family: 'Cinzel', serif; font-weight: 900;
+      font-size: clamp(1.05rem, 3.4vw, 1.55rem); letter-spacing: 2px;
+      color: #5a0f0c; margin: 0 0 .9em;
+    }
+    .ferman-body {
+      font-family: 'IM Fell English', 'Lora', serif;
+      font-size: clamp(.92rem, 2.6vw, 1.12rem);
+      line-height: 1.62; text-align: justify; text-align-last: center;
+    }
+    /* Her satır mürekkebin kâğıda işlemesi gibi soldan sağa açılır:
+       maske = yumuşak cephe gradyanı × mürekkep dokusu (eşitsiz emilim) */
+    .ferman-line {
+      display: block;
+      -webkit-mask: linear-gradient(90deg, #000 45%, transparent 55%) 100% 0 / 220% 100% no-repeat;
+              mask: linear-gradient(90deg, #000 45%, transparent 55%) 100% 0 / 220% 100% no-repeat;
+      opacity: .9;
+      text-shadow: 0 0 .6px rgba(43,19,11,.8);
+    }
+    .ferman.writing .ferman-line { animation: inkLine var(--d, 1.6s) cubic-bezier(.45,.1,.4,1) var(--at, 0s) both; }
+    @keyframes inkLine {
+      from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+      to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+    }
+    .ferman-stamp {
+      position: absolute; width: 30%; left: 50%; bottom: 6.5%;
+      transform: translateX(-50%) rotate(-9deg) scale(2.4);
+      opacity: 0; mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    .ferman.stamped .ferman-stamp { animation: fermanStamp .5s cubic-bezier(.3,1.6,.5,1) both; }
+    @keyframes fermanStamp {
+      0%   { opacity: 0;   transform: translateX(-50%) rotate(-4deg) scale(2.4); }
+      60%  { opacity: .85; transform: translateX(-50%) rotate(-10deg) scale(.94); }
+      100% { opacity: .78; transform: translateX(-50%) rotate(-9deg) scale(1); }
+    }
+    .ferman.stamped { animation: fermanThud .35s ease-out; }
+    @keyframes fermanThud { 30% { transform: translateY(3px) scale(.995); } }
+    @media (prefers-reduced-motion: reduce) {
+      .ferman.writing .ferman-line, .ferman.stamped .ferman-stamp { animation-duration: .01s; animation-delay: 0s; }
+    }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
 <!-- ── GİRİŞ: MÜHÜRLÜ DOSYA ── -->
@@ -274,6 +350,15 @@
     </div>
     <div class="divider-line"></div>
   </div>
+
+  <!-- ── ENGİZİSYON FERMANI (metin girilince görünür) ── -->
+  <section class="ferman" id="ferman" hidden aria-label="Engizisyon fermanı">
+    <div class="ferman-inner">
+      <h2 class="ferman-title" id="ferman-title"></h2>
+      <div class="ferman-body" id="ferman-body"></div>
+    </div>
+    <img class="ferman-stamp" src="img/damga.webp" alt="">
+  </section>
 
   <div class="section-label">Dosya Bölümleri</div>
 
@@ -830,6 +915,7 @@ void main(){
     intro.style.display = 'none';
     document.body.style.overflow = '';
     restampEmblem();
+    window.MV_KIRILDI = true; dispatchEvent(new Event('mv:muhur-kirildi'));
   }
 
   function reset() {
@@ -872,6 +958,147 @@ void main(){
   }
 
   if (intro.style.display !== 'none') show(false);
+  else window.MV_KIRILDI = true;          /* giriş gösterilmiyor: iz ve ferman doğrudan başlar */
+})();
+</script>
+<canvas id="mv-kul" aria-hidden="true"></canvas>
+<script>
+/* ══════════════ KALICI İZ: YANIK KÂĞIT KÜLLERİ (WebGL) ══════════════
+   Mühür kırılınca bir kez başlar, sonra sayfada kalır. Kül dokusu alt kenar boyunca
+   aynalanarak döşenir. Korlar dokudaki turuncu piksellerden bulunur ve gürültüyle
+   için için yanar; üstte sıcak hava titremesi, yükselen kıvılcımlar ve ince duman. */
+(function () {
+  const cv = document.getElementById('mv-kul');
+  const gl = cv.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+  if (!gl) return;
+  const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
+  const FS = `
+precision mediump float;
+uniform vec2 uRes; uniform float uT, uIn; uniform sampler2D uAsh;
+float h(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
+float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=.5,s=0.; for(int i=0;i<4;i++){ s+=a*n(p); p=p*2.03+7.1; a*=.5; } return s; }
+void main(){
+  vec2 px = gl_FragCoord.xy;                       // alttan yukarı
+  float H = uRes.y, y = px.y / H;
+  // dokunun alt %58'i şerit yüksekliğine oturur, yatayda aynalanarak döşenir
+  float tile = H / .58;
+  float tx = px.x / tile;
+  tx = abs(mod(tx, 2.) - 1.);                       // ayna
+  // sıcak hava: korların üstünde hafif titreme
+  float heat = (fbm(vec2(px.x*.02, px.y*.03 - uT*1.6)) - .5) * .006 * (1.-y);
+  vec2 uv = vec2(tx + heat, 1. - y*.58 + heat*.5);
+  vec4 a = texture2D(uAsh, uv);                    // premultiplied değil: renk + alfa
+  // kor maskesi: turuncu-kırmızı, parlak pikseller
+  float ember = smoothstep(.3, .6, a.r - a.g*.9) * smoothstep(.5, .85, a.r) * a.a;
+  float pulse = .55 + .45*fbm(vec2(px.x*.015, uT*.6)) + .25*sin(uT*2.3 + px.x*.05);
+  float lum = dot(a.rgb, vec3(.3,.55,.15));
+  vec3 col = mix(vec3(lum), a.rgb, .55) * vec3(.5,.42,.37);   // kâğıt parçaları sayfanın karanlığına uysun
+  col += vec3(1., .36, .07) * ember * pulse * 1.3;
+  float A = a.a * .82 * smoothstep(1., .5, y);          // şeridin üst kenarı yumuşak biter
+  // korların yaydığı sıcak hâle (kâğıdın dışına da taşar)
+  vec4 b = texture2D(uAsh, uv + vec2(0., .02));
+  float glow = smoothstep(.3,.6,b.r-b.g*.9) * smoothstep(.5,.85,b.r) * b.a * pulse;
+  col += vec3(.9,.25,.04) * glow * .25 * (1.-A);
+  A = max(A, glow*.18);
+  // ince duman: yukarı doğru incelen koyu tül
+  float sm = fbm(vec2(px.x*.006 + uT*.03, px.y*.008 - uT*.12));
+  float smA = smoothstep(.45,.8,sm) * (1.-smoothstep(.1,.95,y)) * .22;
+  col = mix(col, vec3(.09,.075,.07), smA*(1.-A)); A = max(A, smA);
+  // kıvılcımlar: hücre başına bir parçacık, yükselirken söner
+  for (int k=0;k<2;k++){
+    float sc = k==0 ? 44. : 27.;
+    vec2 q = vec2(px.x, px.y - uT*(k==0 ? 34. : 52.)) / sc;
+    vec2 c = floor(q), f = fract(q) - .5;
+    float r = h(c + float(k)*17.);
+    vec2 o = vec2(h(c+3.1)-.5, h(c+7.7)-.5)*.6 + vec2(sin(uT*1.7 + r*20.)*.18, 0.);
+    float d = length(f - o);
+    float life = (1.-y) * step(.86, r);
+    float sp = smoothstep(.09, 0., d) * life * (.6 + .4*sin(uT*9.+r*40.));
+    col += vec3(1.,.55,.15) * sp * 1.4; A = max(A, sp*.9);
+  }
+  A *= uIn;
+  gl_FragColor = vec4(col * A, A);
+}`;
+  const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o);
+    if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  let pr;
+  try {
+    pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(pr); gl.useProgram(pr);
+  } catch (e) { console.warn('Kül katmanı kurulamadı:', e); return; }
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; ['uRes','uT','uIn','uAsh'].forEach(k => U[k] = gl.getUniformLocation(pr, k));
+  const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
+  [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  const img = new Image();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ready = false, started = false, raf = 0, t0 = 0, tIn = 0;
+  img.onload = () => { gl.bindTexture(gl.TEXTURE_2D, tx); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); ready = true; if (started) kick(); };
+  img.src = 'img/kul.webp';
+  function size() {
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr);
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); }
+  }
+  function frame(now) {
+    raf = 0;
+    if (!t0) t0 = tIn = now;
+    size();
+    gl.uniform2f(U.uRes, cv.width, cv.height);
+    gl.uniform1f(U.uT, reduce ? 4 : (now - t0) / 1000);
+    gl.uniform1f(U.uIn, Math.min(1, (now - tIn) / 1800));
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (!reduce && !document.hidden) raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (ready && !raf) raf = requestAnimationFrame(frame); }
+  const start = () => { started = true; cv.classList.add('on'); t0 = 0; kick(); };
+  addEventListener('mv:muhur-kirildi', start);
+  if (window.MV_KIRILDI) start();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && started) kick(); });
+  addEventListener('resize', () => { if (started) kick(); });
+})();
+</script>
+<script>
+/* ══════════════ ENGİZİSYON FERMANI ══════════════
+   Metni buraya yazın: başlık ve satırlar. Satır listesi boşsa ferman sayfada görünmez.
+   Her satır, parşömen ekrana girince sırayla mürekkeple yazılır; sonunda damga basılır. */
+const FERMAN = {
+  baslik: '',
+  satirlar: [],
+};
+(function () {
+  const box = document.getElementById('ferman');
+  if (!FERMAN.satirlar.length) return;
+  document.getElementById('ferman-title').textContent = FERMAN.baslik;
+  const body = document.getElementById('ferman-body');
+  let at = .2;
+  FERMAN.satirlar.forEach(s => {
+    const el = document.createElement('span');
+    el.className = 'ferman-line';
+    el.textContent = s;
+    const d = Math.min(2.6, .5 + s.length * .028);      // uzun satır daha uzun sürer
+    el.style.setProperty('--at', at + 's'); el.style.setProperty('--d', d + 's');
+    at += d * .82;
+    body.appendChild(el);
+  });
+  box.hidden = false;
+  const write = () => {
+    if (box.classList.contains('writing')) return;
+    box.classList.add('writing');
+    setTimeout(() => box.classList.add('stamped'), (at + .2) * 1000);
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { write(); io.disconnect(); } }, { threshold: .35 });
+    // giriş açıkken yazmaya başlamasın: mühür kırılınca gözlemle
+    if (window.MV_KIRILDI) io.observe(box);
+    else addEventListener('mv:muhur-kirildi', () => io.observe(box), { once: true });
+  } else write();
 })();
 </script>
 <script>

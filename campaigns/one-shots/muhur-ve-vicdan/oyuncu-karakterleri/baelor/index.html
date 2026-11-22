@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ceren'in Karakteri — Mühür ve Vicdan</title>
+  <title>Baelor — Mühür ve Vicdan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -388,19 +388,345 @@
       .carousel-card img { width: 185px; height: 260px; }
       .carousel-empty { width: 200px; }
     }
+    /* ══════════════════════════════════
+       MUSIC PLAYER
+    ══════════════════════════════════ */
+    @keyframes playerSlideIn {
+      from{opacity:0;transform:translateY(-12px) scale(0.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes progressPulse {
+      0%,100%{box-shadow:0 0 4px rgba(196,58,44,0.35)}
+      50%{box-shadow:0 0 10px rgba(196,58,44,0.6)}
+    }
+    @keyframes trackReveal {
+      from{opacity:0;transform:translateX(-6px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @keyframes vinylSpin {
+      from{transform:rotate(0deg)} to{transform:rotate(360deg)}
+    }
+
+    #music-widget { display: block; }
+
+    /* Toggle button — fixed top right */
+    .player-toggle {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 900;
+      background: rgba(22,8,8,0.93);
+      border: 1px solid rgba(196,58,44,0.35);
+      color: #e87a68;
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; letter-spacing: 2px;
+      padding: .6rem 1.1rem;
+      cursor: pointer;
+      transition: all .25s ease;
+      display: flex; align-items: center; gap: 7px;
+      backdrop-filter: blur(8px);
+    }
+    .player-toggle:hover { border-color: #e87a68; background: rgba(196,58,44,0.1); }
+    .player-toggle-icon { font-size: .85rem; line-height: 1; }
+    .player-toggle-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #c43a2c;
+      transition: background .3s;
+    }
+    .player-toggle-dot.playing { background: #f3dccb; animation: progressPulse 1.5s ease-in-out infinite; }
+
+    /* Player panel */
+    .player-panel {
+      position: fixed;
+      top: 58px; right: 18px;
+      z-index: 800;
+      width: 320px;
+      background: rgba(22,8,8,0.96);
+      border: 1px solid rgba(196,58,44,0.28);
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(12px);
+      animation: playerSlideIn .3s ease both;
+    }
+    .player-panel.open { display: flex; }
+
+    /* Panel header */
+    .player-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem .9rem;
+      border-bottom: 1px solid rgba(196,58,44,0.12);
+      background: rgba(196,58,44,0.04);
+    }
+    .player-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: .68rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(196,58,44,0.5);
+    }
+    .player-header-archive {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 2px;
+      color: rgba(196,58,44,0.28);
+    }
+
+    /* Now playing section */
+    .player-now {
+      padding: .9rem .9rem .7rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .player-now-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(196,58,44,0.32); margin-bottom: .5rem;
+    }
+    .player-now-info {
+      display: flex; align-items: center; gap: .75rem;
+    }
+    /* Vinyl disc */
+    .player-vinyl {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid rgba(196,58,44,0.25);
+      overflow: hidden; flex-shrink: 0;
+      position: relative;
+      background: rgba(14,6,6,1);
+    }
+    .player-vinyl img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.7);
+      border-radius: 50%;
+    }
+    .player-vinyl::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+        rgba(14,6,6,0.72) 28%, transparent 30%,
+        transparent 80%, rgba(196,58,44,0.1) 100%);
+      pointer-events: none;
+    }
+    .player-vinyl.spinning img { animation: vinylSpin 4s linear infinite; }
+
+    .player-track-info { flex: 1; min-width: 0; }
+    .player-track-name {
+      font-family: 'Cinzel', serif;
+      font-size: .8rem; font-weight: 700;
+      color: #f3dccb; letter-spacing: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .player-track-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 2px;
+      color: rgba(196,58,44,0.38); margin-top: 2px;
+    }
+
+    /* Progress bar */
+    .player-progress-wrap {
+      padding: .6rem .9rem .4rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .player-progress-bar {
+      position: relative; height: 3px;
+      background: rgba(196,58,44,0.1);
+      cursor: pointer; margin-bottom: .35rem;
+    }
+    .player-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #c43a2c, #f3dccb);
+      width: 0%;
+      pointer-events: none;
+      transition: width .1s linear;
+    }
+    .player-progress-bar:hover .player-progress-fill { filter: brightness(1.2); }
+    .player-time-row {
+      display: flex; justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.4);
+    }
+
+    /* Controls */
+    .player-controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; padding: .65rem .9rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .ctrl-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(196,58,44,0.55);
+      font-size: 1rem; line-height: 1;
+      padding: .3rem;
+      transition: color .2s, transform .15s;
+      display: flex; align-items: center;
+    }
+    .ctrl-btn:hover { color: #f3dccb; }
+    .ctrl-btn.active { color: #f3dccb; }
+    .ctrl-btn.play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(196,58,44,0.4);
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(196,58,44,0.06);
+    }
+    .ctrl-btn.play-btn:hover { background: rgba(196,58,44,0.15); border-color: #e87a68; transform: scale(1.05); }
+    .ctrl-btn.loop-btn { font-size: .8rem; }
+
+    /* Volume */
+    .player-volume {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem .9rem .6rem;
+      border-bottom: 1px solid rgba(196,58,44,0.1);
+    }
+    .vol-icon {
+      font-size: .8rem; color: rgba(196,58,44,0.45); flex-shrink: 0;
+    }
+    .vol-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 3px;
+      background: linear-gradient(90deg, #c43a2c 70%, rgba(196,58,44,0.12) 70%);
+      outline: none; cursor: pointer;
+      border-radius: 2px;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #e87a68; cursor: pointer;
+      box-shadow: 0 0 6px rgba(196,58,44,0.5);
+    }
+    .vol-slider::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #e87a68; cursor: pointer; border: none;
+    }
+    .vol-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .58rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.38); width: 26px; text-align: right;
+    }
+
+    /* Track list */
+    .player-tracklist {
+      max-height: 200px; overflow-y: auto;
+    }
+    .player-tracklist::-webkit-scrollbar { width: 3px; }
+    .player-tracklist::-webkit-scrollbar-thumb { background: rgba(196,58,44,0.2); border-radius: 2px; }
+
+    .track-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .5rem .9rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(196,58,44,0.06);
+      transition: background .2s;
+      animation: trackReveal .3s ease both;
+    }
+    .track-item:hover { background: rgba(196,58,44,0.05); }
+    .track-item.active { background: rgba(196,58,44,0.08); }
+    .track-item:last-child { border-bottom: none; }
+
+    .track-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; letter-spacing: 1px;
+      color: rgba(196,58,44,0.28); width: 16px; flex-shrink: 0;
+    }
+    .track-item.active .track-num { color: #e87a68; }
+
+    .track-thumb {
+      width: 32px; height: 32px; border-radius: 2px;
+      overflow: hidden; flex-shrink: 0;
+      border: 1px solid rgba(196,58,44,0.15);
+      background: rgba(14,6,6,1);
+    }
+    .track-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(.7) saturate(.6);
+    }
+
+    .track-label { flex: 1; min-width: 0; }
+    .track-title {
+      font-family: 'Cinzel', serif;
+      font-size: .72rem; font-weight: 700; letter-spacing: .8px;
+      color: rgba(240,226,212,0.74);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-item.active .track-title { color: #f3dccb; }
+    .track-dur {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .56rem; color: rgba(196,58,44,0.28);
+      flex-shrink: 0;
+    }
+    .track-playing-icon {
+      font-size: .7rem; color: #e87a68;
+      display: none; flex-shrink: 0;
+    }
+    .track-item.active .track-playing-icon { display: block; }
+    .track-item.active .track-dur { display: none; }
+
+    @media (max-width: 540px) {
+      .player-panel { width: calc(100vw - 36px); }
+      .player-toggle { font-size: .64rem; padding: .5rem .8rem; letter-spacing: 1.5px; }
+    }
   </style>
 </head>
 <body>
 
   <a href="../index.html" id="back-button" class="fixed-back-button">⟵ Geri Dön</a>
 
-  <div class="container">
-    <h1>Ceren'in Karakteri</h1>
-    <div class="character-image-sealed">
-      <img src="muhur-kucuk.webp" alt="">
-      <span>Portre Bekleniyor</span>
+  <div id="music-widget">
+    <!-- ── MUSIC PLAYER ── -->
+    <button class="player-toggle" onclick="togglePlayer()" id="playerToggleBtn">
+      <span class="player-toggle-icon">♪</span>
+      <span style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px">KARAKTER MÜZİĞİ</span>
+      <span class="player-toggle-dot" id="playerDot"></span>
+    </button>
+
+    <div class="player-panel" id="playerPanel">
+      <div class="player-header">
+        <span class="player-header-title">Karakter Müziği</span>
+        <span class="player-header-archive">MV-MÜZ · One Shot</span>
+      </div>
+      <div class="player-now">
+        <div class="player-now-label">&gt;_ Şu An Çalıyor</div>
+        <div class="player-now-info">
+          <div class="player-vinyl" id="playerVinyl">
+            <img id="playerVinylImg" src="" alt="">
+          </div>
+          <div class="player-track-info">
+            <div class="player-track-name" id="playerTrackName">— Seçilmedi —</div>
+            <div class="player-track-sub" id="playerTrackSub">KARAKTER MÜZİĞİ</div>
+          </div>
+        </div>
+      </div>
+      <div class="player-progress-wrap">
+        <div class="player-progress-bar" id="progressBar" onclick="seekAudio(event)">
+          <div class="player-progress-fill" id="progressFill"></div>
+        </div>
+        <div class="player-time-row">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeDuration">0:00</span>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button class="ctrl-btn loop-btn" id="loopBtn" onclick="toggleLoop()" title="Tekrar">↺</button>
+        <button class="ctrl-btn" onclick="prevTrack()" title="Önceki">⏮</button>
+        <button class="ctrl-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Sonraki">⏭</button>
+        <button class="ctrl-btn" style="opacity:0;pointer-events:none">↺</button>
+      </div>
+      <div class="player-volume">
+        <span class="vol-icon" id="volIcon">🔊</span>
+        <input class="vol-slider" type="range" id="volSlider" min="0" max="100" value="10" oninput="setVolume(this.value)">
+        <span class="vol-val" id="volVal">10</span>
+      </div>
+      <div class="player-tracklist" id="trackList"></div>
     </div>
-    <div class="image-title">İsimsiz Görevli</div>
+
+    <audio id="audioEl"></audio>
+  </div>
+
+  <div class="container">
+    <h1>Baelor</h1>
+    <img src="Baelor.png" alt="Baelor" class="character-image" onclick="openModal(this)">
+    <div class="image-title">Baelor</div>
 
     <div class="bio">
       <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
@@ -419,12 +745,12 @@
       <div class="info-box-inline">
         <h2>Karakter Bilgileri</h2>
         <div class="info-card">
-          <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Ceren</span></div>
-          <div class="info-row"><span class="info-label">Class</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Level</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Irk</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
+          <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Egze</span></div>
+          <div class="info-row"><span class="info-label">Class</span><span class="info-value">Battle Master Fighter</span></div>
+          <div class="info-row"><span class="info-label">Level</span><span class="info-value">5</span></div>
+          <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+          <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">32</span></div>
+          <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
         </div>
       </div>
     </div>
@@ -497,12 +823,12 @@
   <div class="info-box right-box">
     <h2>Karakter Bilgileri</h2>
     <div class="info-card">
-      <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Ceren</span></div>
-      <div class="info-row"><span class="info-label">Class</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Level</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Irk</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
-      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value"><span class="info-pending">Belirlenmedi</span></span></div>
+      <div class="info-row"><span class="info-label">Oyuncu</span><span class="info-value">Egze</span></div>
+      <div class="info-row"><span class="info-label">Class</span><span class="info-value">Battle Master Fighter</span></div>
+      <div class="info-row"><span class="info-label">Level</span><span class="info-value">5</span></div>
+      <div class="info-row"><span class="info-label">Irk</span><span class="info-value">Human</span></div>
+      <div class="info-row"><span class="info-label">Yaş</span><span class="info-value">32</span></div>
+      <div class="info-row"><span class="info-label">Cinsiyet</span><span class="info-value">Erkek</span></div>
     </div>
   </div>
 
@@ -520,6 +846,152 @@
   </div>
 
   <script>
+    /* ══════════════ MUSIC PLAYER ══════════════ */
+    const tracks = [
+      { name: "Baelor Theme", file: "Baelor Theme.mp3", img: "Baelor.png" },
+    ];
+
+    let currentTrack = 0;
+    let isLooping    = false;
+    let playerOpen   = false;
+
+    const audio        = document.getElementById('audioEl');
+    const playBtn      = document.getElementById('playBtn');
+    const playerDot    = document.getElementById('playerDot');
+    const vinylEl      = document.getElementById('playerVinyl');
+    const vinylImg     = document.getElementById('playerVinylImg');
+    const trackNameEl  = document.getElementById('playerTrackName');
+    const trackSubEl   = document.getElementById('playerTrackSub');
+    const progressFill = document.getElementById('progressFill');
+    const timeElapsed  = document.getElementById('timeElapsed');
+    const timeDuration = document.getElementById('timeDuration');
+    const volSlider    = document.getElementById('volSlider');
+    const volVal       = document.getElementById('volVal');
+    const volIcon      = document.getElementById('volIcon');
+
+    audio.volume = 0.10;
+
+    function buildTrackList() {
+      const tl = document.getElementById('trackList');
+      tl.innerHTML = '';
+      tracks.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.className = 'track-item' + (i === currentTrack ? ' active' : '');
+        item.id = `track-${i}`;
+        item.onclick = () => { loadTrack(i); audio.play(); };
+        item.innerHTML = `
+          <span class="track-num">${String(i+1).padStart(2,'0')}</span>
+          <div class="track-thumb"><img src="${t.img}" alt="${t.name}" onerror="this.style.opacity='.2'"></div>
+          <div class="track-label"><div class="track-title">${t.name}</div></div>
+          <span class="track-playing-icon">▶</span>
+          <span class="track-dur" id="dur-${i}">--:--</span>`;
+        tl.appendChild(item);
+      });
+      tracks.forEach((t, i) => {
+        const tmp = new Audio(t.file);
+        tmp.addEventListener('loadedmetadata', () => {
+          const el = document.getElementById(`dur-${i}`);
+          if (el) el.textContent = fmtTime(tmp.duration);
+        });
+      });
+    }
+
+    function fmtTime(s) {
+      if (!s || isNaN(s)) return '0:00';
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${m}:${sec.toString().padStart(2,'0')}`;
+    }
+
+    function loadTrack(idx) {
+      currentTrack = idx;
+      const t = tracks[idx];
+      audio.src = t.file;
+      audio.loop = isLooping;
+      trackNameEl.textContent = t.name;
+      vinylImg.src = t.img;
+      progressFill.style.width = '0%';
+      timeElapsed.textContent  = '0:00';
+      timeDuration.textContent = '0:00';
+      document.querySelectorAll('.track-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+    }
+
+    function togglePlayer() {
+      playerOpen = !playerOpen;
+      document.getElementById('playerPanel').classList.toggle('open', playerOpen);
+    }
+
+    function togglePlay() {
+      if (!audio.src || audio.src === window.location.href) { loadTrack(currentTrack); audio.play(); return; }
+      audio.paused ? audio.play() : audio.pause();
+    }
+
+    function prevTrack() { loadTrack((currentTrack - 1 + tracks.length) % tracks.length); audio.play(); }
+    function nextTrack() { loadTrack((currentTrack + 1) % tracks.length); audio.play(); }
+
+    function toggleLoop() {
+      isLooping = !isLooping;
+      audio.loop = isLooping;
+      document.getElementById('loopBtn').classList.toggle('active', isLooping);
+    }
+
+    function setVolume(v) {
+      audio.volume = v / 100;
+      volVal.textContent = v;
+      updateVolSliderBg(v);
+      volIcon.textContent = v == 0 ? '🔇' : v < 40 ? '🔉' : '🔊';
+    }
+
+    function updateVolSliderBg(v) {
+      volSlider.style.background = `linear-gradient(90deg, #e87a68 ${v}%, rgba(196,58,44,0.12) ${v}%)`;
+    }
+
+    function seekAudio(e) {
+      const bar  = document.getElementById('progressBar');
+      const rect = bar.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (audio.duration) audio.currentTime = pct * audio.duration;
+    }
+
+    audio.addEventListener('play', () => {
+      playBtn.textContent = '⏸';
+      vinylEl.classList.add('spinning');
+      playerDot.classList.add('playing');
+    });
+    audio.addEventListener('pause', () => {
+      playBtn.textContent = '▶';
+      vinylEl.classList.remove('spinning');
+      playerDot.classList.remove('playing');
+    });
+    audio.addEventListener('ended', () => {
+      if (!isLooping) { nextTrack(); audio.play(); }
+    });
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      timeElapsed.textContent  = fmtTime(audio.currentTime);
+      timeDuration.textContent = fmtTime(audio.duration);
+    });
+
+    buildTrackList();
+    loadTrack(0);
+    updateVolSliderBg(10);
+    /* Tarayıcı sesli otomatik oynatmayı engellerse (ör. sayfa yenilenince) müzik,
+       sayfadaki ilk tıklama / dokunma / tuşla başlar. Kullanıcı çaları kendisi
+       kullandıysa karışmaz. */
+    audio.play().catch(() => {
+      const kick = e => {
+        ['pointerdown', 'keydown', 'touchstart'].forEach(ev => removeEventListener(ev, kick, true));
+        if (e.target.closest && e.target.closest('#music-widget')) return;   // çalara tıklandıysa onun düğmesi karar verir
+        if (audio.paused && audio.currentTime === 0) audio.play().catch(() => {});
+      };
+      ['pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, kick, true));
+    });
+
+    window.onbeforeunload = () => audio.pause();
+
     /* ── Info-box scroll tracking ── */
     const leftBox  = document.querySelector('.left-box');
     const rightBox = document.querySelector('.right-box');
@@ -658,6 +1130,7 @@
       modalAnimating = false;
       modal.classList.add('open');
       document.getElementById('back-button').classList.add('hidden');
+      document.getElementById('music-widget').style.display = 'none';
       document.body.style.overflow = 'hidden';
       pauseCarousel();
     }
@@ -665,6 +1138,7 @@
     function closeModal() {
       modal.classList.remove('open');
       document.getElementById('back-button').classList.remove('hidden');
+      document.getElementById('music-widget').style.display = '';
       document.body.style.overflow = '';
       resumeCarousel();
     }
@@ -688,6 +1162,240 @@
     COLOR: '#8e1b1b',
     COLOR_PALETTE: ['#8e1b1b', '#c43a2c', '#c9a84c', '#2a2626']
   };
+</script>
+<script src="../mv-sahne.js"></script>
+<script>
+/* ══════════════ BAELOR — SAVAŞ ODASI ══════════════
+   Atmosfer: yerden yükselen sıcak savaş dumanı, köşelerde titreyen meşale ışığı
+   ve dönerek yükselen kıvılcımlar.
+   Sinematik: mum ışığında, masaya yatırılmış yırtık kenarlı taktik harita ortadan iki yana
+   açılır; demir ve ahşap piyonlar birer birer haritaya iner, gölgeleri haritaya düşer (toz kalkar), savaş planının kırmızı okları
+   soldan sağa yanar ve ad altın mürekkeple yazılır. */
+(function () {
+  if (!window.MVSahne) return;
+  const SPARKS = `
+vec3 sparks(vec2 px, float t, float bottom){
+  vec3 c = vec3(0.);
+  for (int k = 0; k < 3; k++) {
+    float fk = float(k);
+    float sc = 34. + fk * 22.;
+    vec2 q = px; q.y += t * (55. + fk * 30.);
+    q.x += sin(q.y * .012 + fk * 2.) * 26.;                 // sıcak havada kıvrılarak yükselir
+    vec2 id = floor(q / sc), f = fract(q / sc) - .5;
+    float r = h(id + fk * 19.);
+    vec2 o = vec2(h(id + 3.1), h(id + 7.7)) - .5;
+    float d = length((f - o * .6) * vec2(1., .55));
+    float life = smoothstep(0., 1., bottom) * step(.9 - fk * .02, r);
+    float tw = .55 + .45 * sin(t * (8. + r * 10.) + r * 40.);
+    c += vec3(1., .5, .14) * smoothstep(.07, 0., d) * life * tw * (1.2 - fk * .3);
+  }
+  return c;
+}`;
+
+  /* ── ATMOSFER ── */
+  MVSahne.atmosfer({
+    olcek: .7,
+    fs: `
+${SPARKS}
+void main(){
+  vec2 px = PX(), V = uView; float t = uT;
+  float y = px.y / V.y;
+  vec2 q = px / V.y;
+  // yerden yükselen duman
+  vec2 w = vec2(fbm3(q * 1.4 + vec2(0., -t * .05)), fbm3(q * 1.4 + vec2(5.2, 1.3) - t * .04));
+  float s1 = fbm(q * 2.1 + w * 1.4 + vec2(t * .025, t * .07));
+  float smoke = smoothstep(.42, .85, s1 + y * .25 - .12) * smoothstep(.25, 1., y);
+  // köşelerde meşale ışığı
+  float fl = .78 + .22 * n(vec2(t * 7., 1.)) + .1 * n(vec2(t * 17., 4.));
+  float gL = exp(-length((px - vec2(-V.x * .02, V.y * 1.02)) / V.y) * 2.6);
+  float gR = exp(-length((px - vec2(V.x * 1.02, V.y * 1.02)) / V.y) * 2.6) * (.85 + .15 * n(vec2(t * 6., 9.)));
+  float glow = (gL + gR) * fl;
+  vec3 C = vec3(.32, .23, .16) * smoke * (.5 + glow * 1.4);
+  float A = smoke * .5;
+  C += vec3(.85, .38, .1) * glow * .35; A = max(A, glow * .3);
+  vec3 sp = sparks(px, t, y);
+  float sa = clamp(max(sp.r, sp.g), 0., 1.);
+  C += sp; A = max(A, sa * .9);
+  gl_FragColor = vec4(min(C, vec3(1.)), clamp(A, 0., 1.));
+}`,
+  });
+
+  /* ── SİNEMATİK ──
+     Harita masaya yatırılmış bir düzlemdir (perspektif: uzak kenar dar, yakın kenar geniş).
+     Kenarları yırtık ve yanıktır, ortadan iki yana açılır. Piyonlar düzlem üzerindeki
+     noktalara iner; boyları uzaklığa göre küçülür, mum ışığıyla soldan aydınlanır ve
+     siluetleri ışıktan uzağa doğru haritanın üstüne gölge olarak düşer.
+     JS: uPlane = (merkez x, merkez y, kamera uzaklığı D, eğim açısı), uMapWH = haritanın
+     düzlemdeki boyu; uP[i] = (düzlem X, düzlem Y, iniş ilerlemesi, atlas sırası);
+     piyonlar uzaktan yakına sıralı gönderilir ki yakındaki öndekini örtsün, uQ[i].x = inişten beri geçen süre. */
+  const N = 6, P = new Float32Array(N * 4), Q = new Float32Array(N * 4);
+  const ease = k => 1 - Math.pow(1 - k, 3);
+  const bump = (c, w, x) => Math.exp(-Math.pow((x - c) / w, 2));
+  const TILT = .62;                                  // radyan (~35°)
+  function plane(W, H) {
+    const D = H * 1.7, s = Math.sin(TILT);
+    const mh = Math.min(H * .8, W * .9 / 1.5 / (D / (D - H * .5 * s)));
+    return { cx: W * .5, cy: H * .545, D, mh, mw: mh * 1.5 };
+  }
+  MVSahne.sinematik({
+    baslik: 'Baelor',
+    tetik: document.querySelector('.container h1'),
+    sure: 6.8,
+    yaziY: .175,
+    yaziOrani: .058,
+    textures: { uMap: 'Taktik Harita.webp', uPcs: 'Piyonlar.webp' },
+    fs: `
+uniform sampler2D uMap, uPcs; uniform vec2 uMapSize, uPcsSize;
+uniform vec4 uPlane; uniform vec2 uMapWH, uLight;
+uniform vec4 uP[6], uQ[6];
+uniform float uZoom;
+${SPARKS}
+// ekran → masa düzlemi
+vec2 toPlane(vec2 s){
+  float c = cos(uPlane.w), sn = sin(uPlane.w), D = uPlane.z;
+  float ys = s.y - uPlane.y;
+  float Y = ys * D / (c * D + ys * sn);
+  float z = D - Y * sn;
+  return vec2((s.x - uPlane.x) * z / D, Y);
+}
+// masa düzlemi → ekran (+ ölçek)
+vec3 toScreen(vec2 p){
+  float c = cos(uPlane.w), sn = sin(uPlane.w), D = uPlane.z;
+  float z = D - p.y * sn;
+  return vec3(uPlane.x + p.x * D / z, uPlane.y + p.y * c * D / z, D / z);
+}
+// yırtık kenarlı harita maskesi (uv içinde), açılma payı dahil
+float mapMask(vec2 uv, float half_, out float rim){
+  vec2 q = vec2(min(uv.x - .045, .955 - uv.x) * 1.5, min(uv.y - .055, .945 - uv.y));
+  float tear = (fbm(uv * vec2(22., 15.)) - .5) * .05 + (n(uv * 90.) - .5) * .012;
+  float e = min(q.x, q.y) + tear;
+  float open = half_ - abs(uv.x - .5) + (fbm(vec2(uv.y * 14., 3.)) - .5) * .03;
+  float ee = min(e, open);
+  rim = smoothstep(.045, 0., ee);                          // kenara yakın yanık şerit
+  return smoothstep(0., .004, ee);
+}
+void main(){
+  vec2 px0 = PX(), V = uView; float t = uT;
+  vec2 px = (px0 - V * .5) / uZoom + V * .5;
+  vec2 sp = px0 / V;
+  vec2 P = toPlane(px);
+  vec2 uv = P / uMapWH + .5;
+  float fl = .82 + .18 * n(vec2(t * 8., 2.)) + .08 * n(vec2(t * 21., 5.));
+  // mum ışığı: düzlemdeki uzaklığa göre sönümlenir
+  float ld = length(P - uLight) / uMapWH.y;
+  float light = (.16 + 1.05 / (1. + ld * ld * 5.)) * fl;
+  // masa: koyu ahşap damarları
+  float grain_ = fbm(vec2(P.x * .004, P.y * .05)) * .6 + n(vec2(P.x * .002, P.y * .3)) * .4;
+  vec3 col = mix(vec3(.05, .028, .015), vec3(.14, .08, .04), grain_) * light;
+  float horizon = smoothstep(-uPlane.z * .25, 0., P.y + uMapWH.y * .6);   // uzak masa karanlığa karışır
+  col *= horizon;
+  // harita
+  float half_ = smoothstep(.15, 1.5, t) * .5;
+  float rim;
+  float mm = mapMask(uv, half_, rim) * inBox(uv);
+  // haritanın masaya düşen gölgesi (ışıktan uzağa kayık)
+  vec2 sdir = normalize(P - uLight);
+  float rim2; float msh = mapMask((P - sdir * 9.) / uMapWH + .5, half_, rim2);
+  col *= 1. - msh * .45 * (1. - mm);
+  if (mm > 0.) {
+    float curl = smoothstep(half_ - .05, half_, abs(uv.x - .5)) * step(.001, half_);
+    vec3 m = texture2D(uMap, uv).rgb;
+    float red = smoothstep(.1, .25, m.r - max(m.g, m.b) * 1.3) * (1. - smoothstep(.2, .7, rim + curl));   // yanık kenarı ok sanmasın
+    m *= (.3 + light * .85) * (1. - curl * .5);
+    m = mix(m, m * vec3(.42, .25, .14), rim * .8);           // yanık kenar
+    float sweep = smoothstep(.0, .06, (t - 3.1) * .55 - uv.x);
+    m += vec3(1., .22, .08) * red * sweep * (.7 + .3 * sin(t * 6. - uv.x * 12.)) * .9;
+    col = mix(col, m, mm);
+  }
+  // piyonların haritaya/masaya düşen gölgeleri + temas karartısı
+  float shade = 0.;
+  for (int i = 0; i < 6; i++) {
+    vec4 Pi = uP[i];
+    if (Pi.z <= 0.) continue;
+    vec2 base = Pi.xy;
+    float hp = uMapWH.y * .21, wd = hp * 256. / 400.;
+    vec2 dir = normalize(base - uLight), nrm = vec2(-dir.y, dir.x);
+    vec2 rel = P - base;
+    float along = dot(rel, dir), across = dot(rel, nrm);
+    float len = hp * 1.5;
+    vec2 su = vec2(across / wd + .5, 1. - along / len);
+    if (inBox(su) > 0.) {
+      vec2 cu = vec2((Pi.w + su.x) / 6., su.y);
+      float sa = (texture2D(uPcs, cu).a + texture2D(uPcs, cu + vec2(.004, .01)).a + texture2D(uPcs, cu - vec2(.004, -.01)).a) / 3.;
+      shade = max(shade, sa * (1. - along / len * .6) * .62 * Pi.z * Pi.z);
+    }
+    float ao = smoothstep(1., .1, length(rel / vec2(wd * .55, wd * .3)));
+    shade = max(shade, ao * .7 * Pi.z);
+  }
+  col *= 1. - shade;
+  // piyonlar: düzlemdeki tabanlarına oturur, uzaklığa göre ölçeklenir
+  for (int i = 0; i < 6; i++) {
+    vec4 Pi = uP[i], Qi = uQ[i];
+    if (Pi.z <= 0.) continue;
+    vec3 S = toScreen(Pi.xy);
+    float hp = uMapWH.y * .21 * S.z * cos(uPlane.w) * 1.25, wd = hp * 256. / 400.;
+    float k = Pi.z;
+    float lift = (1. - k) * V.y * .32;
+    vec2 lc = vec2((px.x - S.x) / wd + .5, (px.y - (S.y - lift - hp)) / hp);
+    if (inBox(lc) > 0.) {
+      vec4 pc = texture2D(uPcs, vec2((Pi.w + lc.x) / 6., lc.y));
+      float side = mix(1.25, .55, lc.x);                    // mum soldan vurur
+      float ao = mix(1., .6, smoothstep(.82, 1., lc.y));     // taban dibine doğru kararır
+      float pl = (.25 + light * .9) * side * ao;
+      vec3 pcol = pc.rgb * pl;
+      // sol kenarda sıcak kontur ışığı
+      float aL = texture2D(uPcs, vec2((Pi.w + lc.x - .03) / 6., lc.y)).a;
+      pcol += vec3(1., .62, .3) * clamp(pc.a - aL, 0., 1.) * light * .9;
+      col = mix(col, pcol, pc.a * smoothstep(0., .25, k));
+    }
+    // iniş tozu
+    float age = Qi.x;
+    if (age > 0. && age < 1.) {
+      vec2 dq = (px - S.xy) / vec2(wd * (.6 + age * 1.4), wd * (.16 + age * .3));
+      col += vec3(.5, .4, .28) * smoothstep(1., .3, length(dq)) * fbm(px * .05 + age * 2.) * (1. - age) * .5 * light;
+    }
+  }
+  float smk = fbm(px * .004 + vec2(t * .03, -t * .02));
+  col += vec3(.16, .11, .07) * smoothstep(.5, .9, smk) * .4;
+  col += sparks(px0, t, sp.y) * .7 * smoothstep(.5, 2., t);
+  // ad
+  vec3 tx = textAt(px0);
+  float xr = (px0.x - uTextBox.x) / max(uTextBox.z, 1.);
+  float rv = smoothstep(3.9, 5., t) * 1.35 - xr * .35;
+  float nz = fbm(px0 * .04);
+  float vis = smoothstep(nz - .06, nz + .06, rv);
+  float edge = smoothstep(.07, 0., abs(rv - nz)) * step(t, 5.2);
+  float hv = smoothstep(0., 1.1, rv);
+  col += vec3(.55, .32, .08) * tx.b * hv * .7 + vec3(.9, .65, .25) * tx.g * hv * .5;
+  col = mix(col, vec3(1., .78, .36), tx.r * vis);
+  col += vec3(1., .7, .3) * edge * tx.g * 1.4;
+  col *= mix(.3, 1., smoothstep(1.25, .3, length((sp - .5) * vec2(1., .9)) * 1.4));
+  col = 1. - exp(-col * 1.55);
+  col += grain(px0, t) * .045;
+  float bh = smoothstep(0., .8, t) * V.y * .085;
+  col *= 1. - step(px0.y, bh) - step(V.y - bh, px0.y);
+  gl_FragColor = vec4(max(col, 0.), 1.);
+}`,
+    kare(t, set) {
+      const W = innerWidth, H = innerHeight, pl = plane(W, H);
+      set('uPlane', pl.cx, pl.cy, pl.D, TILT);
+      set('uMapWH', pl.mw, pl.mh);
+      // mum, görselin sol üst köşesinde
+      set('uLight', (.06 - .5) * pl.mw, (.09 - .5) * pl.mh);
+      // piyonlar haritanın alt yarısında, kademeli dizilir (uv)
+      const xs = [.2, .33, .46, .6, .73, .85], ys = [.74, .64, .78, .6, .72, .62];
+      const order = [0, 1, 2, 3, 4, 5].sort((a, b) => ys[a] - ys[b]);
+      order.forEach((i, j) => {
+        const t0 = 1.7 + i * .32;
+        const k = Math.max(0, Math.min(1, (t - t0) / .42));
+        P.set([(xs[i] - .5) * pl.mw, (ys[i] - .5) * pl.mh, k > 0 ? ease(k) : 0, i], j * 4);
+        Q.set([t - (t0 + .42), 0, 0, 0], j * 4);
+      });
+      set('uP', P); set('uQ', Q);
+      set('uZoom', 1 + .05 * Math.min(1, t / 6.8) + .006 * [0, 1, 2, 3, 4, 5].reduce((s, i) => s + bump(1.7 + i * .32 + .42, .05, t), 0));
+    },
+  });
+})();
 </script>
 <script src="../../../../../splash-cursor.js"></script>
 </body>
