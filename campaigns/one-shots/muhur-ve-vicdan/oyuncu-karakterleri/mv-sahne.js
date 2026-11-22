@@ -26,7 +26,7 @@ precision highp float;
 uniform vec2 uRes, uView, uMouse;
 uniform float uScale, uT;
 uniform sampler2D uText;
-uniform vec4 uTextBox;
+uniform vec4 uTextBox, uSubBox;
 float h(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float n(vec2 p){ vec2 i=floor(p), f=fract(p), u=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1,0)),u.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),u.x), u.y); }
@@ -41,6 +41,64 @@ vec2 coverUV(vec2 px, vec2 ts){ float s = max(uView.x/ts.x, uView.y/ts.y); retur
 float inBox(vec2 uv){ return step(0.,uv.x)*step(uv.x,1.)*step(0.,uv.y)*step(uv.y,1.); }
 vec3 textAt(vec2 px){ return texture2D(uText, px/uView).rgb; }
 float grain(vec2 px, float t){ return h(px + fract(t*7.)*91.) - .5; }
+/* ── 2.5D KAMERA ──
+   Tek bir görseli, derinlik haritasıyla (beyaz = yakın) sahte 3B kamera hareketiyle çizer.
+   Derinlik haritası .claude/araclar/derinlik/derinlik.py ile üretilir ("<ad> Derinlik.webp").
+   uv   : görselin uv'si (0–1)
+   cam  : kamera kayması, uv cinsinden (ör. vec2(sin(t), cos(t)) * .02). Yakın katmanlar ters yöne,
+          uzaklar kameranın yönüne kayar; derinliği 0.5 olan düzlem sabit kalır.
+   Işın yürütme (parallax occlusion): yakın nesneler arkadakini doğru şekilde örter. */
+vec2 derinlikUV(sampler2D dep, vec2 uv, vec2 cam){
+  const float N = 28.;
+  vec2 stepv = cam / N;
+  vec2 p = uv + cam * .5;
+  float ld = 1., hp = texture2D(dep, p).r, pl = ld, ph = hp;
+  for (int i = 0; i < 28; i++) {
+    if (hp >= ld) break;
+    pl = ld; ph = hp;
+    p -= stepv; ld -= 1. / N;
+    hp = texture2D(dep, p).r;
+  }
+  // son iki katman arasında doğrusal ara değer: kademelenmeyi giderir
+  float a = hp - ld, b = ph - pl;
+  float k = clamp(a / (a - b + 1e-5), 0., 1.);
+  return p + stepv * k;
+}
+/* Catmull-Rom bikübik örnekleme (9 doku okuması): büyütülmüş görselde bilinear'dan çok daha net. ts = doku boyutu (px) */
+vec4 bikubik(sampler2D img, vec2 uv, vec2 ts){
+  vec2 sp = uv * ts, t1 = floor(sp - .5) + .5, f = sp - t1;
+  vec2 w0 = f * (-.5 + f * (1. - .5 * f)), w1 = 1. + f * f * (-2.5 + 1.5 * f);
+  vec2 w2 = f * (.5 + f * (2. - 1.5 * f)), w3 = f * f * (-.5 + .5 * f);
+  vec2 w12 = w1 + w2, t12 = (t1 + w2 / w12) / ts, t0 = (t1 - 1.) / ts, t3 = (t1 + 2.) / ts;
+  return texture2D(img, vec2(t0.x, t0.y)) * w0.x * w0.y + texture2D(img, vec2(t12.x, t0.y)) * w12.x * w0.y + texture2D(img, vec2(t3.x, t0.y)) * w3.x * w0.y
+       + texture2D(img, vec2(t0.x, t12.y)) * w0.x * w12.y + texture2D(img, t12) * w12.x * w12.y + texture2D(img, vec2(t3.x, t12.y)) * w3.x * w12.y
+       + texture2D(img, vec2(t0.x, t3.y)) * w0.x * w3.y + texture2D(img, vec2(t12.x, t3.y)) * w12.x * w3.y + texture2D(img, t3) * w3.x * w3.y;
+}
+/* Derinliğe göre alan derinliği (odak).
+   odak    = netlenen derinlik (0–1); odağın ±0.08'i tamamen nettir (özne asla bulanmaz)
+   bulanik = en büyük yarıçap (uv, yatay); ts = görselin piksel boyutu
+   keskin  = netlikteki hafif keskinleştirme miktarı (0 = yok; büyütülmüş çekimlerde ~.5)
+   Bulanıklık 12 noktalı altın açı sarmalıyla alınır; öndeki nesneler arka bulanıklığa sızmaz. */
+vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, float bulanik, vec2 ts, float keskin){
+  vec2 q = derinlikUV(dep, uv, cam);
+  vec4 c0 = bikubik(img, q, ts);
+  float d0 = texture2D(dep, q).r;
+  float r = max(0., abs(d0 - odak) - .08) * bulanik;
+  if (r < .0004) {
+    if (keskin <= 0.) return c0;
+    vec2 e = 1. / ts;
+    vec4 b = (texture2D(img, q + vec2(e.x, 0.)) + texture2D(img, q - vec2(e.x, 0.)) + texture2D(img, q + vec2(0., e.y)) + texture2D(img, q - vec2(0., e.y))) * .25;
+    return c0 + (c0 - b) * keskin;
+  }
+  vec4 acc = c0; float ws = 1.;
+  for (int i = 0; i < 12; i++) {
+    float fi = float(i), an = fi * 2.39996, rr = r * sqrt((fi + .5) / 12.);
+    vec2 o = vec2(cos(an), sin(an) * ts.x / ts.y) * rr;
+    float w = step(texture2D(dep, q + o).r, d0 + .1);
+    acc += texture2D(img, q + o) * w; ws += w;
+  }
+  return acc / ws;
+}
 `;
 
   const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
@@ -145,7 +203,9 @@ float grain(vec2 px, float t){ return h(px + fract(t*7.)*91.) - .5; }
   const mouse = [.5, .5];
   addEventListener('pointermove', e => { mouse[0] = e.clientX / innerWidth; mouse[1] = e.clientY / innerHeight; }, { passive: true });
 
-  function loop(canvas, g, baseScale, onFrame) {
+  /* clock(t): sahnenin saatini dışarıdan vermek için (ör. müziğin currentTime'ı). Sayı dönerse zaman
+     ona eşitlenir ve oradan akmaya devam eder; null dönerse kendi saatiyle sürer. */
+  function loop(canvas, g, baseScale, onFrame, clock) {
     let raf = 0, t0 = 0, last = 0, slow = 0, frames = 0, scale = baseScale, running = false, W = 0, H = 0;
     function resize() {
       W = innerWidth; H = innerHeight;
@@ -159,7 +219,8 @@ float grain(vec2 px, float t){ return h(px + fract(t*7.)*91.) - .5; }
       // kare süresi uzun kalırsa çözünürlük düşer
       if (++frames > 20 && dt > 26) { if (++slow > 20 && scale > baseScale * .5) { scale *= .8; slow = 0; } } else slow = Math.max(0, slow - 1);
       resize();
-      const t = (now - t0) / 1000;
+      let t = (now - t0) / 1000;
+      if (clock) { const c = clock(t); if (c != null && isFinite(c)) { t0 = now - c * 1000; t = c; } }
       g.set('uRes', g.gl.canvas.width, g.gl.canvas.height);
       g.set('uView', W, H);
       g.set('uScale', g.gl.canvas.width / W);
@@ -236,6 +297,9 @@ float grain(vec2 px, float t){ return h(px + fract(t*7.)*91.) - .5; }
       const lh = fs * 1.2, cy = H * (opt.yaziY || .5), top = cy - (rows.length - 1) * lh / 2;
       let bw = 0; rows.forEach(r => { bw = Math.max(bw, tc.measureText(r).width); });
       g.set('uTextBox', W / 2 - bw / 2, top - lh / 2, bw, rows.length * lh);
+      // alt başlık (isteğe bağlı): başlığın altında, daha küçük ve aralıklı harflerle
+      const sub = (opt.altBaslik || '').toUpperCase(), fsub = Math.max(13, fs * .26);
+      const subY = top + (rows.length - 1) * lh + lh * .5 + fsub * 1.4;
       tc.globalCompositeOperation = 'lighter';
       const SH = 10000;
       [['#0000ff', fs * .55], ['#00ff00', fs * .16]].forEach(([c, b]) => {
@@ -245,16 +309,28 @@ float grain(vec2 px, float t){ return h(px + fract(t*7.)*91.) - .5; }
       tc.shadowColor = 'transparent'; tc.shadowBlur = 0; tc.shadowOffsetX = 0;
       tc.fillStyle = '#ff0000';
       rows.forEach((r, i) => tc.fillText(r, W / 2, top + i * lh));
+      if (sub) {
+        tc.font = `700 ${fsub}px Cinzel, Georgia, serif`;
+        if ('letterSpacing' in tc) tc.letterSpacing = Math.round(fsub * .38) + 'px';
+        const sw = tc.measureText(sub).width;
+        g.set('uSubBox', W / 2 - sw / 2, subY - fsub * .7, sw, fsub * 1.4);
+        [['#0000ff', fsub * .6], ['#00ff00', fsub * .2]].forEach(([c, b]) => {
+          tc.shadowColor = c; tc.shadowBlur = b; tc.shadowOffsetX = SH; tc.fillStyle = c;
+          tc.fillText(sub, W / 2 - SH, subY);
+        });
+        tc.shadowColor = 'transparent'; tc.shadowBlur = 0; tc.shadowOffsetX = 0;
+        tc.fillStyle = '#ff0000'; tc.fillText(sub, W / 2, subY);
+      }
       tc.globalCompositeOperation = 'source-over';
       g.uploadText(textCv);
     }
 
-    const lp = loop(cv, g, Math.min(devicePixelRatio || 1, 1), (t) => {
+    const lp = loop(cv, g, Math.min(devicePixelRatio || 1, opt.cozunurluk || 1), (t) => {
       if (opt.kare) opt.kare(t, g.set);
       g.set('uDur', SURE);
       if (t >= SURE - .9 && playing) end();
       return t < SURE + 1;
-    });
+    }, opt.saat ? (t) => (playing ? opt.saat(t) : null) : null);
 
     function end() {
       if (!playing) return;

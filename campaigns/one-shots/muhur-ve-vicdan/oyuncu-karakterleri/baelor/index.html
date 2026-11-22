@@ -1168,9 +1168,7 @@
 /* ══════════════ BAELOR — SAVAŞ ODASI ══════════════
    Atmosfer: yerden yükselen sıcak savaş dumanı, köşelerde titreyen meşale ışığı
    ve dönerek yükselen kıvılcımlar.
-   Sinematik: mum ışığında, masaya yatırılmış yırtık kenarlı taktik harita ortadan iki yana
-   açılır; demir ve ahşap piyonlar birer birer haritaya iner, gölgeleri haritaya düşer (toz kalkar), savaş planının kırmızı okları
-   soldan sağa yanar ve ad altın mürekkeple yazılır. */
+   Açılış: ~33 sn'lik trailer (ayrıntı aşağıda), Baelor Theme ile eş zamanlı. */
 (function () {
   if (!window.MVSahne) return;
   const SPARKS = `
@@ -1220,94 +1218,215 @@ void main(){
 }`,
   });
 
-  /* ── SİNEMATİK ──
-     Harita masaya yatırılmış bir düzlemdir (perspektif: uzak kenar dar, yakın kenar geniş).
-     Kenarları yırtık ve yanıktır, ortadan iki yana açılır. Piyonlar düzlem üzerindeki
-     noktalara iner; boyları uzaklığa göre küçülür, mum ışığıyla soldan aydınlanır ve
-     siluetleri ışıktan uzağa doğru haritanın üstüne gölge olarak düşer.
-     JS: uPlane = (merkez x, merkez y, kamera uzaklığı D, eğim açısı), uMapWH = haritanın
-     düzlemdeki boyu; uP[i] = (düzlem X, düzlem Y, iniş ilerlemesi, atlas sırası);
-     piyonlar uzaktan yakına sıralı gönderilir ki yakındaki öndekini örtsün, uQ[i].x = inişten beri geçen süre. */
+
+  /* ── TRAILER (açılış sinematiğinin yerine, ~33 sn) ──
+     Baelor Theme'in ilk 33 saniyesine oturur; müzik çalıyorsa trailer'ın saati müziğin saatidir.
+     Müziğin yapısı (analiz): 0.0 darbe → sakin → 16.04 büyük darbe → 19.97–22.24 hızlı vuruşlar
+     → 25.84 / 26.17 vuruş → 32.79 büyük darbe. Kesmeler vuruşla aynı anda ya da hemen sonra, asla önce.
+       0–4.4     Masa, açılış: harita açılır, kamera yana kayar.
+       4.4–8.0   Alçak açı, piyonların yanından geçen kamera (yumuşak geçiş, tilt-shift).
+       8.0–11.0  Tepeden: oklar mürekkeple çizilir.
+       11.0–16.03 Şövalye piyonu; 15.0'ten itibaren hızlanarak dalış (radyal bulanıklık).
+       16.03     Darbe → Baelor: kılıçtan yüze kalkan kamera, isim kartı.
+       20.34 / 21.01 / 21.69  Üç manevra: yüz, eldiven, kılıç; kavisli çelik iz görüntüyü keser,
+                 temas noktasından kıvılcım, darbe karesi.
+       22.24     Yüze yaklaşan kamera (pelerin ve saç rüzgârda, nefes).
+       25.17     Zırhlı el şövalyeyi kaleye koyar (25.84).
+       26.17     Kahraman kartı: görselin tamamı, solda isim; 32.79'a doğru kararır.
+     Portre 2.5D (derinlik haritası); büyütme en fazla ~2.4×, bikübik örnekleme, özne asla bulanmaz. */
   const N = 6, P = new Float32Array(N * 4), Q = new Float32Array(N * 4);
-  const ease = k => 1 - Math.pow(1 - k, 3);
-  const bump = (c, w, x) => Math.exp(-Math.pow((x - c) / w, 2));
-  const TILT = .62;                                  // radyan (~35°)
+  const clamp01 = k => k < 0 ? 0 : k > 1 ? 1 : k;
+  const sm = (a, b, x) => { const k = clamp01((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+  const o3 = k => 1 - Math.pow(1 - clamp01(k), 3);
+  const io = k => { k = clamp01(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+  const DEG = Math.PI / 180;
+  const TILT0 = .62;
   function plane(W, H) {
-    const D = H * 1.7, s = Math.sin(TILT);
+    const D = H * 1.7, s = Math.sin(TILT0);
     const mh = Math.min(H * .8, W * .9 / 1.5 / (D / (D - H * .5 * s)));
     return { cx: W * .5, cy: H * .545, D, mh, mw: mh * 1.5 };
   }
+  function toScreen(pl, X, Y, tl) {
+    const c = Math.cos(tl), sn = Math.sin(tl), z = pl.D - Y * sn;
+    return [pl.cx + X * pl.D / z, pl.cy + Y * c * pl.D / z, pl.D / z];
+  }
+  const mapPt = (pl, u, v, tl) => toScreen(pl, (u - .5) * pl.mw, (v - .5) * pl.mh, tl);
+  // piyonun gövde ortası (taban noktasının biraz üstü), ekran px
+  const govde = (pl, i, tl) => { const s = mapPt(pl, XS[i], YS[i], tl); return [s[0], s[1] - pl.mh * .21 * s[2] * Math.cos(tl) * 1.25 * .5]; };
+  // piyonlar: konum (harita uv), konma zamanı. Şövalye (atlas 3) en son konur; sonda el onu kaleye koyar.
+  const XS = [.2, .33, .46, .6, .73, .85], YS = [.74, .64, .78, .6, .72, .62];
+  const LAND = [4.8, 5.9, 7.0, 11.2, 9.0, 10.2];
+  const FORT = [.7, .29];
+  const SLASH = [20.34, 21.01, 21.69];
+  const ses = MVSahne.sesler({
+    hisirti: '../../ses/Kağıt Hışırtısı.mp3', kalem: '../../ses/Kalem Karalama.mp3', tahta: '../../ses/Tahta Darbe.mp3',
+    darbe: '../../ses/Cinematic Impact.mp3', kesik: '../../ses/Ağır Kesik.mp3',
+  });
+  // sesler sahnenin saatine bağlı tetiklenir. Cinematic Impact bir yükseliş: 14.90'da başlar, doruğu 16.04 darbesine oturur.
+  const OLAYLAR = [
+    [.1, 'hisirti', .8], [2.6, 'kalem', .7], [5.4, 'kalem', .6], [8.2, 'kalem', .55],
+    ...LAND.map(t => [t - .05, 'tahta', .7]),
+    [14.9, 'darbe', .5],
+    ...SLASH.map(t => [t - .45, 'kesik', 1]),            // Ağır Kesik: savuruş birikir, darbe 0.45 sn'de
+    [25.79, 'tahta', 1],
+  ];
+  const SES_SEVIYE = .45;                                   // trailer efektlerinin genel seviyesi (müziğin altında kalsın)
+  const audio = document.getElementById('audioEl');
+  let sonT = -1, simdiT = 0;
+
+  /* ── masa kameraları: {z: yakınlaştırma, tl: eğim, ts: tilt-shift, f: odak (px), a: odağın ekrandaki yeri} */
+  function masaKam(n, t, W, H, pl) {
+    if (n === 0) {                                          // açılış: yana kayış
+      const k = io(t / 4.75), fx = W * (.42 + .13 * k), fy = H * .52;
+      return { z: 1 + .18 * k, tl: .62 - .04 * k, ts: 0, f: [fx, fy], a: [fx, fy] };
+    }
+    if (n === 1) {                                          // alçak açı, yeni konan piyonu izler
+      const tl = .45; let sx = 0, sy = 0, sw = 0;
+      for (let i = 0; i < N; i++) {
+        const w = Math.exp(-Math.pow((t - LAND[i] - .2) / .9, 2)) + 1e-4, g = govde(pl, i, tl);
+        sx += g[0] * w; sy += g[1] * w; sw += w;
+      }
+      return { z: 2 + .2 * io((t - 4.4) / 3.95), tl, ts: 1, f: [sx / sw, sy / sw], a: [W * .5, H * .58] };
+    }
+    if (n === 2) {                                          // tepeden: oklar
+      const tl = .85, k = io((t - 8) / 3.35), f = mapPt(pl, .5 + .16 * k, .47, tl);
+      return { z: 1.5 + .15 * k, tl, ts: .5, f: [f[0], f[1]], a: [W * .5, H * .5] };
+    }
+    if (n === 3) {                                          // şövalye; 15.0'ten sonra hızlanarak dalış
+      const tl = .55, g = govde(pl, 3, tl);
+      let z = 2.2 + .8 * io((t - 11) / 4);
+      if (t > 15) { const kw = clamp01((t - 15) / 1.03); z *= 1 + 6 * kw * kw * kw; }
+      return { z, tl, ts: 1, f: g, a: [W * .5, H * .52] };
+    }
+    const f = mapPt(pl, FORT[0], FORT[1], .5);              // el: kale ekranın ortasına
+    return { z: 2.3, tl: .5, ts: .6, f: [f[0], f[1]], a: [W * .5, H * .58] };
+  }
+
+  /* ── portre çerçeveleme: görselin dışı yalnızca sinematik bantların arkasında kalsın, saç kesilmesin */
+  function cerceve(pz, x, y, W, H, pay) {
+    const s = Math.max(W / 1024, H / 1536), visH = H / (1536 * s) / pz, visW = W / (1024 * s) / pz;
+    const bar = .085 * visH, ic = visH / 2 - bar;
+    y = Math.max(ic, Math.min(y, 1 - ic));
+    const m = pay || 0;
+    x = Math.max(visW / 2 + m, Math.min(x, 1 - visW / 2 - m));
+    return [x, y];
+  }
+  const basUst = (pz, W, H) => { const s = Math.max(W / 1024, H / 1536), visH = H / (1536 * s) / pz; return .012 + visH / 2 - .085 * visH; };
+  // görsel uv'sini ekran px'ine çevirir (shader'daki pUV'nin tersi)
+  function uvEkran(uv, pz, pc, roll, W, H) {
+    const s = Math.max(W / 1024, H / 1536);
+    const x = (uv[0] - pc[0]) * pz * 1024 * s, y = (uv[1] - pc[1]) * pz * 1536 * s;
+    const c = Math.cos(-roll), sn = Math.sin(-roll);
+    return [W / 2 + c * x - sn * y, H / 2 + sn * x + c * y];
+  }
+  // üç noktadan geçen çemberin merkezi
+  function cevrel(A, B, C) {
+    const d = 2 * (A[0] * (B[1] - C[1]) + B[0] * (C[1] - A[1]) + C[0] * (A[1] - B[1]));
+    const a2 = A[0] * A[0] + A[1] * A[1], b2 = B[0] * B[0] + B[1] * B[1], c2 = C[0] * C[0] + C[1] * C[1];
+    return [(a2 * (B[1] - C[1]) + b2 * (C[1] - A[1]) + c2 * (A[1] - B[1])) / d, (a2 * (C[0] - B[0]) + b2 * (A[0] - C[0]) + c2 * (B[0] - A[0])) / d];
+  }
+  const kick = (t, at, a) => t >= at ? 1 + a * Math.exp(-(t - at) * 8) : 1;
+  const darbeZum = a => a >= 0 ? 1 + .14 * Math.exp(-a * 8) * Math.cos(a * 22) : 1;
+  // ağır kılıç: iz 0.09 sn'de süpürür, sonra ~3 kare donar (hit-stop), sonra devam eder
+  const donma = a => a < .09 ? a : a < .15 ? .09 : a - .06;
+
   MVSahne.sinematik({
     baslik: 'Baelor',
+    altBaslik: 'Battle Master Fighter',
     tetik: document.querySelector('.container h1'),
-    sure: 6.8,
-    yaziY: .175,
-    yaziOrani: .058,
-    textures: { uMap: 'Taktik Harita.webp', uPcs: 'Piyonlar.webp' },
+    sure: 33.3,
+    yaziY: .74,
+    yaziOrani: .085,
+    cozunurluk: 1.5,
+    textures: {
+      uMap: 'Taktik Harita.webp', uMapC: 'Taktik Harita Oksuz.webp', uPcs: 'Piyonlar.webp', uImg: 'Baelor.png',
+      uDep: 'Baelor Derinlik.webp', uHand: 'Zırhlı El.webp', uBack: 'Baelor Arka.webp',
+    },
+    // müzik çalıyorsa trailer müziğin saatine uyar
+    saat() {
+      if (!audio || audio.paused || audio.ended) return null;
+      const c = audio.currentTime;
+      return c > 0 && c < 33.3 ? c : null;
+    },
     fs: `
-uniform sampler2D uMap, uPcs; uniform vec2 uMapSize, uPcsSize;
+uniform sampler2D uMap, uMapC, uPcs, uImg, uDep, uHand, uBack;
+uniform vec2 uMapSize, uPcsSize, uImgSize, uDepSize, uHandSize, uBackSize;
 uniform vec4 uPlane; uniform vec2 uMapWH, uLight;
 uniform vec4 uP[6], uQ[6];
-uniform float uZoom;
+uniform float uShot, uUnroll, uArrow, uRad, uJolt, uHandA, uHandH, uDust;
+uniform vec4 uCamA, uCamB;               // x: yakınlaştırma, y: eğim, z: karışım (yalnız B), w: tilt-shift
+uniform vec2 uFocA, uAncA, uFocB, uAncB, uHandPos;
+uniform float uPZoom, uRoll, uFocusD, uBlur, uKeskin, uWind, uPend, uMatte;
+uniform vec2 uPCenter, uCam, uShake, uEmit, uEmitDir, uTxtOff;
+uniform vec4 uGlint, uStar;          // parıltı: konum (görsel px), güç, genişlik · yıldız: x, y, boy, güç
+uniform vec4 uArcA, uArcB, uCard;        // arc A: merkez, yarıçap, baş açısı · B: başlangıç açısı, yaş, etkin, yön
+uniform float uWhite, uFade, uTitle, uSub, uTitleOut;
 ${SPARKS}
-// ekran → masa düzlemi
+float gTilt;
 vec2 toPlane(vec2 s){
-  float c = cos(uPlane.w), sn = sin(uPlane.w), D = uPlane.z;
+  float c = cos(gTilt), sn = sin(gTilt), D = uPlane.z;
   float ys = s.y - uPlane.y;
   float Y = ys * D / (c * D + ys * sn);
   float z = D - Y * sn;
   return vec2((s.x - uPlane.x) * z / D, Y);
 }
-// masa düzlemi → ekran (+ ölçek)
 vec3 toScreen(vec2 p){
-  float c = cos(uPlane.w), sn = sin(uPlane.w), D = uPlane.z;
+  float c = cos(gTilt), sn = sin(gTilt), D = uPlane.z;
   float z = D - p.y * sn;
   return vec3(uPlane.x + p.x * D / z, uPlane.y + p.y * c * D / z, D / z);
 }
-// yırtık kenarlı harita maskesi (uv içinde), açılma payı dahil
 float mapMask(vec2 uv, float half_, out float rim){
   vec2 q = vec2(min(uv.x - .045, .955 - uv.x) * 1.5, min(uv.y - .055, .945 - uv.y));
   float tear = (fbm(uv * vec2(22., 15.)) - .5) * .05 + (n(uv * 90.) - .5) * .012;
   float e = min(q.x, q.y) + tear;
   float open = half_ - abs(uv.x - .5) + (fbm(vec2(uv.y * 14., 3.)) - .5) * .03;
   float ee = min(e, open);
-  rim = smoothstep(.045, 0., ee);                          // kenara yakın yanık şerit
+  rim = smoothstep(.045, 0., ee);
   return smoothstep(0., .004, ee);
 }
-void main(){
-  vec2 px0 = PX(), V = uView; float t = uT;
-  vec2 px = (px0 - V * .5) / uZoom + V * .5;
-  vec2 sp = px0 / V;
+// tilt-shift için yumuşak harita okuması
+vec3 mapTex(sampler2D s, vec2 uv, float r){
+  vec3 c = texture2D(s, uv).rgb;
+  if (r < .0003) return c;
+  c += texture2D(s, uv + vec2(r, 0.)).rgb + texture2D(s, uv - vec2(r, 0.)).rgb
+     + texture2D(s, uv + vec2(0., r * 1.5)).rgb + texture2D(s, uv - vec2(0., r * 1.5)).rgb;
+  return c / 5.;
+}
+// ── SAVAŞ MASASI (kamera parametreleriyle; geçişlerde iki kez çizilir)
+vec3 mapScene(vec2 px0, float t, vec4 cam, vec2 foc, vec2 anc){
+  vec2 V = uView;
+  gTilt = cam.y;
+  vec2 px = (px0 - anc) / cam.x + foc;
   vec2 P = toPlane(px);
   vec2 uv = P / uMapWH + .5;
   float fl = .82 + .18 * n(vec2(t * 8., 2.)) + .08 * n(vec2(t * 21., 5.));
-  // mum ışığı: düzlemdeki uzaklığa göre sönümlenir
   float ld = length(P - uLight) / uMapWH.y;
   float light = (.16 + 1.05 / (1. + ld * ld * 5.)) * fl;
-  // masa: koyu ahşap damarları
   float grain_ = fbm(vec2(P.x * .004, P.y * .05)) * .6 + n(vec2(P.x * .002, P.y * .3)) * .4;
   vec3 col = mix(vec3(.05, .028, .015), vec3(.14, .08, .04), grain_) * light;
-  float horizon = smoothstep(-uPlane.z * .25, 0., P.y + uMapWH.y * .6);   // uzak masa karanlığa karışır
-  col *= horizon;
-  // harita
-  float half_ = smoothstep(.15, 1.5, t) * .5;
+  col *= smoothstep(-uPlane.z * .25, 0., P.y + uMapWH.y * .6);
+  float tsb = cam.w * smoothstep(.0, .35, abs(P.y - toPlane(foc).y) / uMapWH.y) * .004;
   float rim;
-  float mm = mapMask(uv, half_, rim) * inBox(uv);
-  // haritanın masaya düşen gölgesi (ışıktan uzağa kayık)
+  float mm = mapMask(uv, uUnroll, rim) * inBox(uv);
   vec2 sdir = normalize(P - uLight);
-  float rim2; float msh = mapMask((P - sdir * 9.) / uMapWH + .5, half_, rim2);
+  float rim2; float msh = mapMask((P - sdir * 9.) / uMapWH + .5, uUnroll, rim2);
   col *= 1. - msh * .45 * (1. - mm);
   if (mm > 0.) {
-    float curl = smoothstep(half_ - .05, half_, abs(uv.x - .5)) * step(.001, half_);
-    vec3 m = texture2D(uMap, uv).rgb;
-    float red = smoothstep(.1, .25, m.r - max(m.g, m.b) * 1.3) * (1. - smoothstep(.2, .7, rim + curl));   // yanık kenarı ok sanmasın
+    float curl = smoothstep(uUnroll - .05, uUnroll, abs(uv.x - .5)) * step(.001, uUnroll);
+    vec3 m = mapTex(uMap, uv, tsb);
+    float front = uArrow * 1.25 - .1 + (fbm(uv * 9.) - .5) * .12;
+    float drawn = smoothstep(front + .02, front - .02, uv.x);
+    // oklar mürekkeple çizilir: cephe geçene kadar oksuz kopya görünür
+    vec3 temiz = mapTex(uMapC, uv, tsb);
+    float fark = clamp(length(m - temiz) * 3., 0., 1.);
+    m = mix(temiz, m, drawn);
+    float wet = smoothstep(.04, 0., abs(uv.x - front)) * fark;
     m *= (.3 + light * .85) * (1. - curl * .5);
-    m = mix(m, m * vec3(.42, .25, .14), rim * .8);           // yanık kenar
-    float sweep = smoothstep(.0, .06, (t - 3.1) * .55 - uv.x);
-    m += vec3(1., .22, .08) * red * sweep * (.7 + .3 * sin(t * 6. - uv.x * 12.)) * .9;
+    m = mix(m, m * vec3(.42, .25, .14), rim * .8);
+    m += vec3(1., .22, .08) * fark * drawn * .25 * (.7 + .3 * sin(t * 4. - uv.x * 10.));
+    m += vec3(1., .5, .3) * wet * .8;
     col = mix(col, m, mm);
   }
-  // piyonların haritaya/masaya düşen gölgeleri + temas karartısı
   float shade = 0.;
   for (int i = 0; i < 6; i++) {
     vec4 Pi = uP[i];
@@ -1328,71 +1447,411 @@ void main(){
     shade = max(shade, ao * .7 * Pi.z);
   }
   col *= 1. - shade;
-  // piyonlar: düzlemdeki tabanlarına oturur, uzaklığa göre ölçeklenir
   for (int i = 0; i < 6; i++) {
     vec4 Pi = uP[i], Qi = uQ[i];
     if (Pi.z <= 0.) continue;
     vec3 S = toScreen(Pi.xy);
-    float hp = uMapWH.y * .21 * S.z * cos(uPlane.w) * 1.25, wd = hp * 256. / 400.;
+    float hp = uMapWH.y * .21 * S.z * cos(gTilt) * 1.25, wd = hp * 256. / 400.;
     float k = Pi.z;
-    float lift = (1. - k) * V.y * .32;
+    float lift = (1. - k) * V.y * .32 / cam.x + uJolt * 3. / cam.x;
     vec2 lc = vec2((px.x - S.x) / wd + .5, (px.y - (S.y - lift - hp)) / hp);
     if (inBox(lc) > 0.) {
       vec4 pc = texture2D(uPcs, vec2((Pi.w + lc.x) / 6., lc.y));
-      float side = mix(1.25, .55, lc.x);                    // mum soldan vurur
-      float ao = mix(1., .6, smoothstep(.82, 1., lc.y));     // taban dibine doğru kararır
-      float pl = (.25 + light * .9) * side * ao;
-      vec3 pcol = pc.rgb * pl;
-      // sol kenarda sıcak kontur ışığı
+      float side = mix(1.25, .55, lc.x);
+      float ao = mix(1., .6, smoothstep(.82, 1., lc.y));
+      vec3 pcol = pc.rgb * (.25 + light * .9) * side * ao;
       float aL = texture2D(uPcs, vec2((Pi.w + lc.x - .03) / 6., lc.y)).a;
       pcol += vec3(1., .62, .3) * clamp(pc.a - aL, 0., 1.) * light * .9;
       col = mix(col, pcol, pc.a * smoothstep(0., .25, k));
     }
-    // iniş tozu
     float age = Qi.x;
     if (age > 0. && age < 1.) {
       vec2 dq = (px - S.xy) / vec2(wd * (.6 + age * 1.4), wd * (.16 + age * .3));
       col += vec3(.5, .4, .28) * smoothstep(1., .3, length(dq)) * fbm(px * .05 + age * 2.) * (1. - age) * .5 * light;
     }
   }
+  // zırhlı el: şövalyeyi kaleye koyar (tabanı uHandPos'a oturur), masanın mum ışığını alır
+  if (uHandA > 0.) {
+    float hh = uHandH, ww = hh * uHandSize.x / uHandSize.y;
+    vec2 hu = vec2((px.x - uHandPos.x) / ww + .367, (px.y - uHandPos.y) / hh + .933);
+    float sh = smoothstep(1., .2, length((px - uHandPos - vec2(ww * .2, 4.)) / vec2(ww * .3, hh * .05)));
+    col *= 1. - sh * .5 * uHandA;
+    if (inBox(hu) > 0.) {
+      vec4 hc = texture2D(uHand, hu);
+      // eldeki taş, dalılan şövalye piyonunun renklerine çekilir
+      float pm = smoothstep(.28, .30, hu.x) * smoothstep(.44, .42, hu.x) * smoothstep(.6, .66, hu.y)
+               * (1. - (1. - step(.75, hu.y)) * smoothstep(.37, .40, hu.x));
+      float lu = dot(hc.rgb, vec3(.3, .55, .15));
+      hc.rgb = mix(hc.rgb, lu * vec3(.75, .6, .42) * 1.4, .8 * pm);
+      vec3 lit = hc.rgb * (.45 + light * .9);
+      float aL = texture2D(uHand, hu + vec2(-.004, -.006)).a;
+      lit += vec3(1., .6, .3) * clamp(hc.a - aL, 0., 1.) * .8 * light;
+      lit *= mix(.35, 1., hu.y);
+      col = mix(col, lit, hc.a * uHandA);
+    }
+    if (uDust > 0.) {
+      vec2 dq = (px - uHandPos) / vec2(hh * (.18 + (1. - uDust) * .5), hh * (.04 + (1. - uDust) * .1));
+      col += vec3(.55, .45, .32) * smoothstep(1., .3, length(dq)) * fbm(px * .05 + uDust * 3.) * uDust * .8 * light;
+    }
+  }
   float smk = fbm(px * .004 + vec2(t * .03, -t * .02));
   col += vec3(.16, .11, .07) * smoothstep(.5, .9, smk) * .4;
-  col += sparks(px0, t, sp.y) * .7 * smoothstep(.5, 2., t);
-  // ad
-  vec3 tx = textAt(px0);
-  float xr = (px0.x - uTextBox.x) / max(uTextBox.z, 1.);
-  float rv = smoothstep(3.9, 5., t) * 1.35 - xr * .35;
-  float nz = fbm(px0 * .04);
-  float vis = smoothstep(nz - .06, nz + .06, rv);
-  float edge = smoothstep(.07, 0., abs(rv - nz)) * step(t, 5.2);
-  float hv = smoothstep(0., 1.1, rv);
-  col += vec3(.55, .32, .08) * tx.b * hv * .7 + vec3(.9, .65, .25) * tx.g * hv * .5;
-  col = mix(col, vec3(1., .78, .36), tx.r * vis);
-  col += vec3(1., .7, .3) * edge * tx.g * 1.4;
-  col *= mix(.3, 1., smoothstep(1.25, .3, length((sp - .5) * vec2(1., .9)) * 1.4));
-  col = 1. - exp(-col * 1.55);
-  col += grain(px0, t) * .045;
+  col += sparks(px0, t, px0.y / V.y) * .6 * smoothstep(.5, 2., t);
+  col *= mix(.3, 1., smoothstep(1.25, .3, length((px0 / V - .5) * vec2(1., .9)) * 1.4));
+  return col;
+}
+// ── BAELOR (2.5D portre)
+vec2 rot2(vec2 p, float a){ float c = cos(a), s = sin(a); return vec2(c * p.x - s * p.y, s * p.x + c * p.y); }
+vec2 pUV(vec2 px){ vec2 V = uView; vec2 p = rot2(px - V * .5, uRoll) + V * .5; return (coverUV(p, uImgSize) - .5) / uPZoom + uPCenter; }
+// ucuz = 1: bulanıklıksız hızlı okuma (hareket bulanıklığı ve renk ayrışması kopyaları için)
+vec3 baelorAt(sampler2D img, vec2 ts, vec2 uv, float t, float ucuz){
+  float dq = texture2D(uDep, uv).r;
+  // rüzgâr: pelerin ve saç (yüz ve kılıç hariç)
+  float face = inBox((uv - vec2(.40, .035)) / vec2(.13, .085));
+  float bolge = max(step(uv.y, .06), max(step(uv.x, .30), step(.45, uv.y)));
+  float wm = smoothstep(.45, .55, dq) * (1. - face) * (1. - smoothstep(.83, .86, dq)) * bolge;
+  uv.x += (fbm(uv * vec2(6., 10.) + vec2(t * .5, 0.)) - .5) * .003 * wm * uWind;
+  // nefes
+  float bm = smoothstep(.5, .55, dq) * (1. - smoothstep(.72, .78, dq));
+  uv = (uv - vec2(.45, .25)) / (1. + .004 * sin(t * 1.6) * bm) + vec2(.45, .25);
+  vec3 c = ucuz > .5 ? texture2D(img, derinlikUV(uDep, uv, uCam)).rgb
+                     : derinlik25(img, uDep, uv, uCam, uFocusD, uBlur, ts, uKeskin).rgb;
+  // kolyenin kırmızı taşı nabız gibi parlar
+  vec2 pd = (uv - vec2(.53, .225)) * vec2(1., 1.5);
+  c += vec3(1., .1, .1) * smoothstep(.014, .005, length(pd)) * (.1 + .15 * (.5 + .5 * sin(t * 3.)) + uPend);
+  return c;
+}
+vec3 grade(vec3 c, vec2 uv){
+  float l = dot(c, vec3(.3, .55, .15));
+  c = mix(c, vec3(l) * vec3(.85, .92, 1.05), .12) * 1.04;
+  float d = texture2D(uDep, uv).r;
+  c += vec3(.35, .2, .1) * smoothstep(.6, .95, d) * smoothstep(.45, .9, l) * .2;
+  return c;
+}
+vec3 knee(vec3 c){ return mix(c, .8 + .2 * (1. - exp(-(c - .8) / .2)), step(vec3(.8), c)); }
+// kar: uzak (yalnız Baelor'un arkasında), orta, yakın (yumuşak, az; yüzün önüne düşmez)
+vec3 snow(vec2 px, float t, vec2 uv){
+  vec2 V = uView; float sc = V.y / 760.; vec3 s = vec3(0.);
+  float dB = texture2D(uDep, uv).r;
+  float face = inBox((uv - vec2(.38, .0)) / vec2(.18, .14));
+  for (int k = 0; k < 3; k++) {
+    float fk = float(k);
+    float cell = (k == 0 ? 44. : k == 1 ? 96. : 300.) * sc;
+    float spd = (k == 0 ? 32. : k == 1 ? 75. : 170.) * sc;
+    float rad = (k == 0 ? 1.8 : k == 1 ? 2.6 : 8.) * sc;
+    float thr = k == 0 ? .5 : k == 1 ? .78 : .9;
+    float al = k == 0 ? .5 * (1. - smoothstep(.25, .35, dB)) : k == 1 ? .45 : .28 * (1. - face);
+    vec2 q = px - vec2(sin(t * .5 + fk * 2.) * 18. * sc + uCam.x * V.y * (6. + fk * 20.), t * spd);
+    vec2 id = floor(q / cell), f = q - (id + .5) * cell;
+    vec2 dv = f - (vec2(h(id + 1.3 + fk), h(id + 4.1 + fk)) - .5) * cell * .6;
+    float Ls = spd * .018;
+    dv.y -= clamp(dv.y, -Ls, Ls);
+    float d = length(dv);
+    float m = k == 2 ? smoothstep(rad, rad * .2, d) : exp(-pow(d / (rad * (.6 + .8 * h(id + 9.1 + fk))), 2.));
+    s += vec3(.88, .92, 1.) * m * step(thr, h(id + fk * 7.)) * al;
+  }
+  return s;
+}
+float sdSeg(vec2 p, vec2 a, vec2 b){ vec2 pa = p - a, ba = b - a; return length(pa - ba * clamp(dot(pa, ba) / max(dot(ba, ba), 1e-3), 0., 1.)); }
+// temas noktasından fışkıran kıvılcımlar: boyları ve parlaklıkları farklı, yerçekimiyle bükülen izler, aralarda kısa parlak noktalar
+vec3 sparkBurst(vec2 px, float age){
+  vec3 c = vec3(0.); float sc = uView.y / 760.;
+  for (int i = 0; i < 30; i++) {
+    float fi = float(i);
+    float r1 = h(vec2(fi, 1.7)), r2 = h(vec2(fi, 8.3)), r3 = h(vec2(fi, 4.1)), r4 = h(vec2(fi, 2.9)), r5 = h(vec2(fi, 6.6));
+    float life = .22 + .25 * r3;
+    if (age > life) continue;
+    float r6 = h(vec2(fi, 9.4));
+    float an = uEmitDir.x + (r1 - .5) * 1.92 + (r6 < .15 ? 3.14159 : r6 < .3 ? 1.5708 * sign(r1 - .5) : 0.);
+    vec2 v0 = vec2(cos(an), sin(an)) * (500. + 900. * r2) * mix(.5, 1.5, h(vec2(fi, 3.3))) * sc, gv = vec2(0., 1100. * sc);
+    float nokta = step(.8, r4), ln = mix(.4, 1.6, r5) * (1. - nokta * .85);
+    float tb = max(age - .03 * ln, 0.), tm = (age + tb) * .5;
+    vec2 pA = uEmit + v0 * age + .5 * gv * age * age, pM = uEmit + v0 * tm + .5 * gv * tm * tm, pB = uEmit + v0 * tb + .5 * gv * tb * tb;
+    float d = min(sdSeg(px, pB, pM), sdSeg(px, pM, pA));
+    float k = age / life, br = mix(.3, 1., r2 * .5 + r5 * .5) * (1. + nokta);
+    c += mix(vec3(1., .95, .75), vec3(1., .45, .12), k) * (smoothstep(1.5 * sc, 0., d) * 1.5 + exp(-d / (3.5 * sc)) * .2) * (1. - k) * br;
+  }
+  return c;
+}
+vec3 portraitShot(vec2 px, vec2 px0, float t){
+  vec2 V = uView; float sc = V.y / 760.;
+  float act = uArcB.z, age = uArcB.y, sg = uArcB.w;
+  // manevra: ekran dışında merkezli bir çemberin yayı boyunca kılıç izi
+  vec2 rel = px0 - uArcA.xy; float L = max(length(rel), 1.), sd = L - uArcA.z;
+  vec2 nrm = rel / L, tg = vec2(-nrm.y, nrm.x), tng = tg * sg;
+  float a0 = uArcB.x, span = uArcA.w - a0;
+  float ang = atan(rel.y, rel.x);
+  ang = a0 + mod(ang - a0 + 3.14159, 6.28318) - 3.14159;
+  float u = (ang - a0) / (abs(span) < 1e-4 ? 1e-4 : span);
+  float on = act * step(0., u) * step(u, 1.);
+  float taper = smoothstep(0., .25, u) * smoothstep(1., .7, u);
+  float bandLife = 1. - smoothstep(.1, .45, age), edgeLife = 1. - smoothstep(.1, .32, age);
+  float dd = sd + (fbm(vec2(ang * 40., age * 20.)) - .5) * 3. * sc;
+  float bw = mix(170., 260., n(vec2(ang * 6., 1.))) * sc * taper;
+  // iz bandı yalnız yayın arka (iç) tarafında; ön kenar ince ve parlak
+  // iz bandının hangi yanda kalacağı çekime göre (uEmitDir.y): S1'de yüzün tersine, aşağıya
+  float band = exp(-abs(dd) / (bw * .9 + .001)) * .8 * step(dd * uEmitDir.y, 0.) * on * bandLife * step(.001, taper);
+  float edge = exp(-pow(dd / (4.5 * sc), 2.)) * on * taper * edgeLife;
+  // görüntü kesilir: iki yarı iz boyunca kayıp geri oturur
+  vec2 off = vec2(0.);
+  if (act > .5 && age < .3) off += tg * sign(sd) * 26. * sc * pow(1. - age / .3, 2.);
+  // darbenin hava dalgası: izden dışa yayılan halka görüntüyü iter
+  if (act > .5) off += nrm * sign(sd) * 16. * sc * exp(-pow((abs(sd) - age * 1600. * sc) / (40. * sc), 2.)) * (1. - smoothstep(.05, .35, age));
+  vec2 uv = pUV(px + off);
+  vec3 c;
+  if (act > .5 && age < .16) {
+    float mb = 34. * sc * exp(-age * 10.);
+    c = vec3(0.);
+    for (int i = 0; i < 4; i++) c += baelorAt(uImg, uImgSize, pUV(px + off + tg * mb * float(i) / 3.), t, 1.);
+    c *= .25;
+  } else c = baelorAt(uImg, uImgSize, uv, t, 0.);
+  if (act > .5 && age < .2) {
+    float ch = 7. * sc * exp(-age * 12.);
+    c.r = baelorAt(uImg, uImgSize, pUV(px + off + nrm * ch), t, 1.).r;
+    c.b = baelorAt(uImg, uImgSize, pUV(px + off - nrm * ch), t, 1.).b;
+  }
+  // iz bandı sahnenin kendisiyle dolar: geriye sürüklenmiş, parlatılmış, çeliğe çekilmiş kopya
+  if (band > .004) {
+    vec3 sm_ = vec3(0.);
+    for (int i = 0; i < 6; i++) sm_ += baelorAt(uImg, uImgSize, pUV(px + off - tng * 70. * sc * float(i) / 5.), t, 1.);
+    sm_ /= 6.;
+    float sl = dot(sm_, vec3(.3, .55, .15));
+    sm_ = mix(sm_, vec3(sl) * vec3(.75, .8, .9) / .8, .6);
+    vec3 steel = vec3(.85, .9, 1.);
+    c = mix(c, sm_ * 1.6 + steel * .18, band) + steel * band * .35;
+  }
+  c = grade(c, uv);
+  // kılıçta parıltı: çapraz, dar; yalnız çizik metal ve kenar pahları ışığı yakalar
+  if (uGlint.y > 0.) {
+    vec2 ip = vec2((uv.x - .80) * 1024., uv.y * 1536.);
+    float bl = step(.86, texture2D(uDep, uv).r) * step(.765, uv.x) * step(uv.x, .835) * step(.40, uv.y);
+    float gb = exp(-pow((ip.y - uGlint.x + ip.x * .7) / uGlint.z, 2.));
+    float bev = mix(.35, 1., smoothstep(10., 32., abs(ip.x)));
+    c += vec3(1., .96, .88) * gb * bl * bev * pow(dot(c, vec3(.3, .55, .15)), 1.5) * 8. * uGlint.y;
+  }
+  c += snow(px0, t, uv);
+  c *= mix(.55, 1., smoothstep(1.25, .3, length((px0 / V - .5) * vec2(1., .9)) * 1.4));
+  c = knee(c);
+  c += vec3(1., .97, .9) * edge * 2.2 + vec3(.6, .7, .9) * exp(-abs(dd) / (6. * sc)) * on * taper * edgeLife * .12;
+  if (act > .5 && age < .05) {
+    // darbe karesi: derinlikten siyah siluet, açık zemin, ince beyaz kontur, iz siyah
+    float m = smoothstep(uMatte - .01, uMatte + .04, texture2D(uDep, uv).r);
+    float mx = smoothstep(uMatte - .01, uMatte + .04, texture2D(uDep, pUV(px + off + vec2(2. * sc, 0.))).r);
+    float my = smoothstep(uMatte - .01, uMatte + .04, texture2D(uDep, pUV(px + off + vec2(0., 2. * sc))).r);
+    c = mix(vec3(.92), vec3(.02), m);
+    c = mix(c, vec3(1.), clamp((abs(m - mx) + abs(m - my)) * 3., 0., 1.) * m);
+    c *= 1. - clamp(smoothstep(3. * sc, 1. * sc, abs(dd)) * on * taper + band * 2., 0., 1.);
+  }
+  if (act > .5 && age >= .05 && age < .5) c += sparkBurst(px0, age);
+  // kılıç kenarında dört köşeli yıldız
+  if (uStar.w > 0.) {
+    vec2 d = px0 - uStar.xy;
+    float st = exp(-pow(d.x / (1.5 * sc), 2.)) * exp(-pow(d.y / uStar.z, 2.)) + exp(-pow(d.y / (1.5 * sc), 2.)) * exp(-pow(d.x / uStar.z, 2.));
+    c += vec3(1., .97, .9) * (st + exp(-length(d) / (5. * sc)) * .6) * uStar.w;
+  }
+  return c;
+}
+// ── KAHRAMAN KARTI: görselin büyük kısmı net; arkada az bulanık kopyası, önde yer sisi
+vec3 heroCard(vec2 px, vec2 px0, float t){
+  vec2 V = uView;
+  vec2 sz = vec2(uCard.z * uImgSize.x / uImgSize.y, uCard.z);
+  // arka plan: görselin kenarlarındaki harabelerden yapılmış bulanık plaka (figür içermez)
+  vec2 bu = (coverUV(px, uBackSize) - .5) * vec2(1., 1.) + .5 + vec2(uCam.x * .5, 0.);
+  vec3 b = texture2D(uBack, bu).rgb * .68 * mix(.7, 1., smoothstep(.0, .45, px0.x / V.x));
+  b += vec3(.5, .55, .65) * smoothstep(.45, .9, fbm(px / V.y * 2. + vec2(t * .05, t * .02))) * .1;
+  vec2 ku = (px - uCard.xy) / sz + .5;
+  if (inBox(ku) > 0.) {
+    vec3 c = grade(baelorAt(uImg, uImgSize, ku, t, 0.), ku);
+    float dq = texture2D(uDep, ku).r, dr = texture2D(uDep, ku + vec2(3. / sz.x, 0.)).r;
+    c += vec3(.75, .85, 1.) * clamp((dq - dr) * 4., 0., 1.) * .25;          // sağ kenarda soğuk ışık
+    // yalnız arka plan erir; figür ve pelerin (derinlik > .35) hep katı kalır
+    float fe = smoothstep(0., .11, ku.x) * smoothstep(1., .89, ku.x) * smoothstep(0., .04, ku.y) * smoothstep(1., .96, ku.y);
+    b = mix(b, c, max(fe, smoothstep(.3, .4, dq)));
+  }
+  float fy = smoothstep(.68, 1., px0.y / V.y);
+  float fg = fbm(vec2(px.x / V.y * 1.6 + t * .12, px.y / V.y * 3.));
+  b = mix(b, vec3(.62, .66, .74), fy * smoothstep(.3, .8, fg) * .35);
+  b += snow(px0, t, clamp(ku, 0., 1.)) * .8;
+  b *= mix(.55, 1., smoothstep(1.25, .3, length((px0 / V - .5) * vec2(1., .9)) * 1.4));
+  return knee(b);
+}
+void main(){
+  vec2 px0 = PX(), V = uView; float t = uT;
+  vec2 px = px0 + uShake;
+  vec3 col;
+  if (uShot < .5 || (uShot > 2.5 && uShot < 3.5)) {
+    col = mapScene(px, t, uCamA, uFocA, uAncA);
+    if (uCamB.z > 0.) col = mix(col, mapScene(px, t, uCamB, uFocB, uAncB), uCamB.z);
+    if (uRad > 0.) {
+      // dalışın son anında radyal bulanıklık
+      for (int i = 1; i < 4; i++) col += mapScene(uAncA + (px - uAncA) * (1. - uRad * float(i) / 3.), t, uCamA, uFocA, uAncA);
+      col *= .25;
+    }
+    col = 1. - exp(-col * 1.5);
+  } else if (uShot < 1.5) col = portraitShot(px, px0, t);
+  else col = heroCard(px, px0, t);
+  // ── isim kartı: metalik yazı, çapraz silme ile girer, üstünden parıltı geçer
+  vec2 pT = px0 - uTxtOff;
+  vec3 tx = textAt(pT);
+  if (tx.r + tx.g + tx.b > .002) {
+    float isSub = step(uSubBox.y - 4., pT.y) * step(pT.y, uSubBox.y + uSubBox.w + 4.);
+    float rv = mix(uTitle, uSub, isSub);
+    float xr = (pT.x - uTextBox.x) / max(uTextBox.z, 1.) + (pT.y - uTextBox.y) / max(uTextBox.z, 1.) * .35;
+    float vis = smoothstep(rv * 1.4 - .25, rv * 1.4 - .3, xr) * (1. - uTitleOut);
+    float hy = clamp((pT.y - uTextBox.y) / max(uTextBox.w, 1.), 0., 1.);
+    vec3 steel = mix(vec3(1., .97, .9), vec3(.55, .58, .66), smoothstep(.25, .9, hy));
+    float glint = exp(-pow((xr - (rv * 1.6 - .35)) / .08, 2.)) * step(rv, .999) * tx.r;
+    col += vec3(.2, .3, .5) * tx.b * vis * .5 + vec3(.5, .55, .65) * tx.g * vis * .3;
+    col = mix(col, steel, tx.r * vis);
+    col += vec3(1., .95, .85) * glint * 1.2;
+  }
+  col = mix(col, vec3(1., .96, .9), clamp(uWhite, 0., 1.));
+  col *= 1. - uFade;
+  col += grain(px0, t) * .035;
   float bh = smoothstep(0., .8, t) * V.y * .085;
   col *= 1. - step(px0.y, bh) - step(V.y - bh, px0.y);
-  gl_FragColor = vec4(max(col, 0.), 1.);
+  gl_FragColor = vec4(clamp(col, 0., 1.), 1.);
 }`,
     kare(t, set) {
       const W = innerWidth, H = innerHeight, pl = plane(W, H);
-      set('uPlane', pl.cx, pl.cy, pl.D, TILT);
+      simdiT = t;
+      // sesler: zaman çizgisinde geçilen olaylar çalınır (geri sarılırsa sıfırlanır)
+      if (t < sonT - .3) sonT = t - .001;
+      OLAYLAR.forEach(([at, ad, g]) => { if (sonT < at && at <= t && t - at < .25) ses.cal(ad, g * SES_SEVIYE); });
+      sonT = t;
+      // ── çekim: 0 masa, 1 portre, 3 el, 4 kahraman kartı
+      const shot = t < 16.03 ? 0 : t < 25.17 ? 1 : t < 26.17 ? 3 : 4;
+      set('uShot', shot);
+      // ── masa
+      set('uPlane', pl.cx, pl.cy, pl.D, TILT0);
       set('uMapWH', pl.mw, pl.mh);
-      // mum, görselin sol üst köşesinde
       set('uLight', (.06 - .5) * pl.mw, (.09 - .5) * pl.mh);
-      // piyonlar haritanın alt yarısında, kademeli dizilir (uv)
-      const xs = [.2, .33, .46, .6, .73, .85], ys = [.74, .64, .78, .6, .72, .62];
-      const order = [0, 1, 2, 3, 4, 5].sort((a, b) => ys[a] - ys[b]);
+      set('uUnroll', sm(.1, 1.3, t) * .5);
+      set('uArrow', shot === 3 ? 1 : sm(2.6, 10.5, t));
+      const order = [0, 1, 2, 3, 4, 5].sort((a, b) => YS[a] - YS[b]);
       order.forEach((i, j) => {
-        const t0 = 1.7 + i * .32;
-        const k = Math.max(0, Math.min(1, (t - t0) / .42));
-        P.set([(xs[i] - .5) * pl.mw, (ys[i] - .5) * pl.mh, k > 0 ? ease(k) : 0, i], j * 4);
-        Q.set([t - (t0 + .42), 0, 0, 0], j * 4);
+        let k = clamp01((t - (LAND[i] - .42)) / .42);
+        if (shot === 3 && i === 3) k = 0;                       // sonda şövalye elde
+        P.set([(XS[i] - .5) * pl.mw, (YS[i] - .5) * pl.mh, k > 0 ? 1 - Math.pow(1 - k, 3) : 0, i], j * 4);
+        Q.set([t - LAND[i], 0, 0, 0], j * 4);
       });
       set('uP', P); set('uQ', Q);
-      set('uZoom', 1 + .05 * Math.min(1, t / 6.8) + .006 * [0, 1, 2, 3, 4, 5].reduce((s, i) => s + bump(1.7 + i * .32 + .42, .05, t), 0));
+      let A, B = null, mix = 0;
+      if (shot === 3) A = masaKam(4, t, W, H, pl);
+      else if (t < 4.4) A = masaKam(0, t, W, H, pl);
+      else if (t < 8) A = masaKam(1, t, W, H, pl);
+      else if (t < 11) { A = masaKam(2, t, W, H, pl); if (t < 8.35) { B = masaKam(1, t, W, H, pl); mix = 1 - sm(8, 8.35, t); } }
+      else A = masaKam(3, t, W, H, pl);
+      set('uCamA', A.z, A.tl, 0, A.ts); set('uFocA', A.f[0], A.f[1]); set('uAncA', A.a[0], A.a[1]);
+      if (B) { set('uCamB', B.z, B.tl, mix, B.ts); set('uFocB', B.f[0], B.f[1]); set('uAncB', B.a[0], B.a[1]); }
+      else set('uCamB', 1, TILT0, 0, 0);
+      set('uRad', shot === 0 && t > 15.68 ? .15 * Math.pow(clamp01((t - 15.68) / .35), 4) : 0);
+      // el: 25.17'de girer, ağırlıkla iner, 25.84'te koyar, 0.33 sn tutar
+      if (shot === 3) {
+        // kadrajın hemen üstünden girer (ilk 0.1 sn'de parmaklar görünür), yavaşlayarak masaya iner
+        const k = o3((t - 25.30) / .54);
+        set('uHandPos', A.f[0], A.f[1] - (1 - k) * H * .3); set('uHandH', H * .3); set('uHandA', 1);
+        set('uDust', t >= 25.84 ? 1 - clamp01((t - 25.84) / .8) : 0);
+        set('uJolt', t >= 25.84 ? Math.exp(-(t - 25.84) / .15) : 0);
+      } else { set('uHandA', 0); set('uDust', 0); set('uJolt', 0); }
+      // ── portre çekimleri
+      let pz = 1, pc = [.5, .5], cam = [0, 0], roll = 0, fo = .5, glint = null, emitUV = null, si = -1;
+      if (shot === 1) {
+        if (t < 20.34) {                                        // kılıçtan yüze kalkış, isim
+          const k = o3((t - 16.03) / 1.47), k2 = io((t - 17.5) / 2.47);
+          pz = (1 + .10 * k2) * (1 - .03 * sm(19.97, 20.27, t));
+          const hedef = Math.min(.17 - .015 * k2, basUst(pz, W, H));
+          pc = cerceve(pz, .5 - .03 * k2, .55 + (hedef - .55) * k, W, H);
+          cam = [.008 * Math.sin(t * .5), -.015 * (1 - k)];
+          fo = .75 - .25 * k;
+        } else if (t < 22.24) {                                 // üç manevra
+          si = t < 21.01 ? 0 : t < 21.69 ? 1 : 2;
+          const b = SLASH[si], a = t - b, d = [.67, .68, .55][si], k = clamp01(a / d);
+          if (si === 0) {
+            pz = 1.8 * (1 + .06 * k) * kick(t, 20.5, .03) * kick(t, 20.74, .03);
+            pc = cerceve(pz, .55, .085, W, H); roll = (-4 + 1.5 * k) * DEG; fo = .5;
+          } else if (si === 1) {
+            pz = 1.7 * (1 + .04 * k) * kick(t, 21.39, .03);
+            pc = cerceve(pz, .70, .27 + .04 * k, W, H, .03); roll = (7 - 2 * k) * DEG; fo = .78; emitUV = [.80, .215];
+          } else {
+            pz = 1.6 * (1 + .04 * k) * kick(t, 21.97, .03);
+            pc = cerceve(pz, .70, .45, W, H, .035); roll = (-9 + 3 * k) * DEG; fo = .88; emitUV = [.80, .385];
+            if (t >= 21.97 && t < 22.19) glint = [(t - 21.97) / .22];
+          }
+          pz *= darbeZum(donma(a));
+          cam = [.006 * Math.sin(t * 2.1), .004 * Math.cos(t * 1.7)];
+        } else {                                                // yüze yaklaşma
+          const k = io((t - 22.24) / 2.93);
+          pz = 1.25 + .5 * k;
+          pc = cerceve(pz, .5, Math.min(.13 - .03 * k, basUst(pz, W, H)), W, H);
+          cam = [-.012 + .024 * k, 0];
+          fo = .6 - .1 * k;
+        }
+      } else if (shot === 4) {
+        cam = [.01 * Math.sin(t * .4), 0];
+      }
+      const s = Math.max(W / 1024, H / 1536);
+      set('uPZoom', pz); set('uPCenter', pc[0], pc[1]); set('uCam', cam[0], cam[1]); set('uRoll', roll);
+      set('uFocusD', fo); set('uBlur', shot === 4 ? .002 : .0035);
+      set('uKeskin', shot === 1 ? .6 * sm(1.4, 2.2, s * pz) * (1 - sm(2.2, 3.2, s * pz)) : 0);
+      set('uWind', 1); set('uMatte', [.30, .70, .82][Math.max(si, 0)]);
+      // kılıç parıltısı: siperlikten aşağı 0.22 sn, alt banttan önce biter; ortasında kenarda yıldız
+      if (glint) {
+        const k = glint[0], visH = H / (1536 * s) / pz, alt = Math.min(.93, pc[1] + visH / 2 - .085 * visH - .02);
+        const y = .40 + (alt - .40) * o3(k);
+        set('uGlint', y * 1536, Math.sin(Math.PI * k), 10 / (s * pz), 0);
+        const st = uvEkran([.835, y], pz, pc, roll, W, H);
+        set('uStar', st[0], st[1], 40 * H / 760, Math.exp(-Math.pow((k - .5) / .15, 2)) * .9);
+      } else { set('uGlint', 0, 0, 1, 0); set('uStar', 0, 0, 1, 0); }
+      set('uPend', .6 * Math.max(t >= 16.03 ? Math.exp(-(t - 16.03) / .5) : 0, t >= 26.17 ? Math.exp(-(t - 26.17) / .6) : 0));
+      // ── manevra izi ve kıvılcımlar
+      if (si >= 0) {
+        const a = donma(t - SLASH[si]);
+        let E, C, R, a0, a1, ae, sg;
+        if (si === 0) {
+          // S1: yay ekranda yüzün altından, omuz ve pelerin üstünden geçer (soldan ≈.62H, alta ≈.62W)
+          const P1 = [0, .62 * H], P2 = [.62 * W, 1.02 * H]; E = [.3 * W, .86 * H];
+          C = cevrel(P1, E, P2); R = Math.hypot(E[0] - C[0], E[1] - C[1]);
+          const b1 = Math.atan2(P1[1] - C[1], P1[0] - C[0]), b2 = Math.atan2(P2[1] - C[1], P2[0] - C[0]), d = b2 - b1;
+          a0 = b1 - .15 * d; a1 = b2 + .15 * d; sg = Math.sign(d); ae = Math.atan2(E[1] - C[1], E[0] - C[0]);
+        } else {
+          E = uvEkran(emitUV, pz, pc, roll, W, H);
+          C = [null, [1.45 * W, 1.6 * H], [-.4 * W, -.9 * H]][si]; sg = -1;
+          R = Math.hypot(E[0] - C[0], E[1] - C[1]); ae = Math.atan2(E[1] - C[1], E[0] - C[0]);
+          a0 = ae - sg * .5; a1 = ae + sg * .5;
+        }
+        const kk = clamp01(a / .09), ah = a0 + (a1 - a0) * (1 - Math.pow(1 - kk, 4));
+        set('uArcA', C[0], C[1], R, ah); set('uArcB', a0, a, a < .5 ? 1 : 0, sg);
+        set('uEmit', E[0], E[1]); set('uEmitDir', ae + sg * Math.PI / 2, si === 0 ? -1 : 1);
+      } else set('uArcB', 0, 9, 0, 0);
+      // ── kahraman kartı
+      // saçın üstü üst bandın hemen altında; diz altı alt bandın arkasında kalır
+      const zF = (1.04 - .04 * o3((t - 26.17) / 6)) * kick(t, 26.17, .03), hg = H * (1 - 2 * .085) * 1.25 * zF;
+      set('uCard', W * .66, H * .085 - .02 * hg + hg / 2, hg, 0);
+      // ── isim kartı: 17.2'de ortada; 27.0'de solda
+      if (t < 26.17) {
+        set('uTitle', sm(17.2, 18.0, t)); set('uSub', sm(17.6, 18.4, t)); set('uTitleOut', sm(19.97, 20.22, t));
+        set('uTxtOff', 0, 0);
+      } else {
+        set('uTitle', sm(27.0, 27.8, t)); set('uSub', sm(27.4, 28.2, t)); set('uTitleOut', 0);
+        set('uTxtOff', -.25 * W, -.24 * H);
+      }
+      // ── parlama (yalnız vuruştan sonra), sarsıntı, kararma
+      const sonra = (at, w) => t >= at ? Math.exp(-(t - at) / w) : 0;
+      set('uWhite', sonra(16.03, .08) + sonra(26.17, .06) * .12 + SLASH.reduce((v, x) => v + (t >= x && t < x + .05 ? .25 : 0), 0));
+      const sh = (a, w) => a > 0 ? w * Math.exp(-a * 6) : 0;
+      const amp = (sh(t - 16.03, 12) + SLASH.reduce((v, x) => v + (t > x ? 18 * Math.exp(-(t - x) * 5) : 0), 0) + sh(t - 25.84, 2)) * H / 760;
+      set('uShake', amp * Math.sin(t * 83), amp * Math.cos(t * 71));
+      set('uFade', sm(32.2, 32.79, t));
+    },
+    basla() {
+      sonT = -1;
+      // müzik trailer başladıktan sonra çalmaya başlarsa (ör. ilk tıklamada), müziği trailer'ın anına sar
+      if (audio) {
+        const hizala = () => { if (audio.currentTime < 1 && simdiT > 1 && simdiT < 33) audio.currentTime = simdiT; };
+        audio.addEventListener('play', hizala, { once: true });
+        if (!audio.paused && audio.currentTime < 1) audio.currentTime = 0;
+      }
     },
   });
 })();

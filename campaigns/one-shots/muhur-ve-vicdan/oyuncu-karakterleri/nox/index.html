@@ -1373,7 +1373,7 @@ void main(){
   MVSahne.sinematik({
     baslik: 'Nox',
     tetik: document.querySelector('.container h1'),
-    sure: 6.2,
+    sure: 7.2,
     yaziY: .84,
     yaziOrani: .085,
     textures: { uSil: 'Silüet.webp', uVeins: 'Damarlar.webp' },
@@ -1419,7 +1419,7 @@ void main(){
   col = mix(col, vec3(.95, .82, .8), tx.r * vis);
   // kesinti: her şey bir anda söner (gözler bir an daha kalır)
   col *= 1. - uCut;
-  col += eyeC * (1. - uCut * smoothstep(5.45, 5.8, t));
+  col += eyeC * (1. - uCut * smoothstep(6.45, 6.8, t));
   col *= mix(.25, 1., smoothstep(1.25, .3, length((px0 / V - .5) * vec2(1., .9)) * 1.4));
   col = 1. - exp(-col * 1.4);
   col += grain(px0, t) * .05 * (1. - uCut * .7);
@@ -1429,16 +1429,16 @@ void main(){
   gl_FragColor = vec4(max(col, 0.), 1.);
 }`,
     kare(t, set) {
-      set('uBeat', t < 5.3 ? beat(t) * Math.min(1, t / .6) : 0);   // t=0 ilk 'lup' ile hizalı
-      set('uFlick', t < 5.3 ? flick(t) : 0);
+      set('uBeat', t < 6.3 ? beat(t) * Math.min(1, t / .6) : 0);   // t=0 ilk 'lup' ile hizalı
+      set('uFlick', t < 6.3 ? flick(t) : 0);
       set('uGl', Math.min(1, bump(4.35, .1, t) * 1.2 + bump(4.95, .05, t) + bump(2.6, .03, t) * .7));
-      set('uCut', t > 5.3 ? 1 : 0);
+      set('uCut', t > 6.3 ? 1 : 0);
     },
     basla() {
       // sinematik kendi saatiyle atar; ses açılabiliyorsa onunla eş zamanlı, kesintiye kadar
       sinematikte = true;
       const s = performance.now() / 1000;
-      if (izinVar()) KALP.run(s, s + 5.3);
+      if (izinVar()) KALP.run(s, s + 6.3);
     },
     bitis() {
       sinematikte = false;
