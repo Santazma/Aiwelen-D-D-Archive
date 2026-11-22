@@ -686,9 +686,18 @@
       applyInputs();
       step(dt);
       render(null);
+      if (canvas.style.visibility) canvas.style.visibility = '';
       // Fare durunca boya ~1 sn'de söner; sonrası boş ekrana simülasyon çalıştırmaktır.
       // 4 sn hareketsizlikte döngü uyur, ilk harekette uyanır.
-      if (performance.now() - lastInput > 4000) { sleeping = true; return; }
+      // Uyurken tuval temizlenip gizlenir: tuval gizliyken (ör. sinematik sırasında) tarayıcı yeni kareleri
+      // ekrana basmayabiliyor; gizlemezsek tekrar göründüğünde eski, boyalı bir kare donmuş halde kalıyordu.
+      if (performance.now() - lastInput > 4000) {
+        sleeping = true;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        canvas.style.visibility = 'hidden';
+        return;
+      }
       requestAnimationFrame(updateFrame);
     }
 
