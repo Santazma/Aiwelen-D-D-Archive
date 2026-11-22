@@ -686,7 +686,16 @@
       applyInputs();
       step(dt);
       render(null);
+      // Fare durunca boya ~1 sn'de söner; sonrası boş ekrana simülasyon çalıştırmaktır.
+      // 4 sn hareketsizlikte döngü uyur, ilk harekette uyanır.
+      if (performance.now() - lastInput > 4000) { sleeping = true; return; }
       requestAnimationFrame(updateFrame);
+    }
+
+    let lastInput = performance.now(), sleeping = false;
+    function wake() {
+      lastInput = performance.now();
+      if (sleeping) { sleeping = false; lastUpdateTime = Date.now(); requestAnimationFrame(updateFrame); }
     }
 
     function calcDeltaTime() {
@@ -1030,6 +1039,7 @@
       }
     }
 
+    ['mousedown', 'mousemove', 'touchstart', 'touchmove'].forEach(ev => window.addEventListener(ev, wake, { passive: true }));
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchstart', handleTouchStart);

@@ -183,7 +183,9 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
         v.addEventListener('loadeddata', () => { set(name + 'Size', v.videoWidth, v.videoHeight); res(true); }, { once: true });
         v.addEventListener('error', () => { console.warn('Video yüklenemedi:', src); res(false); }, { once: true });
-        videos.push({ v, unit, tx });
+        const o = { v, unit, tx, yeni: true, son: -1 };
+        if (v.requestVideoFrameCallback) { const cb = () => { o.yeni = true; v.requestVideoFrameCallback(cb); }; v.requestVideoFrameCallback(cb); }
+        videos.push(o);
         return;
       }
       const img = new Image();
@@ -193,7 +195,15 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
     }));
     return {
       gl, set, ready: Promise.all(loads), uploadText: c => upload(0, textTx, c),
-      tick() { videos.forEach(o => { if (o.v.readyState >= 2 && o.v.videoWidth) upload(o.unit, o.tx, o.v); }); },
+      tick() {
+        videos.forEach(o => {
+          if (o.v.readyState < 2 || !o.v.videoWidth) return;
+          // video ~30 fps; ekran 60–165 Hz. Aynı kareyi tekrar tekrar GPU'ya yüklemeyelim
+          const yeni = o.v.requestVideoFrameCallback ? o.yeni : o.v.currentTime !== o.son;
+          if (!yeni) return;
+          o.yeni = false; o.son = o.v.currentTime; upload(o.unit, o.tx, o.v);
+        });
+      },
       playVideos(from) { videos.forEach(o => { try { if (from != null) o.v.currentTime = from; } catch (e) {} o.v.play().catch(() => {}); }); },
       pauseVideos() { videos.forEach(o => o.v.pause()); },
     };
@@ -214,10 +224,12 @@ vec4 derinlik25(sampler2D img, sampler2D dep, vec2 uv, vec2 cam, float odak, flo
     }
     function frame(now) {
       raf = 0; if (!running) return;
+      // 120–165 Hz ekranlarda her kareyi çizmek GPU'yu boşuna iki-üç kat yorar; ~60 fps yeter
+      if (t0 && now - last < 12.5) { if (!document.hidden) raf = requestAnimationFrame(frame); return; }
       if (!t0) t0 = last = now;
       const dt = now - last; last = now;
       // kare süresi uzun kalırsa çözünürlük düşer
-      if (++frames > 20 && dt > 26) { if (++slow > 20 && scale > baseScale * .5) { scale *= .8; slow = 0; } } else slow = Math.max(0, slow - 1);
+      if (++frames > 20 && dt > 22) { if (++slow > 15 && scale > baseScale * .45) { scale *= .8; slow = 0; } } else slow = Math.max(0, slow - 1);
       resize();
       let t = (now - t0) / 1000;
       if (clock) { const c = clock(t); if (c != null && isFinite(c)) { t0 = now - c * 1000; t = c; } }
