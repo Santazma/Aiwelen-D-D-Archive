@@ -777,7 +777,8 @@
           <span class="badge">Tuzhane Faciası Hayatta Kalanı</span>
         </div>
         <strong>Lore Etkisi:</strong><br>
-        <span class="info-pending">Henüz işlenmedi.</span>
+        <span class="info-pending">Henüz işlenmedi.</span><br><br>
+        <a href="baelor.pdf" target="_blank" class="character-link">⚔️ Baelor Olarak En Son Char Sheeti</a>
       </div>
       <div class="info-box-inline">
         <h2>Karakter Bilgileri</h2>
@@ -841,6 +842,12 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Emberhollow.webp" alt="Emberhollow" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Smoldering Plate Armor.webp" alt="Smoldering Plate Armor" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
@@ -868,7 +875,8 @@
       <span class="badge">Tuzhane Faciası Hayatta Kalanı</span>
     </div>
     <strong>Lore Etkisi:</strong><br>
-    <span class="info-pending">Henüz işlenmedi.</span>
+    <span class="info-pending">Henüz işlenmedi.</span><br><br>
+    <a href="baelor.pdf" target="_blank" class="character-link">⚔️ Baelor Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
@@ -1060,7 +1068,7 @@
     const captions = [
       ['Baelor\'un Annesi Maren', 'Baelor\'un Hocası ve Onu Eğiten Eski Asker Halvard'],
       ['Elinden Işık Akıtıp Hastaları İyileştiren Fakat Sonra Tuzhane Sokağı\'nı Yakan Kayıtsız Büyücü'],
-      [],
+      ['Emberhollow', 'Smoldering Plate Armor'],
     ];
 
     const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];

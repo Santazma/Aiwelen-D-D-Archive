@@ -813,7 +813,8 @@
           <span class="badge">Beyaz Tenli Avcı</span>
         </div>
         <strong>Lore Etkisi:</strong><br>
-        <span class="info-pending">Henüz işlenmedi.</span>
+        <span class="info-pending">Henüz işlenmedi.</span><br><br>
+        <a href="nox.pdf" target="_blank" class="character-link">⚔️ Nox Olarak En Son Char Sheeti</a>
       </div>
       <div class="info-box-inline">
         <h2>Karakter Bilgileri</h2>
@@ -880,6 +881,12 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Clockwork Amulet.webp" alt="Clockwork Amulet" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Dagger of the Scarlet Mage.webp" alt="Dagger of the Scarlet Mage" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
@@ -906,7 +913,8 @@
       <span class="badge">Beyaz Tenli Avcı</span>
     </div>
     <strong>Lore Etkisi:</strong><br>
-    <span class="info-pending">Henüz işlenmedi.</span>
+    <span class="info-pending">Henüz işlenmedi.</span><br><br>
+    <a href="nox.pdf" target="_blank" class="character-link">⚔️ Nox Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
@@ -1098,7 +1106,7 @@
     const captions = [
       ['Nox\'un Hizmetçi Olan Babası Camron', 'Nox\'un Yüzünü Tam Anlamıyla Hatırlayamadığı İnsan Annesi Philomella', 'Uzun Parmaklı ve Sesini Hiç Yükseltmeyen Bir Vampir Olan Nox\'un Emir Aldığı Komutan Kont Isembard Vey'],
       ['Nox\'u Sorgulayan, Tasmayı Taktıran, Ondan Fırıncıyı İsteyen ve Ona "Tasma" Lakabını Veren Engizitör Marcellus'],
-      [],
+      ['Clockwork Amulet', 'Dagger of the Scarlet Mage'],
     ];
 
     const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];

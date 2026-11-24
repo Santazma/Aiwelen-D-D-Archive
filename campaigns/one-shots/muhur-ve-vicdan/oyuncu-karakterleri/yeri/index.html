@@ -804,7 +804,8 @@
           <span class="badge">Otuz Adım</span>
         </div>
         <strong>Lore Etkisi:</strong><br>
-        <span class="info-pending">Henüz işlenmedi.</span>
+        <span class="info-pending">Henüz işlenmedi.</span><br><br>
+        <a href="yeri yağmurmızrağı.pdf" target="_blank" class="character-link">⚔️ Yeri Olarak En Son Char Sheeti</a>
       </div>
       <div class="info-box-inline">
         <h2>Karakter Bilgileri</h2>
@@ -877,6 +878,15 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(2,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-2">
+              <div class="carousel-card visible" data-panel="2" data-idx="0">
+                <img src="Flintlock.webp" alt="Flintlock" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="1">
+                <img src="Goo Luck Dice.webp" alt="Goo Luck Dice" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="2" data-idx="2">
+                <img src="Hair-Trigger Ring.webp" alt="Hair-Trigger Ring" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(2, 1)">&#10095;</button>
           </div>
@@ -902,7 +912,8 @@
       <span class="badge">Otuz Adım</span>
     </div>
     <strong>Lore Etkisi:</strong><br>
-    <span class="info-pending">Henüz işlenmedi.</span>
+    <span class="info-pending">Henüz işlenmedi.</span><br><br>
+    <a href="yeri yağmurmızrağı.pdf" target="_blank" class="character-link">⚔️ Yeri Olarak En Son Char Sheeti</a>
   </div>
 
   <div class="info-box right-box">
@@ -1094,7 +1105,7 @@
     const captions = [
       ['Yağmurmızrağı Ailesinin Yöneticisi ve Yeri\'nin Babası Olan Lord Aurel Yağmurmızrağı', 'Yağmurmızrağı Ailesinin Leydisi ve Yeri\'nin Annesi Olan Leydi Venetia Yağmurmızrağı', 'Yağmurmızrağı Konağına Her Yıl At Seçmeye Gelen Yaşlı Jaeger Kadın Ruth', 'Western Shield\'daki Kalkan Silah Kervan\'ının Komutanı Cheston', 'Western Shield\'daki Bölüğün Engizitörü Ozcius'],
       ['Kervan Bilgilerini Sızdıran Levazım Subayı Balgar'],
-      [],
+      ['Flintlock', 'Goo Luck Dice', 'Hair-Trigger Ring'],
     ];
 
     const state = [ { idx: 0 }, { idx: 0 }, { idx: 0 } ];
