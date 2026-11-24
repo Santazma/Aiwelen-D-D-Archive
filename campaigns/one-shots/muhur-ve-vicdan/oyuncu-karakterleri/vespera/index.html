@@ -98,7 +98,7 @@
     }
 
     .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); white-space: nowrap; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); max-width: 100%; line-height: 1.35; }
     .info-card { display: grid; gap: 5px; margin-top: 6px; }
     .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(var(--wax-rgb),.14); padding-bottom: 5px; font-size: .85rem; }
     .info-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -729,7 +729,41 @@
     <div class="image-title">Vespera</div>
 
     <div class="bio">
-      <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
+      <p>Demirkoru'da ağaçlar konuşmazdı ama dinlerdi. Köydekiler buna inanırdı; kabukları demir kadar sert, gövdeleri bir kale kulesi kadar kalın o ağaçların altında yüksek sesle usulsüz kelimeler sarf edilmez, yalan söylenmezdi. Vespera, Milat'tan yedi yıl sonra, korunun kenarındaki bir oduncu köyünde doğdu. Babası Demirağıtların izniyle devrilen ağaçları kızaklara bağlar, annesi kızakların taşıdığı kabuk tozunu ciğerlerinden öksürerek atardı. Köyde ölüm sessiz gelirdi: bir öksürük, bir ateş, bir sabah açılmayan bir kapı.</p>
+
+      <p>Ölümün yolunu en çok kesen kişi Merel'di. Korunun derinindeki kulübesinde yaşayan, sırtı kambur, burnu kırık yaşlı bir otacı. Başında her mevsim aynı şapkayı taşırdı: geniş kenarlı, ucu gökyüzüne değil de yana, sanki bir şey dinliyormuş gibi kıvrılmış sivri bir şapka. Çocuklar ondan korkar, anneler gizlice kapısını çalardı. Vespera korkmadı. Yedi yaşından itibaren Merel'in peşinden koruya girdi, hangi kökün ateşi düşürdüğünü, hangi yaprağın uykuyu getirdiğini, hangisinin uykudan hiç uyandırmadığını öğrendi.</p>
+
+      <p>Her otun bir söz gibi olduğunu söylerdi Merel ona. Doğru zamanda söylenirse iyileştirir, yanlış zamanda söylenirse kişiyi gömdüğünü anlatırdı.</p>
+
+      <p>Vespera on bir yaşındayken Engizisyon koruya geldi. Merel'in kulübesinde kurutulmuş otların yanında, kayda geçmemiş başka şeyler de bulduklarını söylediler: üzerine işaretler kazınmış taşlar, kaynayınca yeşil ışık veren bir kazan. Vespera o ışığı görmüştü. Merel bir gece, onun yanında, ateşi üç gündür düşmeyen bir bebeği iyileştirmişti. Bebek yaşıyordu. Bunu söylemek istedi lakin kimsenin sormaya niyetinin olmadığı bir şeyin cevabı önemsizdi.</p>
+
+      <p>Merel götürülürken kapının önünde durdu, şapkasını çıkarıp Vespera'nın başına geçirdi. Şapka çok büyüktü, kızın gözlerine kadar indi. <em>"Benim yerime dinle,"</em> dedi. Merel ise bir daha asla geri gelmedi.</p>
+
+      <p>O kış Vespera köyün küçük kilisesine gitmeye başladı. Bu küçük yapı Merkezi Kilise'ye, yani Aydınlık Olan'ın evine bağlıydı. Taş duvarlarında Magnus Malus'tan satırlar yazılıydı ve rahibi, Merel'i götürenlerle aynı tanrıya dua ediyordu. Vespera bunu biliyordu. Yine de gitti, çünkü köyde ona cevap verebilecek tek kapı oydu. Rahip ona okumayı öğretti, Yeryüzü Tapınağı'nın Tanrı Savaşları sonrasında Engizisyon ile revize ettiği eser olan Malleus Maleficarum'un uzun ve soğuk cümlelerini öğretti. Vespera o kitapta Merel ile alakalı sebepleri ve gerekçeleri aradı. Belirli yerlerde istediği cevapları buldu, bazı noktalarda ise bulamadı. Tanrıların insanlığı terk ettiği bir dünyada Aydınlık Olan'ın onları kucaklamaya geldiğine inandı. Ama kucaklayan bir kolun bazen fazla sıkabileceğini de düşünüyordu.</p>
+
+      <p>On dört yaşındayken bir kızak devrildi ve babasının bacağını ezdi. Kemik deriyi yarmıştı. Vespera elini yaraya bastırdı, Merel'in ona öğrettiği ilk sözü değil, kilisede ezberlediği ilk duayı okudu ve avuçlarının arasından ılık, beyaz bir ışık sızdı. Babası çığlık atmayı bıraktı. Köyün yarısı o ışığı gördü.</p>
+
+      <p>Kimse ona korkarak bakmadı, çünkü yanındaki rahip diz çökmüştü. Aydınlık Olan bir çocuğu seçmişti. Demir Koru'nun Efendisi olan Lord Edmund Demirağıt'ın onayı ve Engizisyon'un süreci hızlandırmasıyla Vespera ertesi ay Beyaz Şehir'e gönderildi, Engizisyon'un kapısına gitti ve gücünü kayda geçirtti. Sorulan her soruya cevap verdi, istenen her sınavdan geçti. Mühürlü belgesini aldığında Merel'in şapkasını çantasının dibine, kimsenin göremeyeceği bir yere koydu. Atamıyordu ama aynı zamanda herkesin içinde takamıyordu da.</p>
+
+      <p>On yedi yaşında onaylı bir şifacı olarak Engizisyon'a katıldı. Kendine verdiği söz basitti: zarar görenlerin yanında olacaktı. Kayıtsız büyünün yaktığı, çürüttüğü, aklını aldığı insanların. Onları ancak içeriden, yasağın saflarında durarak koruyabileceğine inanıyordu. Katıldığı ilk hafta Engizisyon'un kayıt odasına gidip Merel'in adını aradı. Kütüklerde ne bir mahkeme kaydı vardı, ne bir ölüm. Sanki Merel hiç yaşamamıştı. Vespera defteri kapattı ve o gün ilk kez, yasağın gerekli olduğuna inanmanın onu adil saymak anlamına gelmediğini düşündü.</p>
+
+      <p>On sekizinde, korunun doğusundaki üç köyde bir çürüklük başladı. Önce bahçelerin, meyve ağaçlarının yaprakları karardı, sonra insanların derisi. Engizisyon izini kayıtsız bir druid çemberine kadar sürdü; korunun gücünü kendi istedikleri gibi eğip bükmeye çalışmışlardı. Çember dağıtıldı. Çürüklük ise kaldı.</p>
+
+      <p>Vespera hastaların toplandığı ahırda on iki gün kaldı. Yatakları sıraya dizdi, kimin bugün, kimin yarın bakılacağını kendi eliyle tahtaya yazdı. Yorgun düşen yardımcılara su taşıdı, ağlayan annelere iş verdi; kimse eli boş oturmadı, çünkü boş oturan umudunu kaybederdi. İyileştirebildiklerini iyileştirdi. İyileştiremeyeceklerini de biliyordu... Her sabah tahtadan birkaç isim sildi ve her birinin ardından bir dua okudu.</p>
+
+      <p>Yedinci gece ahırın kapısına bir şey geldi. Bir zamanlar geyik olmuştu; boynuzları kararmış dallara, gözleri kabuk tozuyla dolu iki çukura dönmüştü. Muhafızlar mızraklarını kaldırdı ama yaklaşmaya cesaret edemediler, çünkü dokunduğu her şey çürüyordu. Vespera hastaların arasından çıkmadı. Ahırın kapısında durdu, avucunu kaldırdı ve otuz adım öteden, bir mızraktan daha keskin bir ışık fırlattı. Hayvan düştü, yeniden kalktı, ikinci ışıkta bir daha kalkmadı. Vespera elini indirdi, titrediğini fark etti ve bunu kimseye göstermeden içeri döndü. Annesinin yatağı başında bekleyen bir çocuk ona korkuyla bakıyordu.</p>
+
+      <p><em>"Geçti,"</em> dedi Vespera. <em>"Şimdi sen bana yardım edeceksin. Şu kovayı doldur."</em></p>
+
+      <p>Çocuk kovayı doldurdu. Sonra bir başkasını. Sabaha kadar korkmayı unuttu.</p>
+
+      <p>On ikinci gün Engizisyon komutanı, kurtarılamayacak hastaların bulunduğu ahırın yakılmasını emretti. Çürüklüğün yayılmasını durdurmanın başka yolu yoktu. Vespera bir gün daha istedi. Komutan ona bir saat verdi. Vespera mantığını görüyordu; yasak gibi, bu da gerekliydi. Ama o saati boşa harcamadı. Merel'in ona çocukken öğrettiği kökü, uykuyu getiren ve acıyı alan kökü kaynattı, içeride kalan dört kişiye kendi eliyle içirdi. Her birinin elini tuttu, alnına dokundu, adlarını sordu ve ezberledi. Gözleri kapanana kadar yanlarında kaldı. Sonra ahırdan son çıkan o oldu ve alevler yükselirken başını çevirmedi.</p>
+
+      <p>O gece, yılların ardından ilk kez, Merel'in şapkasını çantasından çıkardı ve başına geçirdi. Artık gözlerine inmiyordu.</p>
+
+      <p>Olayların ardından bir mektup gelmişti. Verdun'dan gelen bu mektup kısa ve resmîydi. Üç köyde can kaybının beklenenin yarısında kaldığını yazıyor, düzenini ve soğukkanlılığını övüyordu. On dokuzuna bastığı baharda gelmişti. Verdun Engizisyon Taburu'na bağlı yeni bir birliğe, başka yerlerden gelen yabancılarla birlikte atanıyordu. Mektubun sonunda bir cümle daha vardı: Taburun başındaki kişi, onunla bizzat tanışmak istiyordu. Neden olduğunu yazmıyordu.</p>
+
+      <p>Vespera Verdun'a şapkasıyla girdi. Yağmur kenarlarından damlıyordu. Kapıdaki nöbetçiler şapkaya, sonra boynundaki Aydınlık Olan nişanına, sonra yine şapkaya baktılar. Vespera gülümsedi ve kapıdan geçti. Merel ona dinlemeyi öğretmişti. Burada dinlenecek çok şey vardı...</p>
     </div>
 
     <!-- Inline info-boxes: only shown on narrow screens -->
@@ -737,8 +771,12 @@
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
         <strong>Unvanlar:</strong>
-        <div class="badges"></div>
-        <span class="info-pending">Henüz unvan yok.</span><br><br>
+        <div class="badges">
+          <span class="badge">Aydınlık Olan&#x27;ın Seçtiği Çocuk</span>
+          <span class="badge">Tahta İsim Şifacısı</span>
+          <span class="badge">Sivri Şapkalı Kız</span>
+          <span class="badge">Cadı Şapkalı Rahibe</span>
+        </div>
         <strong>Lore Etkisi:</strong><br>
         <span class="info-pending">Henüz işlenmedi.</span>
       </div>
@@ -771,6 +809,15 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Merel.webp" alt="Merel" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Lord Edmund Demirağıt.webp" alt="Lord Edmund Demirağıt" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Köy Rahibi Sharut.webp" alt="Köy Rahibi Sharut" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
@@ -783,6 +830,9 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Ahır Yakma Emrini Veren Komutan Manxelas.webp" alt="Ahır Yakma Emrini Veren Komutan Manxelas" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
@@ -820,8 +870,12 @@
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong>
-    <div class="badges"></div>
-    <span class="info-pending">Henüz unvan yok.</span><br><br>
+    <div class="badges">
+      <span class="badge">Aydınlık Olan&#x27;ın Seçtiği Çocuk</span>
+      <span class="badge">Tahta İsim Şifacısı</span>
+      <span class="badge">Sivri Şapkalı Kız</span>
+      <span class="badge">Cadı Şapkalı Rahibe</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
     <span class="info-pending">Henüz işlenmedi.</span>
   </div>
@@ -1013,8 +1067,8 @@
     const CAROUSEL_AUTO_MS = 5000;
 
     const captions = [
-      [],
-      [],
+      ['Vespera\'ya Şapkasını Veren ve Engizisyon Tarafından Tutuklanan Şifacı Merel', 'Demirkoru\'nun Lordu ve Meşru Yöneticisi Lord Edmund Demirağıt', 'Merkezi Kilise\'nin Demirkoru\'daki Köye Atadığı Rahip Sharut'],
+      ['Çürüklük Sırasında Ahırın Yakılmasını Emreden ve Vespera\'ya Bir Saat Veren Engizisyon Komutanı Manxelas'],
       [
         'Vespera',
         'Vespera — Dark Atmosphere',

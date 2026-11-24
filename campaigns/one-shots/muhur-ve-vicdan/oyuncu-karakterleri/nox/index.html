@@ -98,7 +98,7 @@
     }
 
     .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); white-space: nowrap; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); max-width: 100%; line-height: 1.35; }
     .info-card { display: grid; gap: 5px; margin-top: 6px; }
     .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(var(--wax-rgb),.14); padding-bottom: 5px; font-size: .85rem; }
     .info-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -754,7 +754,51 @@
     <div class="image-title">Nox</div>
 
     <div class="bio">
-      <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
+      <p>Underdark'ta zaman günlerle değil, mumlarla ölçülürdü. Biri söner, biri yakılır; arada kimin öldüğü pek sorulmazdı. Engizisyon'un kayıtlarında adı Nox'tu; annesinin ona verdiği adı artık yalnızca kendisi hatırlıyor. Nox Milat'tan yüz dokuz yıl önce, güneşin adının bile fısıltıyla anıldığı bir sarayın taş koridorlarında doğdu. Babası o sarayın efendisine hizmet eden bir vampirdi; nefes almayan ama kızına nefesin nasıl taklit edileceğini sabırla öğreten bir adam. Annesi bir insandı; o vampiri kendisi seçmiş, o taş koridorlara kendi ayaklarıyla inmiş bir kadın. Nox onun yüzünü hatırlamazdı. Yalnızca sıcaklığını hatırlardı.</p>
+
+      <p>Sarayda dhampir olmak, iki kapı arasında durmak demekti. Vampirler onu fazla canlı, insan hizmetkârlar fazla ölü bulurdu. Nox erken öğrendi: iki tarafın da sevmediği biri, iki tarafın da ihtiyaç duyduğu biri olursa yaşardı. Kimin yalan söylediğini nabzından, kimin korktuğunu teninin kokusundan okumayı öğrendi. Kimseyi sevmedi, ama herkese fazla yaklaştı ve herkesi dinledi. Sarayın aynasız koridorlarında, cilalı taşlara bir adım geç düşen gölgesiyle saatlerce konuşurdu; gölgesi ona çoğu zaman hak verirdi.</p>
+
+      <p>Nox kendi ölümsüz doğasıyla alakalı değişik bir şeyin daha farkına vardı: güneş onu öldürmüyordu. Bir vampiri bir saatte küle çevirecek o radyant ışık, Nox'un yalnızca tenini kızartır, gözlerini sulandırır, adımlarını ağırlaştırırdı. Sarayda bunu bir fırsata çevirmek isteyen ilk kişi, efendinin savaş komutanı oldu. Uzun parmaklı, sesini hiç yükseltmeyen bir vampir. Nox'u bir gece yanına çağırdı ve ona bir soru sordu: <em>"Gündüz yürüyebilen bir göze ne kadar ihtiyacım olduğunu biliyor musun?"</em></p>
+
+      <p>Tanrı Savaşları başladığında yüz yaşını çoktan geçmişti. Sarayın efendileri savaşa yürüdü; Nox da onlarla, ölülerin ve vampirlerin saflarında savaştı. Ama ön safta değil, Komutanın gözü olarak. Gündüzleri, vampirler toprağın altında uyurken, düşman köylerinin arasında bir yolcu kılığında dolaşır; geceleri hangi kapının sağlam, hangi muhafızın sarhoş olduğunu anlatırdı. Savaşın ne için olduğunu hiç umursamadı. Yalnızca bir şeyi fark etti: yukarıdaki dünyada insanlar büyüye hem tapıyor hem de ondan ödleri kopuyordu. Aşağıda kimse büyüden korkmazdı. Herkes onu kullanan elden korkardı.</p>
+
+      <p>Savaş bittiğinde yukarıdaki Tanrılar sustu ama güneş her sabah yeniden doğdu ve vampir orduları gün ışığının altında açıkça tutunamadı. Ordu aşağıya, mumların ve taşın güvenliğine çekildi. Komutan ise Nox'u yukarıda bıraktı. <em>"Biz inerken birinin bakmaya devam etmesi gerek,"</em> dedi. Babası itiraz etmedi. O gece kızının karşısına oturdu ve ona bir kez daha, yavaşça, nefesin nasıl taklit edileceğini gösterdi. Sonra orduyla birlikte aşağı indi. Nox ona yazmadı. Babası sıradan bir hizmetkârdı ve yukarıdan gelen bir mektup onu korumasız bırakırdı; komutanın ise korunmaya ihtiyacı yoktu. Babasının hâlâ aşağıda olduğunu yalnızca komutanın mektuplarındaki tek tük satırlardan bilirdi.</p>
+
+      <p>On yıl boyunca kervan yollarında yaşadı. Hanlarda yolcu, kervanlarda muhafız, karanlık sokaklarda parayla iş gören biri oldu. Raporlarını kervan yolunun kenarındaki kurumuş bir kuyuya bıraktı; kuyunun dibi aşağıya açılıyordu. Yazdıkları her yıl biraz daha kısaldı, çünkü her yıl saklanacak biraz daha az yer kalıyordu. Savaşın ardından geçen yıllar doğrultusunda yeryüzünde Aydınlık Olan'ın adı yükseldi, onunla birlikte Engizisyon zaman içerisinde kuruldu. Önce küçüktü; dağınık cadı avcılarını kendine kattıkça büyüdü. Organize bir birlik haline gelip İmparatorluk adına hareket etmeye başladıktan sonra, Magnus Malus'un öğretileri ve buyruğuyla hanlara aynalar asıldı, kapılarda insanlar yoklanmaya başlandı ve kuyulara kutsanmış su karıştırıldı. Nox her yıl biraz daha dikkatli nefes almak zorunda kaldı.</p>
+
+      <p>Milat'tan on yıl sonra, Beyaz Şehir'in surlarında bir infaz yapıldı. Kazığa çakılan üç vampirden biri, Nox'a yıllarca bir şarap mahzeninde yer vermiş, Nox'un ona borçlu olduğu biriydi. Son sığınağıydı. Nox kalabalığın arasından izledi. Ağlamadı. Öğrendiği gibi nefes aldı, verdi ve aldı... O gece kuyuya tek satırlık bir rapor bıraktı: <em>"Saklanacak yer kalmadı..."</em></p>
+
+      <p>Cevap bir ay sonra geldi. Kuyunun dibinde bir parşömen ve bir harita vardı. Haritada, komutanın ağına bağlı olmayan, aşağıyı uzun zamandır rahatsız eden, yüzeyde bir değirmenin altına yerleşmiş bir Vampire-spawn yuvasının yeri işaretliydi. Parşömende tek bir cümle yazıyordu: <em>"Dışarıdan bakmak artık yetmiyor. İçeri gir."</em></p>
+
+      <p>Nox emri iki kez okudu ve ilk kez komutanla aynı şeyi istediğini fark etti. Kendi türünü bu kadar kolay bulan avcıların onları nasıl bulduğunu bilmek istiyordu. Hangi aynanın neyi gösterdiğini, hangi sorunun hangi yalanı yakaladığını, hangi odada hangi ışığın yandığını. Saklanan av er ya da geç bulunurdu. Avcıyı ise kimse aramazdı.</p>
+
+      <p>Milat'tan on bir yıl sonra, öğle güneşinin altında, bir Engizisyon karakoluna kendi ayaklarıyla yürüdü. Ellerini kaldırdı, dişlerini gösterdi ve haritayı masaya koydu. Sorgulayan Engizitör onu öldürmedi, çünkü masadaki şey bir vaat değil, bir adresti. Üç gün boyunca onu bir hücrede tuttular ve haritayı doğruladılar. Dördüncü gün baskın tutmuştu. Engizisyon henüz on bir yaşındaydı ve vampirlerin nerede uyuduğunu içeriden bilen kimsesi yoktu. Fakat Nox, Engizisyon'a bu sorunun çözümünü vaat ediyordu.</p>
+
+      <p>Nox'Un boynuna, yakasının altında kalacak gümüş işlemeli bir tasma geçirdiler. Tasmanın üstündeki mühür, onaylı bir Engizisyon büyücüsünün eliydi. Tasma onun yaşama izniydi: onu durduran bir avcıya yakasını açıp mührü göstermesi yeterdi. Tasma çıkarsa ya da kırılırsa onu tutan Engizitör bunu bilirdi ve o andan sonra Nox, avcıların listesinde yalnızca bir isim olurdu. Gümüş tenini hiç durmadan hafifçe yakardı. Bir hatırlatmaydı... Kayıtlarına bir ad yazdılar ve gerçek adını sormadılar. O ad Nox'tu. Onu tutan Engizitör ise ona, başkalarının önünde bile, başka bir adla seslenirdi: Tasma.</p>
+
+      <p>Alt rütbeler onu soluk tenli, tuhaf bir ajan olarak bilirdi. Yüksek makamlar ise ne olduğunu biliyordu; bilmemeleri imkânsızdı. Nabzı yoktu, teni soğuktu, aynalarda gölgesi bir adım geç kalırdı. Ama bir av köpeğinin kurt olduğunu bilmek, onu salmamak için yeterli bir sebep değildi.</p>
+
+      <p>İlk yıl Engizitör ondan bir şey daha istedi. Vampirleri ele vermek kolaydı. Kendi türünü ele verebilir miydi?</p>
+
+      <p>Cevap kendiliğinden geldi. Beyaz Şehir'in surları dışındaki yoksul mahallede, raporlara göre bir fırıncının yanında çıraklık eden genç bir dhampir vardı. Güneş onu ele verdiği için şafak sökmeden hamur yoğuran, kimseye zarar vermemiş birisiydi. Nox'u görünce onun ne olduğunu anladı ve ağladı. Yalnız olmadığını sanmıştı. Nox ona üç gece eşlik etti, bir abla gibi yanında oturdu, korkmamasını söyledi. Bu üç gecede üç şeyi tarttı. Çırak onu tanımıştı ve tanıyan biri konuşabilirdi. Kimsenin ağına bağlı değildi; komutan onu korumazdı. Ve arındırma odalarının içini görmenin tek yolu, oraya birini götürmekti. Dördüncü gece onu Engizitör'e teslim etti ve odanın penceresinden sonuna kadar izledi. Gümüş dolu lambaların altında kaç saat dayandığını kaydetti. Aşağıya giden ilk gerçek bilgi buydu.</p>
+
+      <p>Sonraki yıllarda kervan yollarında kendi türünü avladı ve neredeyse hiç başarısız olmadı. Çünkü avladıklarının çoğunun yerini ona aşağısı söylüyordu: seçilen kişiler komutanın rakipleri, ağdan kopmuş spawn'lar, fazla gürültü yapan aç ağızlardı. Engizisyon her teslimatla ona biraz daha güvendi. Lakin bilmedikleri şey şuydu,; Asıl ağın tek bir halkası bile kırılmamıştı...</p>
+
+      <p>Engizisyon Nox'a mahkumların kanından veriyordu. Ölçülü, soğuk, kayıtlı; ayakta tutacak kadar, doyuracak kadar değil. Doyurulmayan köpek sahibine daha sadık olur, diye düşünüyorlardı. Nox'a daha fazla kan gerekiyordu ve kendi açığını kendisi kapatıyordu. Kimsenin aramayacağı adamlar için sessiz ölüm sözleşmeleri üstlendi; altınları sözleşmeyi verenden, kanları ise hedeflerden aldı. Kervan yolunun kenarındaki köylerde bazı kışlar sabah sayımı bir çocuk eksik çıkardı. Nox her seferinde, bir ay içinde, aşağının ona fısıldadığı bir spawn yuvasını o yolun üstünde bulur ve teslim ederdi. Kayıp çocuklar kayıtlara o yuvanın kurbanları olarak geçerdi.</p>
+
+      <p>O yıllarda kuyuya da kutsanmış su dökülmüştü ve Nox'un yeni bir yola ihtiyacı vardı. Bir kış, kaçakçılara kan sattığından şüphelenilen bir han sahibini sorgulamaya gönderildi. Nox adamın karşısına oturmadı; masanın kenarına, ona bir kol boyu uzağa ilişti. Adam sorulara düzgün cevap verdi. Nabzı ise yalnızca bir ismi duyduğunda tekledi. O isim, kanı aşağıya taşıyan bir kuryenindi; komutanın adamlarından biri. Nox o ismi Engizitör'e vermedi. Gece hana döndü, adamın kulağına ismi fısıldadı ve ona iki yol olduğunu söyledi: Nox'un koruması ya da Nox'un raporu. Adam birincisini seçti. Nox raporunda adamın temiz olduğunu yazdı. Ondan sonra o han Nox'un oldu: kilerdeki kan fıçıları, kapısından geçen her kervanın dedikodusu. Fıçılar aşağıya inerken, çift dipli kapaklarının altında Nox'un mektupları da inerdi. Gerekirse kemerindeki hançerle aradaki kol boyunu bir an içinde kapatabilirdi. Çoğu zaman gerekmezdi. İnsanlar, ne kadar yakın durduğunu fark ettiklerinde zaten konuşurdu.</p>
+
+      <p>Nox konuşmayı severdi; özellikle insanların çok yakınında. Bir askerin bileğini tutup nabzını, bir avınkini sayar gibi, yüksek sesle sayar, bir rahibin kulağına korkudan kalbinin hızlandığını fısıldar, birinin korktuğunu fark ettiğinde gülümserdi. <em>"Bu kadar korkma,"</em> derdi. <em>"Daha karnım tok."</em> İnsanlar ondan uzaklaşmaya çalışırdı. O hep bir adım daha yaklaşırdı. Öğrendiği her şeyi de aşağıya göndermezdi; bir kısmını kendine saklardı. Komutanı sevmiyordu, ona yalnızca borçluydu. Ve komutanın arkasında, onun bile korktuğu daha büyük birinin durduğunu biliyordu.</p>
+
+      <p>Bir yıl önce, genç ve hevesli bir Engizitör Nox'un raporlarını hanın kayıtlarıyla karşılaştırdı. Fıçı sayıları tutmuyordu; Nox kilerden kendine fazladan fıçı ayırıyor, bunu kayıtlarda örtmeye hiç zahmet etmiyordu. Bir gece kilere indi ve bir fıçının çift dibinde, okuyamadığı bir dille yazılmış bir mektup buldu. Kimin elinden çıktığını tahmin etti. Nox'u örnek alan, raporlarını ezbere bilen biriydi; üstlerine gitmeden önce ona sormaya karar verdi. Hatası buydu. Nox onu ertesi gece, kervan yolunun kenarındaki bir ahırda kıstırdı. Ölümünü bir vampir saldırısı gibi gösterdi, sonra adı aşağıdan gelen bir vampiri bizzat avladı ve kafasını karakolun kapısına astı. O ay kendisine bir madalya verildi. Madalyayı aynanın önünde taktı, aynadaki bulanık yansımasının biraz geç gelen gülümsemesini izledi ve onunla uzun uzun konuştu. Bir noktada yansıması ona hak vermedi. Nox aynayı yumruğuyla kırdı, kanayan elini yaladı ve sabaha kadar kırıklara bakarak güldü. Ertesi gün odasına yeni bir ayna istedi.</p>
+
+      <p>Madalya her şeyi örtmedi. Genç adam notlarının bir kopyasını kendi rahibine bırakmıştı. Notlar, hanın kayıtları ve tutmayan fıçı sayıları yukarıya, Nox'un hiç oturmadığı masalara ulaştı. Yüksek makam onu öldürmek istemedi; hala fazla işe yarıyordu. Ama onu ağından koparmaya karar verdi.</p>
+
+      <p>Verdun'a gönderilme emri bir sabah geldi. Verdun Engizisyon Taburu'na bağlı yeni bir birliğe katılacaktı; başka yerlerden gelen, onu tanımayan yabancılarla. Hanı, fıçıları, kuryeleri olmayan bir şehirde. Kağıtta bunun bir ödül olduğu yazıyordu. Nox kağıdı burnuna götürüp kokladı. Ödüller böyle kokmazdı. Lakin bu yük olarak ona zorlanan görevi reddedemezdi. Reddetmek, tasmayı kendi eliyle çıkarmaktan farksızdı. Ona emri veren Engizitör ise başka bir şey söyledi. <em>"Bu sefer sınavda olan yalnızca onlar değil, Tasma."</em></p>
+
+      <p>Nox Verdun'a gece girdi, yağmurun altında, ıslanmayı umursamadan. Şehir kalabalıktı, sıcak ve canlıydı. Kapıdaki nöbetçinin yanından geçerken durdu, eğildi ve adamın boynuna çok yakın bir yerden derin bir nefes aldı. Adam kıpırdamadı.</p>
+
+      <p><em>"Kalbin hızlandı,"</em> dedi Nox, gülümseyerek. Sonra içeri yürüdü...</p>
     </div>
 
     <!-- Inline info-boxes: only shown on narrow screens -->
@@ -762,8 +806,12 @@
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
         <strong>Unvanlar:</strong>
-        <div class="badges"></div>
-        <span class="info-pending">Henüz unvan yok.</span><br><br>
+        <div class="badges">
+          <span class="badge">Kendi Türünün Mürteti</span>
+          <span class="badge">Tasma</span>
+          <span class="badge">Sorunlu Kadın</span>
+          <span class="badge">Beyaz Tenli Avcı</span>
+        </div>
         <strong>Lore Etkisi:</strong><br>
         <span class="info-pending">Henüz işlenmedi.</span>
       </div>
@@ -796,6 +844,15 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Nox&#x27;un Babası Camron.webp" alt="Nox&#x27;un Babası Camron" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Nox&#x27;un Annesi Philomella.webp" alt="Nox&#x27;un Annesi Philomella" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="Kont Komutan Isembard Vey.webp" alt="Kont Komutan Isembard Vey" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
@@ -808,6 +865,9 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Engizitör Marcellus.webp" alt="Engizitör Marcellus" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
@@ -839,8 +899,12 @@
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong>
-    <div class="badges"></div>
-    <span class="info-pending">Henüz unvan yok.</span><br><br>
+    <div class="badges">
+      <span class="badge">Kendi Türünün Mürteti</span>
+      <span class="badge">Tasma</span>
+      <span class="badge">Sorunlu Kadın</span>
+      <span class="badge">Beyaz Tenli Avcı</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
     <span class="info-pending">Henüz işlenmedi.</span>
   </div>
@@ -1032,8 +1096,8 @@
     const CAROUSEL_AUTO_MS = 5000;
 
     const captions = [
-      [],
-      [],
+      ['Nox\'un Hizmetçi Olan Babası Camron', 'Nox\'un Yüzünü Tam Anlamıyla Hatırlayamadığı İnsan Annesi Philomella', 'Uzun Parmaklı ve Sesini Hiç Yükseltmeyen Bir Vampir Olan Nox\'un Emir Aldığı Komutan Kont Isembard Vey'],
+      ['Nox\'u Sorgulayan, Tasmayı Taktıran, Ondan Fırıncıyı İsteyen ve Ona "Tasma" Lakabını Veren Engizitör Marcellus'],
       [],
     ];
 

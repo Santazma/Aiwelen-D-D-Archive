@@ -98,7 +98,7 @@
     }
 
     .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); white-space: nowrap; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); max-width: 100%; line-height: 1.35; }
     .info-card { display: grid; gap: 5px; margin-top: 6px; }
     .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(var(--wax-rgb),.14); padding-bottom: 5px; font-size: .85rem; }
     .info-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -729,7 +729,39 @@
     <div class="image-title">Baelor</div>
 
     <div class="bio">
-      <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
+      <p>Verdun'da yağmur denizden gelirdi. Tuzu, katranı ve kurumaya bırakılmış ağların ekşi kokusunu taşır, Aşağı Liman'ın dar sokaklarına çöker ve orada kalırdı. Baelor bu kokunun içinde doğdu. Yıllar sonra bile üzerinden atamadı onu; belki de hiç atmak istemedi.</p>
+
+      <p>Babası Ronan, Karasancak sancağı altında yürüyen sıradan bir mızrakçıydı. Tanrı Savaşları başladığında Baelor altı yaşındaydı ve babası gittiğinde kapının eşiğinde bekleyen ağır, ıslak bir pelerinin kokusundan başka bir şey hatırlayacak kadar büyük değildi. Gökyüzü yırtıldığında, tanrılar birbirinin boğazına sarıldığında ve dünya sonradan Milat diyeceği o çizgiyi çektiğinde Ronan dönmedi. Dönen tek şey kılıcıydı.</p>
+
+      <p>Onu getiren adamın adı Halvard'dı. Sol kolunun dirsekten aşağısı yoktu, sağ elinde de babasının, bir çocuğun boyunu aşan iki elli kılıcı vardı. Kapıyı çaldığında Baelor'un annesi Maren ağlamadı. Kılıcı aldı, duvara dayadı ve adama bir kâse çorba koydu. Halvard o gece gitmedi. Ertesi gün de gitmedi.</p>
+
+      <p>Savaşın ardından gelen yıllar, yaraların kapanmadığı ama kimsenin artık onlardan söz etmediği yıllardı. İmparatorluk kendini toplarken uzaklardaki Beyaz Şehir'de yeni bir şey doğuyordu; adı Verdun'a henüz ulaşmamıştı. Baelor dokuz yaşındayken Aşağı Liman'da, kimsenin adını bilmediği bir adam ortaya çıktı. Ellerinden ışık akıttığını, hastaları iyileştirdiğini söylüyorlardı. Bir gece, Tuzhane Sokağı'nda ateşi yaksın diye çağırdıkları o ışık sustu ve yerine başka bir şey konuştu.</p>
+
+      <p>Maren onu mahzene sürükledi, sırtını soğuk taşa dayadı ve avucunu oğlunun ağzına bastırdı. <em>"Ses çıkarma,"</em> dedi. Hepsi buydu. Yukarıda tahtalar çatırdadı, cam patladı, insanlar önce isim, sonra yalnızca ses haykırdı. Baelor bir gece boyunca, karanlıkta, annesinin avucunun ardında kıpırdamadan dinledi. Sabah olduğunda Tuzhane Sokağı yoktu. Yerinde, yağmurun bile ıslatamadığı gri bir kül vardı.</p>
+
+      <p>Birkaç gün sonra Verdun'a beyaz cüppeli adamlar geldi. Kül yığınlarının arasında dolaştılar, sorular sordular, sonra bir şey bulup götürdüler. Ne bulduklarını kimse sormadı. Baelor o gün iki şey öğrendi: sessizliğin insanı hayatta tuttuğunu ve büyünün, onu taşıyacak kadar güçlü olmayan ellerde bir yangından farksız olduğunu.</p>
+
+      <p>Maren o günden sonra pek konuşmadı. Geceleri kalkıp pencereleri yokladı, mumları birer birer söndürdü. Halvard ise konuşmayı hiç sevmezdi zaten. Baelor'a, babasının kılıcını kaldırmayı öğretti. Önce kaldıramadı. Sonra kaldırdı ama tutamadı. Sonra tuttu ama savuramadı. Yaşlı asker her seferinde yalnızca başını salladı ve aynı şeyi söyledi: <em>"Kılıcı kolunla değil, zihninle kaldırırsın Baelor. Önce içindeki alevi bul, tüm korkularını o alevin içine at ve geriye sadece boşluk kalsın."</em></p>
+
+      <p>Baelor alevi bulmayı öğrendi. Gözlerini kapatıp onu karanlıkta tek bir mum gibi yaktı ve içine ne varsa attı: mahzenin taş soğuğunu, annesinin avucunun ağırlığını, Tuzhane Sokağı'ndan yükselen o sesleri. Bir sokağı yutan ateşi, kendi içinde yaktığı küçük bir alevle susturmanın ironisini o yaşta göremedi. Gördüğünde ise artık önemsemiyordu. Alev söndüğünde geriye kalan boşluk serin ve sessizdi; korku oraya ulaşamıyordu. Kılıç o boşlukta hafifledi. Baelor o boşluğun içinden bakmayı da öğrendi: rakibin omuzlarına, ağırlığını hangi ayağına verdiğine, bir adamın yalan söylemeden hemen önce gözlerinin nereye kaydığına. Halvard'ın sol kolunu nerede bıraktığını anlatırken araya kattığı yarım yamalak Ork küfürlerini dinledi, ezberledi. Yıllar geçtikçe Aşağı Liman'ın çocukları ondan uzak durmaya başladı. Çok az konuşan, çok uzun bakan, sırtında hep o devasa kılıçla dolaşan ve gözlerinin ardında hiçbir şey kıpırdamayan bir adamdan çekinmek kolaydı.</p>
+
+      <p>On sekizinde Verdun'un şehir muhafızına yazıldı. Kapılarda nöbet tuttu, liman meyhanelerinde kavgaları sustururken tek bir kelime etmedi. Halvard o yıllarda yaşlanmaya başlamıştı ama bir konuda yorulmak bilmiyordu. <em>"İmparatorluğun senin gibi adamlara ihtiyacı var,"</em> derdi akşam yemeklerinde, ateşin başında. <em>"Engizisyon'a git."</em> Bunu asla bir emir gibi söylemedi. Baelor reddettiğinde ısrar etmedi; yalnızca bir sonraki ay, bir sonraki kış, aynı sözleri aynı sakinlikle tekrarladı. Baelor bir keresinde nedenini sordu. Halvard uzun süre ateşe baktı. <em>"Bazı yangınları söndürenler, onları kimin yaktığını da bilir Baelor,"</em> dedi sonunda. <em>"Ben yalnızca kül gördüm."</em> dedi.</p>
+
+      <p>Baelor'u sonunda Engizisyon'a götüren şey o cümle oldu. İkna değil, merak. Yaşlı adamın bunca yıl neyi göstermeye çalıştığını görmek istiyordu.</p>
+
+      <p>Verdun Taburu'nun yardımcı kılıçları arasında üç yıl geçirdi. Kapı kırdı, kaçanları yakaladı, sorgu odalarının önünde nöbet tuttu. Bir gece, rıhtımın ardındaki bir barakada, işe yarayan muskalar satan yaşlı bir adamı bulmaları emredildi. Kapıyı Baelor kırdı. Adam dizlerinin üstüne çöktü, torunlarından, borçlarından, bir daha yapmayacağından söz etti. Baelor tek kelime etmedi. Onu omzuna aldı ve arabaya taşıdı. Bir hafta sonra adamın <em>"arındırıldığını"</em> duydu.</p>
+
+      <p>O gece uyumadı. Bir şey hissetmeyi bekledi; öfke, pişmanlık, belki bir parça acıma. Gelmedi. Yalnızca o eski sessizlik geldi, mahzenin, annesinin avucunun ardındaki sessizlik. Yaptığının doğru olduğunu biliyordu. Tuzhane Sokağı'nın külünü hatırlayan herkes bilirdi. Bilmediği şey, neden hiçbir şey hissetmediğiydi.</p>
+
+      <p>Geçen kış, tahıl ambarlarının önünde aç bir kalabalık Taburu'nun bir devriyesini köşeye sıkıştırdığında, kapının önünde duran Baelor'du. Arkasında yaralı iki yardımcı kılıç ve bir Engizitör vardı; önünde taşlar, sopalar ve bağıran yüzler. Geri çekilmedi. Kılıcını çekmedi de. Yalnızca baktı; kalabalığın içinde ilk adımı atacak olanı, ötekilerin kime baktığını, kimin elinin titrediğini. Öne çıkan ilk adamı yere indirdiğinde ikincisi gelmedi. Kalabalık dağılırken arkasındaki Engizitör onun adını sordu. O ana kadar kimse sormamıştı.</p>
+
+      <p>Mühürlü mektup geçen ay geldi. Verdun Engizisyon Taburu'na bağlı yeni bir birliğe atanıyordu. Birliğin geri kalanı İmparatorluk'un başka köşelerinden, başka sınavlardan geçmiş yabancılardı. Mektupta <em>"sınav"</em> kelimesi geçmiyordu, ama Baelor bir şeyin yalan söylemeden önce nereye baktığını okumayı öğrenmişti. Böyle mektuplar, alan herkesin geri dönmediği yerlere gönderilirdi.</p>
+
+      <p>Son akşamını annesinin evinde geçirdi, babasının kılıcının ağzını yağlayarak. Halvard köşedeki sandalyede uyukluyor, kesik kolu dizinin üstünde duruyordu. Maren bütün akşam bir kelime etmedi. Baelor kapıdan çıkarken, ancak o zaman, oğlunun koluna dokundu.</p>
+
+      <p><em>"Onlara benzeme,"</em> dedi.</p>
+
+      <p>Baelor başını salladı. Ne söyleyeceğini bilmiyordu. Arkasında Halvard'ın yıllardır tekrarladığı sözler, önünde annesinin bu tek cümlesi vardı ve ikisi aynı yolu gösteriyormuş gibi durmuyordu. Kılıcı sırtına yerleştirdi ve yağmurun altında, denizden gelen tuz kokusunun içinde, Taburu'nun kapısına doğru yürüdü...</p>
     </div>
 
     <!-- Inline info-boxes: only shown on narrow screens -->
@@ -737,8 +769,13 @@
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
         <strong>Unvanlar:</strong>
-        <div class="badges"></div>
-        <span class="info-pending">Henüz unvan yok.</span><br><br>
+        <div class="badges">
+          <span class="badge">Boşluğun Kılıcı</span>
+          <span class="badge">Sessiz Öksüz</span>
+          <span class="badge">Aşağı Liman&#x27;ın Duvarı</span>
+          <span class="badge">Külçocuğu</span>
+          <span class="badge">Tuzhane Faciası Hayatta Kalanı</span>
+        </div>
         <strong>Lore Etkisi:</strong><br>
         <span class="info-pending">Henüz işlenmedi.</span>
       </div>
@@ -771,6 +808,12 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Maren.webp" alt="Maren" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Halvard.webp" alt="Halvard" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
@@ -783,6 +826,9 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Tuzhane Sokağı Büyücüsü.webp" alt="Tuzhane Sokağı Büyücüsü" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
@@ -814,8 +860,13 @@
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong>
-    <div class="badges"></div>
-    <span class="info-pending">Henüz unvan yok.</span><br><br>
+    <div class="badges">
+      <span class="badge">Boşluğun Kılıcı</span>
+      <span class="badge">Sessiz Öksüz</span>
+      <span class="badge">Aşağı Liman&#x27;ın Duvarı</span>
+      <span class="badge">Külçocuğu</span>
+      <span class="badge">Tuzhane Faciası Hayatta Kalanı</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
     <span class="info-pending">Henüz işlenmedi.</span>
   </div>
@@ -1007,8 +1058,8 @@
     const CAROUSEL_AUTO_MS = 5000;
 
     const captions = [
-      [],
-      [],
+      ['Baelor\'un Annesi Maren', 'Baelor\'un Hocası ve Onu Eğiten Eski Asker Halvard'],
+      ['Elinden Işık Akıtıp Hastaları İyileştiren Fakat Sonra Tuzhane Sokağı\'nı Yakan Kayıtsız Büyücü'],
       [],
     ];
 

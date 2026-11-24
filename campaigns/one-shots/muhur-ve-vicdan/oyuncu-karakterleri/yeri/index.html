@@ -98,7 +98,7 @@
     }
 
     .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 10px 0; }
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); white-space: nowrap; }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3px; font-weight: 700; color: #e87a68; border: 1px solid rgba(var(--wax-rgb),.5); background: rgba(var(--wax-rgb),.1); max-width: 100%; line-height: 1.35; }
     .info-card { display: grid; gap: 5px; margin-top: 6px; }
     .info-row { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid rgba(var(--wax-rgb),.14); padding-bottom: 5px; font-size: .85rem; }
     .info-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -754,7 +754,43 @@
     <div class="image-title">Yeri Yağmurmızrağı</div>
 
     <div class="bio">
-      <p class="bio-pending">Bu görevlinin sicili henüz arşive işlenmedi.</p>
+      <p>Beyaz Şehir'in kuzeydoğusunda kalan topraklarda, surların gölgesinin çoktan bittiği yerde çayırlar başlardı. Rüzgâr orada hiç durmaz, otları deniz gibi dalga dalga yatırırdı. Sonbaharda yağmur tepelerin arasından ince ve eğik iner, ufku bir mızrak ormanına çevirirdi. Ailenin adı o yağmurdan gelirdi. Yeri Yağmurmızrağı o çayırlarda doğdu, Milat'tan altı yıl sonra, dünyanın yeniden kurulduğu bir zamanda.</p>
+
+      <p>Yağmurmızrağı ailesi nesillerdir İmparatorluk'a at yetiştirirdi. Lejyonların savaş atları, kraliyet kervanlarının yük beygirleri o çayırlarda tay olarak doğar, ailenin ahırlarında büyürdü. Toprakları geniş, tebaası sadıktı. Çobanlar, seyisler, nalbantlar Lord Aurel Yağmurmızrağı'nın adını bir dua gibi anardı.</p>
+
+      <p>Yeri okumayı babasının soy kütüklerinden öğrendi. Her tayın anası, babası, doğduğu gece, satıldığı garnizon; hepsi o kalın deri ciltlere işlenirdi. Bir akşam sayfaların arasında kazınmış bir satır buldu. Babası kalemi bıraktı ve kızına uzun uzun baktı. O satırdaki aygırın kaydı kazınarak satıldığını, iki yıl sonra bir kaçakçının altında bulunduğunu anlattı.</p>
+
+      <p><em>"Güç de at gibidir, Yeri,"</em> dedi. <em>"Soyu yazılır, dizgini takılırsa seni taşır. Başıboş kalırsa ezer geçer."</em></p>
+
+      <p>Yeri o sözü yatağında defalarca tekrarladı; büyüdükçe bu söz, dünyayı ona açıklayan tek cümle oldu. Bir şeyin güçlü olması onu kötü yapmazdı; başıboş olması yapardı. Engizisyon'un büyü yasağını hiçbir zaman zulüm olarak görmedi. Ona göre bu, İmparatorluk'un en vahşi sürüsüne takılmış bir dizgindi. Gücü olan kayda geçmeliydi. Kayda geçmeyen her şey bir gün birini ezerdi.</p>
+
+      <p>Her bahar, çayırlara at seçmeye yaşlı bir Jaeger gelirdi. Yeri on iki yaşındayken adam, Lord Aurel'in izniyle, ona ağır ve soğuk bir flintlock uzattı. İlk atışta geri tepme omzunu morarttı. Ağlamadı. İkincisini yaptı, sonra üçüncüsünü. Jaeger ona hedefi vurmayı değil, ateş etmeden önce beklemeyi öğretti: nefesin dibini, rüzgârın dönüşünü, hedefin bir adım atıp duracağı anı. <em>"Herkes tetiği çekebilir,"</em> derdi. <em>"İşi bitiren, ne zaman çekeceğini bilendir."</em></p>
+
+      <p>Yeri ailenin üçüncü büyük kız çocuğuydu. Toprak, ahırlar ve tebaa büyük erkek ve kız kardeşlerine düşecekti, ve Yeri'nin başka bir aile için düzgün bir leydi olmak gibi planları yoktu; geç doğan bir Yağmurmızrağı için tahta hizmet etmek ayıp değil, makbul bir yoldu. Babası bunu bir kayıp değil, bir hikmet olarak gördü ve Yeri'yi başka bir aileye gelin gitme konusunda zorlamadı. Hizmete giden çocuk, miras masasında boş kalan bir sandalye demekti ve o sandalye yüzünden kardeş kanı dökülmezdi. Lejyonların atlarını büyütmüş bir ailenin kızı için İmparatorluk soyut bir ad değil, her sabah uyandığı topraktı. On altısında Yeri kendi isteğiyle Engizisyon'u seçti. Annesi bir dua okudu, ağabeyleri onu yolun sonuna kadar at sırtında uğurladı. Yeri kendini bir şeyi feda eden biri gibi değil, yerine oturan bir parça gibi hissetti.</p>
+
+      <p>İlk görevi Western Shield'daydı. Kimseye ait olmayan, doğrudan tahta bağlı bu hisarda gece hiçbir zaman tam karanlık olmazdı. Dört Lejyon ailesinin askerleri surlarda nöbet tutar, Tezkiriş atölyelerinin ocakları sönmezdi. Engizisyon'un orada, Beyaz Şehir'den sonraki en büyük karakolu vardı.</p>
+
+      <p>Bölükte ilk aylarda fısıltıları duydu: Tezkirişler ateşli silahı kolay kolay kimseye vermezdi, kendini kanıtlamamış birine ise asla; bu kız onu soyadıyla almıştı. Yeri cevap vermedi. Herkesten önce atış alanına indi, herkesten sonra çıktı. Adının ona kapıyı açtığını biliyordu. İçeride kalmak ise yalnızca onun işiydi.</p>
+
+      <p>Görevi, Western Shield'dan çıkan silah kervanlarına eşlik etmekti. Muhafızlar seçkin ama sıradan görünen adamlardı; kılıç, yay, mızrak. Ateşli silahlı bir muhafız, kervanın yükünü bütün yola ilan etmiş olurdu. Yeri'nin iki tabancası ise paltosunun altında dururdu. Kervan komutanının son çaresi oydu.</p>
+
+      <p>Bir sonbahar, Moradin Geçidi'ne inen yolda pusuya düştüler. Muhafızların yarısı ilk dakikada yere serildi. Yeri bir arabanın arkasına çömeldi, tabancalarını gizli tuttu ve bekledi. Kaçakçıların başı, kızıl şallı uzun boylu bir adam, son arabaya uzandığında açık verdi. Yeri otuz adımdan ateş etti. Barutun gümbürtüsü geçitte yankılandı, adam düştü, geri kalanlar dağıldı.</p>
+
+      <p>Toz yatıştığında yolun kenarında bacağından vurulmuş genç bir kaçakçı kalmıştı. Olsa olsa Yeri'den birkaç yaş büyüktü. Ellerini kaldırdı, kılıcını uzağa itti. Gözleri Yeri'nin elindeki tabancadaydı. Kervanın komutanı ona bakmadı bile. <em>"Silahı gördü,"</em> dedi. <em>"İşini bitir, Yağmurmızrağı."</em></p>
+
+      <p>Yeri tabancayı kaldırdı. Bir saniye, belki daha kısa, gencin gözlerine baktı. Sonra nefesinin dibini buldu ve tetiği çekti. O gece kamp ateşinin başında ellerinin titremediğini fark etti. Bundan gurur mu duyması, korkması mı gerektiğine karar veremedi. Sonunda, kayda geçirdiği her şey gibi, onu da bir kenara yazdı ve uyudu.</p>
+
+      <p>Yük eksiksiz teslim edildi. Ama bir şey aklından çıkmadı: kaçakçılar hangi arabaya, hangi sırayla saldıracaklarını biliyordu. Bu bilgi yalnızca kervan defterlerinde yazılıydı.</p>
+
+      <p>Kural basitti ve onu kendisi koymuştu: sorun Engizisyon'un dışındaysa emir neyse o yapılırdı. İçindeyse konuşulurdu. Yeri konuştu. Defterleri karşılaştırdı, kazınmış bir satırı ve onu düzelten ikinci bir eli buldu. Bulgularını bölüğün Engizitör'üne, usulüne uygun bir raporla sundu. O el, bölüğün levazım subayınındı. Yeri için adalet, kaydı tutulan şeydi; gerisini taşıyacak olan İmparatorluk'tu.</p>
+
+      <p>Engizitör raporu okudu, katladı. <em>"Teşekkür ederim, Yağmurmızrağı. Gerisini ben hallederim."</em></p>
+
+      <p>Levazım subayı bir hafta sonra zincire vurulmuş hâlde Beyaz Şehir'e, Engizisyon'un kalbine gönderildi. Yeri onun orada hesap vereceğini biliyordu; ayrıntıyı sormadı, çünkü Engizisyon'un hesabı eksik kalmazdı. Her cevabı istemek bir tetikçinin işi değildi. Onun işi doğru hedefi göstermekti; gösterdi.</p>
+
+      <p>Mühürlü mektup, dört yıla yaklaşan görevinin sonunda geldi. Verdun Engizisyon Taburu'na bağlı yeni bir birliğe atanıyordu; başka yerlerden, başka görevlerden gelen yabancılarla. Mektup atışından, disiplininden, sadakatinden söz ediyordu. Yeri onu iki kez okudu. Mühür Verdun'un değil, Beyaz Şehir'in mührüydü. Bunun anlamını sormadı; Engizisyon'un kalbinin onu gözettiğini bilmek yeterdi.</p>
+
+      <p>Verdun'a vardığında yağmur yağıyordu. Çayırların eğik, temiz yağmuru değil; denizden gelen, tuzlu ve soğuk bir yağmur. Yeri paltosunun yakasını kaldırdı, tabancalarının kılıflarını yokladı ve Tabur'un kapısına doğru, adımlarını sayarak yürüdü. Kapıdaki nöbetçi onu baştan aşağı süzdü, sonra hiçbir şey sormadan kenara çekildi. Sanki geleceği biliniyordu...</p>
     </div>
 
     <!-- Inline info-boxes: only shown on narrow screens -->
@@ -762,8 +798,11 @@
       <div class="info-box-inline">
         <h2>Unvanlar ve Lore</h2>
         <strong>Unvanlar:</strong>
-        <div class="badges"></div>
-        <span class="info-pending">Henüz unvan yok.</span><br><br>
+        <div class="badges">
+          <span class="badge">Paltolu Tetikçi</span>
+          <span class="badge">Yağmurmızrağı Ferdi</span>
+          <span class="badge">Otuz Adım</span>
+        </div>
         <strong>Lore Etkisi:</strong><br>
         <span class="info-pending">Henüz işlenmedi.</span>
       </div>
@@ -796,6 +835,21 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(0,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-0">
+              <div class="carousel-card visible" data-panel="0" data-idx="0">
+                <img src="Lord Aurel Yağmurmızrağı.webp" alt="Lord Aurel Yağmurmızrağı" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="1">
+                <img src="Venetia Yağmurmızrağı.webp" alt="Venetia Yağmurmızrağı" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="2">
+                <img src="At Seçmeye Gelen Yaşlı Jaeger Ruth.webp" alt="At Seçmeye Gelen Yaşlı Jaeger Ruth" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="3">
+                <img src="Kervan Komutanı Cheston.webp" alt="Kervan Komutanı Cheston" onclick="openModal(this)">
+              </div>
+              <div class="carousel-card" data-panel="0" data-idx="4">
+                <img src="Western Shield&#x27;daki Bölüğün Engizitörü Ozcius.webp" alt="Western Shield&#x27;daki Bölüğün Engizitörü Ozcius" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(0, 1)">&#10095;</button>
           </div>
@@ -808,6 +862,9 @@
           <div class="carousel-row">
             <button class="carousel-arrow" onclick="carouselShift(1,-1)">&#10094;</button>
             <div class="carousel-stage" id="stage-1">
+              <div class="carousel-card visible" data-panel="1" data-idx="0">
+                <img src="Levazım Subayı Balgar.webp" alt="Levazım Subayı Balgar" onclick="openModal(this)">
+              </div>
             </div>
             <button class="carousel-arrow" onclick="carouselShift(1, 1)">&#10095;</button>
           </div>
@@ -839,8 +896,11 @@
   <div class="info-box left-box">
     <h2>Unvanlar ve Lore</h2>
     <strong>Unvanlar:</strong>
-    <div class="badges"></div>
-    <span class="info-pending">Henüz unvan yok.</span><br><br>
+    <div class="badges">
+      <span class="badge">Paltolu Tetikçi</span>
+      <span class="badge">Yağmurmızrağı Ferdi</span>
+      <span class="badge">Otuz Adım</span>
+    </div>
     <strong>Lore Etkisi:</strong><br>
     <span class="info-pending">Henüz işlenmedi.</span>
   </div>
@@ -1032,8 +1092,8 @@
     const CAROUSEL_AUTO_MS = 5000;
 
     const captions = [
-      [],
-      [],
+      ['Yağmurmızrağı Ailesinin Yöneticisi ve Yeri\'nin Babası Olan Lord Aurel Yağmurmızrağı', 'Yağmurmızrağı Ailesinin Leydisi ve Yeri\'nin Annesi Olan Leydi Venetia Yağmurmızrağı', 'Yağmurmızrağı Konağına Her Yıl At Seçmeye Gelen Yaşlı Jaeger Kadın Ruth', 'Western Shield\'daki Kalkan Silah Kervan\'ının Komutanı Cheston', 'Western Shield\'daki Bölüğün Engizitörü Ozcius'],
+      ['Kervan Bilgilerini Sızdıran Levazım Subayı Balgar'],
       [],
     ];
 
